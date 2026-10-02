@@ -416,7 +416,7 @@ function gcal(o){
 async function save(col,id,data){
   if(!S.db){toast("Saving isn't available in this view");return false}
   try{await S.db.collection(col).doc(id).set(data);return true}
-  catch(e){toast(e&&e.code==="quota_exceeded"?"Storage is full. Delete old entries or receipt photos.":"Couldn't save. Check your connection and try again.");return false}
+  catch(e){const c=String(e&&e.code||"");toast(c==="quota_exceeded"?"Storage is full. Delete old entries or receipt photos.":/permission/.test(c)?"Firebase blocked this save. Check that the latest rules are published and your role is set.":"Couldn't save. Check your connection and try again.");if(window.console)console.warn("save failed",col,id,e);return false}
 }
 async function remove(col,id){
   if(!S.db)return false;
@@ -524,7 +524,8 @@ function navLinks(){
     '<a href="#home"'+(r==="home"||r.startsWith("b-")?' class="on"':'')+'>Home</a>'+
     '<a href="#calendar"'+on("calendar")+'>Calendar</a>'+
     '<a href="#collab"'+on("collab")+'>Collaborate</a>'+
-    (S.isAdmin?'<a href="#team" class="team'+(team?' on':'')+'">Back office</a>':S.signedIn?'<a href="#portal" class="team'+(r.startsWith("portal")||r==="join"?' on':'')+'">My portal</a>':'<a href="#signin" class="team'+(r==="signin"||team?' on':'')+'">Sign in</a>');
+    '<a href="#groove"'+(["groove","signin","join"].includes(r)||r.startsWith("portal")?' class="on"':'')+'>Groove Team</a>'+
+    (S.isAdmin?'<a href="#team" class="team'+(team?' on':'')+'">Back office</a>':'');
 }
 
 function treeSVG(){
@@ -876,17 +877,29 @@ function joinPicker(){
   return '<div class="card" style="width:100%;max-width:560px;text-align:left;display:flex;flex-direction:column;gap:12px"><b>Which team do you want to join?</b><div class="brandtabs" style="margin:0">'+BRANDS.map(b=>{const g=grantFor(S.uid,b.id),st=S.myBrands.includes(b.id)?"Joined":g&&g.status==="declined"?"Declined":asked.includes(b.id)?"Waiting":"";
     return '<label class="chip" style="'+cvar(b.id)+';cursor:pointer;padding:6px 10px"><input type="checkbox" name="jb" value="'+b.id+'"'+(asked.includes(b.id)||S.myBrands.includes(b.id)?' checked':'')+(S.myBrands.includes(b.id)?' disabled':'')+' style="accent-color:var(--c)"> '+esc(brandInfo(b.id).name)+(st?' · '+st:'')+'</label>'}).join("")+'</div><button class="btn olive" data-act="request-join" style="align-self:flex-start">'+(asked.length?'Update my request':'Ask to join')+'</button></div>';
 }
-function viewSignin(){
-  let body;
-  if(!S.authChecked)body='<h1>Checking sign in…</h1><p class="muted">One moment.</p>';
-  else if(S.isAdmin)body='<div class="eyebrow">Signed in · Founder</div><h1>Welcome back</h1><p class="muted">You have full access to the back office: every timesheet, calendar, reminder and collab.</p><div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center"><a class="btn olive" href="#team">Open back office</a>'+(BACKEND==="firebase"?'<button class="btn ghost" data-act="signout">Sign out</button>':'')+'</div>';
-  else if(S.signedIn&&S.db)return viewPortalHome();
-  else if(BACKEND==="firebase"){
-    body=!S.fbReady?'<h1>Sign in isn\'t set up yet</h1><p class="muted">Add your Firebase settings to firebase-config.js (see README) to turn on team sign in.</p>':
-      '<div class="eyebrow">Grooveville team portal</div><h1>Sign in</h1><form id="authForm" class="card" style="display:flex;flex-direction:column;gap:12px;text-align:left;width:100%;max-width:380px"><label class="f">Email<input class="i" type="email" id="a-email" name="email" autocomplete="email" required></label><label class="f">Password<input class="i" type="password" id="a-pass" name="password" autocomplete="current-password" minlength="6" required></label><button class="btn olive" type="submit" data-mode="in">Sign in</button><button class="btn ghost" type="submit" data-mode="up">Create team account</button><button class="rowbtn" type="button" data-act="reset-pass" style="align-self:center">Forgot password?</button><p id="authMsg" class="muted" style="font-size:13px;text-align:center" aria-live="polite"></p></form>';
+function viewSignin(){return viewGroove()}
+function authCard(){
+  if(!S.authChecked)return '<div class="card"><p class="muted">Checking sign in…</p></div>';
+  if(S.signedIn&&(S.db||S.isAdmin)){
+    const links=[];
+    if(S.isAdmin)links.push('<a class="btn olive" href="#team">Open Back office</a>','<a class="btn ghost" href="#team-people">Teams & approvals</a>');
+    else links.push('<a class="btn olive" href="#portal">Dashboard</a>');
+    if(!S.isAdmin&&isMember())links.push('<a class="btn ghost" href="#portal-time">My timesheet</a>');
+    if(isHead())links.push('<a class="btn ghost" href="#portal-team">My team</a>');
+    if(!S.isAdmin)links.push('<a class="btn ghost" href="#join">Join a team</a>');
+    return '<div class="card" style="display:flex;flex-direction:column;gap:12px"><div class="eyebrow">Signed in'+(S.isAdmin?' · Founder':isHead()?' · Company head':isMember()?' · Team member':'')+'</div>'+(S.email?'<b style="overflow-wrap:anywhere">'+esc(S.email)+'</b>':'')+'<div style="display:flex;gap:8px;flex-wrap:wrap">'+links.join("")+'</div>'+(BACKEND==="firebase"?'<button class="rowbtn" data-act="signout" style="align-self:flex-start">Sign out</button>':'')+'</div>';
   }
-  else body='<div class="eyebrow">Grooveville team portal</div><h1>Sign in</h1><p class="muted">The back office and team timesheets use your Claude account. Open this page while signed in to Claude. If you\'re on the team, ask the founder to share the page with you as a Contributor (“Can use”), then come back here.</p><p class="muted" style="font-size:13.5px">Just got access? Reload this page.</p>';
-  return '<div class="wrap gate">'+body+'<a href="#home" class="rowbtn">Back to the public site</a></div>';
+  if(BACKEND==="firebase"){
+    if(!S.fbReady)return '<div class="card"><h3 style="font-size:20px">Sign in isn\'t set up yet</h3><p class="muted" style="margin-top:6px">Add your Firebase settings to firebase-config.js (see README).</p></div>';
+    return '<form id="authForm" class="card" style="display:flex;flex-direction:column;gap:12px"><div class="eyebrow">Team sign in</div><h3 style="font-size:22px">Sign in to the Groove Team portal</h3><label class="f">Email<input class="i" type="email" id="a-email" name="email" autocomplete="email" required></label><label class="f">Password<input class="i" type="password" id="a-pass" name="password" autocomplete="current-password" minlength="6" required></label><button class="btn olive" type="submit" data-mode="in">Sign in</button><button class="btn ghost" type="submit" data-mode="up">Create team account</button><button class="rowbtn" type="button" data-act="reset-pass" style="align-self:center">Forgot password?</button><p id="authMsg" class="muted" style="font-size:13px;text-align:center" aria-live="polite"></p></form>';
+  }
+  return '<div class="card" style="display:flex;flex-direction:column;gap:10px"><div class="eyebrow">Team sign in</div><h3 style="font-size:22px">Sign in with Claude</h3><p class="muted">The team portal uses your Claude account. Open this page signed in to Claude. On the team? Ask the founder to share it with you as a Contributor (“Can use”), then reload.</p></div>';
+}
+function viewGroove(){
+  const cards=BRANDS.slice(1).map(b0=>{const b=brandInfo(b0.id);return '<a class="branch" href="#b-'+b.id+'" style="'+cvar(b.id)+'">'+(b.logo?'<img class="blogo" src="'+esc(b.logo)+'" alt="">':'<div class="mark">'+esc(b.short.slice(0,3))+'</div>')+'<h3>'+esc(b.name)+'</h3>'+(b.developing?'<span class="pill high" style="align-self:flex-start">In development</span>':'')+'<p>'+esc(b.tagline)+'</p><span class="go">Company page →</span></a>'}).join("");
+  return '<section class="teamhead"><div class="wrap"><div class="eyebrow">Grooveville LLC · DrawUp Headquarters</div><h1>Groove Team</h1><p class="muted" style="margin-top:8px;max-width:64ch">The people behind the nine companies on the Groove Vine. Team members sign in here to log time, money spent and money in, and to join a company team.</p></div></section>'+
+    '<section class="tsec"><div class="wrap cols2"><div style="min-width:0"><h2 style="font-size:22px;margin-bottom:12px">Our nine companies</h2><div class="branches" style="grid-template-columns:repeat(auto-fill,minmax(220px,1fr))">'+cards+'</div></div>'+
+    '<aside style="min-width:0;display:flex;flex-direction:column;gap:14px;align-self:start;position:sticky;top:90px">'+authCard()+'<p class="muted" style="font-size:13px">New to the team? Create an account, then pick the company you work with. The company head or the founder approves you.</p></aside></div></section>';
 }
 function viewPortal(){
   if(!isMember())return viewSignin();
@@ -1322,7 +1335,7 @@ function render(){
   if(r==="calendar")h=viewPublicCalendar();
   else if(r.startsWith("collab"))h=viewCollab(r.split("-")[1]);
   else if(r.startsWith("b-")&&BR[r.slice(2)])h=viewBrand(r.slice(2));
-  else if(r==="signin")h=viewSignin();
+  else if(r==="signin"||r==="groove")h=viewGroove();
   else if(r==="portal")h=S.signedIn&&S.db&&!S.isAdmin?viewPortalHome():viewSignin();
   else if(r==="portal-time")h=viewPortal();
   else if(r==="join")h=S.signedIn&&S.db&&!S.isAdmin?viewJoin():viewSignin();
@@ -1466,11 +1479,11 @@ route();render();
       started=true;S.signedIn=true;S.uid=u.uid;S.email=u.email||"";
       let first=true;
       S.db.doc("access/"+u.uid).onSnapshot(d=>{
-        const f=d.exists&&["founder","hnic"].includes(String(d.data().role||"").toLowerCase());
+        const f=d.exists&&["founder","hnic"].includes(String(d.data().role||"").toLowerCase().replace(/["'\s]/g,""));
         if(f&&!S.isAdmin){S.isAdmin=true;subscribeFounder();if(!first||S.route==="signin"||S.route.startsWith("portal")||S.route==="join")location.hash="#team";toast("Founder access on")}
-        if(first){first=false;S.authChecked=true;if(!S.isAdmin){subscribeMember();if(S.route==="signin")location.hash="#portal"}}
+        if(first){first=false;S.authChecked=true;if(!S.isAdmin){subscribeMember();if(S.route==="signin"||S.route==="groove")location.hash="#portal"}}
         render();
-      },()=>{if(first){first=false;S.authChecked=true;subscribeMember();if(S.route==="signin")location.hash="#portal";render()}});
+      },()=>{if(first){first=false;S.authChecked=true;subscribeMember();if(S.route==="signin"||S.route==="groove")location.hash="#portal";render()}});
     });
     return;
   }

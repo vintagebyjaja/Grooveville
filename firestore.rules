@@ -11,7 +11,8 @@ service cloud.firestore {
     function isFounder() {
       return signedIn()
         && exists(/databases/$(database)/documents/access/$(request.auth.uid))
-        && accessDoc().data.role in ["founder", "hnic"];
+        && accessDoc().data.role is string
+        && accessDoc().data.role.lower().trim() in ["founder", "hnic"];
     }
     function headsDoc() { return get(/databases/$(database)/documents/org/heads); }
     function isHeadOf(b) {
