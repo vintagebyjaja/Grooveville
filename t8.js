@@ -1,0 +1,14 @@
+const {chromium}=require('playwright');const fs=require('fs');
+(async()=>{const b=await chromium.launch();const p=await b.newPage({viewport:{width:1280,height:900}});const errs=[];p.on('pageerror',e=>errs.push(e.message));
+await p.addInitScript(fs.readFileSync('mock.js','utf8'));
+await p.goto('file://'+process.cwd()+'/grooveville.html#team-vault');await p.waitForTimeout(400);
+await p.click('[data-act="vault-setup"]');await p.fill('#v-pass','first pass phrase');await p.fill('#v-pass2','first pass phrase');await p.fill('#v-phone','(704) 555-1234');await p.click('#mf button[type=submit]');await p.waitForTimeout(2500);
+const rc=await p.evaluate(()=>document.querySelector('#rc-text').textContent);await p.screenshot({path:'s_rc.png'});
+await p.check('#rc-ok');await p.click('#rc-done');
+await p.click('[data-act="vault-new"]');await p.fill('#v-title','Bank');await p.fill('#v-pw','s3cret');await p.click('#mf button[type=submit]');await p.waitForTimeout(400);
+await p.click('[data-act="vault-lock"]');await p.click('[data-act="vault-forgot"]');
+await p.fill('#v-rc',rc.toLowerCase().replace(/-/g,' '));await p.fill('#v-np','second pass phrase');await p.fill('#v-np2','second pass phrase');await p.click('#mf button[type=submit]');await p.waitForTimeout(3000);
+console.log('after reset notes:',await p.evaluate(()=>[...document.querySelectorAll('#app b')].map(x=>x.textContent).join('|')));
+await p.click('[data-act="vault-lock"]');await p.click('[data-act="vault-unlock"]');await p.fill('#v-pass','second pass phrase');await p.click('#mf button[type=submit]');await p.waitForTimeout(1500);
+console.log('unlock new pass rows:',await p.evaluate(()=>document.querySelectorAll('.vpass').length));
+console.log(errs);await b.close()})();

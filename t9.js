@@ -1,0 +1,16 @@
+const {chromium}=require('playwright');const fs=require('fs');
+(async()=>{const b=await chromium.launch();const p=await b.newPage({viewport:{width:1280,height:1000}});const errs=[];p.on('pageerror',e=>errs.push(e.message));
+let m=fs.readFileSync('mock.js','utf8').replace("n==='db'?db:null","n==='db'?db:n==='downloads'?{save:async r=>{window.__saved=window.__saved||[];window.__saved.push([r.filename,(r.data.size||r.data.length)]);return {status:'saved'}}}:null");
+m=m.replace("const store={};","const store={'ledger/a':{brand:'ent',type:'income',source:'Donation',date:'2026-03-04',title:'Gift',amount:200},'ledger/b':{brand:'music',type:'expense',date:'2026-03-09',title:'Mic',amount:80},'ledger/c':{brand:'hq',type:'hours',date:'2026-10-01',title:'Admin',start:'09:00',end:'11:00',hours:2},'ledger/d':{brand:'ent',type:'expense',date:'2027-01-05',title:'Venue',amount:500}};");
+await p.addInitScript(m);
+await p.goto('file://'+process.cwd()+'/grooveville.html#team-docs');await p.waitForTimeout(400);
+await p.click('[data-act="doc-up"]');await p.setInputFiles('#d-files','/tmp/claude-0/test.pdf');await p.selectOption('#d-cat','Receipt');await p.click('#mf button[type=submit]');await p.waitForTimeout(1500);
+console.log('docs rows',await p.evaluate(()=>document.querySelectorAll('[data-act="doc-open"]').length));
+await p.click('[data-act="doc-open"]');await p.waitForTimeout(500);await p.click('[data-act="doc-dl"]');await p.waitForTimeout(300);
+await p.keyboard.press('Escape');
+await p.evaluate(()=>location.hash='team-reports');await p.waitForTimeout(300);await p.screenshot({path:'s_rep.png',fullPage:true});
+await p.click('[data-act="rep-month"][data-v="2026-03"]');await p.click('[data-act="rep-sum"]');await p.click('[data-act="rep-log"]');await p.waitForTimeout(300);
+await p.click('[data-act="rep-year"][data-v="2027"]');await p.waitForTimeout(200);
+console.log('years',await p.evaluate(()=>[...document.querySelectorAll('[data-act="rep-year"]')].map(b=>b.textContent).join()));
+console.log('saved',JSON.stringify(await p.evaluate(()=>window.__saved)));
+console.log(errs);await b.close()})();

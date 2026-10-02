@@ -1,0 +1,12 @@
+const {chromium}=require('playwright');
+(async()=>{const b=await chromium.launch();const p=await b.newPage({viewport:{width:1280,height:900}});const errs=[];p.on('pageerror',e=>errs.push(e.message));
+let m=require('fs').readFileSync('mock.js','utf8').replace("isOwner:async()=>true","isOwner:async()=>false").replace("const store={};","const store={'access/u1':{brands:['ent','music']},'memberlog/u1':{joinedAt:'2026-10-01'}};");
+await p.addInitScript(m);
+await p.goto('file://'+process.cwd()+'/grooveville.html#signin');await p.waitForTimeout(400);
+console.log(await p.evaluate(()=>document.querySelector('#app h1').textContent), await p.evaluate(()=>document.querySelector('#links').textContent));
+await p.evaluate(()=>location.hash='portal');await p.waitForTimeout(200);
+await p.click('[data-act="new-entry"]');console.log(await p.evaluate(()=>[...document.querySelectorAll('#e-brand option')].map(o=>o.value).join()));
+await p.fill('#e-title','Flyer design');await p.fill('#e-start','09:00');await p.fill('#e-end','12:00');await p.click('#mf button[type=submit]');await p.waitForTimeout(200);
+await p.evaluate(()=>location.hash='team');await p.waitForTimeout(200);console.log(await p.evaluate(()=>document.querySelector('#app h1').textContent));
+await p.evaluate(()=>location.hash='portal');await p.waitForTimeout(200);await p.screenshot({path:'s_portal.png'});
+console.log(errs);await b.close()})();
