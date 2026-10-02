@@ -1,0 +1,56 @@
+rules_version = '2';
+// Grooveville security rules.
+// Public: site settings and events marked "public".
+// Founder (access/{uid}.role == "founder"): everything.
+// Team members: only their own timesheet, and only for the companies the founder assigned them.
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() { return request.auth != null; }
+    function accessDoc() { return get(/databases/$(database)/documents/access/$(request.auth.uid)); }
+    function isFounder() {
+      return signedIn()
+        && exists(/databases/$(database)/documents/access/$(request.auth.uid))
+        && accessDoc().data.role == "founder";
+    }
+    function myBrands() { return accessDoc().data.brands; }
+
+    // Public company page text and contact email
+    match /settings/{doc} {
+      allow read: if true;
+      allow write: if isFounder();
+    }
+
+    // Calendar: public events are visible to everyone, private events only to the founder
+    match /events/{id} {
+      allow read: if resource.data.visibility == "public" || isFounder();
+      allow write: if isFounder();
+    }
+
+    // Who can do what. Only the founder can grant access.
+    match /access/{uid} {
+      allow read: if signedIn() && (request.auth.uid == uid || isFounder());
+      allow write: if isFounder();
+    }
+
+    // Each team member's private timesheet
+    match /memberlog/{uid} {
+      allow read: if signedIn() && (request.auth.uid == uid || isFounder());
+      allow create, update: if signedIn() && (request.auth.uid == uid || isFounder());
+      allow delete: if isFounder();
+
+      match /entries/{id} {
+        allow read, delete: if signedIn() && (request.auth.uid == uid || isFounder());
+        allow create, update: if isFounder()
+          || (signedIn() && request.auth.uid == uid && request.resource.data.brand in myBrands());
+      }
+      match /receipts/{id} {
+        allow read, write: if signedIn() && (request.auth.uid == uid || isFounder());
+      }
+    }
+
+    // Everything else (founder timesheet, receipts, reminders, collabs, private notes): founder only
+    match /{collection}/{id} {
+      allow read, write: if isFounder();
+    }
+  }
+}

@@ -1,0 +1,1179 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="description" content="Grooveville LLC, the DrawUp Headquarters, and the companies on the Groove Vine.">
+<link rel="icon" href="logo.webp">
+<style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style>
+<title>Grooveville LLC</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout concept: the Grooveville tree. HQ is the trunk, six companies branch off it.
+   Public side = storefront for each branch; Team side = one ledger with one slot per company. */
+:root{
+  --bg:#FBF6F2; --surface:#FFFFFF; --surface-2:#F5EEE7; --ink:#141B22; --muted:#56605C; --line:#E7DDD2;
+  --peach:#F4A988; --peach-ink:#B4532E; --peach-soft:#FCE7DC;
+  --olive:#5F6F25; --olive-soft:#E8ECD3;
+  --teal:#0ABAB5; --teal-ink:#0A7471; --teal-soft:#D3F1EF;
+  --ok:#4D7C0F; --warn:#B45309; --bad:#B91C1C;
+  --c-hq:#0A7471; --c-ent:#C2582F; --c-music:#5F6F25; --c-vybr8:#0A9F9A; --c-pathd:#7F8F3E; --c-rentals:#D9794F; --c-w4w:#2F5E5B; --c-aec:#44511A; --c-scu:#2B3A55; --c-wit:#A86F1F;
+  --f-display:"Bricolage Grotesque", "Avenir Next", "Segoe UI", system-ui, sans-serif;
+  --f-body:"Instrument Sans", "Helvetica Neue", "Segoe UI", system-ui, sans-serif;
+  --f-mono:"JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --r:14px; --r-sm:9px;
+  --shadow:0 1px 2px rgba(31,36,25,.06), 0 8px 24px -12px rgba(31,36,25,.18);
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#11150F; --surface:#191E15; --surface-2:#22291C; --ink:#F2EDE6; --muted:#A8AE9C; --line:#2E3727;
+  --peach:#F6B396; --peach-ink:#F6A983; --peach-soft:#3A251C;
+  --olive:#B2C26E; --olive-soft:#283019;
+  --teal:#3FD0CB; --teal-ink:#6EDCD7; --teal-soft:#113533;
+  --ok:#A3D65C; --warn:#F5B454; --bad:#F87171;
+  --c-hq:#6EDCD7; --c-ent:#F6A983; --c-music:#B2C26E; --c-vybr8:#81D8D0; --c-pathd:#CBD78F; --c-rentals:#F8C4A9; --c-w4w:#86BDB8; --c-aec:#D5DE9F; --c-scu:#AEBCD9; --c-wit:#EBC27E;
+  --shadow:0 1px 2px rgba(0,0,0,.3), 0 10px 28px -14px rgba(0,0,0,.6);
+  color-scheme:dark }}
+:root[data-theme="dark"]{
+  --bg:#11150F; --surface:#191E15; --surface-2:#22291C; --ink:#F2EDE6; --muted:#A8AE9C; --line:#2E3727;
+  --peach:#F6B396; --peach-ink:#F6A983; --peach-soft:#3A251C;
+  --olive:#B2C26E; --olive-soft:#283019;
+  --teal:#3FD0CB; --teal-ink:#6EDCD7; --teal-soft:#113533;
+  --ok:#A3D65C; --warn:#F5B454; --bad:#F87171;
+  --c-hq:#6EDCD7; --c-ent:#F6A983; --c-music:#B2C26E; --c-vybr8:#81D8D0; --c-pathd:#CBD78F; --c-rentals:#F8C4A9; --c-w4w:#86BDB8; --c-aec:#D5DE9F; --c-scu:#AEBCD9; --c-wit:#EBC27E;
+  --shadow:0 1px 2px rgba(0,0,0,.3), 0 10px 28px -14px rgba(0,0,0,.6);
+  color-scheme:dark }
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15.5px;line-height:1.55;-webkit-font-smoothing:antialiased}
+a{color:var(--teal-ink)}
+h1,h2,h3,h4{font-family:var(--f-display);line-height:1.08;margin:0;text-wrap:balance;letter-spacing:-.01em}
+p{margin:0}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2.5px solid var(--teal);outline-offset:2px;border-radius:6px}
+.wrap{max-width:1160px;margin:0 auto;padding-inline:20px}
+.mono{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.eyebrow{font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.muted{color:var(--muted)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+
+/* nav */
+.nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.nav .wrap{display:flex;align-items:center;gap:18px;min-height:62px;flex-wrap:wrap;padding-block:8px}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--ink);font-family:var(--f-display);font-weight:800;font-size:20px;letter-spacing:-.02em}
+.logoimg{flex:none;border-radius:50%;display:block;box-shadow:0 0 0 1.5px var(--line)}
+.links{display:flex;gap:4px;margin-left:auto;flex-wrap:wrap}
+.links a{text-decoration:none;color:var(--ink);padding:7px 12px;border-radius:999px;font-weight:500;font-size:14.5px}
+.links a:hover{background:var(--surface-2)}
+.links a.on{background:var(--ink);color:var(--bg)}
+.links a.team{border:1.5px solid var(--olive);color:var(--olive)}
+.links a.team.on{background:var(--olive);color:var(--bg)}
+
+/* buttons, inputs */
+.btn{display:inline-flex;align-items:center;gap:8px;border:0;cursor:pointer;border-radius:999px;padding:10px 18px;font-weight:600;font-size:14.5px;text-decoration:none;background:var(--ink);color:var(--bg);transition:transform .12s}
+.btn:hover{transform:translateY(-1px)}
+.btn.teal{background:var(--teal);color:#05302F}
+.btn.peach{background:var(--peach);color:#3D1A0B}
+.btn.olive{background:var(--olive);color:var(--bg)}
+.btn.ghost{background:transparent;color:var(--ink);border:1.5px solid var(--line)}
+.btn.sm{padding:6px 12px;font-size:13px}
+.btn.danger{background:transparent;color:var(--bad);border:1.5px solid color-mix(in srgb,var(--bad) 40%,transparent)}
+.btn[disabled]{opacity:.5;cursor:not-allowed;transform:none}
+label.f{display:flex;flex-direction:column;gap:5px;font-size:13px;font-weight:600;color:var(--muted);min-width:0}
+input.i,select.i,textarea.i{width:100%;background:var(--surface);border:1.5px solid var(--line);border-radius:var(--r-sm);padding:9px 11px;font-size:15px;font-weight:400;color:var(--ink)}
+textarea.i{min-height:96px;resize:vertical}
+input.i:focus,select.i:focus,textarea.i:focus{border-color:var(--teal);outline:none}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}
+.seg{display:inline-flex;background:var(--surface-2);border-radius:999px;padding:3px;gap:2px;flex-wrap:wrap}
+.seg button{border:0;background:transparent;padding:6px 13px;border-radius:999px;cursor:pointer;font-size:13.5px;font-weight:600;color:var(--muted)}
+.seg button.on{background:var(--surface);color:var(--ink);box-shadow:var(--shadow)}
+
+.chip{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;padding:3px 9px;border-radius:999px;background:color-mix(in srgb,var(--c,var(--teal)) 15%,transparent);color:var(--c,var(--teal-ink));white-space:nowrap}
+.chip::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--c,var(--teal))}
+.pill{display:inline-block;font-size:11.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:2px 8px;border-radius:6px}
+.pill.pub{background:var(--teal-soft);color:var(--teal-ink)}
+.pill.priv{background:var(--surface-2);color:var(--muted)}
+.pill.high{background:var(--peach-soft);color:var(--peach-ink)}
+.pill.over{background:color-mix(in srgb,var(--bad) 14%,transparent);color:var(--bad)}
+
+section{padding-block:56px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:20px}
+
+/* hero */
+.hero{padding-block:48px 36px}
+.hero .wrap{display:grid;grid-template-columns:1.05fr 1fr;gap:36px;align-items:center}
+.hero h1{font-size:clamp(38px,6vw,72px);font-weight:800;letter-spacing:-.035em}
+.hero h1 em{font-style:normal;color:var(--teal-ink)}
+.hero h1 span{color:var(--peach-ink)}
+.hero .lede{font-size:18px;color:var(--muted);max-width:52ch;margin-top:18px}
+.hero .ctas{display:flex;gap:10px;flex-wrap:wrap;margin-top:26px}
+.tree{width:100%;height:auto;max-width:100%}
+.tree .node{cursor:pointer}
+.tree .node:hover circle.ring,.tree .node:focus circle.ring{stroke-width:4}
+.tree text{font-family:var(--f-display);font-weight:700}
+
+.branches{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.branch{display:flex;flex-direction:column;gap:10px;text-decoration:none;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:20px;position:relative;overflow:hidden;transition:border-color .15s, transform .15s}
+.branch:hover{border-color:var(--c);transform:translateY(-2px)}
+.blogo{width:48px;height:48px;border-radius:12px;object-fit:contain;background:var(--surface);border:1px solid var(--line);padding:4px;flex:none}
+.blogo.big{width:96px;height:96px;border-radius:20px;padding:8px;margin-bottom:16px;display:block}
+.branch .mark{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;font-family:var(--f-display);font-weight:800;font-size:15px;background:color-mix(in srgb,var(--c) 18%,transparent);color:var(--c)}
+.branch h3{font-size:21px}
+.branch p{color:var(--muted);font-size:14.5px}
+.branch .go{margin-top:auto;font-weight:600;font-size:14px;color:var(--c)}
+.hqband{display:flex;gap:20px;align-items:center;flex-wrap:wrap;background:var(--olive);color:var(--bg);border-radius:var(--r);padding:22px 24px;margin-bottom:14px}
+.hqband h3{font-size:24px}
+.hqband p{opacity:.85;max-width:60ch}
+.hqband .btn{margin-left:auto;background:var(--bg);color:var(--ink)}
+
+.sechead{display:flex;align-items:end;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:22px}
+.sechead h2{font-size:clamp(28px,3.6vw,40px);font-weight:800}
+
+.evlist{display:grid;gap:10px}
+.ev{display:grid;grid-template-columns:70px minmax(0,1fr) auto;gap:16px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px 16px}
+.ev .date{text-align:center;border-right:1px solid var(--line);padding-right:14px}
+.ev .date b{display:block;font-family:var(--f-display);font-size:28px;line-height:1}
+.ev .date small{font-size:11.5px;font-weight:700;letter-spacing:.1em;color:var(--muted);text-transform:uppercase}
+.ev h4{font-size:17px;font-family:var(--f-body);font-weight:600;letter-spacing:0}
+.ev .meta{font-size:13.5px;color:var(--muted);display:flex;gap:10px;flex-wrap:wrap;margin-top:3px}
+.empty{border:1.5px dashed var(--line);border-radius:var(--r);padding:26px;text-align:center;color:var(--muted)}
+
+.cta{background:var(--peach-soft);border-radius:22px;padding:36px;display:grid;grid-template-columns:1.4fr 1fr;gap:24px;align-items:center}
+.cta h2{font-size:clamp(26px,3.4vw,38px);font-weight:800;color:var(--peach-ink)}
+footer{border-top:1px solid var(--line);padding-block:28px;color:var(--muted);font-size:13.5px}
+footer .wrap{display:flex;gap:16px;justify-content:space-between;flex-wrap:wrap}
+
+/* brand page */
+.bhero{padding-block:56px 40px;background:linear-gradient(180deg,color-mix(in srgb,var(--c) 14%,var(--bg)),var(--bg))}
+.bhero h1{font-size:clamp(40px,7vw,84px);font-weight:800;letter-spacing:-.04em;color:var(--c)}
+.bhero .tag{font-size:20px;max-width:46ch;margin-top:12px}
+.bhero .crumb{font-size:13px;color:var(--muted);margin-bottom:14px}
+.bhero .crumb a{color:var(--muted)}
+.bcols{display:grid;grid-template-columns:1.3fr 1fr;gap:20px}
+.links-list{display:flex;flex-direction:column;gap:10px}
+
+/* calendar */
+.calbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:14px}
+.calbar h3{font-size:24px;min-width:170px}
+.calwrap{overflow-x:auto}
+.cal{display:grid;grid-template-columns:repeat(7,minmax(92px,1fr));border:1px solid var(--line);border-radius:var(--r);overflow:hidden;background:var(--line);gap:1px;min-width:660px}
+.cal .dow{background:var(--surface-2);font-size:11.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);padding:8px 10px}
+.cal .day{background:var(--surface);min-height:104px;padding:6px 7px;display:flex;flex-direction:column;gap:3px;cursor:pointer;text-align:left;border:0;border-radius:0}
+.cal .day:hover{background:var(--surface-2)}
+.cal .day.out{background:var(--bg);color:var(--muted)}
+.cal .day .n{font-family:var(--f-mono);font-size:12.5px;font-weight:600}
+.cal .day.today .n{background:var(--teal);color:#05302F;border-radius:999px;padding:1px 7px;align-self:flex-start}
+.cal .it{font-size:11.5px;line-height:1.3;padding:2px 6px;border-radius:5px;background:color-mix(in srgb,var(--c) 16%,transparent);color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;border-left:3px solid var(--c)}
+.cal .it.rem{border-left-style:dotted;background:transparent}
+.cal .it.priv{opacity:.85}
+.cal .more{font-size:11px;color:var(--muted)}
+.legend{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+
+/* team */
+.teamhead{padding-block:28px 6px}
+.teamhead h1{font-size:clamp(30px,4vw,44px);font-weight:800}
+.tabs{display:flex;gap:4px;flex-wrap:wrap;border-bottom:1px solid var(--line);margin-top:18px}
+.tabs a{text-decoration:none;color:var(--muted);font-weight:600;padding:10px 14px;border-bottom:2.5px solid transparent;margin-bottom:-1px;font-size:14.5px}
+.tabs a.on{color:var(--ink);border-color:var(--olive)}
+.tsec{padding-block:24px 56px}
+.banner{display:flex;gap:12px;align-items:center;flex-wrap:wrap;padding:12px 16px;border-radius:var(--r-sm);background:var(--teal-soft);color:var(--teal-ink);font-weight:500;margin-top:16px}
+.banner .btn{margin-left:auto}
+.banner.warn{background:var(--peach-soft);color:var(--peach-ink)}
+.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:22px}
+.kpi{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px}
+.kpi b{display:block;font-family:var(--f-mono);font-size:24px;font-weight:600;margin-top:4px}
+.slots{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px}
+.slot{background:var(--surface);border:1px solid var(--line);border-top:4px solid var(--c);border-radius:var(--r);padding:16px;display:flex;flex-direction:column;gap:10px}
+.slot h4{font-size:17px}
+.slot .nums{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.slot .nums div{background:var(--surface-2);border-radius:8px;padding:7px 8px}
+.slot .nums small{display:block;font-size:10.5px;font-weight:700;letter-spacing:.08em;color:var(--muted);text-transform:uppercase}
+.slot .nums span{font-family:var(--f-mono);font-size:14.5px;font-weight:600}
+.moneyin{display:flex;flex-wrap:wrap;align-items:center;gap:4px 10px;background:var(--olive-soft);border-radius:8px;padding:8px 10px}
+.moneyin div{display:flex;align-items:baseline;gap:8px;flex:1;min-width:0}
+.moneyin small{font-size:10.5px;font-weight:700;letter-spacing:.08em;color:var(--olive);text-transform:uppercase}
+.moneyin b{font-size:15px}
+.moneyin span{font-size:12px;color:var(--muted);flex-basis:100%;order:3}
+.moneyin .btn{padding:4px 10px;font-size:12px}
+.slot .next{font-size:13px;color:var(--muted);min-height:20px}
+.slot .acts{display:flex;gap:6px;flex-wrap:wrap;margin-top:auto}
+.cols2{display:grid;grid-template-columns:1.5fr 1fr;gap:20px}
+.toolbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:14px}
+.toolbar .sp{flex:1}
+.brandtabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.brandtabs button{border:1.5px solid var(--line);background:var(--surface);border-radius:999px;padding:6px 12px;cursor:pointer;font-size:13.5px;font-weight:600;color:var(--ink);display:inline-flex;gap:7px;align-items:center}
+.brandtabs button::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--c,var(--ink))}
+.brandtabs button.on{border-color:var(--c,var(--ink));background:color-mix(in srgb,var(--c,var(--ink)) 13%,var(--surface))}
+.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:var(--r);background:var(--surface)}
+table.t{width:100%;border-collapse:collapse;font-size:14px;min-width:760px}
+table.t th{text-align:left;font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:700;padding:10px 12px;border-bottom:1px solid var(--line);background:var(--surface-2)}
+table.t td{padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+table.t tr:last-child td{border-bottom:0}
+table.t td.num,table.t th.num{text-align:right;font-family:var(--f-mono);font-variant-numeric:tabular-nums;white-space:nowrap}
+table.t tfoot td{font-weight:700;background:var(--surface-2);border-top:1px solid var(--line)}
+.neg{color:var(--peach-ink)} .pos{color:var(--ok)}
+.typ{font-size:12px;font-weight:700;padding:2px 8px;border-radius:6px;background:var(--surface-2);white-space:nowrap}
+.typ.meeting{background:var(--teal-soft);color:var(--teal-ink)}
+.typ.expense,.typ.receipt{background:var(--peach-soft);color:var(--peach-ink)}
+.typ.income{background:var(--olive-soft);color:var(--olive)}
+.rowbtn{border:0;background:transparent;cursor:pointer;color:var(--muted);padding:3px 6px;border-radius:6px;font-size:13px}
+.rowbtn:hover{background:var(--surface-2);color:var(--ink)}
+.thumb{width:34px;height:34px;object-fit:cover;border-radius:6px;border:1px solid var(--line);cursor:zoom-in;vertical-align:middle}
+.remgroup{margin-bottom:22px}
+.remgroup h4{font-family:var(--f-body);font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+.rem{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:12px;align-items:start;background:var(--surface);border:1px solid var(--line);border-radius:var(--r-sm);padding:12px 14px;margin-bottom:8px}
+.rem.done{opacity:.55}
+.rem.done .rt{text-decoration:line-through}
+.rem input[type=checkbox]{width:19px;height:19px;accent-color:var(--olive);margin-top:2px}
+.rem .rt{font-weight:600}
+.rem .rm{font-size:13px;color:var(--muted);display:flex;gap:8px;flex-wrap:wrap;margin-top:2px}
+.letter{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:28px;font-size:15px;white-space:pre-wrap;line-height:1.65;font-family:var(--f-body)}
+.letter .lh{font-family:var(--f-display);font-weight:800;font-size:20px;color:var(--teal-ink);white-space:normal;display:flex;align-items:center;gap:10px;margin-bottom:14px;border-bottom:2px solid var(--peach);padding-bottom:12px}
+
+/* modal */
+.scrim{position:fixed;inset:0;background:rgba(17,21,15,.45);z-index:50;display:flex;align-items:flex-start;justify-content:center;overflow-y:auto;padding:max(24px,env(safe-area-inset-top,0px)) 16px 24px}
+.modal{background:var(--bg);border-radius:18px;width:100%;max-width:620px;padding:24px;box-shadow:var(--shadow);border:1px solid var(--line);display:flex;flex-direction:column;gap:14px}
+.modal h3{font-size:24px}
+.modal .row{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap;margin-top:6px}
+.modal .row .left{margin-right:auto}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:999px;font-weight:600;z-index:60;font-size:14px;max-width:calc(100% - 32px)}
+.gate{max-width:560px;margin:60px auto;text-align:center;display:flex;flex-direction:column;gap:14px;align-items:center}
+.gate h1{font-size:36px;font-weight:800}
+
+@media (max-width:900px){
+  .hero .wrap,.cta,.bcols,.cols2{grid-template-columns:1fr}
+  .branches{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media (max-width:560px){
+  .wrap{padding-inline:16px}
+  .branches{grid-template-columns:1fr}
+  .links{margin-left:0;width:100%;overflow-x:auto;flex-wrap:nowrap}
+  .links a{white-space:nowrap}
+  .ev{grid-template-columns:56px minmax(0,1fr)}
+  .ev .act{grid-column:1/-1}
+  section{padding-block:40px}
+  .cta{padding:24px}
+  .hqband .btn{margin-left:0}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+
+</head>
+<body>
+<header class="nav"><div class="wrap">
+  <a class="logo" href="#home" aria-label="Grooveville home">
+    <img id="logoNav" class="logoimg" alt="" width="40" height="40">
+    Grooveville
+  </a>
+  <nav class="links" id="links"></nav>
+</div></header>
+<main id="app"></main>
+<footer><div class="wrap"><span>© <span id="yr"></span> Grooveville LLC · DrawUp Headquarters</span><span>grooveville.org<span id="footnote"></span></span></div></footer>
+<div id="modal"></div>
+<script type="application/json" id="snap">{"events":[],"brands":{}}</script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="firebase-config.js"></script>
+<script>
+(function(){
+"use strict";
+const SELF_B64 = "";
+const RESET = "OnJvb3R7Y29sb3Itc2NoZW1lOmxpZ2h0O2JveC1zaXppbmc6Ym9yZGVyLWJveDtwYWRkaW5nLXRvcDplbnYoc2FmZS1hcmVhLWluc2V0LXRvcCwwcHgpO3BhZGRpbmctYm90dG9tOmVudihzYWZlLWFyZWEtaW5zZXQtYm90dG9tLDBweCl9aHRtbHtzY3JvbGwtcGFkZGluZy10b3A6ZW52KHNhZmUtYXJlYS1pbnNldC10b3AsMHB4KX1ib2R5e21hcmdpbjowO3BhZGRpbmc6MDtmb250OjE0cHggLWFwcGxlLXN5c3RlbSxCbGlua01hY1N5c3RlbUZvbnQsc2Fucy1zZXJpZjtiYWNrZ3JvdW5kOiNmYWY5ZjU7Y29sb3I6IzE0MTQxM31pbWd7bWF4LXdpZHRoOjEwMCV9W2hpZGRlbl06bm90KFtoaWRkZW49dW50aWwtZm91bmQgaV0pe2Rpc3BsYXk6bm9uZSFpbXBvcnRhbnR9";
+const LOGO = "data:image/webp;base64,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";
+const BACKEND = "firebase";
+const cu = n=>(window.claude&&window.claude.use)?window.claude.use(n):Promise.resolve(null);
+
+/* ---------- brands (every slot) ---------- */
+const BRANDS = [
+  {id:"hq", name:"Grooveville LLC", short:"HQ", role:"DrawUp Headquarters",
+   tagline:"The central business behind every branch of the Groove Vine.",
+   about:"Grooveville LLC is the DrawUp Headquarters. It is the home office that plans, funds and connects each Grooveville company, from live entertainment and music to rentals and new ventures."},
+  {id:"ent", name:"Grooveville Entertainment", short:"ENT", role:"Entertainment", social:"https://www.instagram.com/grooveville.ent/",
+   tagline:"Shows, parties and live experiences.",
+   about:"Grooveville Entertainment produces and hosts events across the Grooveville family. Watch the calendar for what is coming next."},
+  {id:"music", name:"Grooveville Music", short:"MUSIC", role:"Music", social:"https://www.instagram.com/grooveville.music/",
+   tagline:"Artists, releases and the Grooveville sound.",
+   about:"Grooveville Music is home to the artists, recordings and music projects of Grooveville."},
+  {id:"vybr8", name:"Vybr8", short:"VYBR8", role:"Social dining & nightlife", website:"https://vybr8.live",
+   tagline:"Eat • Drink • Live • Connect",
+   about:"Vybr8 is a social dining and nightlife platform. Discover highly rated restaurants and bars near you based on real people's reviews, and plan outings with friends at spots where everyone can order. Now in eight cities, including Charlotte, Atlanta and Miami."},
+  {id:"pathd", name:"Pathd", short:"PATHD", role:"Careers & jobs", website:"https://mypathd.com",
+   tagline:"Find your path.",
+   about:"Pathd is a career platform for finding jobs in fields like nursing, tech, finance and design. Know what a job pays, see how far it is from home, and find your people along the way. Job search and core features are free."},
+  {id:"rentals", name:"Grooveville Rentals", short:"RENTALS", role:"Rentals", developing:true,
+   tagline:"Coming soon.",
+   about:"Grooveville Rentals is coming soon. Send a collaboration request if you want to be first in line."},
+  {id:"w4w", name:"W4W", short:"W4W", role:"Grooveville company", developing:true, website:"https://w4w.store", social:"https://www.instagram.com/w4w.store/",
+   tagline:"A Grooveville company. Shop at w4w.store.",
+   about:"W4W is part of the Grooveville family. Visit w4w.store to shop."},
+  {id:"aec", name:"DrawUp AEC", short:"AEC", role:"Architecture · Engineering · Construction", website:"https://drawup.studio",
+   tagline:"Plans, checkups and firm projects.",
+   about:"DrawUp AEC builds DrawUp, a working product app for architecture, engineering and construction. It brings plans, checkups and firm projects together, with tools like Arch Coach, Check, Resources and Firm Profiles."},
+  {id:"scu", name:"Shadow Crown Universe", short:"SCU", role:"Books & stories",
+   social:"https://www.instagram.com/shadowcrown.ent/", cta:{label:"Buy Book 1 on Amazon", url:"https://www.amazon.com/dp/B0HJZFTWF4"},
+   feature:{eyebrow:"Book 1 · Out now", title:"Shadow Crown: Zeke's Daydream", by:"Jabari J. Bailey", meta:"ISBN 9798171324193", url:"https://www.amazon.com/dp/B0HJZFTWF4", label:"Buy on Amazon"},
+   tagline:"The story world of Shadow Crown. Book 1, Zeke's Daydream, is out now.",
+   about:"Shadow Crown Universe is the home of the Shadow Crown books from the Grooveville family. Book 1, Shadow Crown: Zeke's Daydream by Jabari J. Bailey, is available now on Amazon. Follow @shadowcrown.ent on Instagram for what comes next."},
+  {id:"wit", name:"What If Tomorrow", short:"WHAT IF", role:"Faceless reels", social:"https://www.instagram.com/whatiftmw/", tiktok:"https://www.tiktok.com/@whatiftmw",
+   tagline:"A faceless reels venture. Watch on Instagram and TikTok.",
+   about:"What If Tomorrow is a faceless reels venture from the Grooveville family, posting short-form videos on Instagram and TikTok."}
+];
+const BR = Object.fromEntries(BRANDS.map(b=>[b.id,b]));
+const TYPES = [
+  {id:"meeting", label:"Meeting"}, {id:"hours", label:"Work hours"}, {id:"expense", label:"Money spent"},
+  {id:"receipt", label:"Receipt"}, {id:"income", label:"Money in"}, {id:"note", label:"Note"}
+];
+const TL = Object.fromEntries(TYPES.map(t=>[t.id,t.label]));
+const SOURCES = ["Payment","Donation","Sponsorship","Sales","Booking","Other"];
+const CATS = ["Equipment","Venue","Travel","Marketing","Talent & artists","Supplies","Food & drink","Software","Payroll","Fees","Other"];
+const COLLAB_TYPES = ["Event or show","Sponsorship","Music feature","Brand partnership","Rental partnership","Community project","Other"];
+const STATUSES = [["draft","Draft"],["sent","Sent"],["talking","In talks"],["confirmed","Confirmed"],["declined","Declined"]];
+const REMIND = [["","No reminder"],["0","Same day"],["1","1 day before"],["3","3 days before"],["7","1 week before"],["14","2 weeks before"]];
+
+/* ---------- helpers ---------- */
+const $ = s=>document.querySelector(s);
+const esc = s=>String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const pad = n=>String(n).padStart(2,"0");
+const iso = d=>d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());
+const today = ()=>iso(new Date());
+const parse = s=>{const [y,m,d]=String(s).split("-").map(Number);return new Date(y,(m||1)-1,d||1)};
+const addDays = (s,n)=>{const d=parse(s);d.setDate(d.getDate()+n);return iso(d)};
+const MON = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+const MONTHS = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+const DOW = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+const fmtDate = s=>{if(!s)return"";const d=parse(s);return DOW[d.getDay()]+", "+MON[d.getMonth()]+" "+d.getDate()+(d.getFullYear()!==new Date().getFullYear()?", "+d.getFullYear():"")};
+const longDate = s=>{const d=parse(s);return MONTHS[d.getMonth()]+" "+d.getDate()+", "+d.getFullYear()};
+const fmtTime = t=>{if(!t)return"";let [h,m]=t.split(":").map(Number);const ap=h>=12?"PM":"AM";h=h%12||12;return h+":"+pad(m)+" "+ap};
+const money = n=>{n=Number(n)||0;return (n<0?"-":"")+"$"+Math.abs(n).toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2})};
+const hrs = n=>(Math.round((Number(n)||0)*100)/100).toFixed(2);
+const span = (a,b)=>{if(!a||!b)return 0;const [h1,m1]=a.split(":").map(Number),[h2,m2]=b.split(":").map(Number);let d=(h2*60+m2)-(h1*60+m1);if(d<0)d+=1440;return d/60};
+const uid = ()=>Date.now().toString(36)+Math.random().toString(36).slice(2,8);
+const brandName = id=>(BR[id]||BR.hq).name;
+const cvar = id=>"--c:var(--c-"+(BR[id]?id:"hq")+")";
+const chip = id=>'<span class="chip" style="'+cvar(id)+'">'+esc(brandInfo(id).name)+'</span>';
+const sortBy = (arr,f)=>arr.slice().sort((a,b)=>{const x=f(a),y=f(b);return x<y?-1:x>y?1:0});
+const stable = v=>Array.isArray(v)?"["+v.map(stable).join(",")+"]":(v&&typeof v==="object")?"{"+Object.keys(v).sort().filter(k=>v[k]!==undefined&&v[k]!=="").map(k=>JSON.stringify(k)+":"+stable(v[k])).join(",")+"}":JSON.stringify(v);
+
+let SNAP={};
+try{SNAP=JSON.parse(document.getElementById("snap").textContent)||{}}catch(e){SNAP={}}
+SNAP.events=SNAP.events||[]; SNAP.brands=SNAP.brands||{};
+
+const S = {
+  route:"home", authChecked:false, isAdmin:false, uid:null, db:null, userCap:null, signedIn:false, email:"",
+  myBrands:[], myEntries:[], vault:[], vaultMeta:null, vkey:null, vplain:{}, requested:false, members:{}, access:{}, memberLogs:{}, names:{}, fbReady:false,
+  ledger:[], events:[], reminders:[], outreach:[], site:{brands:{}}, loaded:{},
+  ts:{brand:"all", month:today().slice(0,7), type:"all"},
+  cal:{month:today().slice(0,7), brand:"all"}
+};
+
+/* public content: admins preview live data, everyone else sees the published snapshot */
+function livePublic(){
+  const site=S.site||{};
+  return {
+    contactEmail:site.contactEmail||"", signer:site.signer||"", phone:site.phone||"",
+    brands:site.brands||{},
+    events:sortBy(S.events.filter(e=>e.visibility==="public"),e=>e.date+(e.start||"")).map(e=>({
+      id:e.id,brand:e.brand,title:e.title,date:e.date,start:e.start||"",end:e.end||"",location:e.location||"",description:e.description||"",link:e.link||""}))
+  };
+}
+const pub = ()=>BACKEND==="firebase"?((S.loaded.site&&S.loaded.events)?livePublic():SNAP):((S.isAdmin&&S.loaded.site&&S.loaded.events)?livePublic():SNAP);
+function brandInfo(id){const b=BR[id]||BR.hq;const o=(pub().brands||{})[b.id]||{};return Object.assign({},b,Object.fromEntries(Object.entries(o).filter(([k,v])=>v)))}
+function isDirty(){
+  if(BACKEND==="firebase")return false;
+  if(!(S.isAdmin&&S.loaded.site&&S.loaded.events))return false;
+  const a=Object.assign({},SNAP);delete a.publishedAt;
+  return stable(livePublic())!==stable(a);
+}
+
+/* ---------- toast & modal ---------- */
+let toastT;
+function toast(msg){let t=$(".toast");if(!t){t=document.createElement("div");t.className="toast";t.setAttribute("role","status");document.body.appendChild(t)}t.textContent=msg;t.hidden=false;clearTimeout(toastT);toastT=setTimeout(()=>{t.hidden=true},2600)}
+function openModal(html,mount){
+  const m=$("#modal");
+  m.innerHTML='<div class="scrim" data-act="scrim"><div class="modal" role="dialog" aria-modal="true">'+html+'</div></div>';
+  if(mount)mount(m.querySelector(".modal"));
+  const f=m.querySelector("input:not([type=hidden]),select,textarea");if(f)setTimeout(()=>f.focus(),30);
+}
+function closeModal(){$("#modal").innerHTML=""}
+function formObj(form){const o={};new FormData(form).forEach((v,k)=>{if(!(v instanceof File))o[k]=typeof v==="string"?v.trim():v});return o}
+async function copyText(text,btn){
+  try{await navigator.clipboard.writeText(text);toast("Copied")}
+  catch(e){const ta=document.createElement("textarea");ta.value=text;ta.className="i";ta.style.minHeight="160px";btn.insertAdjacentElement("afterend",ta);ta.focus();ta.select();toast("Press Ctrl+C / Cmd+C to copy")}
+}
+function gcal(o){
+  const d=(o.date||today()).replace(/-/g,"");let dates;
+  if(o.start){const e=o.end||(()=>{let [h,m]=o.start.split(":").map(Number);h=(h+1)%24;return pad(h)+":"+pad(m)})();
+    let ed=d;if(e<=o.start)ed=addDays(o.date,1).replace(/-/g,"");
+    dates=d+"T"+o.start.replace(":","")+"00/"+ed+"T"+e.replace(":","")+"00";}
+  else dates=d+"/"+addDays(o.date,1).replace(/-/g,"");
+  return "https://calendar.google.com/calendar/render?action=TEMPLATE&text="+encodeURIComponent(o.title||"")+"&dates="+dates+"&details="+encodeURIComponent(o.details||"")+"&location="+encodeURIComponent(o.location||"")+"&ctz=America/New_York";
+}
+
+/* ---------- db ---------- */
+async function save(col,id,data){
+  if(!S.db){toast("Saving isn't available in this view");return false}
+  try{await S.db.collection(col).doc(id).set(data);return true}
+  catch(e){toast(e&&e.code==="quota_exceeded"?"Storage is full. Delete old entries or receipt photos.":"Couldn't save. Check your connection and try again.");return false}
+}
+async function remove(col,id){
+  if(!S.db)return false;
+  try{await S.db.collection(col).doc(id).delete();return true}catch(e){toast("Couldn't delete. Try again.");return false}
+}
+const isMember=()=>!S.isAdmin&&S.myBrands.length>0;
+const memberCol=u=>"memberlog/"+u+"/entries";
+const imgCol=col=>col==="ledger"?"receiptImg":col.replace(/\/entries$/,"/receipts");
+function ledgerAll(){
+  if(!S.isAdmin)return S.myEntries;
+  let a=S.ledger.slice();Object.values(S.memberLogs).forEach(l=>{a=a.concat(l)});return a;
+}
+const rows=(snap,col)=>snap.docs.map(d=>Object.assign({id:d.id,_col:col},d.data()));
+const memberSubs={};
+function subscribeFounder(){
+  ["ledger","events","reminders","outreach"].forEach(c=>{
+    S.db.collection(c).onSnapshot(snap=>{S[c]=rows(snap,c);S.loaded[c]=true;scheduleRender(true)},()=>{});
+  });
+  S.db.doc("settings/site").onSnapshot(d=>{S.site=d.exists?Object.assign({brands:{}},d.data()):{brands:{}};S.loaded.site=true;scheduleRender(true)},()=>{});
+  S.db.collection("vault").onSnapshot(snap=>{const all=rows(snap,"vault");S.vaultMeta=(all.find(r=>r.id==="_meta")||null);S.vault=all.filter(r=>r.id!=="_meta");S.loaded.vault=true;if(S.vkey)decryptVault();else scheduleRender(true)},()=>{});
+  S.db.collection("access").onSnapshot(snap=>{S.access=Object.fromEntries(snap.docs.map(d=>[d.id,d.data()]));S.loaded.access=true;scheduleRender(true)},()=>{});
+  S.db.collection("memberlog").onSnapshot(snap=>{
+    S.members=Object.fromEntries(snap.docs.map(d=>[d.id,d.data()]));S.loaded.members=true;
+    Object.keys(S.members).forEach(u=>{if(memberSubs[u]||u===S.uid)return;const col=memberCol(u);
+      memberSubs[u]=S.db.collection(col).onSnapshot(es=>{S.memberLogs[u]=rows(es,col).map(r=>Object.assign(r,{_by:u}));scheduleRender(true)},()=>{})});
+    resolveNames(Object.keys(S.members));scheduleRender(true);
+  },()=>{});
+}
+function subscribeMember(){
+  const u=S.uid;
+  S.db.doc("access/"+u).onSnapshot(d=>{const a=d.exists?d.data():{};S.myBrands=(a.brands||[]).filter(b=>BR[b]);S.loaded.access=true;scheduleRender(true)},()=>{S.loaded.access=true;scheduleRender(true)});
+  S.db.doc("memberlog/"+u).onSnapshot(d=>{S.requested=d.exists;S.loaded.req=true;scheduleRender(true)},()=>{S.loaded.req=true;scheduleRender(true)});
+  S.db.collection(memberCol(u)).onSnapshot(es=>{S.myEntries=rows(es,memberCol(u));S.loaded.mine=true;scheduleRender(true)},()=>{});
+}
+function subscribePublic(){
+  S.db.doc("settings/site").onSnapshot(d=>{S.site=d.exists?Object.assign({brands:{}},d.data()):{brands:{}};S.loaded.site=true;scheduleRender(true)},()=>{S.loaded.site=true});
+  S.db.collection("events").where("visibility","==","public").onSnapshot(snap=>{S.events=rows(snap,"events");S.loaded.events=true;scheduleRender(true)},()=>{});
+}
+async function resolveNames(ids){
+  if(BACKEND!=="claude"||!S.userCap||!S.userCap.profiles)return;
+  const need=ids.filter(i=>!(i in S.names));if(!need.length)return;
+  try{const ps=await S.userCap.profiles(need);need.forEach(i=>{S.names[i]=(ps[i]&&ps[i].name)||""});scheduleRender(true)}catch(e){}
+}
+const memberName=u=>(S.members[u]&&S.members[u].email)||S.names[u]||"Team member "+String(u).slice(-4);
+
+/* ---------- public views ---------- */
+function navLinks(){
+  const r=S.route, on=(t)=>r===t||r.startsWith(t+"-")?' class="on"':'';
+  const team=r.startsWith("team");
+  $("#links").innerHTML=
+    '<a href="#home"'+(r==="home"||r.startsWith("b-")?' class="on"':'')+'>Home</a>'+
+    '<a href="#calendar"'+on("calendar")+'>Calendar</a>'+
+    '<a href="#collab"'+on("collab")+'>Collaborate</a>'+
+    (S.isAdmin?'<a href="#team" class="team'+(team?' on':'')+'">Back office</a>':isMember()?'<a href="#portal" class="team'+(r==="portal"?' on':'')+'">My timesheet</a>':'<a href="#signin" class="team'+(r==="signin"||team?' on':'')+'">Sign in</a>');
+}
+
+function treeSVG(){
+  const W=560, cy=x=>Math.round(64+0.0011*(x-280)*(x-280)+7*Math.sin((x-30)/34));
+  let cane="M24 "+cy(24);for(let x=34;x<=536;x+=10)cane+=" L"+x+" "+cy(x);
+  let cane2="M40 "+(cy(40)-8);for(let x=50;x<=520;x+=10)cane2+=" L"+x+" "+(cy(x)-6+5*Math.sin(x/23)).toFixed(1);
+  const leaf=(x,y,s,rot,o)=>'<g transform="translate('+x+' '+y+') rotate('+rot+') scale('+s+')" opacity="'+(o||.9)+'"><path d="M0 0 C-6 -4 -16 -2 -20 -10 C-14 -12 -12 -18 -16 -26 C-8 -24 -4 -30 0 -36 C4 -30 8 -24 16 -26 C12 -18 14 -12 20 -10 C16 -2 6 -4 0 0Z" fill="var(--olive)"/><path d="M0 0 L0 -30 M0 -12 L-12 -18 M0 -12 L12 -18" stroke="var(--bg)" stroke-width="1.2" opacity=".5" fill="none"/></g>';
+  const curl=(x,y,d)=>'<path d="M'+x+' '+y+' c'+(6*d)+' -2 '+(10*d)+' 4 '+(8*d)+' 9 c'+(-2*d)+' 5 '+(-8*d)+' 4 '+(-8*d)+' -1 c0 -3 '+(3*d)+' -4 '+(4*d)+' -2" stroke="var(--olive)" stroke-width="1.6" fill="none" stroke-linecap="round"/>';
+  const rows=[3,4,3,2,1], R=7.8, dx=15.4, dy=13.4;
+  let clusters="";
+  const SPOT={ent:[36,0],music:[100,0],vybr8:[164,0],pathd:[228,0],aec:[350,0],scu:[432,0],wit:[514,0],rentals:[188,1],w4w:[372,1]};
+  BRANDS.slice(1).forEach((b,i)=>{
+    const sp=SPOT[b.id]||[516,0], x=sp[0], low=sp[1]===1, ay=low?246:cy(x), top=ay+20, info=brandInfo(b.id), c="var(--c-"+b.id+")";
+    let g='<path d="M'+x+' '+(ay+2)+' q4 8 0 '+(top-ay-4)+'" stroke="var(--olive)" stroke-width="2.4" fill="none"/>';
+    rows.forEach((n,r)=>{for(let k=0;k<n;k++){const gx=x+(k-(n-1)/2)*dx, gy=top+R+r*dy;
+      g+='<circle cx="'+gx.toFixed(1)+'" cy="'+gy.toFixed(1)+'" r="'+R+'" fill="'+c+'"'+(low?' opacity=".5" stroke="'+c+'" stroke-width="1.2"':'')+'/><circle cx="'+(gx-2.6).toFixed(1)+'" cy="'+(gy-2.8).toFixed(1)+'" r="2.4" fill="#fff" opacity=".38"/>'}});
+    const bottom=top+R*2+4*dy;
+    if(info.logo)g+='<clipPath id="cl-'+b.id+'"><circle cx="'+x+'" cy="'+(top+R+dy)+'" r="17"/></clipPath><circle cx="'+x+'" cy="'+(top+R+dy)+'" r="19" fill="var(--surface)" stroke="'+c+'" stroke-width="2"/><image href="'+esc(info.logo)+'" x="'+(x-17)+'" y="'+(top+R+dy-17)+'" width="34" height="34" preserveAspectRatio="xMidYMid meet" clip-path="url(#cl-'+b.id+')"/>';
+    g+='<text x="'+x+'" y="'+(bottom+18)+'" text-anchor="middle" font-size="'+(b.short.length>5?13:15)+'" fill="var(--ink)">'+b.short+'</text>';
+    if(low)g+='<text x="'+x+'" y="'+(bottom+32)+'" text-anchor="middle" font-size="10" letter-spacing="1.5" fill="var(--muted)" font-family="var(--f-body)">RIPENING</text>';
+    clusters+='<a class="node" href="#b-'+b.id+'" aria-label="'+esc(info.name)+'"><rect x="'+(x-36)+'" y="'+(ay-4)+'" width="72" height="'+(bottom-ay+30)+'" fill="transparent"/>'+g+'</a>';
+  });
+  const trunk='<path d="M268 452 C258 400 298 372 284 326 C270 282 296 250 282 206 C270 166 294 120 280 '+cy(280)+'" stroke="var(--olive)" stroke-width="15" fill="none" stroke-linecap="round"/>'+
+    '<path d="M276 440 C270 400 300 370 288 330 C276 290 298 250 286 210" stroke="var(--bg)" stroke-width="1.6" opacity=".3" fill="none"/>'+
+    '<path d="M285 222 C312 226 344 232 376 246" stroke="var(--olive)" stroke-width="6" fill="none" stroke-linecap="round"/>'+
+    '<path d="M275 222 C248 226 216 232 184 246" stroke="var(--olive)" stroke-width="6" fill="none" stroke-linecap="round"/>'+
+    '<path d="M268 448 Q236 444 214 456 M272 450 Q310 446 334 458" stroke="var(--olive)" stroke-width="5" fill="none" stroke-linecap="round"/>';
+  const leaves=leaf(246,262,1,-30,.85)+leaf(316,262,1,30,.85)+leaf(226,206,.8,-60,.75)+leaf(334,206,.8,60,.75)+
+    leaf(126,cy(126)-2,.85,-160,.8)+leaf(420,cy(420)-2,.85,165,.8)+leaf(200,cy(200)-4,.7,-178,.7)+leaf(356,cy(356)-4,.7,178,.7)+leaf(30,cy(30)+2,.7,-120,.7)+leaf(530,cy(530)+2,.7,120,.7);
+  const curls=curl(90,cy(90)-4,1)+curl(240,cy(240)-6,-1)+curl(318,cy(318)-6,1)+curl(470,cy(470)-4,-1)+curl(150,250,-1)+curl(410,250,1);
+  return '<svg class="tree" viewBox="0 0 '+W+' 470" role="img" aria-label="The Groove Vine: Grooveville LLC at the root with nine companies growing on it">'+
+    trunk+'<path d="'+cane2+'" stroke="var(--olive)" stroke-width="2.5" fill="none" opacity=".55" stroke-linecap="round"/>'+
+    '<path d="'+cane+'" stroke="var(--olive)" stroke-width="7" fill="none" stroke-linecap="round" stroke-linejoin="round"/>'+
+    leaves+curls+clusters+
+    '<defs><clipPath id="hqclip"><circle cx="280" cy="388" r="50"/></clipPath></defs><a class="node" href="#b-hq" aria-label="Grooveville LLC headquarters, the root of the vine"><circle class="ring" cx="280" cy="388" r="53" fill="var(--surface)" stroke="var(--olive)" stroke-width="4"/><image href="'+LOGO+'" x="230" y="338" width="100" height="100" clip-path="url(#hqclip)"/></a></svg>';
+}
+
+function evRow(e,opts){
+  opts=opts||{};const d=parse(e.date);
+  return '<div class="ev" style="'+cvar(e.brand)+'"><div class="date"><small>'+MON[d.getMonth()]+'</small><b>'+d.getDate()+'</b><small>'+DOW[d.getDay()]+'</small></div>'+
+    '<div style="min-width:0"><h4>'+esc(e.title)+'</h4><div class="meta">'+chip(e.brand)+
+    (e.start?'<span class="mono">'+fmtTime(e.start)+(e.end?" – "+fmtTime(e.end):"")+'</span>':'')+
+    (e.location?'<span>'+esc(e.location)+'</span>':'')+
+    (opts.team?(e.visibility==="public"?'<span class="pill pub">Public</span>':'<span class="pill priv">Private</span>'):'')+'</div></div>'+
+    '<div class="act"><button class="btn ghost sm" data-act="'+(opts.team?"edit-event":"ev-open")+'" data-id="'+esc(e.id)+'">'+(opts.team?"Edit":"Details")+'</button></div></div>';
+}
+function upcomingPublic(brand,n){
+  const t=today();
+  return pub().events.filter(e=>e.date>=t&&(!brand||e.brand===brand)).slice(0,n||6);
+}
+
+function viewHome(){
+  const ev=upcomingPublic(null,5);
+  const hq=brandInfo("hq");
+  return '<section class="hero"><div class="wrap"><div>'+
+    '<div class="eyebrow">Grooveville LLC · DrawUp Headquarters</div>'+
+    '<h1 style="margin-top:14px">One root. <em>Nine companies.</em> <span>All on the Groove Vine.</span></h1>'+
+    '<p class="lede">'+esc(hq.tagline)+' Explore each company, see what we are hosting next, or send us an official collaboration request.</p>'+
+    '<div class="ctas"><a class="btn teal" href="#calendar">See the calendar</a><a class="btn peach" href="#collab">Collaborate with us</a></div>'+
+    '</div><div>'+treeSVG()+'</div></div></section>'+
+    '<section style="padding-top:12px"><div class="wrap">'+
+    '<div class="sechead"><div><div class="eyebrow">The Groove Vine</div><h2>Our companies</h2></div></div>'+
+    '<div class="hqband"><div><div class="eyebrow" style="color:inherit;opacity:.75">Root of the vine · '+esc(hq.role)+'</div><h3>'+esc(hq.name)+'</h3><p>'+esc(hq.about)+'</p></div><a class="btn" href="#b-hq">Visit HQ</a></div>'+
+    '<div class="branches">'+BRANDS.slice(1).map(b0=>{const b=brandInfo(b0.id);return '<a class="branch" href="#b-'+b.id+'" style="'+cvar(b.id)+'">'+(b.logo?'<img class="blogo" src="'+esc(b.logo)+'" alt="">':'<div class="mark">'+esc(b.short.slice(0,3))+'</div>')+'<h3>'+esc(b.name)+'</h3>'+(b.developing?'<span class="pill high" style="align-self:flex-start">In development</span>':'')+'<p>'+esc(b.tagline)+'</p><span class="go">'+(b.website?esc(b.website.replace(/^https?:\/\/(www\.)?/,"").replace(/\/$/,""))+" →":b.social&&/instagram/i.test(b.social)?"@"+esc((/instagram\.com\/([^/?#]+)/i.exec(b.social)||[,""])[1])+" →":"Coming soon →")+'</span></a>'}).join("")+'</div>'+
+    '</div></section>'+
+    '<section><div class="wrap"><div class="sechead"><div><div class="eyebrow">What\'s next</div><h2>Heard it through the Groove Vine</h2></div><a class="btn ghost" href="#calendar">Full calendar</a></div>'+
+    (ev.length?'<div class="evlist">'+ev.map(e=>evRow(e)).join("")+'</div>':'<div class="empty">No public events are posted yet. New launches and hosted events will show up here.</div>')+
+    '</div></section>'+
+    '<section style="padding-top:0"><div class="wrap"><div class="cta"><div><div class="eyebrow">Partnerships</div><h2 style="margin-top:8px">Want to build something with Grooveville?</h2><p class="muted" style="margin-top:10px;max-width:52ch">Organizations, brands and businesses can send an official collaboration request to Grooveville LLC or to any one of our companies.</p></div><div><a class="btn peach" href="#collab">Start a collaboration request</a></div></div></div></section>';
+}
+
+function viewBrand(id){
+  const b=brandInfo(id), ev=upcomingPublic(id,6);
+  const sib=BRANDS.filter(x=>x.id!==id);
+  const links=[];
+  if(b.cta)links.push('<a class="btn" style="background:var(--c);color:var(--bg)" href="'+esc(b.cta.url)+'" target="_blank" rel="noopener">'+esc(b.cta.label)+' ↗</a>');
+  if(b.website)links.push('<a class="btn" style="background:var(--c);color:var(--bg)" href="'+esc(b.website)+'" target="_blank" rel="noopener">Visit '+esc(b.name)+' website ↗</a>');
+  if(b.social){const ig=/instagram\.com\/([^/?#]+)/i.exec(b.social);links.push('<a class="btn '+(b.website||b.cta?'ghost':'')+'" '+(b.website||b.cta?'':'style="background:var(--c);color:var(--bg)" ')+'href="'+esc(b.social)+'" target="_blank" rel="noopener">'+(ig?'Follow @'+esc(ig[1])+' on Instagram ↗':'Social ↗')+'</a>')}
+  if(b.tiktok){const tk=/tiktok\.com\/@?([^/?#]+)/i.exec(b.tiktok);links.push('<a class="btn ghost" href="'+esc(b.tiktok)+'" target="_blank" rel="noopener">'+(tk?'Follow @'+esc(tk[1])+' on TikTok ↗':'TikTok ↗')+'</a>')}
+  if(!b.website&&!b.social)links.push('<span class="pill high" style="align-self:center;font-size:12.5px;padding:6px 10px">Website coming soon</span>');
+  return '<div style="'+cvar(id)+'"><section class="bhero"><div class="wrap">'+
+    '<div class="crumb">'+(id==="hq"?'<a href="#home">Home</a> · Headquarters':'<a href="#b-hq">Grooveville LLC</a> › '+esc(b.name))+'</div>'+
+    (b.logo?'<img class="blogo big" src="'+esc(b.logo)+'" alt="'+esc(b.name)+' logo">':'')+'<div class="eyebrow">'+esc(b.role)+'</div><h1 style="margin-top:8px">'+esc(b.name)+'</h1><p class="tag">'+esc(b.tagline)+'</p>'+
+    '<div class="ctas" style="display:flex;gap:10px;flex-wrap:wrap;margin-top:22px">'+links.join("")+'<a class="btn peach" href="#collab-'+id+'">Collaborate with '+esc(b.short==="HQ"?"Grooveville":b.name)+'</a></div>'+
+    '</div></section>'+
+    '<section style="padding-top:8px"><div class="wrap bcols"><div style="display:flex;flex-direction:column;gap:20px;min-width:0">'+
+    (b.feature?'<div class="card" style="display:flex;gap:18px;align-items:center;flex-wrap:wrap;border-color:var(--c)"><div style="width:74px;height:104px;border-radius:6px;background:linear-gradient(160deg,var(--c),color-mix(in srgb,var(--c) 40%,#000));display:grid;place-items:center;color:var(--bg);font-family:var(--f-display);font-weight:800;font-size:13px;text-align:center;padding:6px;flex:none">BOOK 1</div><div style="min-width:0;flex:1"><div class="eyebrow">'+esc(b.feature.eyebrow)+'</div><h3 style="font-size:22px;margin-top:4px">'+esc(b.feature.title)+'</h3><p class="muted" style="margin-top:4px">by '+esc(b.feature.by)+' · <span class="mono" style="font-size:13px">'+esc(b.feature.meta)+'</span></p></div><a class="btn peach" href="'+esc(b.feature.url)+'" target="_blank" rel="noopener">'+esc(b.feature.label)+' ↗</a></div>':'')+'<div class="card"><div class="eyebrow">About</div><p style="margin-top:8px;font-size:17px;max-width:62ch">'+esc(b.about)+'</p></div>'+
+    '<div><h3 style="font-size:22px;margin-bottom:12px">'+(id==="hq"?"Everything coming up":"Coming up at "+esc(b.name))+'</h3>'+
+    ((id==="hq"?upcomingPublic(null,8):ev).length?'<div class="evlist">'+(id==="hq"?upcomingPublic(null,8):ev).map(e=>evRow(e)).join("")+'</div>':'<div class="empty">Nothing public on the calendar yet.</div>')+'</div></div>'+
+    '<aside class="card" style="align-self:start"><div class="eyebrow">'+(id==="hq"?"Growing on the vine":"Part of the Groove Vine")+'</div><div class="links-list" style="margin-top:12px">'+
+    sib.map(s=>'<a href="#b-'+s.id+'" style="text-decoration:none">'+chip(s.id)+'</a>').join("")+'</div>'+
+    '<p class="muted" style="margin-top:14px;font-size:13.5px">Every company here is run from Grooveville LLC, the DrawUp Headquarters.</p></aside>'+
+    '</div></section></div>';
+}
+
+/* ---------- calendar ---------- */
+function calItems(team){
+  const items=[];
+  if(!team){pub().events.forEach(e=>items.push({kind:"event",date:e.date,title:e.title,brand:e.brand,start:e.start,id:e.id,vis:"public"}));return items}
+  S.events.forEach(e=>items.push({kind:"event",date:e.date,title:e.title,brand:e.brand,start:e.start,id:e.id,vis:e.visibility}));
+  S.reminders.filter(r=>!r.done).forEach(r=>items.push({kind:"reminder",date:r.date,title:r.title,brand:r.brand,start:r.time,id:r.id}));
+  ledgerAll().filter(l=>l.type==="meeting").forEach(l=>items.push({kind:"meeting",date:l.date,title:l.title||"Meeting",brand:l.brand,start:l.start,id:l.id}));
+  return items;
+}
+function viewCalendar(team){
+  const [y,m]=S.cal.month.split("-").map(Number);
+  const first=new Date(y,m-1,1), days=new Date(y,m,0).getDate(), off=first.getDay();
+  const cells=Math.ceil((off+days)/7)*7;
+  const all=calItems(team).filter(i=>S.cal.brand==="all"||i.brand===S.cal.brand);
+  const byDay={};all.forEach(i=>{(byDay[i.date]=byDay[i.date]||[]).push(i)});
+  Object.values(byDay).forEach(a=>a.sort((p,q)=>(p.start||"99")<(q.start||"99")?-1:1));
+  const t=today();
+  let g=DOW.map(d=>'<div class="dow">'+d+'</div>').join("");
+  for(let c=0;c<cells;c++){
+    const d=new Date(y,m-1,c-off+1), ds=iso(d), out=d.getMonth()!==m-1, list=byDay[ds]||[];
+    g+='<button class="day'+(out?" out":"")+(ds===t?" today":"")+'" data-act="day" data-date="'+ds+'" aria-label="'+fmtDate(ds)+', '+list.length+' items"><span class="n">'+d.getDate()+'</span>'+
+      list.slice(0,3).map(i=>'<span class="it'+(i.kind==="reminder"?" rem":"")+(i.vis==="private"?" priv":"")+'" style="'+cvar(i.brand)+'">'+(i.kind==="reminder"?"◆ ":i.kind==="meeting"?"◷ ":"")+(i.start?fmtTime(i.start).replace(":00","").replace(" ","").toLowerCase()+" ":"")+esc(i.title)+'</span>').join("")+
+      (list.length>3?'<span class="more">+'+(list.length-3)+' more</span>':'')+'</button>';
+  }
+  const bt='<div class="brandtabs"><button data-act="cal-brand" data-v="all" class="'+(S.cal.brand==="all"?"on":"")+'">All companies</button>'+BRANDS.map(b=>'<button data-act="cal-brand" data-v="'+b.id+'" style="'+cvar(b.id)+'" class="'+(S.cal.brand===b.id?"on":"")+'">'+esc(brandInfo(b.id).name)+'</button>').join("")+'</div>';
+  const bar='<div class="calbar"><h3>'+MONTHS[m-1]+' '+y+'</h3><button class="btn ghost sm" data-act="cal-prev" aria-label="Previous month">‹ Prev</button><button class="btn ghost sm" data-act="cal-today">Today</button><button class="btn ghost sm" data-act="cal-next" aria-label="Next month">Next ›</button>'+
+    (team?'<span style="flex:1"></span><button class="btn ghost sm" data-act="new-rem">+ Reminder</button><button class="btn olive sm" data-act="new-event">+ Event</button>':'')+'</div>';
+  const legend=team?'<div class="legend"><span class="pill pub">Public</span><span class="muted" style="font-size:13px">shows on the public calendar after you publish</span><span class="pill priv">Private</span><span class="muted" style="font-size:13px">back office only</span><span class="muted" style="font-size:13px">· ◆ reminder · ◷ meeting from timesheet</span></div>':'';
+  const up=team?sortBy(S.events.filter(e=>e.date>=t),e=>e.date+(e.start||"")).filter(e=>S.cal.brand==="all"||e.brand===S.cal.brand).slice(0,8):upcomingPublic(S.cal.brand==="all"?null:S.cal.brand,8);
+  return bt+bar+'<div class="calwrap"><div class="cal">'+g+'</div></div>'+legend+
+    '<h3 style="font-size:22px;margin:30px 0 12px">Upcoming</h3>'+(up.length?'<div class="evlist">'+up.map(e=>evRow(e,{team})).join("")+'</div>':'<div class="empty">'+(team?'No upcoming events. Add one with “+ Event”.':'No public events posted yet. Check back soon.')+'</div>');
+}
+function viewPublicCalendar(){
+  return '<section class="teamhead"><div class="wrap"><div class="eyebrow">Open to everyone</div><h1>Grooveville calendar</h1><p class="muted" style="margin-top:8px;max-width:60ch">Launches, shows and hosted events from every Grooveville company.</p></div></section><section style="padding-top:20px"><div class="wrap">'+viewCalendar(false)+'</div></section>';
+}
+
+/* ---------- collaborate ---------- */
+function refCode(brand,date,id){return "GV-"+((BR[brand]||BR.hq).short).slice(0,3)+"-"+String(date||today()).replace(/-/g,"")+"-"+String(id||uid()).slice(-4).toUpperCase()}
+function letterText(o){
+  const b=brandInfo(o.brand), p=pub(), when=o.created||today();
+  const contactLine=p.contactEmail?p.contactEmail:"the Grooveville team";
+  const parent=o.brand!=="hq"?", a Grooveville LLC company,":"";
+  if(o.direction==="incoming"){
+    return "Ref: "+o.ref+"\nDate: "+longDate(when)+"\n\nTo: "+b.name+(o.brand!=="hq"?" (Grooveville LLC)":"")+"\nFrom: "+(o.contact?o.contact+", ":"")+o.org+(o.email?"\nEmail: "+o.email:"")+(o.phone?"\nPhone: "+o.phone:"")+(o.website?"\nWebsite: "+o.website:"")+
+      "\n\nSubject: Collaboration request – "+(o.type||"Partnership")+"\n\nDear "+b.name+" team,\n\n"+o.org+" would like to collaborate with "+b.name+" on a "+String(o.type||"partnership").toLowerCase()+"."+(o.date?" Our proposed date is "+longDate(o.date)+".":"")+"\n\n"+(o.proposal||"")+
+      "\n\nWe look forward to hearing from you.\n\nSincerely,\n"+(o.contact||o.org)+"\n"+o.org;
+  }
+  return "Ref: "+o.ref+"\nDate: "+longDate(when)+"\n\nTo: "+(o.contact?o.contact+"\n":"")+o.org+(o.email?"\n"+o.email:"")+
+    "\n\nSubject: Invitation to collaborate – "+(o.type||"Partnership")+"\n\nDear "+(o.contact||o.org+" team")+",\n\nOn behalf of "+b.name+parent+" we would like to invite "+o.org+" to collaborate with us on a "+String(o.type||"partnership").toLowerCase()+"."+(o.date?" We are proposing "+longDate(o.date)+".":"")+"\n\n"+(o.proposal||"")+
+    "\n\nGrooveville LLC is the DrawUp Headquarters for Grooveville Entertainment, Grooveville Music, Vybr8, Pathd, Grooveville Rentals, W4W, DrawUp AEC, Shadow Crown Universe and What If Tomorrow. Please reply to "+contactLine+" to confirm your interest or to set up a call.\n\nSincerely,\n"+(p.signer||"The Grooveville Team")+"\n"+b.name+(o.brand!=="hq"?"\nGrooveville LLC":"");
+}
+function letterHTML(o){
+  const b=brandInfo(o.brand);
+  return '<div class="letter" id="letter"><div class="lh"><img src="'+LOGO+'" alt="" width="44" height="44" class="logoimg">'+
+    esc(o.direction==="incoming"?"Official collaboration request":b.name)+'</div>'+esc(letterText(o))+'</div>';
+}
+function viewCollab(pre){
+  const p=pub();
+  const opts=BRANDS.map(b=>'<option value="'+b.id+'"'+(b.id===(pre||"hq")?" selected":"")+'>'+esc(brandInfo(b.id).name)+'</option>').join("");
+  return '<section class="teamhead"><div class="wrap"><div class="eyebrow">Official outreach</div><h1>Collaborate with Grooveville</h1><p class="muted" style="margin-top:8px;max-width:64ch">Send an official request to work with Grooveville LLC or one of our companies. Fill in the form to create a formal, reference-numbered request, then send it to us.</p></div></section>'+
+  '<section style="padding-top:20px"><div class="wrap cols2">'+
+  '<form class="card" id="collabForm" style="display:flex;flex-direction:column;gap:14px;min-width:0">'+
+    '<div class="grid2"><label class="f">Organization or business *<input class="i" id="c-org" name="org" required></label><label class="f">Your name *<input class="i" id="c-contact" name="contact" required></label></div>'+
+    '<div class="grid2"><label class="f">Email *<input class="i" id="c-email" name="email" type="email" required></label><label class="f">Phone<input class="i" id="c-phone" name="phone" type="tel"></label></div>'+
+    '<label class="f">Website or social link<input class="i" id="c-web" name="website" type="url" placeholder="https://"></label>'+
+    '<div class="grid2"><label class="f">Collaborate with *<select class="i" id="c-brand" name="brand">'+opts+'</select></label><label class="f">Type of collaboration *<select class="i" id="c-type" name="type">'+COLLAB_TYPES.map(t=>'<option>'+t+'</option>').join("")+'</select></label></div>'+
+    '<label class="f">Proposed date<input class="i" id="c-date" name="date" type="date"></label>'+
+    '<label class="f">Tell us about the collaboration *<textarea class="i" id="c-proposal" name="proposal" required placeholder="What you have in mind, who it is for, and what you would like from Grooveville."></textarea></label>'+
+    '<div><button class="btn peach" type="submit">Create official request</button></div></form>'+
+  '<aside style="display:flex;flex-direction:column;gap:14px"><div class="card"><div class="eyebrow">How it works</div><ol style="margin:10px 0 0;padding-left:20px;display:grid;gap:8px"><li>Fill in the form with your organization\'s details.</li><li>We format it as an official request with a reference number.</li><li>Copy it and email it to Grooveville'+(p.contactEmail?' at <b>'+esc(p.contactEmail)+'</b>':'')+'.</li><li>Our team replies to set up next steps.</li></ol></div>'+
+  '<div class="card" style="background:var(--teal-soft);border-color:transparent"><div class="eyebrow" style="color:var(--teal-ink)">Grooveville companies</div><div class="links-list" style="margin-top:10px">'+BRANDS.map(b=>chip(b.id)).join("")+'</div></div>'+
+  (S.isAdmin&&!p.contactEmail?'<div class="banner warn" style="margin:0">Add a contact email in Back office › Site settings so visitors know where to send requests.</div>':'')+
+  '</aside></div></section>';
+}
+function collabSubmit(form){
+  const o=formObj(form);o.direction="incoming";o.created=today();o.id=uid();o.ref=refCode(o.brand,o.created,o.id);o.status="talking";
+  const p=pub();
+  openModal('<h3>Your official request is ready</h3><p class="muted">Reference <b class="mono">'+esc(o.ref)+'</b>. Copy it and email it to Grooveville'+(p.contactEmail?'.':' through our official contact.')+'</p>'+
+    (p.contactEmail?'<div class="card" style="padding:12px 14px;display:flex;gap:10px;align-items:center;flex-wrap:wrap"><span>Send to</span><b class="mono" style="user-select:all">'+esc(p.contactEmail)+'</b><a class="btn ghost sm" href="mailto:'+esc(p.contactEmail)+'?subject='+encodeURIComponent("Collaboration request "+o.ref)+'&body='+encodeURIComponent(letterText(o))+'">Open in email app</a></div>':'')+
+    letterHTML(o)+
+    '<div class="row">'+(S.isAdmin?'<button class="btn ghost left" data-act="log-incoming">Save to Collabs</button>':'')+'<button class="btn ghost" data-act="close-modal">Close</button><button class="btn teal" data-act="copy-letter">Copy request</button></div>',
+    el=>{el._letter=letterText(o);el._rec=o});
+}
+
+/* ---------- team (back office) ---------- */
+const TEAM_TABS=[["team","Dashboard"],["team-time","Timesheet"],["team-cal","Calendar"],["team-rem","Reminders"],["team-out","Collabs"],["team-people","Team access"],["team-vault","Private notes"],["team-site","Site settings"]];
+function teamGate(){
+  if(!S.authChecked)return '<div class="wrap gate"><h1>Checking access…</h1><p class="muted">One moment while we confirm who is signed in.</p></div>';
+  return '<div class="wrap gate"><div class="eyebrow">Grooveville team</div><h1>Back office sign in</h1><p class="muted">The timesheet, private calendar, reminders and collab tracker are only for the Grooveville team. Open this page while signed in to Claude with the account Grooveville invited as an Editor.</p><p class="muted" style="font-size:13.5px">If you just got access, reload this page.</p><a class="btn" href="#home">Back to the public site</a></div>';
+}
+function teamShell(tab,body){
+  const dirty=isDirty();
+  const ready=["ledger","events","reminders","outreach","site"].every(k=>S.loaded[k]);
+  return '<section class="teamhead"><div class="wrap"><div class="eyebrow">Grooveville LLC · Back office</div><h1>'+esc((TEAM_TABS.find(t=>t[0]===tab)||[])[1]||"Dashboard")+'</h1>'+
+    (dirty?'<div class="banner warn">You have changes to public events or company pages that visitors can\'t see yet.<button class="btn peach sm" data-act="publish">Publish to public site</button></div>':'')+
+    '<nav class="tabs">'+TEAM_TABS.map(([h,l])=>'<a href="#'+h+'"'+(h===tab?' class="on"':'')+'>'+l+'</a>').join("")+'</nav></div></section>'+
+    '<section class="tsec"><div class="wrap">'+(ready?body:'<div class="empty">Loading your records…</div>')+'</div></section>';
+}
+function monthStats(brand,month){
+  const L=ledgerAll().filter(l=>(!brand||l.brand===brand)&&String(l.date).startsWith(month));
+  const h=L.filter(l=>l.type==="meeting"||l.type==="hours").reduce((a,l)=>a+(Number(l.hours)||0),0);
+  const sp=L.filter(l=>l.type==="expense"||l.type==="receipt").reduce((a,l)=>a+(Number(l.amount)||0),0);
+  const inc=L.filter(l=>l.type==="income").reduce((a,l)=>a+(Number(l.amount)||0),0);
+  const ev=S.events.filter(e=>(!brand||e.brand===brand)&&String(e.date).startsWith(month)).length;
+  const pay=L.filter(l=>l.type==="income"&&(l.source||"Payment")==="Payment").reduce((a,l)=>a+(Number(l.amount)||0),0);
+  const don=L.filter(l=>l.type==="income"&&l.source==="Donation").reduce((a,l)=>a+(Number(l.amount)||0),0);
+  return {h,sp,inc,ev,pay,don,other:inc-pay-don,n:L.length};
+}
+function remindersDue(days){
+  const t=today(), lim=addDays(t,days);
+  const r=S.reminders.filter(x=>!x.done&&x.date<=lim).map(x=>Object.assign({kind:"rem"},x));
+  S.events.forEach(e=>{if(e.remindDays===""||e.remindDays==null)return;const from=addDays(e.date,-Number(e.remindDays));
+    if(e.date>=t&&from<=lim)r.push({kind:"event",id:e.id,title:e.title,brand:e.brand,date:e.date,time:e.start,from})});
+  return sortBy(r,x=>x.date+(x.time||""));
+}
+function remRow(r,showCheck){
+  const t=today(), over=r.date<t&&!r.done;
+  return '<div class="rem'+(r.done?" done":"")+'" style="'+cvar(r.brand)+'">'+
+    (r.kind==="event"?'<span class="pill pub" style="margin-top:2px">Event</span>':'<input type="checkbox" data-act="toggle-rem" data-id="'+esc(r.id)+'" aria-label="Mark done"'+(r.done?" checked":"")+'>')+
+    '<div style="min-width:0"><div class="rt">'+esc(r.title)+'</div><div class="rm">'+chip(r.brand)+'<span class="mono">'+fmtDate(r.date)+(r.time?" · "+fmtTime(r.time):"")+'</span>'+
+    (over?'<span class="pill over">Overdue</span>':'')+(r.priority==="high"?'<span class="pill high">Important</span>':'')+
+    (r.notes?'<span>'+esc(r.notes)+'</span>':'')+'</div></div>'+
+    '<button class="rowbtn" data-act="'+(r.kind==="event"?"edit-event":"edit-rem")+'" data-id="'+esc(r.id)+'">Edit</button></div>';
+}
+function viewDash(){
+  const mo=today().slice(0,7), tot=monthStats(null,mo), due=remindersDue(14);
+  const t=today();
+  const nextFor=id=>{const e=sortBy(S.events.filter(x=>x.brand===id&&x.date>=t),x=>x.date+(x.start||""))[0];const r=sortBy(S.reminders.filter(x=>x.brand===id&&!x.done&&x.date>=t),x=>x.date)[0];
+    const c=[e&&{d:e.date,s:"Event: "+e.title},r&&{d:r.date,s:"Reminder: "+r.title}].filter(Boolean).sort((a,b)=>a.d<b.d?-1:1)[0];return c?esc(c.s)+' · <span class="mono">'+fmtDate(c.d)+'</span>':'Nothing scheduled'};
+  const upEv=sortBy(S.events.filter(e=>e.date>=t),e=>e.date+(e.start||"")).slice(0,6);
+  return '<div class="kpis"><div class="kpi"><span class="eyebrow">Hours · '+MON[new Date().getMonth()]+'</span><b>'+hrs(tot.h)+'</b></div><div class="kpi"><span class="eyebrow">Money spent</span><b class="neg">'+money(tot.sp)+'</b></div><div class="kpi"><span class="eyebrow">Money in</span><b class="pos">'+money(tot.inc)+'</b></div><div class="kpi"><span class="eyebrow">Reminders due (14 days)</span><b>'+due.length+'</b></div></div>'+
+    '<div class="sechead" style="margin-bottom:12px"><h2 style="font-size:24px">Every slot · '+MONTHS[new Date().getMonth()]+'</h2><button class="btn olive sm" data-act="new-entry">+ Log entry</button></div>'+
+    '<div class="slots">'+BRANDS.map(b=>{const s=monthStats(b.id,mo);return '<div class="slot" style="'+cvar(b.id)+'"><h4>'+esc(brandInfo(b.id).name)+'</h4><div class="nums"><div><small>Hours</small><span>'+hrs(s.h)+'</span></div><div><small>Spent</small><span>'+money(s.sp).replace(".00","")+'</span></div><div><small>Events</small><span>'+s.ev+'</span></div></div>'+moneyIn(s,b.id)+'<div class="next">'+nextFor(b.id)+'</div><div class="acts"><button class="btn sm" style="background:var(--c);color:var(--bg)" data-act="new-entry" data-brand="'+b.id+'">+ Log</button><button class="btn ghost sm" data-act="slot-ts" data-brand="'+b.id+'">Timesheet</button><button class="btn ghost sm" data-act="new-event" data-brand="'+b.id+'">+ Event</button></div></div>'}).join("")+'</div>'+
+    '<div class="cols2" style="margin-top:28px"><div style="min-width:0"><div class="sechead" style="margin-bottom:12px"><h2 style="font-size:22px">Upcoming events</h2><a class="btn ghost sm" href="#team-cal">Calendar</a></div>'+(upEv.length?'<div class="evlist">'+upEv.map(e=>evRow(e,{team:true})).join("")+'</div>':'<div class="empty">No events yet. <button class="btn ghost sm" data-act="new-event">+ Add the first event</button></div>')+'</div>'+
+    '<div style="min-width:0"><div class="sechead" style="margin-bottom:12px"><h2 style="font-size:22px">Coming up & overdue</h2><button class="btn ghost sm" data-act="new-rem">+ Reminder</button></div>'+(due.length?due.slice(0,8).map(r=>remRow(r)).join(""):'<div class="empty">Nothing due in the next two weeks.</div>')+'</div></div>';
+}
+
+function moneyIn(s,id){return '<div class="moneyin"><div><small>Money in</small><b class="pos mono">'+money(s.inc)+'</b></div><span>Payments '+money(s.pay).replace(".00","")+' · Donations '+money(s.don).replace(".00","")+(s.other>0?' · Other '+money(s.other).replace(".00",""):'')+'</span><button class="btn ghost sm" data-act="new-income" data-brand="'+id+'">+ Money in</button></div>'}
+function viewTimesheet(){
+  const f=S.ts, allowed=S.isAdmin?BRANDS.map(b=>b.id):S.myBrands;
+  if(f.brand!=="all"&&!allowed.includes(f.brand))f.brand="all";
+  const L=sortBy(ledgerAll().filter(l=>allowed.includes(l.brand)&&(f.brand==="all"||l.brand===f.brand)&&String(l.date).startsWith(f.month)&&(f.type==="all"||l.type===f.type)),l=>l.date+(l.start||"")).reverse();
+  let H=0,SP=0,IN=0;
+  const rows=L.map(l=>{
+    const isMoney=["expense","receipt","income"].includes(l.type), amt=Number(l.amount)||0;
+    if(l.type==="meeting"||l.type==="hours")H+=Number(l.hours)||0;
+    if(l.type==="expense"||l.type==="receipt")SP+=amt; if(l.type==="income")IN+=amt;
+    return '<tr><td class="mono" style="white-space:nowrap">'+fmtDate(l.date)+'</td><td>'+chip(l.brand)+'</td><td><span class="typ '+l.type+'">'+TL[l.type]+'</span></td>'+
+      '<td style="min-width:200px"><b style="font-weight:600">'+esc(l.title||"")+'</b>'+(l.type==="income"&&l.source?' <span class="pill pub">'+esc(l.source)+'</span>':'')+(S.isAdmin&&l._by?'<div class="muted" style="font-size:12px">Logged by '+esc(memberName(l._by))+'</div>':'')+(l.vendor?'<div class="muted" style="font-size:13px">'+esc(l.vendor)+(l.category?" · "+esc(l.category):"")+'</div>':(l.category?'<div class="muted" style="font-size:13px">'+esc(l.category)+'</div>':''))+(l.notes?'<div class="muted" style="font-size:13px">'+esc(l.notes)+'</div>':'')+'</td>'+
+      '<td class="num">'+(l.start?fmtTime(l.start)+(l.end?"–"+fmtTime(l.end):""):"")+'</td><td class="num">'+(l.hours?hrs(l.hours):"")+'</td>'+
+      '<td class="num '+(l.type==="income"?"pos":isMoney?"neg":"")+'">'+(isMoney?(l.type==="income"?"+":"−")+money(amt):"")+'</td>'+
+      '<td>'+(l.hasImage?'<button class="rowbtn" data-act="view-receipt" data-id="'+esc(l.id)+'">View photo</button>':(l.receiptNo?'<span class="mono" style="font-size:12.5px">#'+esc(l.receiptNo)+'</span>':''))+'</td>'+
+      '<td><button class="rowbtn" data-act="edit-entry" data-id="'+esc(l.id)+'">Edit</button></td></tr>';
+  }).join("");
+  const bt='<div class="brandtabs"><button data-act="ts-brand" data-v="all" class="'+(f.brand==="all"?"on":"")+'">'+(S.isAdmin?"All slots":"All my slots")+'</button>'+BRANDS.filter(b=>allowed.includes(b.id)).map(b=>'<button data-act="ts-brand" data-v="'+b.id+'" style="'+cvar(b.id)+'" class="'+(f.brand===b.id?"on":"")+'">'+esc(brandInfo(b.id).name)+'</button>').join("")+'</div>';
+  const seg='<div class="seg" role="group" aria-label="Entry type">'+[["all","All"]].concat(TYPES.map(t=>[t.id,t.label])).map(([v,l])=>'<button data-act="ts-type" data-v="'+v+'" class="'+(f.type===v?"on":"")+'">'+l+'</button>').join("")+'</div>';
+  return bt+'<div class="toolbar"><label class="f" style="flex-direction:row;align-items:center;gap:8px"><span>Month</span><input class="i" type="month" id="ts-month" value="'+f.month+'" style="width:auto"></label>'+seg+'<span class="sp"></span><button class="btn ghost sm" data-act="export">Export CSV</button><button class="btn olive sm" data-act="new-entry"'+(f.brand!=="all"?' data-brand="'+f.brand+'"':'')+'>+ New entry</button></div>'+
+    (L.length?'<div class="tablewrap"><table class="t"><thead><tr><th>Date</th><th>Slot</th><th>Type</th><th>What</th><th class="num">Time</th><th class="num">Hours</th><th class="num">Amount</th><th>Receipt</th><th></th></tr></thead><tbody>'+rows+'</tbody>'+
+    '<tfoot><tr><td colspan="5">Totals · '+L.length+' entries</td><td class="num">'+hrs(H)+'</td><td class="num" colspan="3">Spent '+money(SP)+' · In '+money(IN)+' · Net <span class="'+(IN-SP<0?"neg":"pos")+'">'+money(IN-SP)+'</span></td></tr></tfoot></table></div>'
+    :'<div class="empty">No entries for '+MONTHS[Number(f.month.slice(5))-1]+' yet. Log meetings, work hours, money spent, receipts and money in with “+ New entry”.</div>');
+}
+
+function viewReminders(){
+  const t=today(), wk=addDays(t,7);
+  const open=sortBy(S.reminders.filter(r=>!r.done),r=>r.date+(r.time||""));
+  const g=[["Overdue",open.filter(r=>r.date<t)],["Today",open.filter(r=>r.date===t)],["Next 7 days",open.filter(r=>r.date>t&&r.date<=wk)],["Later",open.filter(r=>r.date>wk)]];
+  const evr=remindersDue(3650).filter(r=>r.kind==="event"&&r.from<=t);
+  const done=sortBy(S.reminders.filter(r=>r.done),r=>r.date).reverse().slice(0,10);
+  return '<div class="toolbar"><p class="muted" style="max-width:64ch">Reminders for deadlines, payments, launches and anything else coming up. Events with a reminder set also appear here when their reminder window opens. Use “Add to Google Calendar” on any reminder to get a phone alert.</p><span class="sp"></span><button class="btn olive sm" data-act="new-rem">+ New reminder</button></div>'+
+    (evr.length?'<div class="remgroup"><h4>From the calendar</h4>'+evr.map(r=>remRow(r)).join("")+'</div>':'')+
+    g.map(([h,a])=>a.length?'<div class="remgroup"><h4>'+h+' · '+a.length+'</h4>'+a.map(r=>remRow(r)).join("")+'</div>':'').join("")+
+    (!open.length&&!evr.length?'<div class="empty">No open reminders. Add important dates like filing deadlines, rent, launches and event prep.</div>':'')+
+    (done.length?'<div class="remgroup" style="margin-top:28px"><h4>Done recently</h4>'+done.map(r=>remRow(r)).join("")+'</div>':'');
+}
+
+function viewOutreach(){
+  const L=sortBy(S.outreach,o=>o.created||"").reverse();
+  return '<div class="toolbar"><p class="muted" style="max-width:64ch">Official collaboration outreach from Grooveville and its companies. Create an invitation to get a formal, reference-numbered letter you can copy into an email, then track where each one stands.</p><span class="sp"></span><button class="btn olive sm" data-act="new-out">+ New invitation</button></div>'+
+    (L.length?'<div class="tablewrap"><table class="t"><thead><tr><th>Date</th><th>Ref</th><th>Company</th><th>Organization</th><th>Type</th><th>Direction</th><th>Status</th><th></th></tr></thead><tbody>'+
+    L.map(o=>'<tr><td class="mono" style="white-space:nowrap">'+fmtDate(o.created)+'</td><td class="mono" style="font-size:12.5px;white-space:nowrap">'+esc(o.ref)+'</td><td>'+chip(o.brand)+'</td><td><b style="font-weight:600">'+esc(o.org)+'</b>'+(o.contact?'<div class="muted" style="font-size:13px">'+esc(o.contact)+'</div>':'')+'</td><td>'+esc(o.type||"")+'</td><td>'+(o.direction==="incoming"?"Incoming":"Outgoing")+'</td>'+
+      '<td><select class="i" style="padding:5px 8px;font-size:13.5px;width:auto" data-act="out-status" data-id="'+esc(o.id)+'" aria-label="Status">'+STATUSES.map(([v,l])=>'<option value="'+v+'"'+(o.status===v?" selected":"")+'>'+l+'</option>').join("")+'</select></td>'+
+      '<td style="white-space:nowrap"><button class="rowbtn" data-act="letter-out" data-id="'+esc(o.id)+'">Letter</button><button class="rowbtn" data-act="edit-out" data-id="'+esc(o.id)+'">Edit</button></td></tr>').join("")+'</tbody></table></div>'
+    :'<div class="empty">No collaborations tracked yet. Start with “+ New invitation”, or save requests that come in through the public Collaborate page.</div>');
+}
+
+function viewSite(){
+  const s=S.site||{};
+  return '<div class="cols2"><div style="display:flex;flex-direction:column;gap:18px;min-width:0">'+
+    '<div class="card"><div class="sechead" style="margin-bottom:8px"><h3 style="font-size:20px">Official contact</h3><button class="btn ghost sm" data-act="edit-contact">Edit</button></div>'+
+    '<p class="muted" style="font-size:14px">Shown on the Collaborate page and signed on official invitations.</p><dl style="display:grid;grid-template-columns:auto 1fr;gap:6px 16px;margin:12px 0 0"><dt class="muted">Email</dt><dd style="margin:0">'+(s.contactEmail?esc(s.contactEmail):'<span class="muted">Not set</span>')+'</dd><dt class="muted">Signed by</dt><dd style="margin:0">'+(s.signer?esc(s.signer):'<span class="muted">The Grooveville Team</span>')+'</dd></dl></div>'+
+    '<div class="card"><h3 style="font-size:20px;margin-bottom:6px">Company pages</h3><p class="muted" style="font-size:14px;margin-bottom:12px">Each company gets its own public homepage. Add a website link to send visitors to a company\'s own site.</p>'+
+    BRANDS.map(b=>{const i=brandInfo(b.id);return '<div style="display:flex;gap:12px;align-items:center;padding:10px 0;border-top:1px solid var(--line)">'+(i.logo?'<img class="blogo" src="'+esc(i.logo)+'" alt="">':'<div class="blogo" style="display:grid;place-items:center;font-size:11px;color:var(--muted)">No logo</div>')+'<div style="min-width:0;flex:1">'+chip(b.id)+'<div class="muted" style="font-size:13px;margin-top:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+(i.website?esc(i.website):i.social?esc(i.social):'General page · no website linked')+'</div></div><a class="rowbtn" href="#b-'+b.id+'">View</a><button class="btn ghost sm" data-act="edit-brand" data-id="'+b.id+'">Edit</button></div>'}).join("")+'</div></div>'+
+    (BACKEND==="firebase"?'<aside class="card" style="align-self:start"><h3 style="font-size:20px">Public site</h3><p class="muted" style="font-size:14px;margin-top:8px">Public events and company pages update for visitors as soon as you save. Private events, timesheets, reminders and collabs stay locked behind sign in.</p></aside></div>':'')+(BACKEND==="firebase"?'':'<aside class="card" style="align-self:start;display:flex;flex-direction:column;gap:10px"><h3 style="font-size:20px">Public site</h3><p class="muted" style="font-size:14px">Visitors see a published copy of your public events and company pages. Private events, the timesheet, reminders and collabs are never published.</p>'+
+    '<p style="font-size:14px">Last published: <b>'+(SNAP.publishedAt?esc(new Date(SNAP.publishedAt).toLocaleString("en-US",{dateStyle:"medium",timeStyle:"short"})):"never")+'</b></p>'+
+    (isDirty()?'<span class="pill high" style="align-self:flex-start">Unpublished changes</span>':'<span class="pill pub" style="align-self:flex-start">Up to date</span>')+
+    '<button class="btn teal" data-act="publish"'+(isDirty()?'':' disabled')+'>Publish to public site</button><p class="muted" style="font-size:12.5px">Publishing reloads this page for everyone who has it open.</p></aside></div>');
+}
+
+function viewPeople(){
+  const ids=Object.keys(S.members).filter(u=>u!==S.uid);
+  const intro='<div class="toolbar"><p class="muted" style="max-width:68ch">Team members request access from the Sign in page. Choose which companies each person can log time, spending and money in for. They only see their own timesheet for those companies. You see everything.'+(BACKEND==="claude"?' To invite someone, share this page with them as a Contributor (“Can use”), then have them open Sign in.':' Share the site link and have them create an account on the Sign in page.')+'</p></div>';
+  if(!ids.length)return intro+'<div class="empty">No one has requested access yet.</div>';
+  return intro+'<div style="display:flex;flex-direction:column;gap:12px">'+ids.map(u=>{
+    const a=S.access[u]||{}, br=a.brands||[], n=(S.memberLogs[u]||[]).length, m=S.members[u]||{};
+    return '<form class="card" data-member="'+esc(u)+'" style="display:flex;flex-direction:column;gap:12px"><div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap"><b style="font-size:16px">'+esc(memberName(u))+'</b>'+(br.length?'<span class="pill pub">Active</span>':'<span class="pill high">Waiting for access</span>')+'<span class="muted" style="font-size:13px">'+(m.joinedAt?'Requested '+esc(fmtDate(String(m.joinedAt).slice(0,10)))+' · ':'')+n+' entries</span></div>'+
+      '<div class="brandtabs" style="margin:0">'+BRANDS.map(b=>'<label class="chip" style="'+cvar(b.id)+';cursor:pointer;padding:6px 10px"><input type="checkbox" name="b" value="'+b.id+'"'+(br.includes(b.id)?' checked':'')+' style="accent-color:var(--c)"> '+esc(brandInfo(b.id).name)+'</label>').join("")+'</div>'+
+      '<div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn olive sm" type="submit">Save access</button>'+(br.length?'<button class="btn danger sm" type="button" data-act="revoke" data-id="'+esc(u)+'">Remove access</button>':'')+'</div></form>'}).join("")+'</div>';
+}
+function viewSignin(){
+  let body;
+  if(!S.authChecked)body='<h1>Checking sign in…</h1><p class="muted">One moment.</p>';
+  else if(S.isAdmin)body='<div class="eyebrow">Signed in · Founder</div><h1>Welcome back</h1><p class="muted">You have full access to the back office: every timesheet, calendar, reminder and collab.</p><div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center"><a class="btn olive" href="#team">Open back office</a>'+(BACKEND==="firebase"?'<button class="btn ghost" data-act="signout">Sign out</button>':'')+'</div>';
+  else if(isMember())body='<div class="eyebrow">Signed in · Team member</div><h1>Your timesheet is ready</h1><p class="muted">You can log time, money spent and money in for '+S.myBrands.map(b=>esc(brandInfo(b).name)).join(", ")+'.</p><div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center"><a class="btn olive" href="#portal">Open my timesheet</a>'+(BACKEND==="firebase"?'<button class="btn ghost" data-act="signout">Sign out</button>':'')+'</div>';
+  else if(S.signedIn&&S.db){
+    body=S.requested?'<div class="eyebrow">Request sent</div><h1>Waiting for access</h1><p class="muted">The founder will assign you to a company. This page updates on its own once you have access.</p>'+(BACKEND==="firebase"?'<button class="btn ghost" data-act="signout">Sign out</button>':''):
+      '<div class="eyebrow">Grooveville team</div><h1>Request team access</h1><p class="muted">Ask the founder to add you to one of the Grooveville companies. Once approved, you\'ll get a private timesheet here.</p><button class="btn olive" data-act="request-access">Request access</button>'+(BACKEND==="firebase"?'<button class="btn ghost" data-act="signout">Sign out</button>':'');
+  }
+  else if(BACKEND==="firebase"){
+    body=!S.fbReady?'<h1>Sign in isn\'t set up yet</h1><p class="muted">Add your Firebase settings to firebase-config.js (see README) to turn on team sign in.</p>':
+      '<div class="eyebrow">Grooveville team portal</div><h1>Sign in</h1><form id="authForm" class="card" style="display:flex;flex-direction:column;gap:12px;text-align:left;width:100%;max-width:380px"><label class="f">Email<input class="i" type="email" id="a-email" name="email" autocomplete="email" required></label><label class="f">Password<input class="i" type="password" id="a-pass" name="password" autocomplete="current-password" minlength="6" required></label><button class="btn olive" type="submit" data-mode="in">Sign in</button><button class="btn ghost" type="submit" data-mode="up">Create team account</button><button class="rowbtn" type="button" data-act="reset-pass" style="align-self:center">Forgot password?</button><p id="authMsg" class="muted" style="font-size:13px;text-align:center" aria-live="polite"></p></form>';
+  }
+  else body='<div class="eyebrow">Grooveville team portal</div><h1>Sign in</h1><p class="muted">The back office and team timesheets use your Claude account. Open this page while signed in to Claude. If you\'re on the team, ask the founder to share the page with you as a Contributor (“Can use”), then come back here.</p><p class="muted" style="font-size:13.5px">Just got access? Reload this page.</p>';
+  return '<div class="wrap gate">'+body+'<a href="#home" class="rowbtn">Back to the public site</a></div>';
+}
+function viewPortal(){
+  if(!isMember())return viewSignin();
+  const mo=today().slice(0,7);
+  const slots='<div class="slots" style="margin-bottom:24px">'+S.myBrands.map(id=>{const s=monthStats(id,mo);return '<div class="slot" style="'+cvar(id)+'"><h4>'+esc(brandInfo(id).name)+'</h4><div class="nums"><div><small>Hours</small><span>'+hrs(s.h)+'</span></div><div><small>Spent</small><span>'+money(s.sp).replace(".00","")+'</span></div><div><small>Entries</small><span>'+s.n+'</span></div></div>'+moneyIn(s,id)+'<div class="acts"><button class="btn sm" style="background:var(--c);color:var(--bg)" data-act="new-entry" data-brand="'+id+'">+ Log</button></div></div>'}).join("")+'</div>';
+  return '<section class="teamhead"><div class="wrap"><div class="eyebrow">Grooveville team · Private</div><h1>My timesheet</h1><p class="muted" style="margin-top:6px">Only you and the founder can see these entries.</p></div></section><section class="tsec"><div class="wrap">'+slots+viewTimesheet()+'</div></section>';
+}
+
+/* ---------- private notes (encrypted in the browser) ---------- */
+const u8b64=u=>{let s="";u.forEach(c=>s+=String.fromCharCode(c));return btoa(s)};
+const b64u8=b=>Uint8Array.from(atob(b),c=>c.charCodeAt(0));
+async function vDerive(pass,salt){const base=await crypto.subtle.importKey("raw",new TextEncoder().encode(pass),"PBKDF2",false,["deriveKey"]);
+  return crypto.subtle.deriveKey({name:"PBKDF2",salt,iterations:250000,hash:"SHA-256"},base,{name:"AES-GCM",length:256},false,["encrypt","decrypt"])}
+async function vEnc(key,obj){const iv=crypto.getRandomValues(new Uint8Array(12));const ct=await crypto.subtle.encrypt({name:"AES-GCM",iv},key,new TextEncoder().encode(JSON.stringify(obj)));return {iv:u8b64(iv),ct:u8b64(new Uint8Array(ct))}}
+async function vDec(key,row){const pt=await crypto.subtle.decrypt({name:"AES-GCM",iv:b64u8(row.iv)},key,b64u8(row.ct));return JSON.parse(new TextDecoder().decode(pt))}
+async function decryptVault(){const out={};for(const r of S.vault){try{out[r.id]=await vDec(S.vkey,r)}catch(e){out[r.id]={title:"(couldn't unlock this note)"}}}S.vplain=out;scheduleRender(true)}
+let vTimer;
+function vTouch(){clearTimeout(vTimer);vTimer=setTimeout(()=>{S.vkey=null;S.vplain={};if(S.route==="team-vault")render()},20*60*1000)}
+function viewVault(){
+  if(!window.crypto||!crypto.subtle)return '<div class="empty">Private notes need a secure browser connection (https).</div>';
+  if(!S.loaded.vault)return '<div class="empty">Loading…</div>';
+  const lockIcon='<svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="var(--olive)" stroke-width="2" aria-hidden="true"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>';
+  if(!S.vaultMeta)return '<div class="card gate" style="margin:0 auto">'+lockIcon+'<h2 style="font-size:26px">Set up your private notes</h2><p class="muted">A place for passwords, log ins and account details. Everything is locked with a passphrase that only you know. It is encrypted in your browser before it is saved, so not even the database can read it.</p><p class="muted" style="font-size:13.5px"><b>If you forget the passphrase, the notes can\'t be recovered.</b> Write it down somewhere safe.</p><button class="btn olive" data-act="vault-setup">Choose a passphrase</button></div>';
+  if(!S.vkey)return '<div class="card gate" style="margin:0 auto">'+lockIcon+'<h2 style="font-size:26px">Private notes are locked</h2><p class="muted">'+S.vault.length+' saved '+(S.vault.length===1?"note":"notes")+'. Enter your passphrase to open them. They lock again after 20 minutes or when you leave the page.</p><button class="btn olive" data-act="vault-unlock">Unlock</button></div>';
+  const items=sortBy(S.vault.map(r=>Object.assign({id:r.id},S.vplain[r.id]||{})),x=>(x.title||"").toLowerCase());
+  return '<div class="toolbar"><p class="muted" style="max-width:62ch">Only you can open these. Encrypted with your passphrase before saving.</p><span class="sp"></span><button class="btn ghost sm" data-act="vault-lock">Lock now</button><button class="btn olive sm" data-act="vault-new">+ New note</button></div>'+
+    (items.length?'<div class="slots">'+items.map(x=>'<div class="card" style="display:flex;flex-direction:column;gap:8px;min-width:0"><div style="display:flex;gap:8px;align-items:center"><b style="font-size:16px;flex:1;min-width:0;overflow-wrap:anywhere">'+esc(x.title||"Untitled")+'</b><button class="rowbtn" data-act="vault-edit" data-id="'+esc(x.id)+'">Edit</button></div>'+
+      (x.user?'<div style="display:flex;gap:8px;align-items:center;font-size:14px"><span class="muted" style="width:72px;flex:none">Log in</span><span class="mono" style="flex:1;min-width:0;overflow-wrap:anywhere">'+esc(x.user)+'</span><button class="rowbtn" data-act="vault-copy" data-id="'+esc(x.id)+'" data-f="user">Copy</button></div>':'')+
+      (x.pass?'<div style="display:flex;gap:8px;align-items:center;font-size:14px"><span class="muted" style="width:72px;flex:none">Password</span><span class="mono vpass" data-id="'+esc(x.id)+'" style="flex:1;min-width:0;overflow-wrap:anywhere">••••••••</span><button class="rowbtn" data-act="vault-show" data-id="'+esc(x.id)+'">Show</button><button class="rowbtn" data-act="vault-copy" data-id="'+esc(x.id)+'" data-f="pass">Copy</button></div>':'')+
+      (x.url?'<a href="'+esc(/^https?:/i.test(x.url)?x.url:"https://"+x.url)+'" target="_blank" rel="noopener" style="font-size:14px;overflow-wrap:anywhere">'+esc(x.url)+' ↗</a>':'')+
+      (x.notes?'<p class="muted" style="font-size:14px;white-space:pre-wrap;overflow-wrap:anywhere">'+esc(x.notes)+'</p>':'')+'</div>').join("")+'</div>'
+    :'<div class="empty">No notes yet. Add log ins, passwords, account numbers or anything else you want kept private.</div>');
+}
+function vaultPassModal(setup){
+  openModal('<form id="mf"><h3 style="margin-bottom:12px">'+(setup?"Choose a passphrase":"Unlock private notes")+'</h3><div style="display:flex;flex-direction:column;gap:12px">'+
+    '<label class="f">Passphrase<input class="i" type="password" id="v-pass" name="p" autocomplete="'+(setup?"new-password":"current-password")+'" minlength="'+(setup?8:1)+'" required></label>'+
+    (setup?'<label class="f">Type it again<input class="i" type="password" id="v-pass2" name="p2" autocomplete="new-password" required></label><p class="muted" style="font-size:13px">Use at least 8 characters. A short sentence works well. If you forget it, the notes can\'t be recovered.</p>':'')+
+    '<p id="v-msg" style="font-size:13.5px;color:var(--bad)" aria-live="polite"></p></div><div class="row"><button type="button" class="btn ghost" data-act="close-modal">Cancel</button><button class="btn olive" type="submit">'+(setup?"Create":"Unlock")+'</button></div></form>',
+  el=>el.querySelector("#mf").addEventListener("submit",async ev=>{ev.preventDefault();const o=formObj(ev.target),msg=el.querySelector("#v-msg"),btn=ev.target.querySelector("button[type=submit]");
+    if(setup&&o.p!==o.p2){msg.textContent="The two passphrases don't match.";return}
+    btn.disabled=true;msg.style.color="var(--muted)";msg.textContent=setup?"Setting up…":"Unlocking…";
+    try{
+      if(setup){const salt=crypto.getRandomValues(new Uint8Array(16));const key=await vDerive(o.p,salt);const chk=await vEnc(key,{ok:"grooveville"});
+        if(!await save("vault","_meta",{salt:u8b64(salt),iv:chk.iv,ct:chk.ct,createdAt:new Date().toISOString()})){btn.disabled=false;return}S.vkey=key;}
+      else{const key=await vDerive(o.p,b64u8(S.vaultMeta.salt));const c=await vDec(key,S.vaultMeta);if(c.ok!=="grooveville")throw 0;S.vkey=key;}
+      vTouch();closeModal();await decryptVault();render();
+    }catch(e){btn.disabled=false;msg.style.color="var(--bad)";msg.textContent="That passphrase didn't unlock your notes. Try again."}
+  }));
+}
+function vaultItemModal(d){
+  d=d||{};
+  openModal('<form id="mf" autocomplete="off"><h3 style="margin-bottom:12px">'+(d.id?"Edit note":"New private note")+'</h3><div style="display:flex;flex-direction:column;gap:12px">'+
+    '<label class="f">Title<input class="i" id="v-title" name="title" value="'+esc(d.title)+'" required placeholder="Bank login, Instagram, domain registrar…"></label>'+
+    '<div class="grid2"><label class="f">Log in / email<input class="i mono" id="v-user" name="user" value="'+esc(d.user)+'" autocomplete="off"></label><label class="f">Password<input class="i mono" type="password" id="v-pw" name="pass" value="'+esc(d.pass)+'" autocomplete="new-password"></label></div>'+
+    '<label class="f">Website<input class="i" id="v-url" name="url" value="'+esc(d.url)+'" placeholder="https://"></label>'+
+    '<label class="f">Notes<textarea class="i" id="v-notes" name="notes">'+esc(d.notes)+'</textarea></label></div>'+
+    '<div class="row">'+delBtn(d.id)+'<button type="button" class="btn ghost" data-act="close-modal">Cancel</button><button class="btn olive" type="submit">Save</button></div></form>',
+  el=>{
+    el._del=async()=>{if(await remove("vault",d.id)){closeModal();toast("Note deleted")}};
+    el.querySelector("#mf").addEventListener("submit",async ev=>{ev.preventDefault();if(!S.vkey){closeModal();return render()}vTouch();
+      const o=formObj(ev.target);const id=d.id||uid();const row=await vEnc(S.vkey,{title:o.title,user:o.user,pass:o.pass,url:o.url,notes:o.notes});
+      row.updatedAt=new Date().toISOString();if(await save("vault",id,row)){closeModal();toast("Saved")}});
+  });
+}
+
+/* ---------- modals ---------- */
+const brandOpts=(sel,only)=>BRANDS.filter(b=>!only||only.includes(b.id)).map(b=>'<option value="'+b.id+'"'+(b.id===sel?" selected":"")+'>'+esc(brandInfo(b.id).name)+'</option>').join("");
+const delBtn=has=>has?'<button type="button" class="btn danger left" data-act="del-arm">Delete</button>':'';
+
+function entryModal(d){
+  d=Object.assign({brand:S.ts.brand!=="all"?S.ts.brand:"hq",type:"meeting",date:today()},d||{});
+  const t=d.type, timed=t==="meeting"||t==="hours", moneyT=["expense","receipt","income"].includes(t);
+  openModal('<form id="mf"><h3 style="margin-bottom:14px">'+(d.id?"Edit entry":"New entry")+'</h3><div style="display:flex;flex-direction:column;gap:12px">'+
+    '<div class="grid2"><label class="f">Slot<select class="i" id="e-brand" name="brand">'+brandOpts(d.brand,S.isAdmin?null:S.myBrands)+'</select></label><label class="f">Type<select class="i" id="e-type" name="type">'+TYPES.map(x=>'<option value="'+x.id+'"'+(x.id===t?" selected":"")+'>'+x.label+'</option>').join("")+'</select></label><label class="f">Date<input class="i" type="date" id="e-date" name="date" value="'+esc(d.date)+'" required></label></div>'+
+    '<label class="f">'+({meeting:"Meeting with / about",hours:"What you worked on",expense:"What was it for",receipt:"What was purchased",income:"What it was for",note:"Note title"}[t])+'<input class="i" id="e-title" name="title" value="'+esc(d.title)+'" required></label>'+
+    (timed?'<div class="grid2"><label class="f">Start<input class="i" type="time" id="e-start" name="start" value="'+esc(d.start)+'" required></label><label class="f">End<input class="i" type="time" id="e-end" name="end" value="'+esc(d.end)+'" required></label>'+(t==="meeting"?'<label class="f">Location or link<input class="i" id="e-loc" name="location" value="'+esc(d.location)+'"></label>':'')+'</div>':'')+
+    (moneyT?'<div class="grid2"><label class="f">Amount ($)<input class="i mono" type="number" step="0.01" min="0" inputmode="decimal" id="e-amt" name="amount" value="'+esc(d.amount)+'" required></label>'+(t==="income"?'<label class="f">Type of money in<select class="i" id="e-src" name="source">'+SOURCES.map(x=>'<option'+(x===(d.source||"Payment")?" selected":"")+'>'+x+'</option>').join("")+'</select></label>':'')+'<label class="f">'+(t==="income"?"From (person or org)":"Paid to (vendor)")+'<input class="i" id="e-vendor" name="vendor" value="'+esc(d.vendor)+'"></label><label class="f">Category<select class="i" id="e-cat" name="category"><option value="">—</option>'+CATS.map(c=>'<option'+(c===d.category?" selected":"")+'>'+c+'</option>').join("")+'</select></label></div>'+
+      (t!=="income"?'<div class="grid2"><label class="f">Paid with<select class="i" id="e-pay" name="payment">'+["","Business card","Cash","Cash App","Zelle","Personal card","Check","Other"].map(p=>'<option'+(p===d.payment?" selected":"")+'>'+p+'</option>').join("")+'</select></label><label class="f">Receipt #<input class="i mono" id="e-rno" name="receiptNo" value="'+esc(d.receiptNo)+'"></label></div>'+
+      '<label class="f">Receipt photo '+(d.hasImage?'<span class="muted" style="font-weight:400">(one saved; choose a new one to replace)</span>':'')+'<input class="i" type="file" accept="image/*" id="e-img" name="img"></label>':''):'')+
+    '<label class="f">Notes<textarea class="i" id="e-notes" name="notes" style="min-height:70px">'+esc(d.notes)+'</textarea></label></div>'+
+    '<div class="row">'+delBtn(d.id)+'<button type="button" class="btn ghost" data-act="close-modal">Cancel</button><button class="btn olive" type="submit">Save entry</button></div></form>',
+  el=>{
+    el.querySelector("#e-type").addEventListener("change",()=>{const o=Object.assign({},d,formObj(el.querySelector("#mf")));entryModal(o)});
+    const col=d._col||(S.isAdmin?"ledger":memberCol(S.uid));
+    el._del=async()=>{if(await remove(col,d.id)){if(d.hasImage)remove(imgCol(col),d.id);closeModal();toast("Entry deleted")}};
+    el.querySelector("#mf").addEventListener("submit",async ev=>{ev.preventDefault();
+      const f=ev.target, o=formObj(f), id=d.id||uid();
+      const rec={brand:o.brand,type:o.type,date:o.date,title:o.title,notes:o.notes||"",createdAt:d.createdAt||new Date().toISOString(),by:d.by||S.uid||""};
+      if(o.type==="meeting"||o.type==="hours"){rec.start=o.start;rec.end=o.end;rec.hours=Math.round(span(o.start,o.end)*100)/100;if(o.location)rec.location=o.location}
+      if(["expense","receipt","income"].includes(o.type)){rec.amount=Math.round(parseFloat(o.amount||0)*100)/100;rec.vendor=o.vendor||"";rec.category=o.category||"";if(o.type!=="income"){rec.payment=o.payment||"";rec.receiptNo=o.receiptNo||""}else rec.source=o.source||"Payment"}
+      const file=f.querySelector("#e-img")&&f.querySelector("#e-img").files[0];
+      rec.hasImage=!!(d.hasImage&&["expense","receipt"].includes(o.type));
+      f.querySelector("button[type=submit]").disabled=true;
+      if(file){const data=await shrink(file);if(data&&await save(imgCol(col),id,{data}))rec.hasImage=true}
+      if(await save(col,id,rec)){closeModal();toast("Entry saved")}else f.querySelector("button[type=submit]").disabled=false;
+    });
+  });
+}
+function shrink(file){return new Promise(res=>{const r=new FileReader();r.onload=()=>{const img=new Image();img.onload=()=>{
+  let q=.7,max=1100,out;for(let i=0;i<5;i++){const sc=Math.min(1,max/Math.max(img.width,img.height));const c=document.createElement("canvas");c.width=Math.round(img.width*sc);c.height=Math.round(img.height*sc);c.getContext("2d").drawImage(img,0,0,c.width,c.height);out=c.toDataURL("image/jpeg",q);if(out.length<230000)break;q-=.12;max=Math.round(max*.8)}
+  res(out.length<250000?out:null)};img.onerror=()=>{toast("That file isn't an image we can read");res(null)};img.src=r.result};r.readAsDataURL(file)})}
+
+function shrinkLogo(file){return new Promise(res=>{const r=new FileReader();r.onload=()=>{const img=new Image();img.onload=()=>{
+  const sc=Math.min(1,320/Math.max(img.width,img.height));const c=document.createElement("canvas");c.width=Math.max(1,Math.round(img.width*sc));c.height=Math.max(1,Math.round(img.height*sc));
+  c.getContext("2d").drawImage(img,0,0,c.width,c.height);let out=c.toDataURL("image/webp",.88);if(!out.startsWith("data:image/webp"))out=c.toDataURL("image/png");
+  if(out.length>60000)out=c.toDataURL("image/webp",.7);res(out.length<90000?out:(toast("That logo is too large. Try a smaller image."),null))};
+  img.onerror=()=>{toast("That file isn't an image we can read");res(null)};img.src=r.result};r.readAsDataURL(file)})}
+function eventModal(d){
+  d=Object.assign({brand:"hq",date:today(),visibility:"private",remindDays:""},d||{});
+  openModal('<form id="mf"><h3 style="margin-bottom:14px">'+(d.id?"Edit event":"New event")+'</h3><div style="display:flex;flex-direction:column;gap:12px">'+
+    '<fieldset style="border:0;padding:0;margin:0"><legend class="f" style="font-size:13px;font-weight:600;color:var(--muted);margin-bottom:6px">Who can see it</legend><div class="seg"><button type="button" data-v="public" class="'+(d.visibility==="public"?"on":"")+'">Public</button><button type="button" data-v="private" class="'+(d.visibility!=="public"?"on":"")+'">Private</button></div>'+
+    '<p class="muted" id="vis-help" style="font-size:13px;margin-top:6px"></p><input type="hidden" name="visibility" id="ev-vis" value="'+esc(d.visibility)+'"></fieldset>'+
+    '<div class="grid2"><label class="f">Company<select class="i" id="ev-brand" name="brand">'+brandOpts(d.brand)+'</select></label><label class="f">Date<input class="i" type="date" id="ev-date" name="date" value="'+esc(d.date)+'" required></label></div>'+
+    '<label class="f">Title<input class="i" id="ev-title" name="title" value="'+esc(d.title)+'" required></label>'+
+    '<div class="grid2"><label class="f">Start<input class="i" type="time" id="ev-start" name="start" value="'+esc(d.start)+'"></label><label class="f">End<input class="i" type="time" id="ev-end" name="end" value="'+esc(d.end)+'"></label><label class="f">Remind me<select class="i" id="ev-rem" name="remindDays">'+REMIND.map(([v,l])=>'<option value="'+v+'"'+(String(d.remindDays)===v?" selected":"")+'>'+l+'</option>').join("")+'</select></label></div>'+
+    '<label class="f">Location<input class="i" id="ev-loc" name="location" value="'+esc(d.location)+'"></label>'+
+    '<label class="f">Tickets or info link<input class="i" type="url" id="ev-link" name="link" value="'+esc(d.link)+'" placeholder="https://"></label>'+
+    '<label class="f">Description<textarea class="i" id="ev-desc" name="description" style="min-height:70px">'+esc(d.description)+'</textarea></label></div>'+
+    '<div class="row">'+delBtn(d.id)+(d.id?'<a class="btn ghost" href="'+esc(gcal({title:d.title,date:d.date,start:d.start,end:d.end,location:d.location,details:d.description}))+'" target="_blank" rel="noopener">Add to Google Calendar</a>':'')+'<button type="button" class="btn ghost" data-act="close-modal">Cancel</button><button class="btn olive" type="submit">Save event</button></div></form>',
+  el=>{
+    const help=()=>{el.querySelector("#vis-help").textContent=el.querySelector("#ev-vis").value==="public"?"Shows on the public calendar and company page after you publish. Use for launches and events you are hosting.":"Back office only. Visitors never see private events."};help();
+    el.querySelectorAll(".seg button").forEach(b=>b.addEventListener("click",()=>{el.querySelectorAll(".seg button").forEach(x=>x.classList.toggle("on",x===b));el.querySelector("#ev-vis").value=b.dataset.v;help()}));
+    el._del=async()=>{if(await remove("events",d.id)){closeModal();toast("Event deleted")}};
+    el.querySelector("#mf").addEventListener("submit",async ev=>{ev.preventDefault();const o=formObj(ev.target);
+      const rec={brand:o.brand,title:o.title,date:o.date,start:o.start||"",end:o.end||"",location:o.location||"",link:o.link||"",description:o.description||"",visibility:o.visibility==="public"?"public":"private",remindDays:o.remindDays,createdAt:d.createdAt||new Date().toISOString()};
+      if(await save("events",d.id||uid(),rec)){closeModal();toast(rec.visibility==="public"?"Saved. Publish to show it on the public site.":"Event saved")}});
+  });
+}
+function remModal(d){
+  d=Object.assign({brand:"hq",date:today(),priority:"normal"},d||{});
+  openModal('<form id="mf"><h3 style="margin-bottom:14px">'+(d.id?"Edit reminder":"New reminder")+'</h3><div style="display:flex;flex-direction:column;gap:12px">'+
+    '<label class="f">Remind me to…<input class="i" id="r-title" name="title" value="'+esc(d.title)+'" required placeholder="Pay venue deposit"></label>'+
+    '<div class="grid2"><label class="f">Company<select class="i" id="r-brand" name="brand">'+brandOpts(d.brand)+'</select></label><label class="f">Date<input class="i" type="date" id="r-date" name="date" value="'+esc(d.date)+'" required></label><label class="f">Time<input class="i" type="time" id="r-time" name="time" value="'+esc(d.time)+'"></label></div>'+
+    '<label class="f">Priority<select class="i" id="r-pri" name="priority"><option value="normal">Normal</option><option value="high"'+(d.priority==="high"?" selected":"")+'>Important</option></select></label>'+
+    '<label class="f">Notes<textarea class="i" id="r-notes" name="notes" style="min-height:70px">'+esc(d.notes)+'</textarea></label></div>'+
+    '<div class="row">'+delBtn(d.id)+(d.id?'<a class="btn ghost" href="'+esc(gcal({title:"Reminder: "+d.title,date:d.date,start:d.time,details:d.notes}))+'" target="_blank" rel="noopener">Add to Google Calendar</a>':'')+'<button type="button" class="btn ghost" data-act="close-modal">Cancel</button><button class="btn olive" type="submit">Save reminder</button></div></form>',
+  el=>{
+    el._del=async()=>{if(await remove("reminders",d.id)){closeModal();toast("Reminder deleted")}};
+    el.querySelector("#mf").addEventListener("submit",async ev=>{ev.preventDefault();const o=formObj(ev.target);
+      const rec={title:o.title,brand:o.brand,date:o.date,time:o.time||"",priority:o.priority,notes:o.notes||"",done:!!d.done,createdAt:d.createdAt||new Date().toISOString()};
+      if(await save("reminders",d.id||uid(),rec)){closeModal();toast("Reminder saved")}});
+  });
+}
+function outModal(d){
+  d=Object.assign({brand:"hq",direction:"outgoing",status:"draft",type:COLLAB_TYPES[0]},d||{});
+  openModal('<form id="mf"><h3 style="margin-bottom:14px">'+(d.id?"Edit collaboration":"New official invitation")+'</h3><div style="display:flex;flex-direction:column;gap:12px">'+
+    '<div class="grid2"><label class="f">Direction<select class="i" id="o-dir" name="direction"><option value="outgoing">Outgoing invitation</option><option value="incoming"'+(d.direction==="incoming"?" selected":"")+'>Incoming request</option></select></label><label class="f">Grooveville company<select class="i" id="o-brand" name="brand">'+brandOpts(d.brand)+'</select></label><label class="f">Status<select class="i" id="o-status" name="status">'+STATUSES.map(([v,l])=>'<option value="'+v+'"'+(d.status===v?" selected":"")+'>'+l+'</option>').join("")+'</select></label></div>'+
+    '<div class="grid2"><label class="f">Organization *<input class="i" id="o-org" name="org" value="'+esc(d.org)+'" required></label><label class="f">Contact person<input class="i" id="o-contact" name="contact" value="'+esc(d.contact)+'"></label><label class="f">Contact email<input class="i" type="email" id="o-email" name="email" value="'+esc(d.email)+'"></label></div>'+
+    '<div class="grid2"><label class="f">Type<select class="i" id="o-type" name="type">'+COLLAB_TYPES.map(t=>'<option'+(t===d.type?" selected":"")+'>'+t+'</option>').join("")+'</select></label><label class="f">Proposed date<input class="i" type="date" id="o-date" name="date" value="'+esc(d.date)+'"></label></div>'+
+    '<label class="f">Proposal (goes in the letter)<textarea class="i" id="o-prop" name="proposal">'+esc(d.proposal)+'</textarea></label>'+
+    '<label class="f">Private notes<textarea class="i" id="o-notes" name="notes" style="min-height:60px">'+esc(d.notes)+'</textarea></label></div>'+
+    '<div class="row">'+delBtn(d.id)+'<button type="button" class="btn ghost" data-act="close-modal">Cancel</button><button class="btn olive" type="submit">Save & view letter</button></div></form>',
+  el=>{
+    el._del=async()=>{if(await remove("outreach",d.id)){closeModal();toast("Deleted")}};
+    el.querySelector("#mf").addEventListener("submit",async ev=>{ev.preventDefault();const o=formObj(ev.target);const id=d.id||uid();const created=d.created||today();
+      const rec=Object.assign({},o,{created,ref:d.ref||refCode(o.brand,created,id)});delete rec.id;
+      if(await save("outreach",id,rec))letterModal(Object.assign({id},rec));});
+  });
+}
+function letterModal(o){
+  openModal('<h3>Official letter</h3><p class="muted">Copy this into an email'+(o.email?' to <b class="mono">'+esc(o.email)+'</b>':'')+'. Reference <b class="mono">'+esc(o.ref)+'</b>.</p>'+letterHTML(o)+
+    '<div class="row"><button class="btn ghost" data-act="close-modal">Close</button><button class="btn teal" data-act="copy-letter">Copy letter</button></div>',el=>{el._letter=letterText(o)});
+}
+function contactModal(){
+  const s=S.site||{};
+  openModal('<form id="mf"><h3 style="margin-bottom:14px">Official contact</h3><div style="display:flex;flex-direction:column;gap:12px">'+
+    '<label class="f">Contact email (public)<input class="i" type="email" id="s-email" name="contactEmail" value="'+esc(s.contactEmail)+'" placeholder="hello@yourdomain.com"></label>'+
+    '<label class="f">Letters signed by<input class="i" id="s-signer" name="signer" value="'+esc(s.signer)+'" placeholder="Name, Title"></label></div>'+
+    '<div class="row"><button type="button" class="btn ghost" data-act="close-modal">Cancel</button><button class="btn olive" type="submit">Save</button></div></form>',
+  el=>el.querySelector("#mf").addEventListener("submit",async ev=>{ev.preventDefault();const o=formObj(ev.target);
+    if(await save("settings","site",Object.assign({},S.site,{contactEmail:o.contactEmail,signer:o.signer}))){closeModal();toast("Saved")}}));
+}
+function brandModal(id){
+  const b=brandInfo(id), cur=((S.site||{}).brands||{})[id]||{};
+  openModal('<form id="mf"><h3 style="margin-bottom:4px">'+esc(b.name)+' page</h3><p class="muted" style="margin-bottom:12px;font-size:14px">Leave a field blank to keep the default text.</p><div style="display:flex;flex-direction:column;gap:12px">'+
+    '<label class="f">Tagline<input class="i" id="b-tag" name="tagline" value="'+esc(cur.tagline)+'" placeholder="'+esc(BR[id].tagline)+'"></label>'+
+    '<label class="f">About<textarea class="i" id="b-about" name="about" placeholder="'+esc(BR[id].about)+'">'+esc(cur.about)+'</textarea></label>'+
+    '<label class="f">Website (the page links out to it)<input class="i" type="url" id="b-web" name="website" value="'+esc(cur.website)+'" placeholder="https://"></label>'+
+    '<label class="f">Social link<input class="i" type="url" id="b-soc" name="social" value="'+esc(cur.social)+'" placeholder="https://instagram.com/…"></label>'+
+    '<div class="f" style="font-size:13px;font-weight:600;color:var(--muted)">Logo<div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:5px">'+(b.logo?'<img class="blogo big" style="margin:0" id="b-prev" src="'+esc(b.logo)+'" alt="">':'')+'<input class="i" type="file" accept="image/*" id="b-logo" style="flex:1;min-width:0">'+(cur.logo?'<label style="display:flex;gap:6px;align-items:center;font-weight:500"><input type="checkbox" id="b-rmlogo"> Remove logo</label>':'')+'</div><span style="font-weight:400">PNG with a transparent background looks best. It is resized to fit.</span></div></div>'+
+    '<div class="row"><button type="button" class="btn ghost" data-act="close-modal">Cancel</button><button class="btn olive" type="submit">Save</button></div></form>',
+  el=>el.querySelector("#mf").addEventListener("submit",async ev=>{ev.preventDefault();const o=formObj(ev.target);
+    const brands=Object.assign({},(S.site||{}).brands);let logo=cur.logo||"";
+    const lf=el.querySelector("#b-logo").files[0];if(lf){logo=await shrinkLogo(lf);if(!logo)return}
+    const rm=el.querySelector("#b-rmlogo");if(rm&&rm.checked&&!lf)logo="";
+    brands[id]={tagline:o.tagline,about:o.about,website:o.website,social:o.social,logo};
+    if(await save("settings","site",Object.assign({},S.site,{brands}))){closeModal();toast("Saved. Publish to update the public page.")}}));
+}
+function dayModal(ds){
+  const team=S.isAdmin&&S.route==="team-cal";
+  const list=calItems(team).filter(i=>i.date===ds&&(S.cal.brand==="all"||i.brand===S.cal.brand)).sort((a,b)=>(a.start||"99")<(b.start||"99")?-1:1);
+  openModal('<h3>'+fmtDate(ds)+'</h3>'+(list.length?'<div style="display:flex;flex-direction:column;gap:8px">'+list.map(i=>'<button class="rem" style="'+cvar(i.brand)+';text-align:left;cursor:pointer;width:100%;grid-template-columns:auto minmax(0,1fr)" data-act="'+(i.kind==="event"?(team?"edit-event":"ev-open"):i.kind==="reminder"?"edit-rem":"edit-entry")+'" data-id="'+esc(i.id)+'"><span class="pill '+(i.kind==="event"?(i.vis==="public"?"pub":"priv"):"high")+'">'+(i.kind==="event"?(team?(i.vis==="public"?"Public":"Private"):"Event"):i.kind==="reminder"?"Reminder":"Meeting")+'</span><span><span class="rt">'+esc(i.title)+'</span><span class="rm">'+chip(i.brand)+(i.start?'<span class="mono">'+fmtTime(i.start)+'</span>':'')+'</span></span></button>').join("")+'</div>':'<p class="muted">Nothing on this day.</p>')+
+    '<div class="row">'+(team?'<button class="btn ghost" data-act="new-rem" data-date="'+ds+'">+ Reminder</button><button class="btn olive" data-act="new-event" data-date="'+ds+'">+ Event</button>':'')+'<button class="btn ghost" data-act="close-modal">Close</button></div>');
+}
+function eventDetail(id){
+  const e=pub().events.find(x=>x.id===id);if(!e)return;
+  openModal('<div style="'+cvar(e.brand)+'">'+chip(e.brand)+'<h3 style="margin-top:10px">'+esc(e.title)+'</h3><p class="mono" style="margin-top:6px">'+fmtDate(e.date)+(e.start?" · "+fmtTime(e.start)+(e.end?" – "+fmtTime(e.end):""):"")+'</p>'+(e.location?'<p class="muted">'+esc(e.location)+'</p>':'')+(e.description?'<p style="margin-top:12px;white-space:pre-wrap">'+esc(e.description)+'</p>':'')+'</div>'+
+    '<div class="row">'+(e.link?'<a class="btn peach" href="'+esc(e.link)+'" target="_blank" rel="noopener">Tickets & info ↗</a>':'')+'<a class="btn ghost" href="'+esc(gcal({title:e.title,date:e.date,start:e.start,end:e.end,location:e.location,details:e.description}))+'" target="_blank" rel="noopener">Add to Google Calendar</a><button class="btn ghost" data-act="close-modal">Close</button></div>');
+}
+async function viewReceipt(id){
+  openModal('<h3>Receipt</h3><div id="rimg" class="empty">Loading…</div><div class="row"><button class="btn ghost" data-act="close-modal">Close</button></div>');
+  const en=ledgerAll().find(x=>x.id===id);const ic=imgCol((en&&en._col)||"ledger");
+  try{const d=await S.db.doc(ic+"/"+id).get();const box=$("#rimg");if(!box)return;
+    if(d.exists){box.className="";box.innerHTML='<img alt="Receipt photo" style="width:100%;border-radius:10px;border:1px solid var(--line)" src="'+esc(d.data().data)+'">'}else box.textContent="No photo found."}
+  catch(e){const box=$("#rimg");if(box)box.textContent="Couldn't load the photo."}
+}
+async function exportCSV(){
+  const f=S.ts;const L=sortBy(ledgerAll().filter(l=>(f.brand==="all"||l.brand===f.brand)&&String(l.date).startsWith(f.month)&&(f.type==="all"||l.type===f.type)),l=>l.date+(l.start||""));
+  const q=v=>'"'+String(v==null?"":v).replace(/"/g,'""')+'"';
+  const csv=[["Date","Slot","Type","What","Start","End","Hours","Amount","Money in type","Vendor/From","Category","Paid with","Receipt #","Notes","Logged by"].join(",")].concat(L.map(l=>[l.date,brandName(l.brand),TL[l.type],l.title,l.start,l.end,l.hours,l.amount!=null?(l.type==="income"?l.amount:-l.amount):"",l.type==="income"?(l.source||"Payment"):"",l.vendor,l.category,l.payment,l.receiptNo,l.notes,l._by?memberName(l._by):""].map(q).join(","))).join("\n");
+  const dl=await cu("downloads");
+  const name="grooveville-timesheet-"+(f.brand==="all"?"all":f.brand)+"-"+f.month+".csv";
+  if(!dl){openModal('<h3>Export</h3><p class="muted">Downloads aren\'t available here. Copy the CSV instead.</p><textarea class="i mono" style="min-height:220px" readonly>'+esc(csv)+'</textarea><div class="row"><button class="btn ghost" data-act="close-modal">Close</button></div>');return}
+  try{await dl.save({filename:name,data:csv});toast("Saved "+name)}catch(e){if(e&&e.code!=="declined"&&e.code!=="cancelled")toast("Couldn't export. Try again.")}
+}
+
+/* ---------- publish public site ---------- */
+function b64utf8(s){const b=new TextEncoder().encode(s);let o="";for(let i=0;i<b.length;i+=8192)o+=String.fromCharCode.apply(null,b.subarray(i,i+8192));return btoa(o)}
+function fromb64(s){const bin=atob(s);const u=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)u[i]=bin.charCodeAt(i);return new TextDecoder().decode(u)}
+async function publishSite(btn){
+  const art=await cu("artifact");
+  if(!art){toast("Publishing isn't available in this view");return}
+  if(btn)btn.disabled=true;
+  const tpl=fromb64(SELF_B64);
+  const payload=Object.assign(livePublic(),{publishedAt:new Date().toISOString()});
+  const json=JSON.stringify(payload).replace(/</g,"\\u003c");
+  const body=tpl.replace("__SE"+"LF__",()=>b64utf8(tpl)).replace("__SN"+"AP__",()=>json);
+  const html='<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>'+fromb64(RESET)+'</style></head><body>\n'+body+'\n</body></html>';
+  try{await art.publish(html);toast("Published. Reloading…")}
+  catch(e){if(btn)btn.disabled=false;
+    const c=e&&e.code;
+    if(c==="conflict")toast("A newer version was just published. Reloading…");
+    else if(c==="not_writer"||c==="not_granted")toast("Only the owner and editors can publish.");
+    else if(c==="rate_limited")toast("Publishing too often. Wait a minute and try again.");
+    else toast("Couldn't publish. Try again in a moment.");}
+}
+
+/* ---------- router & render ---------- */
+let rq=0;
+function scheduleRender(fromData){
+  if(fromData&&(S.route.startsWith("collab")||(S.route==="signin"&&$("#authForm"))))return;
+  if(rq)return;rq=requestAnimationFrame(()=>{rq=0;render()});
+}
+function render(){
+  navLinks();
+  const r=S.route, app=$("#app");
+  let h;
+  if(r==="calendar")h=viewPublicCalendar();
+  else if(r.startsWith("collab"))h=viewCollab(r.split("-")[1]);
+  else if(r.startsWith("b-")&&BR[r.slice(2)])h=viewBrand(r.slice(2));
+  else if(r==="signin")h=viewSignin();
+  else if(r==="portal")h=viewPortal();
+  else if(r.startsWith("team")){
+    if(!S.isAdmin)h=viewSignin();
+    else if(!S.db)h='<div class="wrap gate"><h1>Back office unavailable</h1><p class="muted">Saved records can\'t be reached in this view. Open the page from claude.ai while signed in.</p></div>';
+    else{const v={"team":viewDash,"team-time":viewTimesheet,"team-cal":()=>viewCalendar(true),"team-rem":viewReminders,"team-out":viewOutreach,"team-people":viewPeople,"team-vault":viewVault,"team-site":viewSite}[r]||viewDash;h=teamShell(TEAM_TABS.some(t=>t[0]===r)?r:"team",v())}
+  }
+  else h=viewHome();
+  app.innerHTML=h;
+  const cf=$("#collabForm");if(cf)cf.addEventListener("submit",e=>{e.preventDefault();collabSubmit(cf)});
+  document.querySelectorAll("form[data-member]").forEach(f=>f.addEventListener("submit",async e=>{e.preventDefault();const u=f.dataset.member;const brands=[...f.querySelectorAll("input[name=b]:checked")].map(x=>x.value);
+    if(await save("access",u,Object.assign({},S.access[u]||{},{brands,role:(S.access[u]||{}).role==="founder"?"founder":"member",updatedAt:new Date().toISOString()})))toast("Access saved")}));
+  const af=$("#authForm");if(af)af.addEventListener("submit",e=>{e.preventDefault();fbAuth(af,(e.submitter&&e.submitter.dataset.mode)||"in")});
+  const tm=$("#ts-month");if(tm)tm.addEventListener("change",()=>{if(tm.value){S.ts.month=tm.value;render()}});
+  $("#footnote").innerHTML=SNAP.publishedAt?' · Updated '+esc(new Date(SNAP.publishedAt).toLocaleDateString("en-US",{month:"short",day:"numeric",year:"numeric"})):'';
+}
+function route(){S.route=(location.hash||"#home").slice(1)||"home"}
+window.addEventListener("hashchange",()=>{route();render();window.scrollTo(0,0)});
+
+/* ---------- events ---------- */
+const byId=(col,id)=>S[col].find(x=>x.id===id);
+document.addEventListener("click",async e=>{
+  const t=e.target.closest("[data-act]");if(!t)return;
+  const a=t.dataset.act, id=t.dataset.id;
+  if(a==="scrim"){if(e.target===t)closeModal();return}
+  if(a==="close-modal")return closeModal();
+  if(a==="del-arm"){t.textContent="Tap again to delete";t.dataset.act="del-go";return}
+  if(a==="del-go"){const m=t.closest(".modal");if(m&&m._del)m._del();return}
+  if(a==="copy-letter"){const m=t.closest(".modal");return copyText(m._letter,t)}
+  if(a==="log-incoming"){const m=t.closest(".modal");const o=Object.assign({},m._rec);const rid=o.id;delete o.id;if(await save("outreach",rid,o)){t.disabled=true;t.textContent="Saved to Collabs"}return}
+  if(a==="ev-open")return eventDetail(id);
+  if(a==="day")return dayModal(t.dataset.date);
+  if(a==="cal-prev"||a==="cal-next"){const [y,m]=S.cal.month.split("-").map(Number);const d=new Date(y,m-1+(a==="cal-next"?1:-1),1);S.cal.month=iso(d).slice(0,7);return render()}
+  if(a==="cal-today"){S.cal.month=today().slice(0,7);return render()}
+  if(a==="cal-brand"){S.cal.brand=t.dataset.v;return render()}
+  if(a==="signout"){if(BACKEND==="firebase"&&window.firebase)firebase.auth().signOut();return}
+  if(a==="reset-pass")return fbReset();
+  if(a==="request-access"){t.disabled=true;const ok=await save("memberlog",S.uid,Object.assign({joinedAt:new Date().toISOString()},S.email?{email:S.email}:{}));if(!ok){t.disabled=false;openModal('<h3>Can\'t send the request</h3><p class="muted">Your account can view this page but can\'t save to it. Ask the founder to share it with you as a Contributor (“Can use”), then try again.</p><div class="row"><button class="btn ghost" data-act="close-modal">Close</button></div>')}return}
+  if(isMember()){
+    if(a==="ts-brand"){S.ts.brand=t.dataset.v;return render()}
+    if(a==="ts-type"){S.ts.type=t.dataset.v;return render()}
+    if(a==="new-entry")return entryModal({brand:t.dataset.brand||(S.ts.brand!=="all"?S.ts.brand:S.myBrands[0])});
+    if(a==="new-income")return entryModal({brand:t.dataset.brand||S.myBrands[0],type:"income"});
+    if(a==="edit-entry"){const x=S.myEntries.find(z=>z.id===id);return x&&entryModal(Object.assign({},x))}
+    if(a==="view-receipt")return viewReceipt(id);
+    if(a==="export")return exportCSV();
+    return;
+  }
+  if(!S.isAdmin)return;
+  if(a==="new-income")return entryModal({brand:t.dataset.brand||"hq",type:"income"});
+  if(a==="vault-setup")return vaultPassModal(true);
+  if(a==="vault-unlock")return vaultPassModal(false);
+  if(a==="vault-lock"){S.vkey=null;S.vplain={};return render()}
+  if(a==="vault-new"){vTouch();return vaultItemModal()}
+  if(a==="vault-edit"){vTouch();return vaultItemModal(Object.assign({id},S.vplain[id]))}
+  if(a==="vault-show"){vTouch();const sp=document.querySelector('.vpass[data-id="'+id+'"]');if(sp){const on=t.textContent==="Show";sp.textContent=on?((S.vplain[id]||{}).pass||""):"••••••••";t.textContent=on?"Hide":"Show"}return}
+  if(a==="vault-copy"){vTouch();return copyText((S.vplain[id]||{})[t.dataset.f]||"",t)}
+  if(a==="revoke"){if(await remove("access",id))toast("Access removed");return}
+  if(a==="ts-brand"){S.ts.brand=t.dataset.v;return render()}
+  if(a==="ts-type"){S.ts.type=t.dataset.v;return render()}
+  if(a==="slot-ts"){S.ts.brand=t.dataset.brand;S.ts.type="all";location.hash="#team-time";return}
+  if(a==="new-entry")return entryModal({brand:t.dataset.brand||(S.ts.brand!=="all"?S.ts.brand:"hq")});
+  if(a==="edit-entry"){const x=ledgerAll().find(z=>z.id===id);return x&&entryModal(Object.assign({},x))}
+  if(a==="new-event")return eventModal({brand:t.dataset.brand||(S.cal.brand!=="all"?S.cal.brand:"hq"),date:t.dataset.date||today()});
+  if(a==="edit-event"){const x=byId("events",id);return x&&eventModal(Object.assign({},x))}
+  if(a==="new-rem")return remModal({date:t.dataset.date||today(),brand:S.cal.brand!=="all"?S.cal.brand:"hq"});
+  if(a==="edit-rem"){const x=byId("reminders",id);return x&&remModal(Object.assign({},x))}
+  if(a==="new-out")return outModal();
+  if(a==="edit-out"){const x=byId("outreach",id);return x&&outModal(Object.assign({},x))}
+  if(a==="letter-out"){const x=byId("outreach",id);return x&&letterModal(x)}
+  if(a==="view-receipt")return viewReceipt(id);
+  if(a==="export")return exportCSV();
+  if(a==="publish")return publishSite(t);
+  if(a==="edit-contact")return contactModal();
+  if(a==="edit-brand")return brandModal(id);
+});
+document.addEventListener("change",async e=>{
+  const t=e.target;if(!S.isAdmin)return;
+  if(t.dataset.act==="toggle-rem"){const x=byId("reminders",t.dataset.id);if(x){const o=Object.assign({},x);delete o.id;o.done=t.checked;await save("reminders",x.id,o)}}
+  if(t.dataset.act==="out-status"){const x=byId("outreach",t.dataset.id);if(x){const o=Object.assign({},x);delete o.id;o.status=t.value;if(await save("outreach",x.id,o))toast("Status updated")}}
+});
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&$("#modal").innerHTML)closeModal()});
+
+/* ---------- firebase sign in (GitHub version) ---------- */
+async function fbAuth(form,mode){
+  const m=$("#authMsg"),o=formObj(form);m.textContent=mode==="up"?"Creating your account…":"Signing in…";
+  try{
+    if(mode==="up"){const c=await firebase.auth().createUserWithEmailAndPassword(o.email,o.password);
+      await S.db.doc("memberlog/"+c.user.uid).set({email:o.email,joinedAt:new Date().toISOString()});}
+    else await firebase.auth().signInWithEmailAndPassword(o.email,o.password);
+  }catch(e){const c=e&&e.code||"";m.textContent=/wrong-password|invalid-credential|user-not-found/.test(c)?"That email and password don't match. Try again or reset your password.":/email-already/.test(c)?"An account with that email already exists. Sign in instead.":/weak-password/.test(c)?"Use a password with at least 6 characters.":"Couldn't sign in. Check your connection and try again."}
+}
+async function fbReset(){
+  const em=$("#a-email"),m=$("#authMsg");if(!em||!em.value){if(m)m.textContent="Type your email above first.";return}
+  try{await firebase.auth().sendPasswordResetEmail(em.value);m.textContent="Check your email for a reset link."}catch(e){m.textContent="Couldn't send a reset email. Check the address."}
+}
+
+/* ---------- boot ---------- */
+$("#logoNav").src=LOGO;
+$("#yr").textContent=new Date().getFullYear();
+route();render();
+(async()=>{
+  if(BACKEND==="firebase"){
+    const cfg=window.FIREBASE_CONFIG;
+    if(!(window.firebase&&cfg&&cfg.apiKey&&!/YOUR_/.test(cfg.apiKey))){S.authChecked=true;render();return}
+    try{firebase.initializeApp(cfg);S.db=firebase.firestore();S.fbReady=true}catch(e){S.authChecked=true;render();return}
+    subscribePublic();
+    let started=false;
+    firebase.auth().onAuthStateChanged(async u=>{
+      if(started&&!u){location.hash="#home";location.reload();return}
+      if(!u){S.authChecked=true;render();return}
+      started=true;S.signedIn=true;S.uid=u.uid;S.email=u.email||"";
+      let a={};try{const d=await S.db.doc("access/"+u.uid).get();a=d.exists?d.data():{}}catch(e){}
+      S.isAdmin=a.role==="founder";S.authChecked=true;
+      if(S.isAdmin)subscribeFounder();else subscribeMember();
+      if(S.route==="signin")location.hash=S.isAdmin?"#team":"#portal";
+      render();
+    });
+    return;
+  }
+  let user=null;
+  try{user=await cu("user")}catch(e){}
+  S.userCap=user;
+  if(user){
+    try{S.isAdmin=!!(await user.isOwner())}catch(e){}
+    try{S.uid=await user.id()}catch(e){}
+  }
+  S.signedIn=!!S.uid;
+  try{S.db=await cu("db")}catch(e){}
+  if(S.db&&S.uid){if(S.isAdmin)subscribeFounder();else subscribeMember()}
+  S.authChecked=true;
+  render();
+})();
+})();
+</script>
+
+</body>
+</html>
