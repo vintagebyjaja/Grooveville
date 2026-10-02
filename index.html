@@ -463,7 +463,7 @@ const headBrands=(u)=>BRANDS.map(b=>b.id).filter(b=>headsOf(b).includes(u||S.uid
 const isHead=()=>!S.isAdmin&&headBrands().length>0;
 const manageBrands=()=>S.isAdmin?BRANDS.map(b=>b.id):headBrands();
 function allGrants(){let a=[];Object.entries(S.grants).forEach(([h,l])=>{l.forEach(g=>a.push(Object.assign({author:h},g)))});
-  return a.filter(g=>BR[g.brand]&&(g.author===S.org.founder||(S.isAdmin&&g.author===S.uid)||headsOf(g.brand).includes(g.author)))}
+  return a.filter(g=>BR[g.brand]&&(g.author===S.org.founder||(S.org.admins||[]).includes(g.author)||(S.isAdmin&&g.author===S.uid)||headsOf(g.brand).includes(g.author)))}
 const grantFor=(m,b)=>allGrants().filter(g=>g.member===m&&g.brand===b).sort((x,y)=>String(y.at||"")<String(x.at||"")?-1:1)[0];
 const teamOf=b=>[...new Set(allGrants().filter(g=>g.brand===b&&g.status==="approved").map(g=>g.member).concat(headsOf(b)))];
 function computeMine(){
@@ -472,7 +472,7 @@ function computeMine(){
   S.myBrands=BRANDS.map(b=>b.id).filter(b=>g.includes(b)&&grantFor(S.uid,b).status==="approved"||headsOf(b).includes(S.uid));
 }
 function watchGrants(){
-  const ids=new Set([S.org.founder,S.uid].concat(...Object.values(S.org.heads||{})).filter(Boolean));
+  const ids=new Set([S.org.founder,S.uid].concat(S.org.admins||[]).concat(...Object.values(S.org.heads||{})).filter(Boolean));
   ids.forEach(h=>{if(grantSubs[h])return;const col="grants/"+h+"/to";
     grantSubs[h]=S.db.collection(col).onSnapshot(s=>{S.grants[h]=s.docs.map(d=>Object.assign({id:d.id},d.data()));scheduleRender(true)},()=>{})});
   if(!reqSub){
@@ -482,8 +482,8 @@ function watchGrants(){
 }
 function subscribeTeam(){
   S.db.doc("org/heads").onSnapshot(d=>{
-    const o=d.exists?d.data():{};S.org={founder:o.founder||"",heads:o.heads||{}};S.loaded.org=true;
-    if(S.isAdmin&&S.uid&&S.org.founder!==S.uid)save("org","heads",{founder:S.uid,heads:S.org.heads});
+    const o=d.exists?d.data():{};S.org={founder:o.founder||"",admins:o.admins||[],heads:o.heads||{}};S.loaded.org=true;
+    if(S.isAdmin&&S.uid&&(!S.org.founder||!S.org.admins.includes(S.uid)))save("org","heads",{founder:S.org.founder||S.uid,admins:[...new Set(S.org.admins.concat(S.uid))],heads:S.org.heads});
     if(reqSub&&!S.isAdmin&&headBrands().length&&!S.loaded.reqAll){reqSub();reqSub=null;S.loaded.reqAll=true}
     watchGrants();scheduleRender(true);
   },()=>{S.loaded.org=true;watchGrants();scheduleRender(true)});
@@ -500,7 +500,7 @@ async function removeFromTeam(member,brand){
 }
 async function setHeads(brand,list){
   const heads=Object.assign({},S.org.heads);heads[brand]=[...new Set(list)];
-  if(await save("org","heads",{founder:S.org.founder||S.uid,heads})){
+  if(await save("org","heads",{founder:S.org.founder||S.uid,admins:S.org.admins||[],heads})){
     if(BACKEND==="firebase"){for(const u of list.concat(headsOf(brand))){const hb=BRANDS.map(b=>b.id).filter(b=>(heads[b]||[]).includes(u));await S.db.doc("access/"+u).set({heads:hb},{merge:true}).catch(()=>{})}}
     toast("Company heads updated");
   }
@@ -524,7 +524,7 @@ function navLinks(){
     '<a href="#home"'+(r==="home"||r.startsWith("b-")?' class="on"':'')+'>Home</a>'+
     '<a href="#calendar"'+on("calendar")+'>Calendar</a>'+
     '<a href="#collab"'+on("collab")+'>Collaborate</a>'+
-    (S.isAdmin?'<a href="#team" class="team'+(team?' on':'')+'">Back office</a>':isMember()?'<a href="#portal" class="team'+(r.startsWith("portal")?' on':'')+'">'+(isHead()?'My team':'My timesheet')+'</a>':'<a href="#signin" class="team'+(r==="signin"||team?' on':'')+'">Sign in</a>');
+    (S.isAdmin?'<a href="#team" class="team'+(team?' on':'')+'">Back office</a>':S.signedIn?'<a href="#portal" class="team'+(r.startsWith("portal")||r==="join"?' on':'')+'">My portal</a>':'<a href="#signin" class="team'+(r==="signin"||team?' on':'')+'">Sign in</a>');
 }
 
 function treeSVG(){
@@ -842,9 +842,35 @@ function viewTeams(){
   return intro+reqHtml+teams;
 }
 function viewMyTeam(){
-  return '<section class="teamhead"><div class="wrap"><div class="eyebrow">Company head · Private</div><h1>My team</h1>'+portalTabs("portal-team")+'</div></section><section class="tsec"><div class="wrap">'+viewTeams()+'</div></section>';
+  return portalHead("My team","","portal-team")+'<section class="tsec"><div class="wrap">'+viewTeams()+'</div></section>';
 }
-const portalTabs=cur=>isHead()?'<nav class="tabs"><a href="#portal"'+(cur==="portal"?' class="on"':'')+'>My timesheet</a><a href="#portal-team"'+(cur==="portal-team"?' class="on"':'')+'>My team</a></nav>':'';
+const portalTabs=cur=>'<nav class="tabs"><a href="#portal"'+(cur==="portal"?' class="on"':'')+'>Dashboard</a>'+(isMember()?'<a href="#portal-time"'+(cur==="portal-time"?' class="on"':'')+'>My timesheet</a>':'')+(isHead()?'<a href="#portal-team"'+(cur==="portal-team"?' class="on"':'')+'>My team</a>':'')+'<a href="#join"'+(cur==="join"?' class="on"':'')+'>Join a team</a></nav>';
+function portalHead(title,sub,cur){return '<section class="teamhead"><div class="wrap"><div class="eyebrow">Grooveville team portal · Private</div><h1>'+title+'</h1>'+(sub?'<p class="muted" style="margin-top:6px">'+sub+'</p>':'')+portalTabs(cur)+'</div></section>'}
+function accountCard(){
+  return '<div class="card" style="display:flex;flex-direction:column;gap:10px;min-width:0"><div class="eyebrow">Your account</div>'+(S.email?'<div><span class="muted" style="font-size:13px">Email</span><div style="overflow-wrap:anywhere">'+esc(S.email)+'</div></div>':'')+
+    '<div><span class="muted" style="font-size:13px">User ID</span><div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><code class="mono" style="font-size:13px;overflow-wrap:anywhere;user-select:all">'+esc(S.uid||"")+'</code><button class="rowbtn" data-act="copy-uid">Copy</button></div></div>'+
+    (BACKEND==="firebase"&&!S.isAdmin?'<details style="font-size:13.5px"><summary style="cursor:pointer;font-weight:600">Setting up the founder account?</summary><ol style="margin:8px 0 0;padding-left:18px;display:grid;gap:4px" class="muted"><li>Copy the User ID above.</li><li>In Firebase, open <b>Firestore Database → Data</b>.</li><li>Click <b>+ Start collection</b> (or open the <b>access</b> collection if it exists). Collection ID: <code>access</code></li><li>Document ID: paste the User ID.</li><li>Add a field: name <code>role</code>, type <b>string</b>, value <code>founder</code>. Save.</li><li>This page switches to the Back office on its own.</li></ol></details>':'')+
+    (BACKEND==="firebase"?'<button class="btn ghost sm" data-act="signout" style="align-self:flex-start">Sign out</button>':'')+'</div>';
+}
+function viewPortalHome(){
+  const asked=((S.myReq&&S.myReq.brands)||[]).filter(b=>!S.myBrands.includes(b));
+  const mo=today().slice(0,7);
+  let main;
+  if(isMember()){
+    const t=S.myBrands.map(id=>monthStats(id,mo)).reduce((a,s)=>({h:a.h+s.h,sp:a.sp+s.sp,inc:a.inc+s.inc,n:a.n+s.n}),{h:0,sp:0,inc:0,n:0});
+    main='<div class="kpis" style="grid-template-columns:repeat(4,minmax(0,1fr))"><div class="kpi"><span class="eyebrow">My hours · '+MON[new Date().getMonth()]+'</span><b>'+hrs(t.h)+'</b></div><div class="kpi"><span class="eyebrow">Spent</span><b class="neg">'+money(t.sp)+'</b></div><div class="kpi"><span class="eyebrow">Money in</span><b class="pos">'+money(t.inc)+'</b></div><div class="kpi"><span class="eyebrow">Entries</span><b>'+t.n+'</b></div></div>'+
+      '<div class="sechead" style="margin-bottom:12px"><h2 style="font-size:22px">My teams</h2><a class="btn ghost sm" href="#portal-time">Open my timesheet</a></div>'+
+      '<div class="slots">'+S.myBrands.map(id=>{const s=monthStats(id,mo);return '<div class="slot" style="'+cvar(id)+'"><h4>'+esc(brandInfo(id).name)+(headsOf(id).includes(S.uid)?' <span class="pill pub">Head</span>':'')+'</h4><div class="nums"><div><small>Hours</small><span>'+hrs(s.h)+'</span></div><div><small>Spent</small><span>'+money(s.sp).replace(".00","")+'</span></div><div><small>Entries</small><span>'+s.n+'</span></div></div>'+moneyIn(s,id)+'<div class="acts"><button class="btn sm" style="background:var(--c);color:var(--bg)" data-act="new-entry" data-brand="'+id+'">+ Log</button></div></div>'}).join("")+'</div>'+
+      (asked.length?'<p class="muted" style="margin-top:16px">Waiting for approval: '+asked.map(b=>chip(b)).join(" ")+'</p>':'');
+  } else {
+    main='<div class="card" style="display:flex;flex-direction:column;gap:12px"><div class="eyebrow">Your status</div>'+(asked.length?'<h2 style="font-size:24px">Waiting for approval</h2><p class="muted">You asked to join '+asked.map(b=>chip(b)).join(" ")+'. The company head or the founder will approve you, and this page updates on its own.</p>':'<h2 style="font-size:24px">You\'re not on a team yet</h2><p class="muted">Ask to join the Grooveville company you work with. Once approved, your private timesheet shows up here.</p>')+
+      '<a class="btn olive" href="#join" style="align-self:flex-start">'+(asked.length?'Change my request':'Join a team')+'</a></div>';
+  }
+  return portalHead(isMember()?"My dashboard":"Welcome to the portal",isMember()?"Only you and the founder can see your entries.":"",'portal')+'<section class="tsec"><div class="wrap cols2"><div style="min-width:0">'+main+'</div><aside style="min-width:0">'+accountCard()+'</aside></div></section>';
+}
+function viewJoin(){
+  return portalHead("Join a team","Pick the Grooveville companies you work with. The company head or the founder approves each request.","join")+'<section class="tsec"><div class="wrap">'+joinPicker()+'</div></section>';
+}
 function joinPicker(){
   const r=S.myReq||{}, asked=r.brands||[];
   return '<div class="card" style="width:100%;max-width:560px;text-align:left;display:flex;flex-direction:column;gap:12px"><b>Which team do you want to join?</b><div class="brandtabs" style="margin:0">'+BRANDS.map(b=>{const g=grantFor(S.uid,b.id),st=S.myBrands.includes(b.id)?"Joined":g&&g.status==="declined"?"Declined":asked.includes(b.id)?"Waiting":"";
@@ -854,11 +880,7 @@ function viewSignin(){
   let body;
   if(!S.authChecked)body='<h1>Checking sign in…</h1><p class="muted">One moment.</p>';
   else if(S.isAdmin)body='<div class="eyebrow">Signed in · Founder</div><h1>Welcome back</h1><p class="muted">You have full access to the back office: every timesheet, calendar, reminder and collab.</p><div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center"><a class="btn olive" href="#team">Open back office</a>'+(BACKEND==="firebase"?'<button class="btn ghost" data-act="signout">Sign out</button>':'')+'</div>';
-  else if(isMember())body='<div class="eyebrow">Signed in · '+(isHead()?'Company head':'Team member')+'</div><h1>Your timesheet is ready</h1><p class="muted">You can log time, money spent and money in for '+S.myBrands.map(b=>esc(brandInfo(b).name)).join(", ")+'.'+(isHead()?' As a company head you can also approve people for your team.':'')+'</p><div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center"><a class="btn olive" href="#portal">Open my timesheet</a>'+(isHead()?'<a class="btn ghost" href="#portal-team">My team</a>':'')+(BACKEND==="firebase"?'<button class="btn ghost" data-act="signout">Sign out</button>':'')+'</div><p class="muted" style="font-size:13.5px">Want to join another company team?</p>'+joinPicker();
-  else if(S.signedIn&&S.db){
-    const asked=(S.myReq&&S.myReq.brands)||[];
-    body=(asked.length?'<div class="eyebrow">Request sent</div><h1>Waiting for approval</h1><p class="muted">The company head or the founder will approve you. This page updates on its own once you\'re in.</p>':'<div class="eyebrow">Grooveville team</div><h1>Join a company team</h1><p class="muted">Pick the Grooveville company you work with. Once the company head or the founder approves you, you\'ll get a private timesheet here.</p>')+joinPicker()+(BACKEND==="firebase"?'<button class="btn ghost" data-act="signout">Sign out</button>':'');
-  }
+  else if(S.signedIn&&S.db)return viewPortalHome();
   else if(BACKEND==="firebase"){
     body=!S.fbReady?'<h1>Sign in isn\'t set up yet</h1><p class="muted">Add your Firebase settings to firebase-config.js (see README) to turn on team sign in.</p>':
       '<div class="eyebrow">Grooveville team portal</div><h1>Sign in</h1><form id="authForm" class="card" style="display:flex;flex-direction:column;gap:12px;text-align:left;width:100%;max-width:380px"><label class="f">Email<input class="i" type="email" id="a-email" name="email" autocomplete="email" required></label><label class="f">Password<input class="i" type="password" id="a-pass" name="password" autocomplete="current-password" minlength="6" required></label><button class="btn olive" type="submit" data-mode="in">Sign in</button><button class="btn ghost" type="submit" data-mode="up">Create team account</button><button class="rowbtn" type="button" data-act="reset-pass" style="align-self:center">Forgot password?</button><p id="authMsg" class="muted" style="font-size:13px;text-align:center" aria-live="polite"></p></form>';
@@ -870,7 +892,7 @@ function viewPortal(){
   if(!isMember())return viewSignin();
   const mo=today().slice(0,7);
   const slots='<div class="slots" style="margin-bottom:24px">'+S.myBrands.map(id=>{const s=monthStats(id,mo);return '<div class="slot" style="'+cvar(id)+'"><h4>'+esc(brandInfo(id).name)+'</h4><div class="nums"><div><small>Hours</small><span>'+hrs(s.h)+'</span></div><div><small>Spent</small><span>'+money(s.sp).replace(".00","")+'</span></div><div><small>Entries</small><span>'+s.n+'</span></div></div>'+moneyIn(s,id)+'<div class="acts"><button class="btn sm" style="background:var(--c);color:var(--bg)" data-act="new-entry" data-brand="'+id+'">+ Log</button></div></div>'}).join("")+'</div>';
-  return '<section class="teamhead"><div class="wrap"><div class="eyebrow">Grooveville team · Private</div><h1>My timesheet</h1><p class="muted" style="margin-top:6px">Only you and the founder can see these entries.</p>'+portalTabs("portal")+'</div></section><section class="tsec"><div class="wrap">'+slots+viewTimesheet()+'</div></section>';
+  return portalHead("My timesheet","Only you and the founder can see these entries.","portal-time")+'<section class="tsec"><div class="wrap">'+slots+viewTimesheet()+'</div></section>';
 }
 
 /* ---------- private notes (encrypted in the browser) ---------- */
@@ -1301,8 +1323,10 @@ function render(){
   else if(r.startsWith("collab"))h=viewCollab(r.split("-")[1]);
   else if(r.startsWith("b-")&&BR[r.slice(2)])h=viewBrand(r.slice(2));
   else if(r==="signin")h=viewSignin();
-  else if(r==="portal")h=viewPortal();
-  else if(r==="portal-team")h=isHead()?viewMyTeam():viewPortal();
+  else if(r==="portal")h=S.signedIn&&S.db&&!S.isAdmin?viewPortalHome():viewSignin();
+  else if(r==="portal-time")h=viewPortal();
+  else if(r==="join")h=S.signedIn&&S.db&&!S.isAdmin?viewJoin():viewSignin();
+  else if(r==="portal-team")h=isHead()?viewMyTeam():viewSignin();
   else if(r.startsWith("team")){
     if(!S.isAdmin)h=viewSignin();
     else if(!S.db)h='<div class="wrap gate"><h1>Back office unavailable</h1><p class="muted">Saved records can\'t be reached in this view. Open the page from claude.ai while signed in.</p></div>';
@@ -1338,6 +1362,7 @@ document.addEventListener("click",async e=>{
   if(a==="cal-brand"){S.cal.brand=t.dataset.v;return render()}
   if(a==="signout"){if(BACKEND==="firebase"&&window.firebase)firebase.auth().signOut();return}
   if(a==="reset-pass")return fbReset();
+  if(a==="copy-uid")return copyText(S.uid||"",t);
   if(a==="request-join"){const card=t.closest(".card");const brands=[...card.querySelectorAll("input[name=jb]:checked:not(:disabled)")].map(x=>x.value);
     if(!brands.length){toast("Pick at least one company");return}
     t.disabled=true;const base=Object.assign({joinedAt:(S.myReq&&S.myReq.joinedAt)||new Date().toISOString()},S.email?{email:S.email}:{});
@@ -1439,11 +1464,13 @@ route();render();
       if(started&&!u){location.hash="#home";location.reload();return}
       if(!u){S.authChecked=true;render();return}
       started=true;S.signedIn=true;S.uid=u.uid;S.email=u.email||"";
-      let a={};try{const d=await S.db.doc("access/"+u.uid).get();a=d.exists?d.data():{}}catch(e){}
-      S.isAdmin=a.role==="founder";S.authChecked=true;
-      if(S.isAdmin)subscribeFounder();else subscribeMember();
-      if(S.route==="signin")location.hash=S.isAdmin?"#team":"#portal";
-      render();
+      let first=true;
+      S.db.doc("access/"+u.uid).onSnapshot(d=>{
+        const f=d.exists&&["founder","hnic"].includes(String(d.data().role||"").toLowerCase());
+        if(f&&!S.isAdmin){S.isAdmin=true;subscribeFounder();if(!first||S.route==="signin"||S.route.startsWith("portal")||S.route==="join")location.hash="#team";toast("Founder access on")}
+        if(first){first=false;S.authChecked=true;if(!S.isAdmin){subscribeMember();if(S.route==="signin")location.hash="#portal"}}
+        render();
+      },()=>{if(first){first=false;S.authChecked=true;subscribeMember();if(S.route==="signin")location.hash="#portal";render()}});
     });
     return;
   }

@@ -46,6 +46,8 @@ Every time you change a file on GitHub, Netlify republishes the site automatical
 3. **Firestore Database** > **Start collection** > Collection ID `access` > Document ID = your UID > add a field `role` (string) = `founder` > Save.
 4. Reload the site and sign in. You now see **Back office** with everything.
 
+**Backup admin (HNIC):** to give a second account the same full access, have it create an account on the site, copy its User ID from **My portal → Your account**, then add another document in the `access` collection with that User ID as the Document ID and the field `role` (string) = `hnic`. Use it if your main founder account ever has trouble signing in.
+
 ## 5. Teams, company heads and join requests
 
 1. A new person opens the site > **Sign in** > **Create team account**, then picks the company team(s) they want to join and clicks **Ask to join**.

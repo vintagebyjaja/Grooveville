@@ -1,7 +1,7 @@
 rules_version = '2';
 // Grooveville security rules.
 // Public: site settings and events marked "public".
-// Founder (access/{uid}.role == "founder"): everything.
+// Founder or HNIC (access/{uid}.role == "founder" or "hnic"): everything.
 // Company heads (listed in org/heads): approve people for their own company.
 // Team members: only their own timesheet.
 service cloud.firestore {
@@ -11,7 +11,7 @@ service cloud.firestore {
     function isFounder() {
       return signedIn()
         && exists(/databases/$(database)/documents/access/$(request.auth.uid))
-        && accessDoc().data.role == "founder";
+        && accessDoc().data.role in ["founder", "hnic"];
     }
     function headsDoc() { return get(/databases/$(database)/documents/org/heads); }
     function isHeadOf(b) {
