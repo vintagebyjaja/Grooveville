@@ -2,7 +2,8 @@ rules_version = '2';
 // Grooveville security rules.
 // Public: site settings and events marked "public".
 // Founder (access/{uid}.role == "founder"): everything.
-// Team members: only their own timesheet, and only for the companies the founder assigned them.
+// Company heads (listed in org/heads): approve people for their own company.
+// Team members: only their own timesheet.
 service cloud.firestore {
   match /databases/{database}/documents {
     function signedIn() { return request.auth != null; }
@@ -12,7 +13,18 @@ service cloud.firestore {
         && exists(/databases/$(database)/documents/access/$(request.auth.uid))
         && accessDoc().data.role == "founder";
     }
-    function myBrands() { return accessDoc().data.brands; }
+    function headsDoc() { return get(/databases/$(database)/documents/org/heads); }
+    function isHeadOf(b) {
+      return signedIn()
+        && exists(/databases/$(database)/documents/org/heads)
+        && (b in headsDoc().data.heads)
+        && request.auth.uid in headsDoc().data.heads[b];
+    }
+    function isAnyHead() {
+      return signedIn()
+        && exists(/databases/$(database)/documents/access/$(request.auth.uid))
+        && accessDoc().data.get("heads", []).size() > 0;
+    }
 
     // Public company page text and contact email
     match /settings/{doc} {
@@ -26,7 +38,28 @@ service cloud.firestore {
       allow write: if isFounder();
     }
 
-    // Who can do what. Only the founder can grant access.
+    // Company heads list: everyone signed in can read it, only the founder changes it
+    match /org/{doc} {
+      allow read: if signedIn();
+      allow write: if isFounder();
+    }
+
+    // Join requests: each person writes their own; heads and the founder can read them
+    match /requests/{uid} {
+      allow read: if signedIn() && (request.auth.uid == uid || isFounder() || isAnyHead());
+      allow write: if signedIn() && (request.auth.uid == uid || isFounder());
+    }
+
+    // Approvals: written under the approver's own id, only for a company they head
+    match /grants/{author}/to/{id} {
+      allow read: if signedIn();
+      allow create, update: if signedIn() && request.auth.uid == author
+        && (isFounder() || isHeadOf(request.resource.data.brand));
+      allow delete: if isFounder()
+        || (signedIn() && request.auth.uid == author && isHeadOf(resource.data.brand));
+    }
+
+    // Founder role, plus a copy of which companies each person heads. Only the founder can change it.
     match /access/{uid} {
       allow read: if signedIn() && (request.auth.uid == uid || isFounder());
       allow write: if isFounder();
@@ -40,8 +73,7 @@ service cloud.firestore {
 
       match /entries/{id} {
         allow read, delete: if signedIn() && (request.auth.uid == uid || isFounder());
-        allow create, update: if isFounder()
-          || (signedIn() && request.auth.uid == uid && request.resource.data.brand in myBrands());
+        allow create, update: if signedIn() && (request.auth.uid == uid || isFounder());
       }
       match /receipts/{id} {
         allow read, write: if signedIn() && (request.auth.uid == uid || isFounder());

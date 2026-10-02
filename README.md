@@ -46,11 +46,12 @@ Every time you change a file on GitHub, Netlify republishes the site automatical
 3. **Firestore Database** > **Start collection** > Collection ID `access` > Document ID = your UID > add a field `role` (string) = `founder` > Save.
 4. Reload the site and sign in. You now see **Back office** with everything.
 
-## 5. Add team members
+## 5. Teams, company heads and join requests
 
-1. A team member opens the site > **Sign in** > **Create team account**.
-2. You open **Back office > Team access**, tick the companies they work for, and click **Save access**.
-3. They sign in and see **My timesheet**: they can log meetings, work hours, money spent, receipts (with a photo) and money in (payments, donations, sponsorships and more), only for the companies you picked. They never see the back office, other people's entries, private events, reminders, collabs or private notes.
+1. A new person opens the site > **Sign in** > **Create team account**, then picks the company team(s) they want to join and clicks **Ask to join**.
+2. **You (founder)** see every request in **Back office > Teams**. Click **Approve** or **Decline**, or use **Add a person** to put someone on a team directly.
+3. **Company heads:** in **Back office > Teams**, use **Make head** under a company to pick its head (they must have an account first). A head gets a **My team** tab where they approve or decline people asking to join *their* company and add or remove members. Heads can't touch other companies.
+4. Approved people sign in and see **My timesheet**. They can log meetings, work hours, money spent, receipts (with a photo) and money in (payments, donations, sponsorships and more) for their company. They never see the back office, other people's entries, private events, reminders, collabs or private notes. Heads can join more teams the same way.
 
 ## Private notes
 
