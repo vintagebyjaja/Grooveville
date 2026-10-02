@@ -1,10 +1,11 @@
-// Paste your Firebase web app settings here (Firebase console > Project settings > Your apps > Web app).
+// Grooveville Firebase settings (project: groovevillellc).
 // These values are safe to publish. Your data is protected by firestore.rules, not by hiding this file.
 window.FIREBASE_CONFIG = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_PROJECT.firebaseapp.com",
-  projectId: "YOUR_PROJECT",
-  storageBucket: "YOUR_PROJECT.appspot.com",
-  messagingSenderId: "YOUR_SENDER_ID",
-  appId: "YOUR_APP_ID"
+  apiKey: "AIzaSyA1luaNLJ-2D2YRYRXCg1bpfe6ya3KDHeI",
+  authDomain: "groovevillellc.firebaseapp.com",
+  projectId: "groovevillellc",
+  storageBucket: "groovevillellc.firebasestorage.app",
+  messagingSenderId: "267419071706",
+  appId: "1:267419071706:web:90172484360dd0a4c421e3",
+  measurementId: "G-XWPNQFFRQB"
 };
