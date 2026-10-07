@@ -376,7 +376,7 @@ function livePublic(){
     contactEmail:site.contactEmail||"", signer:site.signer||"", phone:site.phone||"",
     brands:site.brands||{},
     events:sortBy(S.events.filter(e=>e.visibility==="public"),e=>e.date+(e.start||"")).map(e=>({
-      id:e.id,brand:e.brand,title:e.title,date:e.date,start:e.start||"",end:e.end||"",location:e.location||"",description:e.description||"",link:e.link||""}))
+      id:e.id,brand:e.brand,title:e.title,date:e.date,start:e.start||"",end:e.end||"",location:e.location||"",description:e.description||"",link:e.link||"",repeat:e.repeat||"",days:e.repeat?(e.days||[]):[],until:e.until||"",count:e.count||"",exdates:e.repeat?(e.exdates||[]):[]}))
   };
 }
 const pub = ()=>BACKEND==="firebase"?((S.loaded.site&&S.loaded.events)?livePublic():SNAP):((S.isAdmin&&S.loaded.site&&S.loaded.events)?livePublic():SNAP);
@@ -409,7 +409,7 @@ function gcal(o){
     let ed=d;if(e<=o.start)ed=addDays(o.date,1).replace(/-/g,"");
     dates=d+"T"+o.start.replace(":","")+"00/"+ed+"T"+e.replace(":","")+"00";}
   else dates=d+"/"+addDays(o.date,1).replace(/-/g,"");
-  return "https://calendar.google.com/calendar/render?action=TEMPLATE&text="+encodeURIComponent(o.title||"")+"&dates="+dates+"&details="+encodeURIComponent(o.details||"")+"&location="+encodeURIComponent(o.location||"")+"&ctz=America/New_York";
+  return "https://calendar.google.com/calendar/render?action=TEMPLATE&text="+encodeURIComponent(o.title||"")+"&dates="+dates+"&details="+encodeURIComponent(o.details||"")+(o.recur?"&recur="+encodeURIComponent(o.recur):"")+"&location="+encodeURIComponent(o.location||"")+"&ctz=America/New_York";
 }
 
 /* ---------- db ---------- */
@@ -518,6 +518,52 @@ async function resolveNames(ids){
 }
 const memberName=u=>u===S.uid?"You":(S.requests[u]&&S.requests[u].email)||(S.members[u]&&S.members[u].email)||S.names[u]||"Team member "+String(u).slice(-4);
 
+/* ---------- recurring events ---------- */
+const REPEATS=[["","Does not repeat"],["daily","Every day"],["weekly","Every week"],["biweekly","Every 2 weeks"],["monthly","Every month (same date)"],["monthlyNth","Every month (same weekday)"],["yearly","Every year"]];
+const DOW_LONG=["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+function nthInfo(ds){const d=parse(ds),dim=new Date(d.getFullYear(),d.getMonth()+1,0).getDate(),n=Math.ceil(d.getDate()/7);const last=d.getDate()+7>dim&&n>=4;return {n,last,wd:d.getDay(),label:(last?"last":["first","second","third","fourth","fifth"][n-1])+" "+DOW_LONG[d.getDay()]}}
+function occurrences(e,from,to){
+  const out=[];if(!e||!e.date)return out;
+  if(!e.repeat){if(e.date>=from&&e.date<=to)out.push(e.date);return out}
+  const ex=new Set(e.exdates||[]),until=e.until||"9999-12-31",cnt=Number(e.count)||0,start=parse(e.date);let n=0,guard=0;
+  const done=ds=>ds>to||ds>until||(cnt&&n>=cnt)||++guard>5000;
+  const push=ds=>{n++;if(ds>=from&&!ex.has(ds))out.push(ds)};
+  if(e.repeat==="daily"){for(let d=new Date(start);;d.setDate(d.getDate()+1)){const ds=iso(d);if(done(ds))break;push(ds)}}
+  else if(e.repeat==="weekly"||e.repeat==="biweekly"){
+    const step=e.repeat==="biweekly"?2:1,days=((e.days&&e.days.length)?e.days:[start.getDay()]).map(Number).sort((a,b)=>a-b);
+    const wk0=new Date(start);wk0.setDate(wk0.getDate()-wk0.getDay());
+    outer:for(let w=0;;w+=step){for(const dw of days){const d=new Date(wk0);d.setDate(d.getDate()+w*7+dw);const ds=iso(d);if(ds<e.date)continue;if(done(ds))break outer;push(ds)}}
+  }
+  else if(e.repeat==="monthly"){const day=start.getDate();for(let k=0;;k++){const y=start.getFullYear(),m=start.getMonth()+k,dim=new Date(y,m+1,0).getDate();if(dim<day){if(iso(new Date(y,m,1))>to||++guard>5000)break;continue}const ds=iso(new Date(y,m,day));if(done(ds))break;push(ds)}}
+  else if(e.repeat==="monthlyNth"){const ni=nthInfo(e.date);
+    for(let k=0;;k++){const y=start.getFullYear(),m=start.getMonth()+k;let d;
+      if(ni.last){d=new Date(y,m+1,0);while(d.getDay()!==ni.wd)d.setDate(d.getDate()-1)}
+      else{d=new Date(y,m,1);while(d.getDay()!==ni.wd)d.setDate(d.getDate()+1);d.setDate(d.getDate()+7*(ni.n-1));if(d.getMonth()!==new Date(y,m,1).getMonth()){if(iso(new Date(y,m,1))>to||++guard>5000)break;continue}}
+      const ds=iso(d);if(done(ds))break;push(ds)}}
+  else if(e.repeat==="yearly"){for(let k=0;k<200;k++){const d=new Date(start.getFullYear()+k,start.getMonth(),start.getDate());if(d.getMonth()!==start.getMonth())continue;const ds=iso(d);if(done(ds))break;push(ds)}}
+  return out;
+}
+function expand(list,from,to){const out=[];(list||[]).forEach(e=>occurrences(e,from,to).forEach(ds=>out.push(e.repeat?Object.assign({},e,{date:ds,_occ:ds}):e)));return sortBy(out,x=>x.date+(x.start||""))}
+const upcomingEvents=(list,days)=>expand(list,today(),addDays(today(),days||400));
+function repeatText(e){
+  if(!e||!e.repeat)return "";
+  let s=({daily:"Every day",weekly:"Every week",biweekly:"Every 2 weeks",monthly:"Monthly on day "+parse(e.date).getDate(),monthlyNth:"Monthly on the "+nthInfo(e.date).label,yearly:"Every year on "+MON[parse(e.date).getMonth()]+" "+parse(e.date).getDate()})[e.repeat]||"Repeats";
+  if((e.repeat==="weekly"||e.repeat==="biweekly")){const ds=((e.days&&e.days.length)?e.days:[parse(e.date).getDay()]).map(Number).sort((a,b)=>a-b);s+=" on "+ds.map(x=>DOW[x]).join(", ")}
+  if(e.until)s+=" until "+fmtDate(e.until);else if(Number(e.count))s+=", "+e.count+" times";
+  return s;
+}
+function rrule(e){
+  if(!e||!e.repeat)return "";
+  const BD=["SU","MO","TU","WE","TH","FR","SA"];let r="RRULE:FREQ=";
+  if(e.repeat==="daily")r+="DAILY";
+  else if(e.repeat==="weekly"||e.repeat==="biweekly"){r+="WEEKLY"+(e.repeat==="biweekly"?";INTERVAL=2":"")+";BYDAY="+((e.days&&e.days.length)?e.days:[parse(e.date).getDay()]).map(x=>BD[x]).join(",")}
+  else if(e.repeat==="monthly")r+="MONTHLY";
+  else if(e.repeat==="monthlyNth"){const ni=nthInfo(e.date);r+="MONTHLY;BYDAY="+(ni.last?"-1":ni.n)+BD[ni.wd]}
+  else if(e.repeat==="yearly")r+="YEARLY";
+  if(e.until)r+=";UNTIL="+e.until.replace(/-/g,"")+"T235959";else if(Number(e.count))r+=";COUNT="+Number(e.count);
+  return r;
+}
+
 /* ---------- public views ---------- */
 function navLinks(){
   const r=S.route, on=(t)=>r===t||r.startsWith(t+"-")?' class="on"':'';
@@ -571,12 +617,12 @@ function evRow(e,opts){
     '<div style="min-width:0"><h4>'+esc(e.title)+'</h4><div class="meta">'+chip(e.brand)+
     (e.start?'<span class="mono">'+fmtTime(e.start)+(e.end?" – "+fmtTime(e.end):"")+'</span>':'')+
     (e.location?'<span>'+esc(e.location)+'</span>':'')+
-    (opts.team?(e.visibility==="public"?'<span class="pill pub">Public</span>':'<span class="pill priv">Private</span>'):'')+'</div></div>'+
-    '<div class="act"><button class="btn ghost sm" data-act="'+(opts.team?"edit-event":"ev-open")+'" data-id="'+esc(e.id)+'">'+(opts.team?"Edit":"Details")+'</button></div></div>';
+    (e.repeat?'<span title="'+esc(repeatText(e))+'">↻ '+esc(repeatText(e).split(" until")[0].split(",")[0])+'</span>':'')+(opts.team?(e.visibility==="public"?'<span class="pill pub">Public</span>':'<span class="pill priv">Private</span>'):'')+'</div></div>'+
+    '<div class="act"><button class="btn ghost sm" data-act="'+(opts.team?"edit-event":"ev-open")+'" data-id="'+esc(e.id)+'" data-date="'+esc(e.date)+'">'+(opts.team?"Edit":"Details")+'</button></div></div>';
 }
 function upcomingPublic(brand,n){
   const t=today();
-  return pub().events.filter(e=>e.date>=t&&(!brand||e.brand===brand)).slice(0,n||6);
+  return upcomingEvents(pub().events).filter(e=>!brand||e.brand===brand).slice(0,n||6);
 }
 
 function viewHome(){
@@ -624,10 +670,10 @@ function viewBrand(id){
 }
 
 /* ---------- calendar ---------- */
-function calItems(team){
-  const items=[];
-  if(!team){pub().events.forEach(e=>items.push({kind:"event",date:e.date,title:e.title,brand:e.brand,start:e.start,id:e.id,vis:"public"}));return items}
-  S.events.forEach(e=>items.push({kind:"event",date:e.date,title:e.title,brand:e.brand,start:e.start,id:e.id,vis:e.visibility}));
+function calItems(team,from,to){
+  const items=[];from=from||addDays(today(),-400);to=to||addDays(today(),400);
+  if(!team){expand(pub().events,from,to).forEach(e=>items.push({kind:"event",date:e.date,title:e.title,brand:e.brand,start:e.start,id:e.id,vis:"public",rep:!!e.repeat}));return items}
+  expand(S.events,from,to).forEach(e=>items.push({kind:"event",date:e.date,title:e.title,brand:e.brand,start:e.start,id:e.id,vis:e.visibility,rep:!!e.repeat}));
   S.reminders.filter(r=>!r.done).forEach(r=>items.push({kind:"reminder",date:r.date,title:r.title,brand:r.brand,start:r.time,id:r.id}));
   ledgerAll().filter(l=>l.type==="meeting").forEach(l=>items.push({kind:"meeting",date:l.date,title:l.title||"Meeting",brand:l.brand,start:l.start,id:l.id}));
   return items;
@@ -636,7 +682,8 @@ function viewCalendar(team){
   const [y,m]=S.cal.month.split("-").map(Number);
   const first=new Date(y,m-1,1), days=new Date(y,m,0).getDate(), off=first.getDay();
   const cells=Math.ceil((off+days)/7)*7;
-  const all=calItems(team).filter(i=>S.cal.brand==="all"||i.brand===S.cal.brand);
+  const gFrom=iso(new Date(y,m-1,1-off)),gTo=iso(new Date(y,m-1,cells-off));
+  const all=calItems(team,gFrom,gTo).filter(i=>S.cal.brand==="all"||i.brand===S.cal.brand);
   const byDay={};all.forEach(i=>{(byDay[i.date]=byDay[i.date]||[]).push(i)});
   Object.values(byDay).forEach(a=>a.sort((p,q)=>(p.start||"99")<(q.start||"99")?-1:1));
   const t=today();
@@ -644,14 +691,14 @@ function viewCalendar(team){
   for(let c=0;c<cells;c++){
     const d=new Date(y,m-1,c-off+1), ds=iso(d), out=d.getMonth()!==m-1, list=byDay[ds]||[];
     g+='<button class="day'+(out?" out":"")+(ds===t?" today":"")+'" data-act="day" data-date="'+ds+'" aria-label="'+fmtDate(ds)+', '+list.length+' items"><span class="n">'+d.getDate()+'</span>'+
-      list.slice(0,3).map(i=>'<span class="it'+(i.kind==="reminder"?" rem":"")+(i.vis==="private"?" priv":"")+'" style="'+cvar(i.brand)+'">'+(i.kind==="reminder"?"◆ ":i.kind==="meeting"?"◷ ":"")+(i.start?fmtTime(i.start).replace(":00","").replace(" ","").toLowerCase()+" ":"")+esc(i.title)+'</span>').join("")+
+      list.slice(0,3).map(i=>'<span class="it'+(i.kind==="reminder"?" rem":"")+(i.vis==="private"?" priv":"")+'" style="'+cvar(i.brand)+'">'+(i.kind==="reminder"?"◆ ":i.kind==="meeting"?"◷ ":i.rep?"↻ ":"")+(i.start?fmtTime(i.start).replace(":00","").replace(" ","").toLowerCase()+" ":"")+esc(i.title)+'</span>').join("")+
       (list.length>3?'<span class="more">+'+(list.length-3)+' more</span>':'')+'</button>';
   }
   const bt='<div class="brandtabs"><button data-act="cal-brand" data-v="all" class="'+(S.cal.brand==="all"?"on":"")+'">All companies</button>'+BRANDS.map(b=>'<button data-act="cal-brand" data-v="'+b.id+'" style="'+cvar(b.id)+'" class="'+(S.cal.brand===b.id?"on":"")+'">'+esc(brandInfo(b.id).name)+'</button>').join("")+'</div>';
   const bar='<div class="calbar"><h3>'+MONTHS[m-1]+' '+y+'</h3><button class="btn ghost sm" data-act="cal-prev" aria-label="Previous month">‹ Prev</button><button class="btn ghost sm" data-act="cal-today">Today</button><button class="btn ghost sm" data-act="cal-next" aria-label="Next month">Next ›</button>'+
     (team?'<span style="flex:1"></span><button class="btn ghost sm" data-act="new-rem">+ Reminder</button><button class="btn olive sm" data-act="new-event">+ Event</button>':'')+'</div>';
   const legend=team?'<div class="legend"><span class="pill pub">Public</span><span class="muted" style="font-size:13px">shows on the public calendar after you publish</span><span class="pill priv">Private</span><span class="muted" style="font-size:13px">back office only</span><span class="muted" style="font-size:13px">· ◆ reminder · ◷ meeting from timesheet</span></div>':'';
-  const up=team?sortBy(S.events.filter(e=>e.date>=t),e=>e.date+(e.start||"")).filter(e=>S.cal.brand==="all"||e.brand===S.cal.brand).slice(0,8):upcomingPublic(S.cal.brand==="all"?null:S.cal.brand,8);
+  const up=team?upcomingEvents(S.events).filter(e=>S.cal.brand==="all"||e.brand===S.cal.brand).slice(0,8):upcomingPublic(S.cal.brand==="all"?null:S.cal.brand,8);
   return bt+bar+'<div class="calwrap"><div class="cal">'+g+'</div></div>'+legend+
     '<h3 style="font-size:22px;margin:30px 0 12px">Upcoming</h3>'+(up.length?'<div class="evlist">'+up.map(e=>evRow(e,{team})).join("")+'</div>':'<div class="empty">'+(team?'No upcoming events. Add one with “+ Event”.':'No public events posted yet. Check back soon.')+'</div>');
 }
@@ -726,7 +773,7 @@ function monthStats(brand,month){
   const h=L.filter(l=>l.type==="meeting"||l.type==="hours").reduce((a,l)=>a+(Number(l.hours)||0),0);
   const sp=L.filter(l=>l.type==="expense"||l.type==="receipt").reduce((a,l)=>a+(Number(l.amount)||0),0);
   const inc=L.filter(l=>l.type==="income").reduce((a,l)=>a+(Number(l.amount)||0),0);
-  const ev=S.events.filter(e=>(!brand||e.brand===brand)&&String(e.date).startsWith(month)).length;
+  const ev=expand(S.events.filter(e=>!brand||e.brand===brand),month+"-01",month+"-31").length;
   const pay=L.filter(l=>l.type==="income"&&(l.source||"Payment")==="Payment").reduce((a,l)=>a+(Number(l.amount)||0),0);
   const don=L.filter(l=>l.type==="income"&&l.source==="Donation").reduce((a,l)=>a+(Number(l.amount)||0),0);
   return {h,sp,inc,ev,pay,don,other:inc-pay-don,n:L.length};
@@ -734,7 +781,7 @@ function monthStats(brand,month){
 function remindersDue(days){
   const t=today(), lim=addDays(t,days);
   const r=S.reminders.filter(x=>!x.done&&x.date<=lim).map(x=>Object.assign({kind:"rem"},x));
-  S.events.forEach(e=>{if(e.remindDays===""||e.remindDays==null)return;const from=addDays(e.date,-Number(e.remindDays));
+  expand(S.events,t,addDays(lim,15)).forEach(e=>{if(e.remindDays===""||e.remindDays==null)return;const from=addDays(e.date,-Number(e.remindDays));
     if(e.date>=t&&from<=lim)r.push({kind:"event",id:e.id,title:e.title,brand:e.brand,date:e.date,time:e.start,from})});
   return sortBy(r,x=>x.date+(x.time||""));
 }
@@ -750,9 +797,9 @@ function remRow(r,showCheck){
 function viewDash(){
   const mo=today().slice(0,7), tot=monthStats(null,mo), due=remindersDue(14);
   const t=today();
-  const nextFor=id=>{const e=sortBy(S.events.filter(x=>x.brand===id&&x.date>=t),x=>x.date+(x.start||""))[0];const r=sortBy(S.reminders.filter(x=>x.brand===id&&!x.done&&x.date>=t),x=>x.date)[0];
+  const nextFor=id=>{const e=upcomingEvents(S.events.filter(x=>x.brand===id))[0];const r=sortBy(S.reminders.filter(x=>x.brand===id&&!x.done&&x.date>=t),x=>x.date)[0];
     const c=[e&&{d:e.date,s:"Event: "+e.title},r&&{d:r.date,s:"Reminder: "+r.title}].filter(Boolean).sort((a,b)=>a.d<b.d?-1:1)[0];return c?esc(c.s)+' · <span class="mono">'+fmtDate(c.d)+'</span>':'Nothing scheduled'};
-  const upEv=sortBy(S.events.filter(e=>e.date>=t),e=>e.date+(e.start||"")).slice(0,6);
+  const upEv=upcomingEvents(S.events).slice(0,6);
   return '<div class="kpis"><div class="kpi"><span class="eyebrow">Hours · '+MON[new Date().getMonth()]+'</span><b>'+hrs(tot.h)+'</b></div><div class="kpi"><span class="eyebrow">Money spent</span><b class="neg">'+money(tot.sp)+'</b></div><div class="kpi"><span class="eyebrow">Money in</span><b class="pos">'+money(tot.inc)+'</b></div><div class="kpi"><span class="eyebrow">Reminders due (14 days)</span><b>'+due.length+'</b></div></div>'+
     '<div class="sechead" style="margin-bottom:12px"><h2 style="font-size:24px">Every slot · '+MONTHS[new Date().getMonth()]+'</h2><button class="btn olive sm" data-act="new-entry">+ Log entry</button></div>'+
     '<div class="slots">'+BRANDS.map(b=>{const s=monthStats(b.id,mo);return '<div class="slot" style="'+cvar(b.id)+'"><h4>'+esc(brandInfo(b.id).name)+'</h4><div class="nums"><div><small>Hours</small><span>'+hrs(s.h)+'</span></div><div><small>Spent</small><span>'+money(s.sp).replace(".00","")+'</span></div><div><small>Events</small><span>'+s.ev+'</span></div></div>'+moneyIn(s,b.id)+'<div class="next">'+nextFor(b.id)+'</div><div class="acts"><button class="btn sm" style="background:var(--c);color:var(--bg)" data-act="new-entry" data-brand="'+b.id+'">+ Log</button><button class="btn ghost sm" data-act="slot-ts" data-brand="'+b.id+'">Timesheet</button><button class="btn ghost sm" data-act="new-event" data-brand="'+b.id+'">+ Event</button></div></div>'}).join("")+'</div>'+
@@ -1293,7 +1340,10 @@ function readEvent(text){
   const subj=headerVal(text,"subject");const title=(subj||lines.find(l=>!/^(from|to|date|sent|subject|cc):/i.test(l))||"New event").replace(/^(re|fwd?):\s*/i,"").slice(0,90);
   const tm=findTimes(text);const loc=(/\b(?:at|location|venue|where)\s*[:\-]?\s+([A-Z0-9][^\n.,]{3,60})/.exec(text)||[])[1]||"";
   const link=(/(https?:\/\/[^\s)]+)/.exec(text)||[])[1]||"";const mb=matchBrand(text);
-  return {title,date:findDate(text)||today(),start:tm[0]||"",end:tm[1]||"",location:loc.trim(),link,brand:mb?mb.brand:"hq",visibility:"private",description:String(text).trim().slice(0,1500),toCal:true,toLog:true,toDoc:false};
+  const tl=String(text).toLowerCase();const dm=/every\s+(sun|mon|tue|wed|thu|fri|sat)/.exec(tl);
+  const repeat=/every other week|bi-?weekly|every 2 weeks/.test(tl)?"biweekly":(dm||/\bweekly\b|every week/.test(tl))?"weekly":/\bdaily\b|every day/.test(tl)?"daily":/\bmonthly\b|every month/.test(tl)?"monthly":/\byearly\b|annual|every year/.test(tl)?"yearly":"";
+  const days=dm?[["sun","mon","tue","wed","thu","fri","sat"].indexOf(dm[1])]:[];
+  return {repeat,days,title,date:findDate(text)||today(),start:tm[0]||"",end:tm[1]||"",location:loc.trim(),link,brand:mb?mb.brand:"hq",visibility:"private",description:String(text).trim().slice(0,1500),toCal:true,toLog:true,toDoc:false};
 }
 const KINDS=["Complaint","Question","Collab request","Payment","Booking","Other"];
 function readEmail(text){
@@ -1360,7 +1410,7 @@ function inputCard(kind){
 function viewConvEvent(){
   const o=S.conv.ev;
   return inputCard("event")+(o?'<div class="card" style="margin-top:14px;display:flex;flex-direction:column;gap:12px"><h3 style="font-size:20px">Event details</h3><div class="grid2">'+
-    convFields(o,[["title","Title"],["brand","Company","select",brandPairs()],["date","Date","date"],["start","Start","time"],["end","End","time"],["location","Location"],["link","Tickets or info link","url"],["visibility","Who can see it","select",[["private","Private (back office)"],["public","Public calendar"]]],["description","Description","area"]])+
+    convFields(o,[["title","Title"],["brand","Company","select",brandPairs()],["date","Date","date"],["start","Start","time"],["end","End","time"],["location","Location"],["link","Tickets or info link","url"],["visibility","Who can see it","select",[["private","Private (back office)"],["public","Public calendar"]]],["repeat","Repeats","select",REPEATS],["description","Description","area"]])+
     '</div><div style="display:flex;gap:16px;flex-wrap:wrap">'+convFields(o,[["toCal","Add to calendar","check"],["toLog","Log on the team timesheet","check"],["toDoc","Save the original to Documents","check"]])+'</div><div><button class="btn olive" data-act="conv-go-event">Convert</button></div></div>':'');
 }
 function viewConvEmail(){
@@ -1408,7 +1458,7 @@ async function convGoEvent(btn){
   btn.disabled=true;let docId="",done=[];
   try{
     if(o.toDoc){docId=await convSaveOriginal(o.title);await S.db.collection("docs").doc(docId).update({brand:o.brand,category:"Other",notes:"Event: "+o.title})}
-    if(o.toCal&&await save("events",uid(),{brand:o.brand,title:o.title,date:o.date,start:o.start||"",end:o.end||"",location:o.location||"",link:o.link||"",description:o.description||"",visibility:o.visibility==="public"?"public":"private",remindDays:"1",createdAt:new Date().toISOString()}))done.push("calendar");
+    if(o.toCal&&await save("events",uid(),{brand:o.brand,title:o.title,date:o.date,start:o.start||"",end:o.end||"",location:o.location||"",link:o.link||"",description:o.description||"",visibility:o.visibility==="public"?"public":"private",remindDays:"1",repeat:o.repeat||"",days:o.repeat&&o.days&&o.days.length?o.days:(o.repeat=="weekly"||o.repeat=="biweekly"?[parse(o.date).getDay()]:[]),until:"",count:"",exdates:[],createdAt:new Date().toISOString()}))done.push("calendar");
     if(o.toLog&&await save("ledger",uid(),{brand:o.brand,type:"note",date:today(),title:"Event: "+o.title+" ("+fmtDate(o.date)+")",notes:[o.location,o.link].filter(Boolean).join(" · "),createdAt:new Date().toISOString(),by:S.uid||""}))done.push("timesheet");
     await save("conversions",uid(),{kind:"Event",title:o.title,brands:[o.brand],items:done.length,docId,at:new Date().toISOString()});
     toast("Event added to "+(done.join(" and ")||"Documents"));const m=S.conv.mode;convReset(m);render();
@@ -1494,24 +1544,52 @@ function shrinkLogo(file){return new Promise(res=>{const r=new FileReader();r.on
   c.getContext("2d").drawImage(img,0,0,c.width,c.height);let out=c.toDataURL("image/webp",.88);if(!out.startsWith("data:image/webp"))out=c.toDataURL("image/png");
   if(out.length>60000)out=c.toDataURL("image/webp",.7);res(out.length<90000?out:(toast("That logo is too large. Try a smaller image."),null))};
   img.onerror=()=>{toast("That file isn't an image we can read");res(null)};img.src=r.result};r.readAsDataURL(file)})}
+function readRepeat(el,o){
+  const r=o.repeat||"";if(!r)return {repeat:"",days:[],until:"",count:"",exdates:[]};
+  const days=(r==="weekly"||r==="biweekly")?[...el.querySelectorAll("[data-dow].on")].map(b=>Number(b.dataset.dow)):[];
+  return {repeat:r,days,until:o.ends==="until"?(o.until||""):"",count:o.ends==="count"?String(Math.max(2,Number(o.count)||0)||""):"",exdates:(el._ex||[]).slice()};
+}
 function eventModal(d){
   d=Object.assign({brand:"hq",date:today(),visibility:"private",remindDays:""},d||{});
   openModal('<form id="mf"><h3 style="margin-bottom:14px">'+(d.id?"Edit event":"New event")+'</h3><div style="display:flex;flex-direction:column;gap:12px">'+
-    '<fieldset style="border:0;padding:0;margin:0"><legend class="f" style="font-size:13px;font-weight:600;color:var(--muted);margin-bottom:6px">Who can see it</legend><div class="seg"><button type="button" data-v="public" class="'+(d.visibility==="public"?"on":"")+'">Public</button><button type="button" data-v="private" class="'+(d.visibility!=="public"?"on":"")+'">Private</button></div>'+
+    '<fieldset style="border:0;padding:0;margin:0"><legend class="f" style="font-size:13px;font-weight:600;color:var(--muted);margin-bottom:6px">Who can see it</legend><div class="seg" id="ev-visseg"><button type="button" data-v="public" class="'+(d.visibility==="public"?"on":"")+'">Public</button><button type="button" data-v="private" class="'+(d.visibility!=="public"?"on":"")+'">Private</button></div>'+
     '<p class="muted" id="vis-help" style="font-size:13px;margin-top:6px"></p><input type="hidden" name="visibility" id="ev-vis" value="'+esc(d.visibility)+'"></fieldset>'+
     '<div class="grid2"><label class="f">Company<select class="i" id="ev-brand" name="brand">'+brandOpts(d.brand)+'</select></label><label class="f">Date<input class="i" type="date" id="ev-date" name="date" value="'+esc(d.date)+'" required></label></div>'+
     '<label class="f">Title<input class="i" id="ev-title" name="title" value="'+esc(d.title)+'" required></label>'+
     '<div class="grid2"><label class="f">Start<input class="i" type="time" id="ev-start" name="start" value="'+esc(d.start)+'"></label><label class="f">End<input class="i" type="time" id="ev-end" name="end" value="'+esc(d.end)+'"></label><label class="f">Remind me<select class="i" id="ev-rem" name="remindDays">'+REMIND.map(([v,l])=>'<option value="'+v+'"'+(String(d.remindDays)===v?" selected":"")+'>'+l+'</option>').join("")+'</select></label></div>'+
+    '<fieldset style="border:1px solid var(--line);border-radius:var(--r-sm);padding:12px;margin:0;display:flex;flex-direction:column;gap:10px"><legend style="font-size:13px;font-weight:600;color:var(--muted);padding:0 6px">Repeat</legend>'+
+      '<div class="grid2"><label class="f">Repeats<select class="i" id="ev-repeat" name="repeat">'+REPEATS.map(([v,l])=>'<option value="'+v+'"'+((d.repeat||"")===v?" selected":"")+'>'+l+'</option>').join("")+'</select></label>'+
+      '<label class="f" id="ev-endsbox">Ends<select class="i" id="ev-ends" name="ends"><option value="never">Never</option><option value="until"'+(d.until?" selected":"")+'>On a date</option><option value="count"'+(!d.until&&Number(d.count)?" selected":"")+'>After a number of times</option></select></label>'+
+      '<label class="f" id="ev-untilbox">End date<input class="i" type="date" id="ev-until" name="until" value="'+esc(d.until)+'"></label><label class="f" id="ev-countbox">How many times<input class="i" type="number" min="2" max="500" id="ev-count" name="count" value="'+esc(d.count||"")+'"></label></div>'+
+      '<div id="ev-daysbox"><span style="font-size:13px;font-weight:600;color:var(--muted)">On these days</span><div class="seg" style="margin-top:6px">'+DOW.map((n,i)=>'<button type="button" data-dow="'+i+'" class="'+(((d.days&&d.days.length)?d.days.map(Number):[parse(d.date).getDay()]).includes(i)?"on":"")+'">'+n+'</button>').join("")+'</div></div>'+
+      '<p class="muted" id="ev-reptext" style="font-size:13px"></p>'+
+      ((d.exdates&&d.exdates.length)?'<p class="muted" style="font-size:12.5px">Skipped dates: '+d.exdates.map(x=>esc(fmtDate(x))).join(", ")+' <button type="button" class="rowbtn" id="ev-unskip">Restore all</button></p>':'')+
+    '</fieldset>'+
     '<label class="f">Location<input class="i" id="ev-loc" name="location" value="'+esc(d.location)+'"></label>'+
     '<label class="f">Tickets or info link<input class="i" type="url" id="ev-link" name="link" value="'+esc(d.link)+'" placeholder="https://"></label>'+
     '<label class="f">Description<textarea class="i" id="ev-desc" name="description" style="min-height:70px">'+esc(d.description)+'</textarea></label></div>'+
-    '<div class="row">'+delBtn(d.id)+(d.id?'<a class="btn ghost" href="'+esc(gcal({title:d.title,date:d.date,start:d.start,end:d.end,location:d.location,details:d.description}))+'" target="_blank" rel="noopener">Add to Google Calendar</a>':'')+'<button type="button" class="btn ghost" data-act="close-modal">Cancel</button><button class="btn olive" type="submit">Save event</button></div></form>',
+    (d.id&&d.repeat&&d._occ?'<div class="banner" style="margin:0">You opened the '+esc(fmtDate(d._occ))+' date of a repeating event. Changes apply to the whole series.<button type="button" class="btn ghost sm" id="ev-skip">Skip just '+esc(fmtDate(d._occ))+'</button></div>':'')+
+    '<div class="row">'+(d.id?'<button type="button" class="btn danger left" data-act="del-arm">'+(d.repeat?"Delete series":"Delete")+'</button>':'')+(d.id?'<a class="btn ghost" href="'+esc(gcal({title:d.title,date:d.date,start:d.start,end:d.end,location:d.location,details:d.description,recur:rrule(d)}))+'" target="_blank" rel="noopener">Add to Google Calendar</a>':'')+'<button type="button" class="btn ghost" data-act="close-modal">Cancel</button><button class="btn olive" type="submit">Save event</button></div></form>',
   el=>{
     const help=()=>{el.querySelector("#vis-help").textContent=el.querySelector("#ev-vis").value==="public"?"Shows on the public calendar and company page after you publish. Use for launches and events you are hosting.":"Back office only. Visitors never see private events."};help();
-    el.querySelectorAll(".seg button").forEach(b=>b.addEventListener("click",()=>{el.querySelectorAll(".seg button").forEach(x=>x.classList.toggle("on",x===b));el.querySelector("#ev-vis").value=b.dataset.v;help()}));
+    el.querySelectorAll("#ev-visseg button").forEach(b=>b.addEventListener("click",()=>{el.querySelectorAll("#ev-visseg button").forEach(x=>x.classList.toggle("on",x===b));el.querySelector("#ev-vis").value=b.dataset.v;help()}));
     el._del=async()=>{if(await remove("events",d.id)){closeModal();toast("Event deleted")}};
+    el._ex=(d.exdates||[]).slice();
+    const repUI=()=>{const r=el.querySelector("#ev-repeat").value,ends=el.querySelector("#ev-ends").value;
+      el.querySelector("#ev-endsbox").hidden=!r;el.querySelector("#ev-untilbox").hidden=!r||ends!=="until";el.querySelector("#ev-countbox").hidden=!r||ends!=="count";
+      el.querySelector("#ev-daysbox").hidden=!(r==="weekly"||r==="biweekly");
+      const o=formObj(el.querySelector("#mf"));el.querySelector("#ev-reptext").textContent=r&&o.date?repeatText(Object.assign({date:o.date},readRepeat(el,o)))+".":""};
+    ["#ev-repeat","#ev-ends","#ev-until","#ev-count","#ev-date"].forEach(s=>el.querySelector(s).addEventListener("input",repUI));
+    let daysTouched=!!(d.days&&d.days.length);
+    el.querySelectorAll("[data-dow]").forEach(b=>b.addEventListener("click",()=>{daysTouched=true;b.classList.toggle("on");if(!el.querySelector("[data-dow].on"))b.classList.add("on");repUI()}));
+    el.querySelector("#ev-date").addEventListener("input",()=>{if(daysTouched)return;const v=el.querySelector("#ev-date").value;if(!v)return;const wd=parse(v).getDay();el.querySelectorAll("[data-dow]").forEach(b=>b.classList.toggle("on",Number(b.dataset.dow)===wd));repUI()});
+    repUI();
+    const sk=el.querySelector("#ev-skip");if(sk)sk.addEventListener("click",async()=>{const ex=[...new Set((d.exdates||[]).concat(d._occ))];const base=Object.assign({},S.events.find(x=>x.id===d.id)||d);["id","_col","_occ"].forEach(k=>delete base[k]);base.exdates=ex;if(await save("events",d.id,base)){closeModal();toast("Skipped "+fmtDate(d._occ))}});
+    const us=el.querySelector("#ev-unskip");if(us)us.addEventListener("click",()=>{el._ex=[];us.parentElement.textContent="Skipped dates will be restored when you save."});
     el.querySelector("#mf").addEventListener("submit",async ev=>{ev.preventDefault();const o=formObj(ev.target);
       const rec={brand:o.brand,title:o.title,date:o.date,start:o.start||"",end:o.end||"",location:o.location||"",link:o.link||"",description:o.description||"",visibility:o.visibility==="public"?"public":"private",remindDays:o.remindDays,createdAt:d.createdAt||new Date().toISOString()};
+      Object.assign(rec,readRepeat(el,o));
+      if(rec.repeat&&rec.until&&rec.until<rec.date){toast("The end date is before the first date");return}
       if(await save("events",d.id||uid(),rec)){closeModal();toast(rec.visibility==="public"?"Saved. Publish to show it on the public site.":"Event saved")}});
   });
 }
@@ -1577,14 +1655,14 @@ function brandModal(id){
 }
 function dayModal(ds){
   const team=S.isAdmin&&S.route==="team-cal";
-  const list=calItems(team).filter(i=>i.date===ds&&(S.cal.brand==="all"||i.brand===S.cal.brand)).sort((a,b)=>(a.start||"99")<(b.start||"99")?-1:1);
-  openModal('<h3>'+fmtDate(ds)+'</h3>'+(list.length?'<div style="display:flex;flex-direction:column;gap:8px">'+list.map(i=>'<button class="rem" style="'+cvar(i.brand)+';text-align:left;cursor:pointer;width:100%;grid-template-columns:auto minmax(0,1fr)" data-act="'+(i.kind==="event"?(team?"edit-event":"ev-open"):i.kind==="reminder"?"edit-rem":"edit-entry")+'" data-id="'+esc(i.id)+'"><span class="pill '+(i.kind==="event"?(i.vis==="public"?"pub":"priv"):"high")+'">'+(i.kind==="event"?(team?(i.vis==="public"?"Public":"Private"):"Event"):i.kind==="reminder"?"Reminder":"Meeting")+'</span><span><span class="rt">'+esc(i.title)+'</span><span class="rm">'+chip(i.brand)+(i.start?'<span class="mono">'+fmtTime(i.start)+'</span>':'')+'</span></span></button>').join("")+'</div>':'<p class="muted">Nothing on this day.</p>')+
+  const list=calItems(team,ds,ds).filter(i=>i.date===ds&&(S.cal.brand==="all"||i.brand===S.cal.brand)).sort((a,b)=>(a.start||"99")<(b.start||"99")?-1:1);
+  openModal('<h3>'+fmtDate(ds)+'</h3>'+(list.length?'<div style="display:flex;flex-direction:column;gap:8px">'+list.map(i=>'<button class="rem" style="'+cvar(i.brand)+';text-align:left;cursor:pointer;width:100%;grid-template-columns:auto minmax(0,1fr)" data-act="'+(i.kind==="event"?(team?"edit-event":"ev-open"):i.kind==="reminder"?"edit-rem":"edit-entry")+'" data-id="'+esc(i.id)+'" data-date="'+esc(i.date)+'"><span class="pill '+(i.kind==="event"?(i.vis==="public"?"pub":"priv"):"high")+'">'+(i.kind==="event"?(team?(i.vis==="public"?"Public":"Private"):"Event"):i.kind==="reminder"?"Reminder":"Meeting")+'</span><span><span class="rt">'+esc(i.title)+'</span><span class="rm">'+chip(i.brand)+(i.start?'<span class="mono">'+fmtTime(i.start)+'</span>':'')+'</span></span></button>').join("")+'</div>':'<p class="muted">Nothing on this day.</p>')+
     '<div class="row">'+(team?'<button class="btn ghost" data-act="new-rem" data-date="'+ds+'">+ Reminder</button><button class="btn olive" data-act="new-event" data-date="'+ds+'">+ Event</button>':'')+'<button class="btn ghost" data-act="close-modal">Close</button></div>');
 }
-function eventDetail(id){
-  const e=pub().events.find(x=>x.id===id);if(!e)return;
-  openModal('<div style="'+cvar(e.brand)+'">'+chip(e.brand)+'<h3 style="margin-top:10px">'+esc(e.title)+'</h3><p class="mono" style="margin-top:6px">'+fmtDate(e.date)+(e.start?" · "+fmtTime(e.start)+(e.end?" – "+fmtTime(e.end):""):"")+'</p>'+(e.location?'<p class="muted">'+esc(e.location)+'</p>':'')+(e.description?'<p style="margin-top:12px;white-space:pre-wrap">'+esc(e.description)+'</p>':'')+'</div>'+
-    '<div class="row">'+(e.link?'<a class="btn peach" href="'+esc(e.link)+'" target="_blank" rel="noopener">Tickets & info ↗</a>':'')+'<a class="btn ghost" href="'+esc(gcal({title:e.title,date:e.date,start:e.start,end:e.end,location:e.location,details:e.description}))+'" target="_blank" rel="noopener">Add to Google Calendar</a><button class="btn ghost" data-act="close-modal">Close</button></div>');
+function eventDetail(id,occ){
+  const base=pub().events.find(x=>x.id===id);if(!base)return;const e=Object.assign({},base,occ?{date:occ}:{});
+  openModal('<div style="'+cvar(e.brand)+'">'+chip(e.brand)+'<h3 style="margin-top:10px">'+esc(e.title)+'</h3><p class="mono" style="margin-top:6px">'+fmtDate(e.date)+(e.start?" · "+fmtTime(e.start)+(e.end?" – "+fmtTime(e.end):""):"")+'</p>'+(e.repeat?'<p class="muted">↻ '+esc(repeatText(base))+'</p>':'')+(e.location?'<p class="muted">'+esc(e.location)+'</p>':'')+(e.description?'<p style="margin-top:12px;white-space:pre-wrap">'+esc(e.description)+'</p>':'')+'</div>'+
+    '<div class="row">'+(e.link?'<a class="btn peach" href="'+esc(e.link)+'" target="_blank" rel="noopener">Tickets & info ↗</a>':'')+'<a class="btn ghost" href="'+esc(gcal({title:e.title,date:e.date,start:e.start,end:e.end,location:e.location,details:e.description,recur:rrule(base)}))+'" target="_blank" rel="noopener">Add to Google Calendar</a><button class="btn ghost" data-act="close-modal">Close</button></div>');
 }
 async function viewReceipt(id){
   openModal('<h3>Receipt</h3><div id="rimg" class="empty">Loading…</div><div class="row"><button class="btn ghost" data-act="close-modal">Close</button></div>');
@@ -1670,7 +1748,7 @@ document.addEventListener("click",async e=>{
   if(a==="del-go"){const m=t.closest(".modal");if(m&&m._del)m._del();return}
   if(a==="copy-letter"){const m=t.closest(".modal");return copyText(m._letter,t)}
   if(a==="log-incoming"){const m=t.closest(".modal");const o=Object.assign({},m._rec);const rid=o.id;delete o.id;if(await save("outreach",rid,o)){t.disabled=true;t.textContent="Saved to Collabs"}return}
-  if(a==="ev-open")return eventDetail(id);
+  if(a==="ev-open")return eventDetail(id,t.dataset.date);
   if(a==="day")return dayModal(t.dataset.date);
   if(a==="cal-prev"||a==="cal-next"){const [y,m]=S.cal.month.split("-").map(Number);const d=new Date(y,m-1+(a==="cal-next"?1:-1),1);S.cal.month=iso(d).slice(0,7);return render()}
   if(a==="cal-today"){S.cal.month=today().slice(0,7);return render()}
@@ -1741,7 +1819,7 @@ document.addEventListener("click",async e=>{
   if(a==="new-entry")return entryModal({brand:t.dataset.brand||(S.ts.brand!=="all"?S.ts.brand:"hq")});
   if(a==="edit-entry"){const x=ledgerAll().find(z=>z.id===id);return x&&entryModal(Object.assign({},x))}
   if(a==="new-event")return eventModal({brand:t.dataset.brand||(S.cal.brand!=="all"?S.cal.brand:"hq"),date:t.dataset.date||today()});
-  if(a==="edit-event"){const x=byId("events",id);return x&&eventModal(Object.assign({},x))}
+  if(a==="edit-event"){const x=byId("events",id);return x&&eventModal(Object.assign({},x,t.dataset.date&&x.repeat?{_occ:t.dataset.date}:{}))}
   if(a==="new-rem")return remModal({date:t.dataset.date||today(),brand:S.cal.brand!=="all"?S.cal.brand:"hq"});
   if(a==="edit-rem"){const x=byId("reminders",id);return x&&remModal(Object.assign({},x))}
   if(a==="new-out")return outModal();
