@@ -66,6 +66,16 @@ Forgot the passphrase? Click **Forgot passphrase?**, enter the recovery code fro
 
 **Back office > Documents** stores receipts, invoices, contracts, tax forms and other files (up to 10 MB each). Drag files onto the page or use **+ Upload documents**, tag them by company, type and date, then filter or search. Only the founder can see them. Files are stored inside Firestore, so they count toward the free 1 GB limit.
 
+## Converter
+
+**Back office > Converter** (Founder and HNIC only) turns paperwork into timesheet entries:
+
+- **Bank statement:** drop in a PDF or CSV statement. Every transaction is read and split out, marked money in or money out, and matched to a company using **Matching rules** (for example, text containing `vybr8` goes to Vybr8). Review the table, fix anything, then click **Add to team timesheets**. The statement is saved to Documents too. Transactions already logged are flagged and skipped, so re-uploading a statement won't double count.
+- **Event:** paste event details or upload a flyer PDF. It picks out the title, date, times, place and link. Convert to add it to the calendar (private or public) and log it on that team's timesheet.
+- **Email or complaint:** paste an email. It picks out who it's from, the subject and the type (complaint, question, booking, collab). Convert to log it on the team's timesheet, create a follow-up reminder, and optionally save it to Collabs or the calendar.
+
+Scanned (photo) statements have no readable text. Download a text PDF or CSV from your bank's website instead, or paste the text.
+
 ## Reports
 
 **Back office > Reports** shows each year (2026, 2027, 2028 and on, added automatically) with totals for hours, money spent, money in (payments and donations) and net, month by month and by company. Export a single month's log, a year summary, or the full year log as CSV files that open in Excel or Google Sheets.

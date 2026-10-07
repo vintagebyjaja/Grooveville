@@ -363,7 +363,7 @@ SNAP.events=SNAP.events||[]; SNAP.brands=SNAP.brands||{};
 
 const S = {
   route:"home", authChecked:false, isAdmin:false, uid:null, db:null, userCap:null, signedIn:false, email:"",
-  myBrands:[], myEntries:[], vault:[], vaultMeta:null, vkey:null, vraw:null, vplain:{}, docs:[], docf:{brand:"all",cat:"all",year:"all",q:""}, rep:{year:new Date().getFullYear()}, requested:false, members:{}, access:{}, org:{founder:"",heads:{}}, requests:{}, grants:{}, myReq:null, memberLogs:{}, names:{}, fbReady:false,
+  myBrands:[], myEntries:[], vault:[], vaultMeta:null, vkey:null, vraw:null, vplain:{}, conv:{mode:"stmt",saveDoc:true}, conversions:[], convRules:null, docs:[], docf:{brand:"all",cat:"all",year:"all",q:""}, rep:{year:new Date().getFullYear()}, requested:false, members:{}, access:{}, org:{founder:"",heads:{}}, requests:{}, grants:{}, myReq:null, memberLogs:{}, names:{}, fbReady:false,
   ledger:[], events:[], reminders:[], outreach:[], site:{brands:{}}, loaded:{},
   ts:{brand:"all", month:today().slice(0,7), type:"all"},
   cal:{month:today().slice(0,7), brand:"all"}
@@ -436,6 +436,8 @@ function subscribeFounder(){
     S.db.collection(c).onSnapshot(snap=>{S[c]=rows(snap,c);S.loaded[c]=true;scheduleRender(true)},()=>{});
   });
   S.db.doc("settings/site").onSnapshot(d=>{S.site=d.exists?Object.assign({brands:{}},d.data()):{brands:{}};S.loaded.site=true;scheduleRender(true)},()=>{});
+  S.db.collection("conversions").onSnapshot(snap=>{S.conversions=rows(snap,"conversions");scheduleRender(true)},()=>{});
+  S.db.doc("convrules/main").onSnapshot(d=>{S.convRules=d.exists?d.data():null},()=>{});
   S.db.collection("docs").onSnapshot(snap=>{S.docs=rows(snap,"docs");S.loaded.docs=true;scheduleRender(true)},()=>{});
   S.db.collection("vault").onSnapshot(snap=>{const all=rows(snap,"vault");S.vaultMeta=(all.find(r=>r.id==="_meta")||null);S.vault=all.filter(r=>r.id!=="_meta");S.loaded.vault=true;if(S.vkey)decryptVault();else scheduleRender(true)},()=>{});
   S.db.collection("memberlog").onSnapshot(snap=>{
@@ -706,7 +708,7 @@ function collabSubmit(form){
 }
 
 /* ---------- team (back office) ---------- */
-const TEAM_TABS=[["team","Dashboard"],["team-time","Timesheet"],["team-cal","Calendar"],["team-rem","Reminders"],["team-out","Collabs"],["team-people","Teams"],["team-docs","Documents"],["team-reports","Reports"],["team-vault","Private notes"],["team-site","Site settings"]];
+const TEAM_TABS=[["team","Dashboard"],["team-time","Timesheet"],["team-cal","Calendar"],["team-rem","Reminders"],["team-out","Collabs"],["team-people","Teams"],["team-docs","Documents"],["team-conv","Converter"],["team-reports","Reports"],["team-vault","Private notes"],["team-site","Site settings"]];
 function teamGate(){
   if(!S.authChecked)return '<div class="wrap gate"><h1>Checking access…</h1><p class="muted">One moment while we confirm who is signed in.</p></div>';
   return '<div class="wrap gate"><div class="eyebrow">Grooveville team</div><h1>Back office sign in</h1><p class="muted">The timesheet, private calendar, reminders and collab tracker are only for the Grooveville team. Open this page while signed in to Claude with the account Grooveville invited as an Editor.</p><p class="muted" style="font-size:13.5px">If you just got access, reload this page.</p><a class="btn" href="#home">Back to the public site</a></div>';
@@ -1154,6 +1156,302 @@ function exportYear(full){
   return saveFile("grooveville-"+y+(full?"-full-log":"-summary")+".csv",toCSV(rows));
 }
 
+/* ---------- Converter: bank statements, events, emails → timesheets, calendar, documents ---------- */
+const PDFJS_BASE="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/";
+let pdfjsP=null;
+function loadPdfJs(){
+  if(window.__pdfjsOverride)return window.__pdfjsOverride();
+  if(window.pdfjsLib)return Promise.resolve(window.pdfjsLib);
+  if(pdfjsP)return pdfjsP;
+  const add=src=>new Promise((res,rej)=>{const s=document.createElement("script");s.src=src;s.onload=res;s.onerror=()=>rej(new Error("load"));document.head.appendChild(s)});
+  pdfjsP=add(PDFJS_BASE+"pdf.worker.min.js").then(()=>add(PDFJS_BASE+"pdf.min.js")).then(()=>{const L=window.pdfjsLib||window["pdfjs-dist/build/pdf"];L.GlobalWorkerOptions.workerSrc=PDFJS_BASE+"pdf.worker.min.js";return L}).catch(e=>{pdfjsP=null;throw e});
+  return pdfjsP;
+}
+/* PDF → lines of text, top to bottom, left to right */
+async function pdfLines(file){
+  const L=await loadPdfJs();const buf=new Uint8Array(await file.arrayBuffer());
+  const doc=await L.getDocument({data:buf}).promise;const out=[];
+  for(let p=1;p<=doc.numPages;p++){
+    const page=await doc.getPage(p);const tc=await page.getTextContent();const rowsY=[];
+    tc.items.forEach(it=>{if(!it.str||!it.str.trim())return;const x=it.transform[4],y=it.transform[5];let r=rowsY.find(r=>Math.abs(r.y-y)<3);if(!r){r={y,items:[]};rowsY.push(r)}r.items.push({x,s:it.str,w:it.width||0})});
+    rowsY.sort((a,b)=>b.y-a.y).forEach(r=>{r.items.sort((a,b)=>a.x-b.x);let line="",end=null;r.items.forEach(i=>{if(end!==null)line+=(i.x-end>12?"   ":" ");line+=i.s.trim();end=i.x+i.w});out.push(line.trim())});
+  }
+  return out;
+}
+
+/* ---- statement parsing ---- */
+const MONTHS3={jan:1,feb:2,mar:3,apr:4,may:5,jun:6,jul:7,aug:8,sep:9,sept:9,oct:10,nov:11,dec:12};
+const DATE_AT_START=/^\s*(\d{1,2}[\/\-.]\d{1,2}(?:[\/\-.]\d{2,4})?|\d{4}-\d{2}-\d{2}|(?:jan|feb|mar|apr|may|jun|jul|aug|sept?|oct|nov|dec)[a-z]*\.?\s+\d{1,2}(?:,?\s+\d{4})?)\b/i;
+const AMT_G=/\(?-?\s?\$?\s?\d{1,3}(?:,\d{3})*\.\d{2}\)?(?:\s?(?:CR|DR)\b|-(?=\s|$))?/gi;
+function toISO(raw,yearHint,endMonth){
+  raw=raw.trim().replace(/\./g,"/");let y,m,d,mm;
+  if((mm=/^(\d{4})-(\d{2})-(\d{2})$/.exec(raw))){y=+mm[1];m=+mm[2];d=+mm[3]}
+  else if((mm=/^(\d{1,2})[\/\-](\d{1,2})(?:[\/\-](\d{2,4}))?$/.exec(raw))){m=+mm[1];d=+mm[2];y=mm[3]?(+mm[3]<100?2000+(+mm[3]):+mm[3]):null}
+  else if((mm=/^([a-z]+)\/?\s+(\d{1,2})(?:,?\s+(\d{4}))?$/i.exec(raw))){m=MONTHS3[mm[1].slice(0,4).toLowerCase()]||MONTHS3[mm[1].slice(0,3).toLowerCase()];d=+mm[2];y=mm[3]?+mm[3]:null}
+  if(!m||!d||m>12||d>31)return null;
+  if(!y){y=yearHint;if(endMonth&&m>endMonth+1)y=yearHint-1}
+  return y+"-"+pad(m)+"-"+pad(d);
+}
+function amtVal(s){const neg=/^\(|\)$|^-|-\s*$|\bDR\b/i.test(s.trim())||/-\s?\$/.test(s);const v=parseFloat(s.replace(/[^\d.]/g,""));return isNaN(v)?null:(neg?-v:v)}
+const IN_WORDS=/\b(deposit|credit|transfer from|payout|refund|received|incoming|zelle from|cash app from|venmo from|interest paid|reversal|ach credit|direct dep|mobile deposit)\b/i;
+const OUT_WORDS=/\b(purchase|debit|withdrawal|payment to|pos\b|card \d{4}|ach debit|fee|charge|transfer to|zelle to|bill pay|atm|check\s?#?\d+|subscription|autopay)\b/i;
+const PLATFORMS=[["stripe","Stripe"],["shopify","Shopify"],["paypal","PayPal"],["square","Square"],["cash app","Cash App"],["cashapp","Cash App"],["venmo","Venmo"],["zelle","Zelle"],["patreon","Patreon"],["gofundme","GoFundMe"],["givebutter","Givebutter"],["kdp","Amazon KDP"],["amazon","Amazon"],["youtube","YouTube"],["google","Google"],["tiktok","TikTok"],["eventbrite","Eventbrite"],["etsy","Etsy"],["ebay","eBay"],["distrokid","DistroKid"],["spotify","Spotify"],["apple","Apple"],["netlify","Netlify"],["squarespace","Squarespace"],["adobe","Adobe"],["canva","Canva"],["uber","Uber"],["lyft","Lyft"]];
+const DONATION_RE=/\b(donat|gofundme|patreon|givebutter|tip(s|ping)?\b|sponsor|gift)/i;
+const CAT_RULES=[[/\b(uber|lyft|delta|united|american air|southwest|airbnb|hotel|marriott|hilton|parking|shell|exxon|chevron|bp\b|gas)\b/i,"Travel"],[/\b(adobe|google|squarespace|netlify|canva|openai|anthropic|github|microsoft|apple\.com|dropbox|zoom|notion|figma|firebase)\b/i,"Software"],[/\b(meta|facebook|instagram|tiktok ads|ads\b|promo|printing|vistaprint)\b/i,"Marketing"],[/\b(fee|service charge|overdraft|interest charge)\b/i,"Fees"],[/\b(restaurant|cafe|coffee|starbucks|doordash|grubhub|uber eats|chipotle|mcdonald)\b/i,"Food & drink"],[/\b(guitar center|sweetwater|b&h|best buy|amazon)\b/i,"Equipment"],[/\b(payroll|gusto|adp)\b/i,"Payroll"]];
+const DEFAULT_RULES=[{k:"vybr8",b:"vybr8"},{k:"pathd",b:"pathd"},{k:"w4w",b:"w4w"},{k:"drawup",b:"aec"},{k:"shadow crown",b:"scu"},{k:"kdp",b:"scu"},{k:"whatiftmw",b:"wit"},{k:"what if tomorrow",b:"wit"},{k:"grooveville music",b:"music"},{k:"distrokid",b:"music"},{k:"grooveville ent",b:"ent"},{k:"eventbrite",b:"ent"},{k:"grooveville rentals",b:"rentals"}];
+const convRules=()=>((S.convRules&&S.convRules.rules)||DEFAULT_RULES);
+function matchBrand(text){const t=" "+String(text).toLowerCase()+" ";const r=convRules().find(r=>r.k&&t.includes(String(r.k).toLowerCase()));return r?{brand:r.b,rule:r.k,source:r.src||""}:null}
+function platformOf(text){const t=String(text).toLowerCase();const p=PLATFORMS.find(([k])=>t.includes(k));return p?p[1]:""}
+function cleanDesc(s){return String(s).replace(/\s{2,}/g," ").replace(/\b(pos|ach|ppd|ccd|web|id:?\s*\w+|card\s*\d{4}|xx+\d+)\b/gi," ").replace(/\s{2,}/g," ").trim().slice(0,90)}
+function finishRow(r){
+  const m=matchBrand(r.desc);const plat=platformOf(r.desc);
+  r.brand=m?m.brand:"hq";r.matched=!!m;r.platform=plat;
+  r.type=r.amount>=0?"income":"expense";
+  r.source=r.type==="income"?((m&&m.source)||(DONATION_RE.test(r.desc)?"Donation":"Payment")):"";
+  r.category=r.type==="expense"?((CAT_RULES.find(([re])=>re.test(r.desc))||[])[1]||"Other"):"";
+  r.title=cleanDesc(r.desc)||"Bank transaction";
+  r.fp=r.date+"|"+r.amount.toFixed(2)+"|"+r.title.toLowerCase().replace(/[^a-z0-9]/g,"").slice(0,24);
+  r.dup=ledgerAll().some(l=>l.fp===r.fp);r.include=!r.dup;r.id=r.id||uid();
+  return r;
+}
+function parseStatementLines(lines){
+  const text=lines.join("\n");
+  const years=(text.match(/\b20\d{2}\b/g)||[]).map(Number).filter(y=>y>=2015&&y<=2100);
+  const per=/(?:statement period|period|for)\b[^\n]*?(\d{1,2}[\/\-]\d{1,2}[\/\-](\d{2,4}))\s*(?:-|to|through|–)\s*(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{2,4})/i.exec(text);
+  let yearHint=years.length?Math.max(...years):new Date().getFullYear(),endMonth=0;
+  if(per){yearHint=+per[5]<100?2000+(+per[5]):+per[5];endMonth=+per[3]}
+  const rows=[],skipped=[];let section=0,prevBal=null,last=null;
+  lines.forEach(line=>{
+    const L=line.trim();if(!L)return;
+    const dm=DATE_AT_START.exec(L);const amts=(L.match(AMT_G)||[]).map(s=>s.trim());
+    if(!dm){
+      if(!amts.length&&/(deposits|credits|additions|money in|incoming)/i.test(L)){section=1;last=null;return}
+      if(!amts.length&&/(withdrawals|debits|subtractions|checks paid|purchases|payments|fees|money out|outgoing|card transactions)/i.test(L)){section=-1;last=null;return}
+      if(/(beginning|opening|previous) balance/i.test(L)&&amts.length)prevBal=amtVal(amts[amts.length-1]);
+      else if(last&&!amts.length&&L.length<70&&!/page \d|continued|balance|total|summary|account|statement/i.test(L)){last.desc+=" "+L;}
+      else if(amts.length)skipped.push(L);
+      return;
+    }
+    if(!amts.length){skipped.push(L);return}
+    const date=toISO(dm[1],yearHint,endMonth);
+    let desc=L.slice(dm[0].length);amts.forEach(a=>{desc=desc.replace(a,"")});desc=desc.replace(/\s{2,}/g," ").trim();
+    if(/(beginning|ending|opening|closing|daily|available)\s+balance|^total|balance forward/i.test(desc)){prevBal=amtVal(amts[amts.length-1]);last=null;return}
+    if(!date){skipped.push(L);return}
+    let raw=amts[0],val=amtVal(raw),bal=amts.length>=2?amtVal(amts[amts.length-1]):null;
+    if(val===null){skipped.push(L);return}
+    const explicit=/^\(|\)$|^-|-$|\bDR\b|\bCR\b/i.test(raw);
+    let sign=0;
+    if(explicit)sign=/\bCR\b/i.test(raw)?1:(val<0?-1:1);
+    else if(prevBal!==null&&bal!==null&&Math.abs(Math.abs(bal-prevBal)-Math.abs(val))<0.011)sign=bal>=prevBal?1:-1;
+    else if(section)sign=section;
+    else if(IN_WORDS.test(desc))sign=1;
+    else if(OUT_WORDS.test(desc))sign=-1;
+    else sign=-1;
+    if(bal!==null)prevBal=bal;
+    const r={date,desc,amount:Math.abs(val)*sign,raw:L,how:explicit?"sign":(sign&&section?"section":"words")};
+    rows.push(r);last=r;
+  });
+  return {rows:rows.map(finishRow),skipped,period:per?per[0]:""};
+}
+function parseCSV(text){
+  const rows=[];let row=[],cell="",q=false;
+  for(let i=0;i<text.length;i++){const c=text[i];if(q){if(c==='"'&&text[i+1]==='"'){cell+='"';i++}else if(c==='"')q=false;else cell+=c}else if(c==='"')q=true;else if(c===","){row.push(cell);cell=""}else if(c==="\n"||c==="\r"){if(c==="\r"&&text[i+1]==="\n")i++;row.push(cell);rows.push(row);row=[];cell=""}else cell+=c}
+  if(cell||row.length){row.push(cell);rows.push(row)}
+  const hi=rows.findIndex(r=>r.some(c=>/date/i.test(c))&&r.some(c=>/amount|debit|credit|withdraw|deposit/i.test(c)));
+  if(hi<0)return null;
+  const H=rows[hi].map(h=>h.trim().toLowerCase());const col=re=>H.findIndex(h=>re.test(h));
+  const cD=col(/date/),cDesc=col(/desc|memo|payee|name|details|transaction/),cA=col(/^amount|amount$/),cDr=col(/debit|withdraw|money out/),cCr=col(/credit|deposit|money in/);
+  const out=[];
+  rows.slice(hi+1).forEach(r=>{if(!r[cD])return;const date=toISO(r[cD].trim().split(" ")[0],new Date().getFullYear());if(!date)return;
+    let a=null;if(cA>=0&&r[cA])a=amtVal(r[cA]);else{const dr=cDr>=0?amtVal(r[cDr]||""):null,cr=cCr>=0?amtVal(r[cCr]||""):null;if(cr)a=Math.abs(cr);else if(dr)a=-Math.abs(dr)}
+    if(a===null||a===0)return;out.push({date,desc:(r[cDesc]||"").trim(),amount:a,raw:r.join(", "),how:"csv"})});
+  return {rows:out.map(finishRow),skipped:[],period:""};
+}
+
+/* ---- events & emails ---- */
+function findDate(text,noRoll){
+  const t=String(text);let m;
+  if((m=/\b(\d{4}-\d{2}-\d{2})\b/.exec(t)))return m[1];
+  if((m=/\b(\d{1,2})\/(\d{1,2})\/(\d{2,4})\b/.exec(t)))return toISO(m[0],new Date().getFullYear());
+  if((m=/\b(?:(?:mon|tue|wed|thu|fri|sat|sun)[a-z]*,?\s+)?((?:jan|feb|mar|apr|may|jun|jul|aug|sept?|oct|nov|dec)[a-z]*\.?\s+\d{1,2})(?:st|nd|rd|th)?(?:,?\s+(\d{4}))?/i.exec(t))){
+    const y=m[2]?+m[2]:new Date().getFullYear();let iso=toISO(m[1].replace(/\./,"")+" "+y,y);if(iso&&!m[2]&&!noRoll&&iso<today())iso=(y+1)+iso.slice(4);return iso}
+  if((m=/\b(\d{1,2})\/(\d{1,2})\b/.exec(t))){let iso=toISO(m[0],new Date().getFullYear());if(iso&&!noRoll&&iso<today())iso=(+iso.slice(0,4)+1)+iso.slice(4);return iso}
+  return "";
+}
+function findTimes(text){
+  const rngFirst=/\b(\d{1,2})(?::(\d{2}))?\s*(am|pm)?\s*(?:-|–|to)\s*(\d{1,2})(?::(\d{2}))?\s*(am|pm)/i.exec(text);
+  if(rngFirst){const ap1=rngFirst[3]||rngFirst[6];let s=+rngFirst[1]%12;if(/p/i.test(ap1))s+=12;let e=+rngFirst[4]%12;if(/p/i.test(rngFirst[6]))e+=12;return [pad(s)+":"+(rngFirst[2]||"00"),pad(e)+":"+(rngFirst[5]||"00")]}
+  const re=/\b(\d{1,2})(?::(\d{2}))?\s*(am|pm|a\.m\.|p\.m\.)/gi;const out=[];let m;
+  while((m=re.exec(text))&&out.length<2){let h=+m[1]%12;if(/p/i.test(m[3]))h+=12;out.push(pad(h)+":"+(m[2]||"00"))}
+  const rng=/\b(\d{1,2})(?::(\d{2}))?\s*[-–to]+\s*(\d{1,2})(?::(\d{2}))?\s*(am|pm)/i.exec(text);
+  if(rng&&out.length<2){let e=+rng[3]%12;if(/p/i.test(rng[5]))e+=12;let s=+rng[1]%12;if(/p/i.test(rng[5])&&s+12<=e)s+=12;return [pad(s)+":"+(rng[2]||"00"),pad(e)+":"+(rng[4]||"00")]}
+  return out;
+}
+function headerVal(text,name){const m=new RegExp("^"+name+":\\s*(.+)$","im").exec(text);return m?m[1].trim():""}
+function readEvent(text){
+  const lines=String(text).split(/\n/).map(s=>s.trim()).filter(Boolean);
+  const subj=headerVal(text,"subject");const title=(subj||lines.find(l=>!/^(from|to|date|sent|subject|cc):/i.test(l))||"New event").replace(/^(re|fwd?):\s*/i,"").slice(0,90);
+  const tm=findTimes(text);const loc=(/\b(?:at|location|venue|where)\s*[:\-]?\s+([A-Z0-9][^\n.,]{3,60})/.exec(text)||[])[1]||"";
+  const link=(/(https?:\/\/[^\s)]+)/.exec(text)||[])[1]||"";const mb=matchBrand(text);
+  return {title,date:findDate(text)||today(),start:tm[0]||"",end:tm[1]||"",location:loc.trim(),link,brand:mb?mb.brand:"hq",visibility:"private",description:String(text).trim().slice(0,1500),toCal:true,toLog:true,toDoc:false};
+}
+const KINDS=["Complaint","Question","Collab request","Payment","Booking","Other"];
+function readEmail(text){
+  const from=headerVal(text,"from"),subject=headerVal(text,"subject"),dateH=headerVal(text,"date")||headerVal(text,"sent");
+  const body=String(text).replace(/^(from|to|cc|date|sent|subject):.*$/gim,"").trim();
+  const t=(subject+" "+body).toLowerCase();
+  const kind=/(complain|refund|issue|problem|disappoint|broken|unhappy|wrong|never received|charged twice|not working|terrible|bad experience)/.test(t)?"Complaint":/(collab|partner|sponsor|feature|work together)/.test(t)?"Collab request":/(book|reserve|availability|rental|quote)/.test(t)?"Booking":/(invoice|payment|paid|receipt)/.test(t)?"Payment":/\?/.test(t)?"Question":"Other";
+  const mb=matchBrand(text);const ev=findDate(body,true);
+  return {from,subject:subject||body.split("\n")[0].slice(0,80)||"Message",date:findDate(dateH)||today(),kind,brand:mb?mb.brand:"hq",summary:body.slice(0,1500),followUp:addDays(today(),2),eventDate:ev&&ev>today()?ev:"",toLog:true,toRem:kind!=="Other",toCal:false,toCollab:kind==="Collab request",toDoc:false};
+}
+
+/* ---- storage helper shared with Documents ---- */
+async function storeDocBlob(blob,name,meta){
+  const b64=await readB64(blob),id=uid(),n=Math.max(1,Math.ceil(b64.length/CHUNK));
+  for(let i=0;i<n;i++){if(!await putChunk(id,i,b64.slice(i*CHUNK,(i+1)*CHUNK)))throw {code:"chunk"}}
+  if(!await save("docs",id,Object.assign({name,type:blob.type||"application/octet-stream",size:blob.size,chunks:n,brand:"hq",category:"Other",date:today(),notes:"",uploadedAt:new Date().toISOString()},meta)))throw {code:"meta"};
+  return id;
+}
+
+/* ---- view ---- */
+function viewConverter(){
+  const c=S.conv;const mode=c.mode;
+  const seg='<div class="seg" role="group" aria-label="What are you converting?">'+[["stmt","Bank statement"],["event","Event"],["email","Email or complaint"]].map(([v,l])=>'<button data-act="conv-mode" data-v="'+v+'" class="'+(mode===v?"on":"")+'">'+l+'</button>').join("")+'</div>';
+  const intro='<div class="toolbar">'+seg+'<span class="sp"></span><button class="btn ghost sm" data-act="conv-rules">Matching rules</button></div>';
+  let body="";
+  if(mode==="stmt")body=viewConvStatement();
+  else if(mode==="event")body=viewConvEvent();
+  else body=viewConvEmail();
+  const hist=sortBy(S.conversions||[],x=>x.at||"").reverse().slice(0,12);
+  return '<p class="muted" style="max-width:72ch;margin-bottom:14px">Drop in a bank statement, an event flyer or an email. The converter reads it, sorts each piece to the right company, and adds it to that team\'s timesheet, the calendar and Documents. Nothing here is visible to the public.</p>'+intro+body+
+    '<h2 style="font-size:20px;margin:30px 0 10px">Recent conversions</h2>'+(hist.length?'<div class="tablewrap"><table class="t"><thead><tr><th>When</th><th>Kind</th><th>What</th><th>Companies</th><th class="num">Items</th></tr></thead><tbody>'+hist.map(h=>'<tr><td class="mono" style="white-space:nowrap">'+esc(fmtDate(String(h.at).slice(0,10)))+'</td><td>'+esc(h.kind)+'</td><td>'+esc(h.title)+(h.docId?' <button class="rowbtn" data-act="doc-open" data-id="'+esc(h.docId)+'">File</button>':'')+'</td><td>'+(h.brands||[]).map(b=>chip(b)).join(" ")+'</td><td class="num">'+(h.items||0)+'</td></tr>').join("")+'</tbody></table></div>':'<div class="empty">Nothing converted yet.</div>');
+}
+function viewConvStatement(){
+  const c=S.conv;
+  const drop='<div class="card" style="display:flex;flex-direction:column;gap:12px"><div id="conv-drop" class="empty" style="margin:0;padding:22px">Drag a bank statement here (PDF or CSV), or <label style="color:var(--teal-ink);font-weight:600;cursor:pointer;text-decoration:underline">choose a file<input type="file" id="conv-file" accept=".pdf,.csv,text/csv,application/pdf" hidden></label></div>'+
+    '<details><summary style="cursor:pointer;font-weight:600;font-size:14px">Or paste statement text</summary><textarea class="i mono" id="conv-paste" style="min-height:120px;margin-top:8px;font-size:13px" placeholder="10/02 STRIPE TRANSFER VYBR8   1,240.00   5,300.12"></textarea><button class="btn ghost sm" data-act="conv-paste" style="margin-top:8px">Read pasted text</button></details>'+
+    (c.busy?'<p class="muted">'+esc(c.busy)+'</p>':'')+(c.err?'<p style="color:var(--bad)">'+esc(c.err)+'</p>':'')+'</div>';
+  if(!c.rows)return drop;
+  const R=c.rows, inc=R.filter(r=>r.include);
+  const tin=inc.filter(r=>r.amount>0).reduce((a,r)=>a+r.amount,0), tout=inc.filter(r=>r.amount<0).reduce((a,r)=>a-r.amount,0);
+  const per={};inc.forEach(r=>{per[r.brand]=(per[r.brand]||0)+r.amount});
+  const need=R.filter(r=>r.include&&!r.matched).length;
+  const brandSel=r=>'<select class="i" data-act="conv-row" data-k="brand" data-id="'+r.id+'" style="padding:5px 6px;font-size:13px;min-width:150px" aria-label="Company">'+BRANDS.map(b=>'<option value="'+b.id+'"'+(b.id===r.brand?" selected":"")+'>'+esc(brandInfo(b.id).name)+'</option>').join("")+'</select>';
+  const typeSel=r=>r.amount>=0?'<select class="i" data-act="conv-row" data-k="source" data-id="'+r.id+'" style="padding:5px 6px;font-size:13px" aria-label="Money in type">'+SOURCES.map(s=>'<option'+(s===r.source?" selected":"")+'>'+s+'</option>').join("")+'</select>':'<select class="i" data-act="conv-row" data-k="category" data-id="'+r.id+'" style="padding:5px 6px;font-size:13px" aria-label="Category">'+CATS.map(s=>'<option'+(s===r.category?" selected":"")+'>'+s+'</option>').join("")+'</select>';
+  return drop+
+    '<div class="card" style="margin-top:14px;display:flex;flex-direction:column;gap:12px"><div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap"><b style="font-size:17px;overflow-wrap:anywhere">'+esc(c.fileName||"Statement")+'</b>'+(c.period?'<span class="muted" style="font-size:13px">'+esc(c.period)+'</span>':'')+'<span class="sp" style="flex:1"></span><button class="btn ghost sm" data-act="conv-clear">Start over</button></div>'+
+    '<div class="kpis" style="margin:0"><div class="kpi"><span class="eyebrow">Transactions found</span><b>'+R.length+'</b></div><div class="kpi"><span class="eyebrow">Money in (selected)</span><b class="pos">'+money(tin)+'</b></div><div class="kpi"><span class="eyebrow">Money out (selected)</span><b class="neg">'+money(tout)+'</b></div><div class="kpi"><span class="eyebrow">Check company</span><b>'+need+'</b></div></div>'+
+    '<div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center"><span class="muted" style="font-size:13px">By company:</span>'+Object.entries(per).map(([b,v])=>'<span class="chip" style="'+cvar(b)+'">'+esc(brandInfo(b).name)+' · '+money(v)+'</span>').join("")+'</div>'+
+    (R.length?'<div class="tablewrap"><table class="t" style="min-width:980px"><thead><tr><th><input type="checkbox" data-act="conv-all" aria-label="Select all"'+(R.every(r=>r.include)?" checked":"")+'></th><th>Date</th><th>Description</th><th class="num">Amount</th><th>Company</th><th>Type</th><th></th></tr></thead><tbody>'+
+    R.map(r=>'<tr style="'+(r.include?'':'opacity:.5')+'"><td><input type="checkbox" data-act="conv-row" data-k="include" data-id="'+r.id+'"'+(r.include?" checked":"")+' aria-label="Include"></td><td><input class="i mono" type="date" data-act="conv-row" data-k="date" data-id="'+r.id+'" value="'+esc(r.date)+'" style="padding:4px 6px;font-size:13px;width:140px"></td><td style="min-width:220px"><input class="i" data-act="conv-row" data-k="title" data-id="'+r.id+'" value="'+esc(r.title)+'" style="padding:4px 6px;font-size:13px">'+(r.platform?'<div class="muted" style="font-size:12px;margin-top:2px">'+esc(r.platform)+'</div>':'')+'</td>'+
+      '<td class="num"><div style="display:flex;gap:4px;justify-content:flex-end;align-items:center"><button class="rowbtn" data-act="conv-flip" data-id="'+r.id+'" title="Switch money in / money out" style="font-weight:700;color:'+(r.amount>=0?'var(--ok)':'var(--peach-ink)')+'">'+(r.amount>=0?'+ In':'− Out')+'</button><input class="i mono" type="number" step="0.01" min="0" data-act="conv-row" data-k="abs" data-id="'+r.id+'" value="'+Math.abs(r.amount).toFixed(2)+'" style="padding:4px 6px;font-size:13px;width:100px;text-align:right"></div></td>'+
+      '<td>'+brandSel(r)+(r.matched?'':'<div style="font-size:11.5px;color:var(--peach-ink);margin-top:2px">No rule matched · check</div>')+'</td><td>'+typeSel(r)+'</td><td style="white-space:nowrap">'+(r.dup?'<span class="pill priv">Already logged</span>':'')+'</td></tr>').join("")+
+    '</tbody></table></div>':'<div class="empty">No transactions were found. If this is a scanned statement (a photo), download a text PDF or CSV from your bank instead, or paste the text.</div>')+
+    (c.skipped&&c.skipped.length?'<details><summary style="cursor:pointer;font-size:13.5px" class="muted">'+c.skipped.length+' lines with amounts were skipped (totals, balances, headers). Review them</summary><pre class="mono" style="white-space:pre-wrap;font-size:12px;max-height:220px;overflow:auto;background:var(--surface-2);padding:10px;border-radius:8px">'+esc(c.skipped.join("\n"))+'</pre></details>':'')+
+    '<div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center"><button class="btn ghost sm" data-act="conv-addrow">+ Add a row</button><label style="display:flex;gap:6px;align-items:center;font-size:14px"><input type="checkbox" id="conv-savedoc" '+(c.saveDoc!==false?"checked":"")+' data-act="conv-savedoc"> Save statement to Documents</label><span class="sp" style="flex:1"></span><button class="btn olive" data-act="conv-post"'+(inc.length?'':' disabled')+'>Add '+inc.length+' to team timesheets</button></div>'+
+    '<p class="muted" style="font-size:12.5px">Check the company and in/out on each row before adding. Every statement is laid out differently, so the converter makes its best read and you confirm it.</p></div>';
+}
+function convFields(o,fields){return fields.map(([k,l,type,opts])=>type==="select"?'<label class="f">'+l+'<select class="i" data-act="conv-f" data-k="'+k+'">'+opts.map(([v,t])=>'<option value="'+esc(v)+'"'+(String(o[k])===String(v)?" selected":"")+'>'+esc(t)+'</option>').join("")+'</select></label>':type==="area"?'<label class="f" style="grid-column:1/-1">'+l+'<textarea class="i" data-act="conv-f" data-k="'+k+'" style="min-height:90px">'+esc(o[k])+'</textarea></label>':type==="check"?'<label style="display:flex;gap:8px;align-items:center;font-weight:600;font-size:14px"><input type="checkbox" data-act="conv-f" data-k="'+k+'"'+(o[k]?" checked":"")+'> '+l+'</label>':'<label class="f">'+l+'<input class="i" type="'+(type||"text")+'" data-act="conv-f" data-k="'+k+'" value="'+esc(o[k])+'"></label>').join("")}
+const brandPairs=()=>BRANDS.map(b=>[b.id,brandInfo(b.id).name]);
+function inputCard(kind){
+  return '<div class="card" style="display:flex;flex-direction:column;gap:10px"><label class="f">Paste the '+(kind==="event"?"event details, flyer text or invite":"email or message")+'<textarea class="i" id="conv-text" style="min-height:140px" placeholder="'+(kind==="event"?"Grooveville Entertainment presents Fall Groove Night, Sat Oct 24, 7pm–11pm at The Loft, 123 Main St. Tickets: https://…":"From: Jane Doe <jane@email.com>\nSubject: Rental speakers didn\'t work\n\nHi, I rented speakers from Grooveville Rentals on Oct 3 and…")+'">'+esc(S.conv.text||"")+'</textarea></label>'+
+    '<div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center"><button class="btn olive sm" data-act="conv-read" data-v="'+kind+'">Read it</button><label class="btn ghost sm" style="cursor:pointer">Or upload a file (.txt, .eml, .pdf)<input type="file" id="conv-file2" accept=".txt,.eml,.pdf,text/plain,message/rfc822,application/pdf" hidden></label>'+(S.conv.srcName?'<span class="muted" style="font-size:13px">'+esc(S.conv.srcName)+'</span>':'')+'</div>'+(S.conv.busy?'<p class="muted">'+esc(S.conv.busy)+'</p>':'')+(S.conv.err?'<p style="color:var(--bad)">'+esc(S.conv.err)+'</p>':'')+'</div>';
+}
+function viewConvEvent(){
+  const o=S.conv.ev;
+  return inputCard("event")+(o?'<div class="card" style="margin-top:14px;display:flex;flex-direction:column;gap:12px"><h3 style="font-size:20px">Event details</h3><div class="grid2">'+
+    convFields(o,[["title","Title"],["brand","Company","select",brandPairs()],["date","Date","date"],["start","Start","time"],["end","End","time"],["location","Location"],["link","Tickets or info link","url"],["visibility","Who can see it","select",[["private","Private (back office)"],["public","Public calendar"]]],["description","Description","area"]])+
+    '</div><div style="display:flex;gap:16px;flex-wrap:wrap">'+convFields(o,[["toCal","Add to calendar","check"],["toLog","Log on the team timesheet","check"],["toDoc","Save the original to Documents","check"]])+'</div><div><button class="btn olive" data-act="conv-go-event">Convert</button></div></div>':'');
+}
+function viewConvEmail(){
+  const o=S.conv.em;
+  return inputCard("email")+(o?'<div class="card" style="margin-top:14px;display:flex;flex-direction:column;gap:12px"><h3 style="font-size:20px">Message details</h3><div class="grid2">'+
+    convFields(o,[["kind","What is it","select",KINDS.map(k=>[k,k])],["brand","Company","select",brandPairs()],["from","From"],["subject","Subject"],["date","Received","date"],["followUp","Follow up by","date"],["eventDate","Event date (if any)","date"],["summary","Message","area"]])+
+    '</div><div style="display:flex;gap:16px;flex-wrap:wrap">'+convFields(o,[["toLog","Log on the team timesheet","check"],["toRem","Create a follow-up reminder","check"],["toCal","Add the event date to the calendar","check"],["toCollab","Save to Collabs","check"],["toDoc","Save the original to Documents","check"]])+'</div><div><button class="btn olive" data-act="conv-go-email">Convert</button></div></div>':'');
+}
+
+/* ---- actions ---- */
+function convReset(keepMode){S.conv={mode:keepMode||S.conv.mode||"stmt",saveDoc:true}}
+async function convLoadStatement(file){
+  const c=S.conv;c.err="";c.busy="Reading "+file.name+"…";c.rows=null;c.file=file;c.fileName=file.name;render();
+  try{
+    let res;
+    if(/\.csv$/i.test(file.name)||file.type==="text/csv")res=parseCSV(await file.text());
+    else{const lines=await pdfLines(file);res=parseStatementLines(lines);if(!res.rows.length&&lines.join("").length<40)c.err="This PDF has no readable text. It's probably a scanned image. Download the statement as a text PDF or CSV from your bank's website."}
+    if(!res){c.err="Couldn't find date and amount columns in this CSV.";c.busy="";return render()}
+    c.rows=res.rows;c.skipped=res.skipped;c.period=res.period;c.busy="";
+  }catch(e){c.busy="";c.err="Couldn't open that file. Make sure it's a PDF or CSV statement."+(e&&e.message==="load"?" (The PDF reader didn't load; check your internet connection.)":"")}
+  render();
+}
+async function convPost(btn){
+  const c=S.conv;const inc=c.rows.filter(r=>r.include);if(!inc.length)return;
+  btn.disabled=true;btn.textContent="Adding…";let docId="";
+  try{
+    if(c.saveDoc!==false&&c.file)docId=await storeDocBlob(c.file,c.fileName,{brand:"hq",category:"Bank statement",date:(inc[inc.length-1]||{}).date||today(),notes:"Converted: "+inc.length+" transactions"});
+    else if(c.saveDoc!==false&&c.pasted)docId=await storeDocBlob(new Blob([c.pasted],{type:"text/plain"}),"Pasted statement "+today()+".txt",{brand:"hq",category:"Bank statement",notes:"Converted: "+inc.length+" transactions"});
+    let n=0;
+    for(const r of inc){
+      const rec={brand:r.brand,type:r.amount>=0?"income":"expense",date:r.date,title:r.title,amount:Math.round(Math.abs(r.amount)*100)/100,vendor:r.platform||r.title,category:r.amount>=0?"":r.category,notes:"From bank statement"+(c.fileName?" · "+c.fileName:""),fp:r.fp,fromStatement:docId,createdAt:new Date().toISOString(),by:S.uid||""};
+      if(r.amount>=0)rec.source=r.source||"Payment";else{rec.payment="Business card";rec.receiptNo=""}
+      if(await save("ledger",uid(),rec))n++;
+    }
+    await save("conversions",uid(),{kind:"Bank statement",title:c.fileName||"Pasted statement",brands:[...new Set(inc.map(r=>r.brand))],items:n,docId,at:new Date().toISOString()});
+    toast(n+" transactions added"+(docId?" · statement saved to Documents":""));convReset("stmt");render();
+  }catch(e){btn.disabled=false;btn.textContent="Try again";toast("Stopped partway. Check your connection; already-added rows show as “Already logged”.")}
+}
+async function convSaveOriginal(name){
+  const c=S.conv;if(c.srcFile)return storeDocBlob(c.srcFile,c.srcFile.name,{});
+  return storeDocBlob(new Blob([c.text||""],{type:"text/plain"}),name+".txt",{});
+}
+async function convGoEvent(btn){
+  const o=S.conv.ev;if(!o.title||!o.date){toast("Add a title and date");return}
+  btn.disabled=true;let docId="",done=[];
+  try{
+    if(o.toDoc){docId=await convSaveOriginal(o.title);await S.db.collection("docs").doc(docId).update({brand:o.brand,category:"Other",notes:"Event: "+o.title})}
+    if(o.toCal&&await save("events",uid(),{brand:o.brand,title:o.title,date:o.date,start:o.start||"",end:o.end||"",location:o.location||"",link:o.link||"",description:o.description||"",visibility:o.visibility==="public"?"public":"private",remindDays:"1",createdAt:new Date().toISOString()}))done.push("calendar");
+    if(o.toLog&&await save("ledger",uid(),{brand:o.brand,type:"note",date:today(),title:"Event: "+o.title+" ("+fmtDate(o.date)+")",notes:[o.location,o.link].filter(Boolean).join(" · "),createdAt:new Date().toISOString(),by:S.uid||""}))done.push("timesheet");
+    await save("conversions",uid(),{kind:"Event",title:o.title,brands:[o.brand],items:done.length,docId,at:new Date().toISOString()});
+    toast("Event added to "+(done.join(" and ")||"Documents"));const m=S.conv.mode;convReset(m);render();
+  }catch(e){btn.disabled=false;toast("Couldn't finish. Try again.")}
+}
+async function convGoEmail(btn){
+  const o=S.conv.em;btn.disabled=true;let docId="",done=[];const label=o.kind+": "+(o.subject||"Message");
+  try{
+    if(o.toDoc){docId=await convSaveOriginal(o.subject||"Message");await S.db.collection("docs").doc(docId).update({brand:o.brand,category:"Other",notes:label})}
+    if(o.toLog&&await save("ledger",uid(),{brand:o.brand,type:"note",date:o.date||today(),title:label.slice(0,100),notes:((o.from?"From "+o.from+". ":"")+o.summary).slice(0,900),createdAt:new Date().toISOString(),by:S.uid||""}))done.push("timesheet");
+    if(o.toRem&&await save("reminders",uid(),{title:"Follow up: "+label.slice(0,80),brand:o.brand,date:o.followUp||addDays(today(),2),time:"",priority:o.kind==="Complaint"?"high":"normal",notes:(o.from?"From "+o.from:"").slice(0,200),done:false,createdAt:new Date().toISOString()}))done.push("reminders");
+    if(o.toCal&&o.eventDate&&await save("events",uid(),{brand:o.brand,title:o.subject||label,date:o.eventDate,start:"",end:"",location:"",link:"",description:o.summary.slice(0,800),visibility:"private",remindDays:"1",createdAt:new Date().toISOString()}))done.push("calendar");
+    if(o.toCollab){const id=uid();if(await save("outreach",id,{direction:"incoming",brand:o.brand,org:(o.from||"Unknown").replace(/<.*>/,"").trim(),contact:(o.from||"").replace(/<.*>/,"").trim(),email:((/<([^>]+)>/.exec(o.from)||[])[1]||(/\S+@\S+/.exec(o.from)||[""])[0]),type:"Brand partnership",date:"",proposal:o.summary.slice(0,1500),status:"talking",notes:"",created:today(),ref:refCode(o.brand,today(),id)}))done.push("collabs")}
+    await save("conversions",uid(),{kind:o.kind,title:o.subject||"Message",brands:[o.brand],items:done.length,docId,at:new Date().toISOString()});
+    toast("Saved to "+(done.join(", ")||"Documents"));const m=S.conv.mode;convReset(m);render();
+  }catch(e){btn.disabled=false;toast("Couldn't finish. Try again.")}
+}
+async function convReadText(kind){
+  const ta=$("#conv-text");if(ta)S.conv.text=ta.value;
+  if(!S.conv.text||!S.conv.text.trim()){S.conv.err="Paste some text or upload a file first.";return render()}
+  S.conv.err="";if(kind==="event")S.conv.ev=readEvent(S.conv.text);else S.conv.em=readEmail(S.conv.text);render();
+}
+async function convLoadText(file){
+  const c=S.conv;c.srcFile=file;c.srcName=file.name;c.err="";
+  try{if(/\.pdf$/i.test(file.name)){c.busy="Reading "+file.name+"…";render();c.text=(await pdfLines(file)).join("\n")}else c.text=await file.text();c.busy=""}
+  catch(e){c.busy="";c.err="Couldn't read that file."}
+  if(c.text)return convReadText(c.mode==="event"?"event":"email");render();
+}
+function rulesModal(){
+  const rules=convRules().slice();
+  const rowHtml=(r,i)=>'<div style="display:flex;gap:6px;align-items:center" data-rule="'+i+'"><input class="i" name="k" value="'+esc(r.k)+'" placeholder="Text on the statement, e.g. vybr8" style="flex:1;min-width:0"><select class="i" name="b" style="width:auto">'+BRANDS.map(b=>'<option value="'+b.id+'"'+(b.id===r.b?" selected":"")+'>'+esc(brandInfo(b.id).name)+'</option>').join("")+'</select><select class="i" name="src" style="width:auto" aria-label="Money in type"><option value="">Auto type</option>'+SOURCES.map(s=>'<option'+(s===r.src?" selected":"")+'>'+s+'</option>').join("")+'</select><button type="button" class="rowbtn" data-rm="1" aria-label="Remove rule">✕</button></div>';
+  openModal('<form id="mf"><h3 style="margin-bottom:6px">Matching rules</h3><p class="muted" style="font-size:14px;margin-bottom:12px">When a transaction, event or email contains this text, it goes to that company. Rules are checked top to bottom. Use the name each platform prints on your statement (for example the Stripe or Shopify store name).</p><div id="rules" style="display:flex;flex-direction:column;gap:8px;max-height:50vh;overflow:auto">'+rules.map(rowHtml).join("")+'</div><button type="button" class="btn ghost sm" id="addrule" style="margin-top:10px">+ Add rule</button><div class="row"><button type="button" class="btn ghost left" id="resetrules">Reset to defaults</button><button type="button" class="btn ghost" data-act="close-modal">Cancel</button><button class="btn olive" type="submit">Save rules</button></div></form>',
+  el=>{
+    const box=el.querySelector("#rules");
+    el.querySelector("#addrule").addEventListener("click",()=>{box.insertAdjacentHTML("beforeend",rowHtml({k:"",b:"hq",src:""},box.children.length));box.lastElementChild.querySelector("input").focus()});
+    box.addEventListener("click",e=>{if(e.target.dataset.rm)e.target.closest("[data-rule]").remove()});
+    el.querySelector("#resetrules").addEventListener("click",()=>{box.innerHTML=DEFAULT_RULES.map(rowHtml).join("")});
+    el.querySelector("#mf").addEventListener("submit",async ev=>{ev.preventDefault();
+      const list=[...box.querySelectorAll("[data-rule]")].map(d=>({k:d.querySelector("[name=k]").value.trim(),b:d.querySelector("[name=b]").value,src:d.querySelector("[name=src]").value})).filter(r=>r.k);
+      if(await save("convrules","main",{rules:list,updatedAt:new Date().toISOString()})){S.convRules={rules:list};if(S.conv.rows)S.conv.rows=S.conv.rows.map(r=>finishRow(Object.assign({},r,{id:r.id})));closeModal();toast("Rules saved");render()}});
+  });
+}
+
 /* ---------- modals ---------- */
 const brandOpts=(sel,only)=>BRANDS.filter(b=>!only||only.includes(b.id)).map(b=>'<option value="'+b.id+'"'+(b.id===sel?" selected":"")+'>'+esc(brandInfo(b.id).name)+'</option>').join("");
 const delBtn=has=>has?'<button type="button" class="btn danger left" data-act="del-arm">Delete</button>':'';
@@ -1343,7 +1641,7 @@ function render(){
   else if(r.startsWith("team")){
     if(!S.isAdmin)h=viewSignin();
     else if(!S.db)h='<div class="wrap gate"><h1>Back office unavailable</h1><p class="muted">Saved records can\'t be reached in this view. Open the page from claude.ai while signed in.</p></div>';
-    else{const v={"team":viewDash,"team-time":viewTimesheet,"team-cal":()=>viewCalendar(true),"team-rem":viewReminders,"team-out":viewOutreach,"team-people":viewTeams,"team-vault":viewVault,"team-docs":viewDocs,"team-reports":viewReports,"team-site":viewSite}[r]||viewDash;h=teamShell(TEAM_TABS.some(t=>t[0]===r)?r:"team",v())}
+    else{const v={"team":viewDash,"team-time":viewTimesheet,"team-cal":()=>viewCalendar(true),"team-rem":viewReminders,"team-out":viewOutreach,"team-people":viewTeams,"team-vault":viewVault,"team-docs":viewDocs,"team-conv":viewConverter,"team-reports":viewReports,"team-site":viewSite}[r]||viewDash;h=teamShell(TEAM_TABS.some(t=>t[0]===r)?r:"team",v())}
   }
   else h=viewHome();
   app.innerHTML=h;
@@ -1351,6 +1649,10 @@ function render(){
   const af=$("#authForm");if(af)af.addEventListener("submit",e=>{e.preventDefault();fbAuth(af,(e.submitter&&e.submitter.dataset.mode)||"in")});
   [["docf-cat","cat"],["docf-year","year"],["docf-q","q"]].forEach(([i,k])=>{const el=$("#"+i);if(el)el.addEventListener("change",()=>{S.docf[k]=el.value;render()})});
   const dz=$("#dropzone");if(dz){dz.addEventListener("dragover",e=>{e.preventDefault();dz.style.borderColor="var(--teal)"});dz.addEventListener("dragleave",()=>{dz.style.borderColor=""});dz.addEventListener("drop",e=>{e.preventDefault();dz.style.borderColor="";if(e.dataTransfer.files.length)docsModal(e.dataTransfer.files)})}
+  const cf1=$("#conv-file");if(cf1)cf1.addEventListener("change",()=>{if(cf1.files[0])convLoadStatement(cf1.files[0])});
+  const cf2=$("#conv-file2");if(cf2)cf2.addEventListener("change",()=>{if(cf2.files[0])convLoadText(cf2.files[0])});
+  const cd=$("#conv-drop");if(cd){cd.addEventListener("dragover",e=>{e.preventDefault();cd.style.borderColor="var(--teal)"});cd.addEventListener("dragleave",()=>{cd.style.borderColor=""});cd.addEventListener("drop",e=>{e.preventDefault();cd.style.borderColor="";if(e.dataTransfer.files[0])convLoadStatement(e.dataTransfer.files[0])})}
+  const ct=$("#conv-text");if(ct)ct.addEventListener("input",()=>{S.conv.text=ct.value});
   const tm=$("#ts-month");if(tm)tm.addEventListener("change",()=>{if(tm.value){S.ts.month=tm.value;render()}});
   $("#footnote").innerHTML=SNAP.publishedAt?' · Updated '+esc(new Date(SNAP.publishedAt).toLocaleDateString("en-US",{month:"short",day:"numeric",year:"numeric"})):'';
 }
@@ -1408,6 +1710,16 @@ document.addEventListener("click",async e=>{
   if(a==="vault-lock"){lockVault();return render()}
   if(a==="vault-forgot")return vaultForgotModal();
   if(a==="doc-up")return docsModal();
+  if(a==="conv-mode"){S.conv.mode=t.dataset.v;S.conv.err="";return render()}
+  if(a==="conv-rules")return rulesModal();
+  if(a==="conv-clear"){convReset("stmt");return render()}
+  if(a==="conv-paste"){const v=($("#conv-paste")||{}).value||"";if(!v.trim()){toast("Paste the statement text first");return}const res=parseStatementLines(v.split(/\n/));Object.assign(S.conv,{rows:res.rows,skipped:res.skipped,period:res.period,fileName:"Pasted statement",file:null,pasted:v,err:res.rows.length?"":"No transactions found in that text."});return render()}
+  if(a==="conv-flip"){const r=S.conv.rows.find(x=>x.id===id);if(r){r.amount=-r.amount;r.type=r.amount>=0?"income":"expense";if(r.amount>=0&&!r.source)r.source=DONATION_RE.test(r.desc)?"Donation":"Payment";if(r.amount<0&&!r.category)r.category="Other";r.fp=r.date+"|"+r.amount.toFixed(2)+"|"+r.title.toLowerCase().replace(/[^a-z0-9]/g,"").slice(0,24)}return render()}
+  if(a==="conv-addrow"){S.conv.rows.push({id:uid(),date:today(),desc:"",title:"",amount:0,brand:"hq",matched:true,type:"income",source:"Payment",category:"",include:true,platform:"",fp:""});return render()}
+  if(a==="conv-post")return convPost(t);
+  if(a==="conv-read")return convReadText(t.dataset.v);
+  if(a==="conv-go-event")return convGoEvent(t);
+  if(a==="conv-go-email")return convGoEmail(t);
   if(a==="doc-open")return openDoc(id);
   if(a==="doc-dl"){const d=S.docs.find(x=>x.id===id);if(d&&S.docBlob&&S.docBlob.id===id)return saveFile(d.name,S.docBlob.blob,d.type);return}
   if(a==="doc-del")return deleteDoc(id,t);
@@ -1443,6 +1755,13 @@ document.addEventListener("click",async e=>{
 });
 document.addEventListener("change",async e=>{
   const t=e.target;if(!S.isAdmin)return;
+  if(t.dataset.act==="conv-row"){const r=(S.conv.rows||[]).find(x=>x.id===t.dataset.id);if(!r)return;const k=t.dataset.k;
+    if(k==="include")r.include=t.checked;else if(k==="abs"){const v=Math.abs(parseFloat(t.value)||0);r.amount=r.amount<0?-v:v}else if(k==="brand"){r.brand=t.value;r.matched=true}else r[k]=t.value;
+    if(["date","abs","title"].includes(k))r.fp=r.date+"|"+r.amount.toFixed(2)+"|"+String(r.title).toLowerCase().replace(/[^a-z0-9]/g,"").slice(0,24);
+    return render()}
+  if(t.dataset.act==="conv-all"){(S.conv.rows||[]).forEach(r=>{r.include=t.checked&&!r.dup});return render()}
+  if(t.dataset.act==="conv-savedoc"){S.conv.saveDoc=t.checked;return}
+  if(t.dataset.act==="conv-f"){const o=S.conv.mode==="event"?S.conv.ev:S.conv.em;if(o)o[t.dataset.k]=t.type==="checkbox"?t.checked:t.value;return}
   if(t.dataset.act==="toggle-rem"){const x=byId("reminders",t.dataset.id);if(x){const o=Object.assign({},x);delete o.id;o.done=t.checked;await save("reminders",x.id,o)}}
   if(t.dataset.act==="out-status"){const x=byId("outreach",t.dataset.id);if(x){const o=Object.assign({},x);delete o.id;o.status=t.value;if(await save("outreach",x.id,o))toast("Status updated")}}
 });
