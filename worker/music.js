@@ -112,14 +112,27 @@ export async function musicApi(req, env, ctx, h) {
   if (role !== "founder" && role !== "hnic") return json({ error: "Founder only" }, 403);
   let b = {}; if (req.method === "POST") { try { b = await req.json() } catch (e) { } }
   const r2ready = env.R2_ACCESS_KEY_ID && env.R2_SECRET_ACCESS_KEY && env.CF_ACCOUNT_ID;
+  /* Direct upload through the Worker's R2 binding (no R2 API keys needed). Workers accept bodies up to 100 MB. */
+  if (p === "/api/music/put" && req.method === "PUT") {
+    const key = url.searchParams.get("key") || "", isAudio = key.startsWith("music/audio/");
+    if (!/^music\/(audio|img)\/[A-Za-z0-9._-]+\/[A-Za-z0-9._-]+$/.test(key)) return json({ error: "Bad key" }, 400);
+    const len = Number(req.headers.get("content-length") || 0), type = (req.headers.get("content-type") || "").split(";")[0];
+    if (!len || len > (isAudio ? MAX_MP3 : MAX_IMG)) return json({ error: isAudio ? "MP3s can be up to 100 MB" : "Images can be up to 8 MB" }, 413);
+    if (isAudio ? type !== "audio/mpeg" : !/^image\/(jpeg|png|webp)$/.test(type)) return json({ error: "Wrong file type" }, 415);
+    await env.STUDIO_BUCKET.put(key, req.body, { httpMetadata: { contentType: type, cacheControl: isAudio ? "public, max-age=86400" : "public, max-age=604800" } });
+    return json({ ok: true, key });
+  }
+  if (p === "/api/music/raw" && req.method === "GET") {
+    const key = url.searchParams.get("key") || ""; if (!/^music\/(audio|img)\//.test(key) || key.includes("..")) return json({ error: "Not allowed" }, 403);
+    return serveR2(env, key, req, null, "private, no-store");
+  }
   if (p === "/api/music/upload") {
-    if (!r2ready) return json({ error: "R2 keys missing (see STUDIO-SETUP.md)" }, 503);
     const kind = b.kind === "image" ? "image" : "audio", size = Number(b.size) || 0, type = String(b.contentType || "");
     if (kind === "audio" && !(type === "audio/mpeg" || type === "audio/mp3" || /\.mp3$/i.test(b.filename || ""))) return json({ error: "Upload an MP3 file" }, 415);
     if (kind === "image" && !/^image\/(jpeg|png|webp)$/.test(type)) return json({ error: "Use a JPG, PNG or WebP image" }, 415);
     if (!size || size > (kind === "audio" ? MAX_MP3 : MAX_IMG)) return json({ error: kind === "audio" ? "MP3s can be up to 100 MB" : "Images can be up to 8 MB" }, 413);
     const key = (kind === "audio" ? "music/audio/" : "music/img/") + safe(b.id || "x") + "/" + crypto.randomUUID().slice(0, 12) + "-" + safe(b.filename);
-    return json({ key, url: await presignR2(env, "PUT", key, 3600), contentType: kind === "audio" ? "audio/mpeg" : type });
+    return json({ key, url: "/api/music/put?key=" + encodeURIComponent(key), direct: true, contentType: kind === "audio" ? "audio/mpeg" : type });
   }
   if (p === "/api/music/verify") {
     const key = String(b.key || ""); if (!key.startsWith("music/audio/")) return json({ error: "Not allowed" }, 403);
@@ -128,7 +141,7 @@ export async function musicApi(req, env, ctx, h) {
     if (!looksLikeMp3(bytes)) { await env.STUDIO_BUCKET.delete(key); return json({ error: "That file isn't a valid MP3" }, 415) }
     const head = await env.STUDIO_BUCKET.head(key); return json({ ok: true, size: head ? head.size : 0 });
   }
-  if (p === "/api/music/file") { const key = String(b.key || ""); if (!/^music\/(audio|img)\//.test(key) || key.includes("..")) return json({ error: "Not allowed" }, 403); if (!r2ready) return json({ error: "R2 keys missing" }, 503); return json({ url: await presignR2(env, "GET", key, 3600) }) }
+  if (p === "/api/music/file") { const key = String(b.key || ""); if (!/^music\/(audio|img)\//.test(key) || key.includes("..")) return json({ error: "Not allowed" }, 403); if (!r2ready) return json({ url: "/api/music/raw?key=" + encodeURIComponent(key), direct: true }); return json({ url: await presignR2(env, "GET", key, 3600) }) }
   if (p === "/api/music/delete") { const keys = (b.keys || []).filter(k => typeof k === "string" && /^music\/(audio|img)\//.test(k) && !k.includes("..")).slice(0, 20); for (const k of keys) await env.STUDIO_BUCKET.delete(k); return json({ ok: true, deleted: keys.length }) }
   if (p === "/api/tv/resolve") {
     const ids = ytIds(String(b.url || "")); if (!ids || (!ids.v && !ids.list)) return json({ error: "Paste a YouTube video or playlist link" }, 400);

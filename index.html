@@ -2696,7 +2696,7 @@ function mpAudio(){if(MP.audio)return MP.audio;const a=MP.audio=new Audio();a.pr
 function soundtrackIds(){const st=muSet("soundtrack"),songs=MU().songs;return (st.trackIds||[]).filter(id=>songs[id]&&songs[id].published&&songs[id].soundOn)}
 const soundtrackOn=()=>muSet("soundtrack").enabled!==false&&soundtrackIds().length>0;
 function mpStopOthers(){try{if(window.__liveStop)window.__liveStop()}catch(e){}try{if(window.__tvStop)window.__tvStop()}catch(e){}}
-async function mpSrc(s){if(s.published)return "/api/music/a/"+encodeURIComponent(s.id);if(S.isAdmin&&s.audioKey){const r=await muApi("/api/music/file",{key:s.audioKey});return r.url}throw new Error("unpublished")}
+async function mpSrc(s){if(s.published)return "/api/music/a/"+encodeURIComponent(s.id);if(S.isAdmin&&s.audioKey)return privateUrl(s.audioKey);throw new Error("unpublished")}
 async function mpLoad(i,auto){
   if(i<0||i>=MP.q.length)return;MP.i=i;const s=mpSong();if(!s)return mpNext(true);
   const a=mpAudio();MP.loading=true;mpRender();
@@ -2878,7 +2878,8 @@ const RATE_CATS=[["production","Production"],["vocals","Vocals / Performance"],[
 const CHART_DEFAULTS=["Grooveville Top 10","R&B / Soul","Hip-Hop","Afrobeats / Dancehall","Independent Artists","New Discoveries"];
 S.ent={q:"",f:"all",edit:null,sr:null,srF:"submitted",chart:"",tvList:null};
 async function muApi(path,body){const t=await idToken();const r=await fetch(path,{method:"POST",headers:{"content-type":"application/json",authorization:"Bearer "+t},body:JSON.stringify(body||{})});const j=await r.json().catch(()=>({}));if(!r.ok)throw new Error(j.error||("HTTP "+r.status));return j}
-function xhrPut(url,blob,ct,onp){return new Promise((res,rej)=>{const x=new XMLHttpRequest();x.open("PUT",url);x.setRequestHeader("content-type",ct);x.upload.onprogress=e=>{if(e.lengthComputable&&onp)onp(e.loaded/e.total)};x.onload=()=>x.status<300?res():rej(new Error("Upload failed ("+x.status+")"));x.onerror=()=>rej(new Error("Upload failed. Check the R2 CORS setting in STUDIO-SETUP.md."));x.send(blob)})}
+async function xhrPut(url,blob,ct,onp){const tok=url.startsWith("/api/")?await idToken():"";return new Promise((res,rej)=>{const x=new XMLHttpRequest();x.open("PUT",url);x.setRequestHeader("content-type",ct);if(tok)x.setRequestHeader("authorization","Bearer "+tok);x.upload.onprogress=e=>{if(e.lengthComputable&&onp)onp(e.loaded/e.total)};x.onload=()=>{if(x.status<300)return res();let m="";try{m=JSON.parse(x.responseText).error}catch(_){}rej(new Error(m||"Upload failed ("+x.status+")"))};x.onerror=()=>rej(new Error("Upload failed. Check the R2 CORS setting in STUDIO-SETUP.md."));x.send(blob)})}
+async function privateUrl(key){const r=await muApi("/api/music/file",{key});if(!r.direct)return r.url;const t=await idToken();const res=await fetch(r.url,{headers:{authorization:"Bearer "+t}});if(!res.ok)throw new Error("Couldn't load the file");return URL.createObjectURL(await res.blob())}
 async function isMp3(file){const b=new Uint8Array(await file.slice(0,4).arrayBuffer());return (b[0]===0x49&&b[1]===0x44&&b[2]===0x33)||(b[0]===0xff&&(b[1]&0xe0)===0xe0)}
 function fileDuration(file){return new Promise(res=>{const a=new Audio(),u=URL.createObjectURL(file);a.preload="metadata";a.onloadedmetadata=()=>{const d=a.duration;URL.revokeObjectURL(u);res(isFinite(d)?Math.round(d):0)};a.onerror=()=>{URL.revokeObjectURL(u);res(0)};a.src=u})}
 async function upAudio(file,id,onp){if(file.size>100*1024*1024)throw new Error("MP3s can be up to 100 MB");if(!(/\.mp3$/i.test(file.name)||file.type==="audio/mpeg")||!(await isMp3(file)))throw new Error("That file isn't an MP3");
@@ -2933,7 +2934,7 @@ function entMount(){
     if(!(await isMp3(f))){info.textContent="That file isn't an MP3.";mf.value="";return}const d=await fileDuration(f);info.textContent=f.name+" · "+(f.size/1048576).toFixed(1)+" MB · "+fmtSec(d);
     const df=$('#songForm [name=duration]');if(df&&d)df.value=fmtSec(d);pv.hidden=false;pv.src=URL.createObjectURL(f);const tf=$('#songForm [name=title]');if(tf&&!tf.value)tf.value=f.name.replace(/\.mp3$/i,"").replace(/[_-]+/g," ")};
   const dz=$("#mp3Drop");if(dz){dz.ondragover=e=>{e.preventDefault();dz.classList.add("over")};dz.ondragleave=()=>dz.classList.remove("over");dz.ondrop=e=>{e.preventDefault();dz.classList.remove("over");const f=e.dataTransfer.files[0];if(f&&mf){const dt=new DataTransfer();dt.items.add(f);mf.files=dt.files;mf.onchange()}}}
-  const pv=$("#mp3Prev");if(pv&&S.ent.edit&&S.ent.edit.audioKey&&!pv.src){pv.onplay=null;muApi("/api/music/file",{key:S.ent.edit.audioKey}).then(r=>{if(!pv.src)pv.src=r.url}).catch(()=>{})}
+  const pv=$("#mp3Prev");if(pv&&S.ent.edit&&S.ent.edit.audioKey&&!pv.src){privateUrl(S.ent.edit.audioKey).then(u=>{if(!pv.src)pv.src=u}).catch(()=>{})}
 }
 async function saveSong(form){
   const o=formObj(form),e=S.ent.edit||{},id=e.id||uid(),msg=$("#upMsg"),pr=$("#upProg"),btn=$("#upBtn");
