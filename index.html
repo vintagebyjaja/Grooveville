@@ -522,6 +522,51 @@ footer.ft .fgrid{grid-template-columns:1fr 1fr}
   .nav .soundbtn{position:absolute;right:12px;top:16px}
   .nav .soundbtn .lbl{display:none}
 }
+/* Grooveville LIVE */
+.links a.watchlive{display:inline-flex;align-items:center;gap:7px}
+.ldot,.livebadge i{width:8px;height:8px;border-radius:50%;background:var(--peach);box-shadow:0 0 0 0 #f4a987aa;animation:lpulse 1.6s infinite}
+@keyframes lpulse{0%{box-shadow:0 0 0 0 #f4a987aa}70%{box-shadow:0 0 0 9px #f4a98700}100%{box-shadow:0 0 0 0 #f4a98700}}
+.livebadge{display:inline-flex;align-items:center;gap:8px;background:#f4a98722;border:1px solid #f4a98788;color:var(--peach);font:800 12px var(--f-body);letter-spacing:.2em;padding:7px 12px;border-radius:999px}
+.livebadge.sm{padding:4px 9px;font-size:10px;margin-left:auto}
+.offbadge{display:inline-flex;align-items:center;background:#ffffff10;border:1px solid #ffffff24;color:#cfc9bf;font:700 11px var(--f-body);letter-spacing:.2em;text-transform:uppercase;padding:7px 12px;border-radius:999px}
+.lvpage{padding-block:38px 70px;background:radial-gradient(60% 50% at 85% 0%,#b7a1e51a,transparent 70%),radial-gradient(40% 40% at 5% 30%,#68d4d012,transparent 70%),#0f1011}
+.lvhead{display:flex;align-items:flex-end;gap:16px;flex-wrap:wrap;justify-content:space-between;margin-bottom:20px}
+.lvhead h1{font-size:clamp(34px,5vw,62px);color:#fff}
+.lvplayer{position:relative;aspect-ratio:16/9;border-radius:20px;overflow:hidden;background:#000;box-shadow:0 30px 80px -40px #000,0 0 0 1px #ffffff14}
+.lvplayer iframe,.lvplayer>#ytLive{position:absolute;inset:0;width:100%;height:100%;border:0}
+.lvplayer.off img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.35;filter:saturate(.8)}
+.lvplayer.off::after{content:"";position:absolute;inset:0;background:linear-gradient(0deg,#0f1011f0 0,#0f101166 60%,#0f101133)}
+.offmsg{position:absolute;left:clamp(18px,4vw,48px);right:18px;bottom:clamp(18px,4vw,44px);z-index:1;max-width:620px}
+.offmsg h2{font-size:clamp(28px,4vw,48px);color:#fff;margin-top:10px}
+.offmsg p{color:#d8d2c8;margin-top:10px}
+.offmsg .btn{margin-top:16px}
+.lvsec{margin-top:44px}
+.lvh{font:600 12.5px var(--f-body);letter-spacing:.26em;text-transform:uppercase;color:var(--peach);margin-bottom:16px}
+.socgrid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px}
+.soc{display:flex;align-items:center;gap:12px;padding:16px;border-radius:16px;background:linear-gradient(160deg,color-mix(in srgb,var(--sc) 14%,#17181a),#141516);border:1px solid #ffffff14;color:#fff;text-decoration:none;transition:transform .2s,border-color .2s}
+.soc:hover{transform:translateY(-2px);border-color:color-mix(in srgb,var(--sc) 60%,transparent)}
+.soc .ic{width:40px;height:40px;flex:none;border-radius:12px;display:grid;place-items:center;color:var(--sc);background:#ffffff0c}
+.soc .ic svg{width:24px;height:24px}
+.soc b{display:block;font-size:15.5px}
+.soc small{color:#a9a49b;font-size:12px}
+.soc .go{margin-left:auto;color:#a9a49b}
+.epgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:18px}
+.ep{display:flex;flex-direction:column;gap:8px;text-decoration:none;color:#fff}
+.ep .th{position:relative;aspect-ratio:16/9;border-radius:12px;overflow:hidden;background:#1d1f22}
+.ep .th img{width:100%;height:100%;object-fit:cover;transition:transform .5s}
+.ep:hover .th img{transform:scale(1.04)}
+.ep .dur{position:absolute;right:8px;bottom:8px;background:#000c;font:600 12px var(--f-mono);padding:2px 6px;border-radius:6px}
+.ep b{font-size:15px;line-height:1.3}
+.ep small{color:#a9a49b;font-size:12.5px}
+.ep .yt{color:var(--peach)}
+/* Studio */
+.stage{aspect-ratio:16/9;border-radius:12px;overflow:hidden;background:#000;position:relative}
+.stage video,.stage iframe,.stage>div{position:absolute;inset:0;width:100%;height:100%;border:0}
+.btnrow0{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+dl.kv{display:grid;grid-template-columns:auto 1fr;gap:6px 16px;margin:14px 0 0;font-size:14px}
+dl.kv dt{color:var(--muted)}dl.kv dd{margin:0;overflow-wrap:anywhere}
+@media (max-width:1000px){.socgrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:480px){.socgrid{grid-template-columns:1fr}}
 @media (max-width:900px){
   .hero .wrap,.cta,.bcols,.cols2{grid-template-columns:1fr}
   .branches{grid-template-columns:repeat(2,minmax(0,1fr))}
@@ -861,11 +906,13 @@ function navLinks(){
   $("#links").innerHTML=
     '<a href="#home"'+(r==="home"?' class="on"':'')+'>Home</a>'+
     '<a href="#vine"'+(r==="vine"||r==="brands"||r.startsWith("b-")?' class="on"':'')+'>Companies</a>'+
+    '<a href="#live" class="watchlive'+(r==="live"?' on':'')+'">'+(LV.live&&LV.live.live?'<i class="ldot" aria-hidden="true"></i>':'')+'Watch Live</a>'+
     '<a href="#calendar"'+on("calendar")+'>Calendar</a>'+
     '<a href="#collab"'+on("collab")+'>Collaborate</a>'+
     '<a href="#story"'+on("story")+'>Our Story</a>'+
     '<a href="#groove"'+(["groove","signin","join"].includes(r)||r.startsWith("portal")?' class="on"':'')+'>Groove Team</a>'+
-    (S.isAdmin?'<a href="#team" class="team'+(team?' on':'')+'">Back Office</a>':'');
+    (!S.isAdmin&&SR().checked&&studioAccess()?'<a href="#studio" class="team'+(r.startsWith("studio")?' on':'')+'">Studio</a>':'')+
+    (S.isAdmin?'<a href="#team" class="team'+(team||r.startsWith("studio")?' on':'')+'">Back Office</a>':'');
 }
 
 function treeSVG(){
@@ -961,7 +1008,7 @@ function viewBrand(id,sub){
   if(b.tiktok){const tk=/tiktok\.com\/@?([^/?#]+)/i.exec(b.tiktok);links.push('<a class="btn ghost" href="'+esc(b.tiktok)+'" target="_blank" rel="noopener">'+(tk?'Follow @'+esc(tk[1])+' on TikTok ↗':'TikTok ↗')+'</a>')}
   if(id==="hq")links.push('<a class="btn" style="background:var(--c);color:var(--bg)" href="#home">Visit the Grooveville website →</a>');
   else if(!b.website&&!b.social)links.push('<span class="pill high" style="align-self:center;font-size:12.5px;padding:6px 10px">Website coming soon</span>');
-  const entTabs=id==="ent"?'<nav class="subtabs" aria-label="Grooveville Entertainment">'+ENT_TABS.map(([k,l])=>'<a href="#b-ent'+(k?"/"+k:"")+'"'+((sub||"")===k?' class="on" aria-current="page"':'')+'>'+l+'</a>').join("")+'</nav>':'';
+  const entTabs=id==="ent"?'<nav class="subtabs" aria-label="Grooveville Entertainment">'+ENT_TABS.map(([k,l])=>'<a href="'+(k==="live"?"#live":"#b-ent"+(k?"/"+k:""))+'"'+((sub||"")===k?' class="on" aria-current="page"':'')+'>'+l+'</a>').join("")+'</nav>':'';
   if(id==="ent"&&sub)return '<div style="'+cvar(id)+'"><section class="bhero'+(hero?" hasimg":"")+'" style="padding-block:46px 0">'+(hero?'<div class="bimg">'+imgTag(hero,"","")+'</div>':'')+'<div class="wrap"><div class="crumb"><button class="backbtn" data-act="go-back" aria-label="Go back">‹ Back</button><a href="#b-hq">Grooveville LLC</a> › <a href="#b-ent">'+esc(b.name)+'</a> › '+esc((ENT_TABS.find(t=>t[0]===sub)||[,""])[1])+'</div><div class="kicker">Grooveville Entertainment</div><h1 class="disp" style="margin-top:12px;font-size:clamp(40px,7vw,84px)">'+esc((ENT_TABS.find(t=>t[0]===sub)||[,""])[1])+'</h1>'+entTabs+'</div></section><section style="padding-top:34px"><div class="wrap">'+entSub(sub)+'</div></section></div>';
   return '<div style="'+cvar(id)+'"><section class="bhero'+(hero?" hasimg":"")+'">'+(hero?'<div class="bimg">'+imgTag(hero,"","")+'</div>':'')+'<div class="wrap">'+
     '<div class="crumb"><button class="backbtn" data-act="go-back" aria-label="Go back">‹ Back</button>'+(id==="hq"?'<a href="#home">Home</a> · Headquarters':'<a href="#b-hq">Grooveville LLC</a> › '+esc(b.name))+'</div>'+
@@ -1066,7 +1113,7 @@ function collabSubmit(form){
 }
 
 /* ---------- team (back office) ---------- */
-const TEAM_TABS=[["team","Dashboard"],["team-time","Timesheet"],["team-cal","Calendar"],["team-rem","Reminders"],["team-out","Collabs"],["team-people","Teams"],["team-docs","Documents"],["team-conv","Converter"],["team-reports","Reports"],["team-vault","Private notes"],["team-web","Website"],["team-site","Site settings"]];
+const TEAM_TABS=[["team","Dashboard"],["team-time","Timesheet"],["team-cal","Calendar"],["team-rem","Reminders"],["team-out","Collabs"],["team-people","Teams"],["team-docs","Documents"],["team-conv","Converter"],["team-reports","Reports"],["team-vault","Private notes"],["team-web","Website"],["studio","Ent. Studio"],["team-site","Site settings"]];
 function teamGate(){
   if(!S.authChecked)return '<div class="wrap gate"><h1>Checking access…</h1><p class="muted">One moment while we confirm who is signed in.</p></div>';
   return '<div class="wrap gate"><div class="eyebrow">Grooveville team</div><h1>Back office sign in</h1><p class="muted">The timesheet, private calendar, reminders and collab tracker are only for the Grooveville team. Open this page while signed in to Claude with the account Grooveville invited as an Editor.</p><p class="muted" style="font-size:13.5px">If you just got access, reload this page.</p><a class="btn" href="#home">Back to the public site</a></div>';
@@ -1205,7 +1252,7 @@ function viewTeams(){
 function viewMyTeam(){
   return portalHead("My team","","portal-team")+'<section class="tsec"><div class="wrap">'+viewTeams()+'</div></section>';
 }
-const portalTabs=cur=>'<nav class="tabs"><a href="#portal"'+(cur==="portal"?' class="on"':'')+'>Dashboard</a>'+(isMember()?'<a href="#portal-time"'+(cur==="portal-time"?' class="on"':'')+'>My timesheet</a>':'')+(isHead()?'<a href="#portal-team"'+(cur==="portal-team"?' class="on"':'')+'>My team</a>':'')+'<a href="#join"'+(cur==="join"?' class="on"':'')+'>Join a team</a></nav>';
+const portalTabs=cur=>'<nav class="tabs"><a href="#portal"'+(cur==="portal"?' class="on"':'')+'>Dashboard</a>'+(isMember()?'<a href="#portal-time"'+(cur==="portal-time"?' class="on"':'')+'>My timesheet</a>':'')+(isHead()?'<a href="#portal-team"'+(cur==="portal-team"?' class="on"':'')+'>My team</a>':'')+'<a href="#join"'+(cur==="join"?' class="on"':'')+'>Join a team</a>'+(SR().checked&&studioAccess()?'<a href="#studio">Entertainment Studio</a>':'')+'</nav>';
 function portalHead(title,sub,cur){return '<section class="teamhead"><div class="wrap"><div class="eyebrow">Grooveville team portal · Private</div><h1>'+title+'</h1>'+(sub?'<p class="muted" style="margin-top:6px">'+sub+'</p>':'')+portalTabs(cur)+'</div></section>'}
 function accountCard(){
   return '<div class="card" style="display:flex;flex-direction:column;gap:10px;min-width:0"><div class="eyebrow">Your account</div>'+(S.email?'<div><span class="muted" style="font-size:13px">Email</span><div style="overflow-wrap:anywhere">'+esc(S.email)+'</div></div>':'')+
@@ -1861,7 +1908,7 @@ function goBack(){if(S.navCount>0){S.navCount-=2;history.back()}else location.ha
 
 /* ---------- Creative House: managed images, cinematic entry, radio, music, AELIO, Website back office ---------- */
 const ASSETS={"gv-intro": "/media/gv-intro.webp", "gv-hero": "/media/gv-hero.webp", "gv-collab": "/media/gv-collab.webp", "gv-story": "/media/gv-story.webp", "gv-ent": "/media/gv-ent.webp", "gv-box": "/media/gv-box.webp", "card-aec": "/media/card-aec.webp", "card-vybr8": "/media/card-vybr8.webp", "card-pathd": "/media/card-pathd.webp", "card-aelio": "/media/card-aelio.webp", "card-ent": "/media/card-ent.webp", "sc-cover": "/media/sc-cover.webp", "aelio-p1": "/media/aelio-p1.webp", "aelio-p2": "/media/aelio-p2.webp", "aelio-p3": "/media/aelio-p3.webp", "aelio-p4": "/media/aelio-p4.webp", "aelio-p5": "/media/aelio-p5.webp", "aelio-p6": "/media/aelio-p6.webp"};
-const ENT_TABS=[["","Overview"],["music","Music"],["radio","Grooveville Radio"],["artists","Featured Artists"],["events","Events"]];
+const ENT_TABS=[["","Overview"],["live","Watch Live"],["music","Music"],["radio","Grooveville Radio"],["artists","Featured Artists"],["events","Events"]];
 S.media={};S.web={sec:"media"};S.sound=false;
 const DEFIMG={"intro-poster":"gv-intro","home-hero":"gv-hero","home-collab":"gv-collab","home-story":"gv-story","hero-ent":"gv-ent","card-aec":"card-aec","card-vybr8":"card-vybr8","card-pathd":"card-pathd","card-aelio":"card-aelio","card-ent":"card-ent","card-scu":"sc-cover","card-hq":"gv-box",
   "aelio-p1":"aelio-p1","aelio-p2":"aelio-p2","aelio-p3":"aelio-p3","aelio-p4":"aelio-p4","aelio-p5":"aelio-p5","aelio-p6":"aelio-p6"};
@@ -1910,7 +1957,7 @@ function syncSoundBtns(){document.querySelectorAll(".soundbtn").forEach(b=>{b.cl
 function setSound(on){
   S.sound=on;try{sessionStorage.setItem("gvSound",on?"1":"0")}catch(e){}syncSoundBtns();
   const intro=$(".intro:not(.out)");
-  if(!on){padStop();if(INTRO_AUDIO){INTRO_AUDIO.pause()}const v=intro&&intro.querySelector("video");if(v)v.muted=true;radioPause();return}
+  if(!on){RD.userPaused=true;padStop();if(INTRO_AUDIO){INTRO_AUDIO.pause()}const v=intro&&intro.querySelector("video");if(v)v.muted=true;radioPause();return}
   if(intro){const v=intro.querySelector("video");const au=media("intro-audio");
     if(au&&au.url){if(!INTRO_AUDIO){INTRO_AUDIO=new Audio(au.url);INTRO_AUDIO.loop=true;INTRO_AUDIO.volume=.6}INTRO_AUDIO.play().catch(()=>{})}
     else if(v&&v.dataset.hasAudio==="1"){v.muted=false}else padStart();return}
@@ -2018,13 +2065,13 @@ function spotifyInit(){
   window.onSpotifyIframeApiReady=api=>{window.__spApi=api;go(api)};
   if(!RD.apiLoading){RD.apiLoading=true;const s=document.createElement("script");s.src="https://open.spotify.com/embed/iframe-api/v1";s.async=true;s.onerror=()=>{const h=$("#rdEmbed");if(h)h.innerHTML='<iframe title="Grooveville Radio on Spotify" style="border:0;width:100%;height:152px" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" src="https://open.spotify.com/embed/'+src.uri.split(":").slice(1).join("/")+'"></iframe>'};document.head.appendChild(s)}
 }
-function radioPlay(){const src=radioSrc();if(!src)return;renderRadio();
+function radioPlay(){const src=radioSrc();if(!src)return;if(window.__liveStop)window.__liveStop();renderRadio();
   if(src.kind==="spotify"){RD.open=true;syncRadio();if(RD.ctrl){try{RD.ctrl.play()}catch(e){RD.ctrl.togglePlay()}}else{RD.wantPlay=true;spotifyInit()}return}
   if(!RD.audio){RD.audio=new Audio(src.url);RD.audio.preload="none";RD.audio.addEventListener("play",()=>{RD.playing=true;syncRadio()});RD.audio.addEventListener("pause",()=>{RD.playing=false;syncRadio()});RD.audio.addEventListener("error",()=>toast("The radio stream couldn't be reached"))}
   const v=$("#rdVol");if(v)RD.audio.volume=Number(v.value);RD.audio.play().catch(()=>toast("Press play again to start the radio"))}
 function radioPause(){if(RD.ctrl){try{RD.ctrl.pause()}catch(e){}}if(RD.audio)RD.audio.pause();RD.playing=false;syncRadio()}
 function radioStop(){radioPause();if(RD.ctrl){try{RD.ctrl.destroy()}catch(e){}}RD.ctrl=null;RD.audio=null}
-function radioToggle(){if(RD.playing){radioPause();if(S.sound){S.sound=false;syncSoundBtns()}}else{radioPlay();if(!S.sound){S.sound=true;syncSoundBtns()}}}
+function radioToggle(){if(RD.playing){radioPause();RD.userPaused=true;if(S.sound){S.sound=false;syncSoundBtns()}}else{RD.userPaused=false;radioPlay();if(!S.sound){S.sound=true;syncSoundBtns()}}}
 
 /* ---------- Entertainment: Music, Radio, Artists, Events ---------- */
 const mItems=k=>{const l=(siteCfg("music")[k]||[]).filter(i=>i&&!i.hidden&&(!i.from||i.from<=today()));return k==="trending"?sortBy(l,i=>Number(i.rank)||999):l};
@@ -2237,6 +2284,328 @@ document.addEventListener("submit",async e=>{
     if(await saveMusic({station:o.station,spotify:o.spotify,stream:o.stream,streamAttr:o.streamAttr})){toast("Radio saved");renderRadio()}}
 },true);
 
+/* ---------- Grooveville LIVE (public) ---------- */
+const SHOW_DEFAULTS={uncneph:{name:"The Unc & Neph Show",youtube:"https://www.youtube.com/@TheUncNephShowCLT",tagline:"Live from Charlotte. Two generations, one mic.",
+  socials:{youtube:"https://www.youtube.com/@TheUncNephShowCLT",twitch:"https://www.twitch.tv/uncnephshow",instagram:"https://www.instagram.com/uncnephshow/",facebook:"https://www.facebook.com/share/19d1AE77T4/?mibextid=wwXIfr",tiktok:"https://www.tiktok.com/@uncnephshow"}}};
+S.shows={};S.liveShow="uncneph";
+const SOC_PLATFORMS=[
+  ["youtube","YouTube","Watch & Subscribe",/^(www\.|m\.)?(youtube\.com|youtu\.be)$/,"#f4a987",'<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="4" fill="currentColor"/><path d="M10 9l5 3-5 3z" fill="#101112"/></svg>'],
+  ["twitch","Twitch","Watch & Follow",/^(www\.|m\.)?twitch\.tv$/,"#b7a1e5",'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 3 3.5 6.5V19H8v2.5h2.5L13 19h3.5L21 14.5V3H5zm14 10.5L16.5 16H13l-2.5 2.5V16H7V5h12v8.5z" fill="currentColor"/><path d="M11 7.5h2v4.5h-2zM15.5 7.5h2v4.5h-2z" fill="currentColor"/></svg>'],
+  ["instagram","Instagram","Follow & Watch",/^(www\.)?instagram\.com$/,"#f3efe7",'<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5.5" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="17.4" cy="6.6" r="1.3" fill="currentColor"/></svg>'],
+  ["facebook","Facebook","Like & Follow",/^(www\.|m\.|web\.)?(facebook\.com|fb\.com|fb\.watch)$/,"#68d4d0",'<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="currentColor"/><path d="M13.3 20v-6.2h2.1l.3-2.5h-2.4V9.8c0-.7.2-1.2 1.2-1.2h1.3V6.4c-.2 0-1-.1-1.9-.1-1.9 0-3.2 1.2-3.2 3.3v1.8H8.6v2.5h2.1V20h2.6z" fill="#101112"/></svg>'],
+  ["tiktok","TikTok","Follow & Watch",/^(www\.|m\.|vm\.)?tiktok\.com$/,"#b9c978",'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16.1 3c.4 2.4 1.9 4 4.4 4.3v3.1c-1.6 0-3.1-.5-4.3-1.3v6.4a5.7 5.7 0 1 1-5.7-5.7c.3 0 .6 0 .9.1v3.2a2.6 2.6 0 1 0 1.8 2.5V3h2.9z" fill="currentColor"/></svg>']
+];
+function socialOk(k,url){const p=SOC_PLATFORMS.find(x=>x[0]===k);if(!p||!url)return false;try{const u=new URL(url);return u.protocol==="https:"&&p[3].test(u.hostname)}catch(e){return false}}
+function showCfg(id){const d=SHOW_DEFAULTS[id]||{},o=S.shows[id]||{};const r=Object.assign({},d,Object.fromEntries(Object.entries(o).filter(([k,v])=>v!==""&&v!=null&&k!=="socials")));
+  r.socials=o.socials?Object.assign({},o.socials):Object.assign({},d.socials||{});return r}
+let showSub=false;
+function subscribeShows(){if(showSub||!S.db)return;showSub=true;S.db.collection("shows").onSnapshot(snap=>{const o={};snap.docs.forEach(d=>{o[d.id]=d.data()});S.shows=o;if(S.route==="live"||S.route.startsWith("studio"))scheduleRender(true)},()=>{})}
+/* fetch helpers with graceful failure */
+const LV={live:null,eps:[],epsNext:0,epsTotal:0,state:"idle",err:"",player:null,playing:false,radioWas:false,timer:0,loadedFor:""};
+async function apiGet(path){const r=await fetch(path,{headers:{accept:"application/json"}});if(!r.ok)throw new Error("HTTP "+r.status);return r.json()}
+async function liveLoad(show,more){
+  if(!more){LV.state="loading";LV.loadedFor=show}
+  try{
+    if(!more){LV.live=await apiGet("/api/live?show="+encodeURIComponent(show));LV.eps=[];LV.epsNext=0}
+    const e=await apiGet("/api/episodes?show="+encodeURIComponent(show)+"&offset="+(LV.epsNext||0)+"&limit=12");
+    LV.eps=LV.eps.concat(e.items||[]);LV.epsNext=e.next;LV.epsTotal=e.total||0;LV.state="ready";LV.err="";
+  }catch(err){LV.state="error";LV.err=String(err.message||err)}
+  if(S.route!=="live")return;
+  if(more&&$("#lvEps")){$("#lvEps").innerHTML=lvEpsHTML(showCfg(S.liveShow));return}
+  render();
+}
+const fmtDur=s=>{s=Number(s)||0;if(!s)return "";const h=Math.floor(s/3600),m=Math.floor(s%3600/60),x=s%60;return (h?h+":"+pad(m):m)+":"+pad(x)};
+const fmtWhen=iso=>{if(!iso)return "";const d=new Date(iso);return MON[d.getMonth()]+" "+d.getDate()+", "+d.getFullYear()};
+function viewLive(){
+  const id=S.liveShow,cfg=showCfg(id),L=LV.live||{},live=L.live,up=L.upcoming;
+  if(LV.loadedFor!==id&&LV.state!=="loading")liveLoad(id);
+  const next=!live&&!up&&cfg.nextShow&&cfg.nextShow.when&&cfg.nextShow.when>new Date().toISOString()?{title:cfg.nextShow.title||cfg.name,scheduled:cfg.nextShow.when,manual:true}:null;
+  const soon=up||next;
+  let stage;
+  if(live)stage='<div class="lvplayer" data-keep="lv:'+esc(live.id)+'"><div id="ytLive" data-vid="'+esc(live.id)+'"></div></div>';
+  else stage='<div class="lvplayer off"><img src="'+esc((soon&&soon.thumb)||slotSrc("hero-ent")||ASSETS["gv-ent"]||"")+'" alt=""><div class="offmsg">'+
+    (LV.state==="loading"&&!LV.live?'<div class="kicker">Checking the studio…</div>':
+     soon?'<div class="kicker">Next show</div><h2 class="disp">'+esc(soon.title)+'</h2><p>'+esc(new Date(soon.scheduled).toLocaleString("en-US",{weekday:"long",month:"long",day:"numeric",hour:"numeric",minute:"2-digit"}))+'</p>'+(soon.id?'<a class="btn line" href="https://www.youtube.com/watch?v='+esc(soon.id)+'" target="_blank" rel="noopener">Set a reminder on YouTube ↗</a>':''):
+     '<div class="kicker">Off air</div><h2 class="disp">We\'re not live right now.</h2><p>Catch a previous episode below, and follow the show so you never miss the next one.</p>')+
+    (LV.state==="error"?'<p class="muted" style="font-size:12.5px;margin-top:10px">Live status is unavailable right now. You can always watch on <a href="'+esc(cfg.socials.youtube||cfg.youtube)+'" target="_blank" rel="noopener">YouTube ↗</a>.</p>':'')+'</div></div>';
+  const soc=SOC_PLATFORMS.filter(p=>socialOk(p[0],cfg.socials[p[0]]));
+  const liveOn=k=>k==="youtube"?!!live:k==="twitch"?L.twitchLive===true:false;
+  return '<section class="lvpage"><div class="wrap">'+
+    '<div class="lvhead"><div><div class="kicker">Grooveville Entertainment · Grooveville LIVE</div><h1 class="disp" style="margin-top:12px">'+esc(cfg.name)+'</h1><p class="muted" style="margin-top:8px">'+esc(live?live.title:cfg.tagline||"")+'</p></div>'+
+    (live?'<span class="livebadge" role="status"><i></i>LIVE</span>':'<span class="offbadge">'+(soon?"Up next":"Off air")+'</span>')+'</div>'+stage+
+    (soc.length?'<div class="lvsec"><h2 class="lvh">Watch &amp; follow us everywhere</h2><div class="socgrid">'+soc.map(([k,n,cta,,col,ico])=>'<a class="soc" href="'+esc(cfg.socials[k])+'" target="_blank" rel="noopener noreferrer" style="--sc:'+col+'"><span class="ic">'+ico+'</span><span><b>'+n+'</b><small>'+cta+'</small></span>'+(liveOn(k)?'<span class="livebadge sm"><i></i>LIVE</span>':'<span class="go" aria-hidden="true">↗</span>')+'</a>').join("")+'</div></div>':'')+
+    '<div class="lvsec" id="lvEps">'+lvEpsHTML(cfg)+'</div>'+
+    '</div></section>';
+}
+function lvEpsHTML(cfg){
+  return '<div class="sechead" style="margin-bottom:14px"><h2 class="lvh" style="margin:0">Previous episodes</h2>'+(LV.epsTotal?'<span class="muted" style="font-size:13px">'+LV.epsTotal+' episodes</span>':'')+'</div>'+
+    (LV.eps.length?'<div class="epgrid">'+LV.eps.map(e=>'<a class="ep" href="'+esc(e.url)+'" target="_blank" rel="noopener noreferrer"><span class="th"><img src="'+esc(e.thumb)+'" alt="" loading="lazy">'+(e.duration?'<span class="dur">'+fmtDur(e.duration)+'</span>':'')+'</span><b>'+esc(e.title)+'</b><small>'+esc(fmtWhen(e.start))+' · <span class="yt">Watch on YouTube ↗</span></small></a>').join("")+'</div>'+(LV.epsNext!=null?'<div style="text-align:center;margin-top:20px"><button class="btn ghost" data-act="eps-more">Load more</button></div>':'')
+      :'<div class="empty">'+(LV.state==="loading"?"Loading episodes…":LV.state==="error"?'Episodes can\'t load right now. <a href="'+esc(cfg.socials.youtube||cfg.youtube)+'" target="_blank" rel="noopener">See them on YouTube ↗</a>':"Past shows appear here automatically after each livestream ends.")+'</div>');
+}
+/* YouTube IFrame player + Grooveville Radio hand-off */
+function liveMount(){
+  if(document.getElementById("ytLiveFrame")&&LV.player&&S.route==="live")return;
+  const el=$("#ytLive");if(!el){liveUnmount();return}
+  const vid=el.dataset.vid;if(LV.player&&LV.vid===vid&&document.getElementById(LV.frameId))return;
+  liveUnmount(true);LV.vid=vid;
+  const make=()=>{const host=$("#ytLive");if(!host)return;LV.frameId="ytLiveFrame";host.id="ytLiveFrame";
+    LV.player=new YT.Player("ytLiveFrame",{videoId:vid,width:"100%",height:"100%",playerVars:{autoplay:0,playsinline:1,rel:0,modestbranding:1},events:{onStateChange:e=>{
+      const st=e.data;
+      if(st===1){LV.playing=true;if(RD.playing){LV.radioWas=true;radioPause()}}
+      else if(st===2||st===0){LV.playing=false;liveResumeRadio()}}}})};
+  if(window.YT&&window.YT.Player)return make();
+  const prev=window.onYouTubeIframeAPIReady;window.onYouTubeIframeAPIReady=()=>{if(prev)prev();make()};
+  if(!document.getElementById("ytapi")){const s=document.createElement("script");s.id="ytapi";s.src="https://www.youtube.com/iframe_api";s.onerror=()=>{const h=$("#ytLive");if(h)h.innerHTML='<iframe title="Live on YouTube" style="width:100%;height:100%;border:0" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen src="https://www.youtube-nocookie.com/embed/'+esc(vid)+'"></iframe>'};document.head.appendChild(s)}
+}
+function liveResumeRadio(){if(LV.radioWas&&!RD.userPaused&&radioSrc()){LV.radioWas=false;radioPlay()}else LV.radioWas=false}
+function liveUnmount(keepRadio){if(LV.player){try{LV.player.destroy()}catch(e){}LV.player=null}if(LV.playing){LV.playing=false;if(!keepRadio)liveResumeRadio()}}
+window.__liveStop=()=>{if(LV.player&&LV.playing){try{LV.player.pauseVideo()}catch(e){}LV.playing=false;LV.radioWas=false}};
+function liveTick(){clearInterval(LV.timer);if(S.route==="live")LV.timer=setInterval(async()=>{if(S.route!=="live")return clearInterval(LV.timer);try{const n=await apiGet("/api/live?show="+encodeURIComponent(S.liveShow));const was=LV.live&&LV.live.live&&LV.live.live.id,now=n.live&&n.live.id;LV.live=n;if(was!==now&&!LV.playing)render()}catch(e){}},60000)}
+
+/* ---------- Grooveville Entertainment Studio (private, role-based) ----------
+   Roles: owner (Founder/HNIC) 5 · manager 4 (studioRoles/{uid}) · producer 3 · editor 2 · member 1 (shows/{show}/members/{uid}).
+   Firestore security rules enforce every write; the Worker re-checks roles before handing out file links. */
+const SROLE={member:1,editor:2,producer:3,manager:4,owner:5};
+const SROLE_NAME={1:"Show Member",2:"Editor",3:"Producer",4:"Entertainment Manager",5:"Owner"};
+const STABS=[["live","Live Control",1],["clips","AI Clip Studio",1],["episodes","Episode Library",1],["calendar","Content Calendar",1],["queue","Publishing Queue",1],["team","Team Management",4],["analytics","Analytics",3],["settings","Show Settings",4]];
+const CLIP_STATUS=[["suggested","Suggested"],["draft","Draft"],["review","In review"],["approved","Approved"],["published","Published"],["rejected","Rejected"]];
+const PUB_TARGETS=["YouTube Shorts","Instagram Reels","Facebook Reels","TikTok","Twitch","Grooveville website"];
+const FORMATS=[["9:16","Vertical 9:16"],["1:1","Square 1:1"],["16:9","Horizontal 16:9"]];
+const PRESETS=[["bold","Bold pop"],["karaoke","Karaoke highlight"],["clean","Clean lower-third"],["neon","Neon glow"]];
+S.studio={checked:false,manager:false,member:{},show:"uncneph",tab:"live",d:{},subs:{},status:null,eps:null,clipEp:"",queueF:"review",busy:""};
+const SR=()=>S.studio;
+function sRank(show){if(S.isAdmin)return 5;if(SR().manager)return 4;return SROLE[(SR().member[show||SR().show]||{}).role]||0}
+const studioAccess=()=>S.isAdmin||SR().manager||Object.keys(SR().member).length>0;
+const studioShows=()=>{const ids=[...new Set(Object.keys(SHOW_DEFAULTS).concat(Object.keys(S.shows||{})))];return ids.filter(id=>S.isAdmin||SR().manager||SR().member[id])};
+/* sign-in hook: accept invitations, find this person's Studio roles */
+async function studioCheck(){
+  if(!S.db||!S.uid||SR().checking)return;SR().checking=true;subscribeShows();
+  const email=String(S.email||"").toLowerCase().trim();
+  try{ if(email&&BACKEND==="firebase"){const inv=await S.db.doc("invites/"+email).get();
+      if(inv.exists){const v=inv.data();
+        if(v.role==="manager")await S.db.doc("studioRoles/"+S.uid).set({role:"manager",email,at:new Date().toISOString(),by:v.by||""});
+        else await S.db.doc("shows/"+v.show+"/members/"+S.uid).set({role:v.role,uid:S.uid,email,at:new Date().toISOString(),by:v.by||""});
+        await S.db.doc("invites/"+email).delete();toast("You've been added to Grooveville Entertainment Studio")}}}catch(e){}
+  try{const m=await S.db.doc("studioRoles/"+S.uid).get();SR().manager=m.exists&&m.data().role==="manager"}catch(e){}
+  for(const id of [...new Set(Object.keys(SHOW_DEFAULTS).concat(Object.keys(S.shows||{})))]){try{const d=await S.db.doc("shows/"+id+"/members/"+S.uid).get();if(d.exists)SR().member[id]=d.data();else delete SR().member[id]}catch(e){}}
+  SR().checked=true;SR().checking=false;if(!studioShows().includes(SR().show)&&studioShows()[0])SR().show=studioShows()[0];scheduleRender(true);
+}
+function studioSubscribe(){
+  const s=SR().show,k=s+(S.isAdmin?"A":"")+sRank(s);if(SR().subs[k]||!S.db)return;SR().subs[k]=1;SR().d={};
+  const on=(name,col)=>S.db.collection(col).onSnapshot(snap=>{SR().d[name]=rows(snap,col);if(S.route.startsWith("studio"))scheduleRender(true)},()=>{SR().d[name]=SR().d[name]||[]});
+  ["members","episodes","clips","calendar"].forEach(n=>on(n,"shows/"+s+"/"+n));
+  if(sRank(s)>=2)on("jobs","shows/"+s+"/jobs");
+  if(sRank(s)>=4){on("invites","invites");on("managers","studioRoles")}
+  S.db.collection("studioWorker").onSnapshot(snap=>{SR().worker=rows(snap,"studioWorker");if(S.route.startsWith("studio"))scheduleRender(true)},()=>{});
+  studioStatus();studioEpisodes();
+}
+async function idToken(){if(BACKEND!=="firebase"||!window.firebase||!firebase.auth().currentUser)throw new Error("Sign in on grooveville.org to use this");return firebase.auth().currentUser.getIdToken()}
+async function sApi(path,body){const t=await idToken();const r=await fetch(path,{method:"POST",headers:{"content-type":"application/json",authorization:"Bearer "+t},body:JSON.stringify(Object.assign({show:SR().show},body||{}))});const j=await r.json().catch(()=>({}));if(!r.ok)throw new Error(j.error||("HTTP "+r.status));return j}
+async function studioStatus(){try{SR().status=await sApi("/api/studio/status");const st=SR().status,s=SR().show;
+    if(sRank(s)>=4&&st.channelId&&(S.shows[s]||{}).channelId!==st.channelId)save("shows",s,Object.assign({name:showCfg(s).name,youtube:showCfg(s).youtube},S.shows[s]||{},{channelId:st.channelId,channelTitle:st.channelTitle||""}))}catch(e){SR().status={error:String(e.message||e)}}if(S.route.startsWith("studio"))scheduleRender(true)}
+async function studioEpisodes(){const s=SR().show;let all=[],off=0;try{for(let i=0;i<10;i++){const r=await apiGet("/api/episodes?show="+encodeURIComponent(s)+"&offset="+off+"&limit=48");all=all.concat(r.items||[]);if(r.next==null)break;off=r.next}SR().eps=all}catch(e){SR().eps=SR().eps||[];SR().epsErr=String(e.message||e)}if(S.route.startsWith("studio"))scheduleRender(true)}
+const sd=n=>SR().d[n]||[];
+function epList(){const docs=sd("episodes"),yt=SR().eps||[],m=new Map();
+  yt.forEach(e=>m.set(e.id,{id:e.id,youtubeId:e.id,title:e.title,date:e.start,duration:e.duration,views:e.views,url:e.url,thumb:e.thumb}));
+  docs.forEach(d=>{m.set(d.id,Object.assign({},m.get(d.id)||{},d,{doc:true}))});
+  return sortBy([...m.values()],e=>e.date||"").reverse()}
+const mmss=s=>{s=Math.max(0,Math.round(Number(s)||0));return Math.floor(s/60)+":"+pad(s%60)};
+const toSec=v=>{v=String(v||"").trim();if(!v)return NaN;const p=v.split(":").map(Number);if(p.some(isNaN))return NaN;return p.reduce((a,x)=>a*60+x,0)};
+function canSee(tab){const t=STABS.find(x=>x[0]===tab);return t&&sRank()>=t[2]}
+
+function viewStudio(){
+  if(!S.signedIn)return viewSignin();
+  if(!SR().checked&&!S.isAdmin){studioCheck();return '<div class="wrap gate"><h1>Studio</h1><p class="muted">Checking your access…</p></div>'}
+  if(!studioAccess())return '<div class="wrap gate"><h1>No Studio access yet</h1><p class="muted">Ask a Grooveville Entertainment manager to invite <b>'+esc(S.email||"your email")+'</b>. Sign out and back in after you\'re invited.</p></div>';
+  if(!studioShows().includes(SR().show))SR().show=studioShows()[0]||"uncneph";
+  studioSubscribe();
+  const tab=(S.route.split("-")[1])||"live",t=canSee(tab)?tab:"live",cfg=showCfg(SR().show),rk=sRank();
+  const body={live:stLive,clips:stClips,episodes:stEpisodes,calendar:stCalendar,queue:stQueue,team:stTeam,analytics:stAnalytics,settings:stSettings}[t]();
+  return '<section class="teamhead"><div class="wrap"><div class="eyebrow">'+(S.isAdmin?'<a href="#team" style="color:inherit">Back office</a> › ':'')+'Grooveville Entertainment · Studio</div>'+
+    '<div style="display:flex;gap:14px;align-items:center;flex-wrap:wrap;margin-top:6px"><h1>'+esc(cfg.name)+'</h1>'+(studioShows().length>1?'<select class="i" style="width:auto" id="stShow" aria-label="Show">'+studioShows().map(id=>'<option value="'+esc(id)+'"'+(id===SR().show?" selected":"")+'>'+esc(showCfg(id).name)+'</option>').join("")+'</select>':'')+'<span class="pill pub">'+SROLE_NAME[rk]+'</span>'+(rk>=4?'<button class="btn ghost sm" data-act="st-newshow">+ New show</button>':'')+'</div>'+
+    '<nav class="tabs">'+STABS.filter(x=>rk>=x[2]).map(([k,l])=>'<a href="#studio-'+k+'"'+(k===t?' class="on"':'')+'>'+l+'</a>').join("")+'</nav></div></section><section class="tsec"><div class="wrap">'+body+'</div></section>';
+}
+/* 1. Live Control */
+function stLive(){
+  const st=SR().status||{},cfg=showCfg(SR().show),rk=sRank(),wk=(SR().worker||[])[0];
+  const lv=st.live;
+  return '<div class="cols2"><div style="display:flex;flex-direction:column;gap:16px;min-width:0"><div class="mbox"><div class="sechead" style="margin-bottom:8px"><h3 style="font-size:20px">Broadcast status</h3>'+(lv?'<span class="livebadge"><i></i>LIVE</span>':'<span class="offbadge">'+(st.upcoming?"Scheduled":"Off air")+'</span>')+'</div>'+
+    (st.lastEnded&&!(sd("episodes").find(d=>d.id===st.lastEnded.id)||{}).recordingKey?'<div class="banner" style="margin:0 0 10px">Last show ended '+esc(new Date(st.lastEnded.at).toLocaleString("en-US"))+'. '+(rk>=2?'<button class="btn olive sm" data-act="st-openep" data-id="'+esc(st.lastEnded.id)+'">Upload its recording</button>':'Editors can now upload the recording.')+'</div>':'')+
+    (st.error&&!st.channelId?'<div class="banner warn" style="margin:0">'+esc(st.error)+'</div>':'')+
+    (lv?'<p><b>'+esc(lv.title)+'</b></p><p class="muted" style="font-size:13.5px">Started '+esc(new Date(lv.start).toLocaleTimeString("en-US",{hour:"numeric",minute:"2-digit"}))+'</p><div class="btnrow0"><a class="btn olive sm" href="#live">Open public player</a><a class="btn ghost sm" href="'+esc(lv.url||("https://www.youtube.com/watch?v="+lv.id))+'" target="_blank" rel="noopener">YouTube ↗</a></div>':
+      st.upcoming?'<p>Next on YouTube: <b>'+esc(st.upcoming.title)+'</b> · '+esc(new Date(st.upcoming.scheduled).toLocaleString("en-US"))+'</p>':'<p class="muted">Nothing is live. Grooveville LIVE switches on automatically within about two minutes of going live on YouTube.</p>')+
+    '<dl class="kv"><dt>YouTube channel</dt><dd>'+esc(st.channelTitle||"")+' '+(st.channelId?'<span class="mono">'+esc(st.channelId)+'</span>':'<span class="muted">not resolved yet</span>')+'</dd><dt>Twitch</dt><dd>'+(st.twitchLive==null?'<span class="muted">status not connected</span>':st.twitchLive?"Live":"Offline")+'</dd><dt>Last check</dt><dd>'+(st.checkedAt?esc(new Date(st.checkedAt).toLocaleString("en-US")):'<span class="muted">never</span>')+(st.stale?' <span class="pill high">stale</span>':'')+'</dd></dl>'+
+    ((st.errors||[]).length&&rk>=4?'<div class="banner warn" style="margin-top:10px">'+st.errors.map(esc).join("<br>")+'</div>':'')+
+    '<div class="btnrow0" style="margin-top:12px"><button class="btn ghost sm" data-act="st-refresh">Refresh</button>'+(rk>=4?'<button class="btn olive sm" data-act="st-sync">Sync with YouTube now</button>':'')+'<a class="btn ghost sm" href="https://studio.youtube.com" target="_blank" rel="noopener">YouTube Studio ↗</a><a class="btn ghost sm" href="https://streamyard.com" target="_blank" rel="noopener">StreamYard ↗</a></div></div>'+
+    '<form class="mbox" id="stNext" style="display:flex;flex-direction:column;gap:10px"><h3 style="font-size:19px">Next show (shown when off air)</h3><p class="muted" style="font-size:13px">Used when YouTube has no scheduled stream yet.</p><div class="grid2"><label class="f">Title<input class="i" name="title" value="'+esc((cfg.nextShow||{}).title||"")+'"'+(rk<3?" disabled":"")+'></label><label class="f">Date & time<input class="i" type="datetime-local" name="when" value="'+esc(((cfg.nextShow||{}).when||"").slice(0,16))+'"'+(rk<3?" disabled":"")+'></label></div>'+(rk>=3?'<div><button class="btn olive sm">Save next show</button></div>':'')+'</form></div>'+
+    '<aside class="mbox" style="align-self:start"><h3 style="font-size:19px">After each show</h3><ol style="padding-left:18px;margin:10px 0 0;display:grid;gap:6px;font-size:14px"><li>The finished livestream joins Previous Episodes automatically.</li><li>Upload the StreamYard recording in the Episode Library.</li><li>Generate AI clip suggestions or mark clips by hand.</li><li>Editors polish captions, producers approve, then post.</li></ol>'+
+    '<p style="margin-top:14px;font-size:14px"><b>AI worker:</b> '+(wk&&wk.lastSeen&&Date.now()-Date.parse(wk.lastSeen)<300000?'<span class="pill pub">Online</span>':'<span class="pill priv">Not connected</span>')+'</p><p class="muted" style="font-size:12.5px">Until a processing machine is connected, AI and render jobs wait safely in the queue.</p></aside></div>';
+}
+/* 2. AI Clip Studio */
+function stClips(){
+  const eps=epList(),rk=sRank();if(!SR().clipEp&&eps[0])SR().clipEp=eps[0].id;
+  const ep=eps.find(e=>e.id===SR().clipEp)||null,clips=sd("clips").filter(c=>c.episodeId===SR().clipEp),jobs=sd("jobs").filter(j=>j.episodeId===SR().clipEp);
+  const ed=SR().edit||{};
+  return '<div class="toolbar"><label class="f" style="flex:1;min-width:240px">Episode<select class="i" id="stEp">'+(eps.length?eps.map(e=>'<option value="'+esc(e.id)+'"'+(e.id===SR().clipEp?" selected":"")+'>'+esc((e.date?fmtWhen(e.date)+" · ":"")+e.title)+'</option>').join(""):'<option>No episodes yet</option>')+'</select></label></div>'+
+    (!ep?'<div class="empty">Episodes appear here after the first livestream ends, or add one in the Episode Library.</div>':
+    '<div class="cols2"><div style="min-width:0;display:flex;flex-direction:column;gap:14px"><div class="mbox"><div class="stage" id="stStage">'+(SR().recUrl&&SR().recFor===ep.id?'<video id="stVid" controls playsinline src="'+esc(SR().recUrl)+'"></video>':ep.youtubeId?'<div id="stYT" data-vid="'+esc(ep.youtubeId)+'"></div>':'<div class="empty" style="height:100%;display:grid;place-items:center">No preview source</div>')+'</div>'+
+      '<div class="btnrow0" style="margin-top:10px">'+(ep.recordingKey?(rk>=2?'<button class="btn ghost sm" data-act="st-rec">'+(SR().recFor===ep.id?"Using recording":"Preview recording")+'</button>':''):'<span class="muted" style="font-size:13px">'+(rk>=2?'No recording attached. Previewing the YouTube video.':'Previewing the YouTube video.')+'</span>')+
+      (rk>=2?'<label class="btn ghost sm" style="cursor:pointer">'+(ep.recordingKey?"Replace recording":"Upload recording")+'<input type="file" id="stUp" accept="video/*,audio/*" hidden></label>':'')+'<span id="stUpMsg" class="muted" style="font-size:13px"></span></div></div>'+
+      '<form class="mbox" id="stClipForm" style="display:flex;flex-direction:column;gap:10px"><h3 style="font-size:19px">'+(ed.id?"Edit clip":rk>=2?"New clip":"Suggest a clip")+'</h3>'+
+      '<label class="f">Clip title *<input class="i" name="title" required value="'+esc(ed.title||"")+'"></label>'+
+      '<div class="grid2"><label class="f">Start (m:ss)<span style="display:flex;gap:6px"><input class="i" name="start" value="'+esc(ed.start!=null?mmss(ed.start):"")+'" placeholder="12:30"><button type="button" class="btn ghost sm" data-act="st-mark" data-k="start">Mark in</button></span></label><label class="f">End (m:ss)<span style="display:flex;gap:6px"><input class="i" name="end" value="'+esc(ed.end!=null?mmss(ed.end):"")+'" placeholder="13:15"><button type="button" class="btn ghost sm" data-act="st-mark" data-k="end">Mark out</button></span></label></div>'+
+      '<div class="grid2"><label class="f">Format<select class="i" name="format">'+FORMATS.map(([v,l])=>'<option value="'+v+'"'+((ed.format||"9:16")===v?" selected":"")+'>'+l+'</option>').join("")+'</select></label><label class="f">Caption style<select class="i" name="preset">'+PRESETS.map(([v,l])=>'<option value="'+v+'"'+((ed.preset||"bold")===v?" selected":"")+'>'+l+'</option>').join("")+'</select></label></div>'+
+      '<label style="display:flex;gap:8px;align-items:center;font-size:14px"><input type="checkbox" name="brand"'+(ed.brand===false?"":" checked")+'> Show branding (logo bug + end card)</label>'+
+      '<label class="f">Captions (one line each: <span class="mono">m:ss text</span>)<textarea class="i" name="captions" style="min-height:110px" placeholder="0:02 Nah, Unc, listen…">'+esc((ed.captions||[]).map(c=>mmss(c.t)+" "+c.text).join("\n"))+'</textarea></label>'+
+      '<label class="f">Notes for the team<input class="i" name="notes" value="'+esc(ed.notes||"")+'"></label>'+
+      '<div class="btnrow0"><button class="btn olive">'+(ed.id?"Save changes":rk>=2?"Save draft":"Send suggestion")+'</button><button type="button" class="btn ghost" data-act="st-preview">▶ Preview clip</button>'+(ed.id?'<button type="button" class="btn ghost" data-act="st-newclip">New clip</button>':'')+'</div></form></div>'+
+      '<aside style="display:flex;flex-direction:column;gap:14px;min-width:0"><div class="mbox"><h3 style="font-size:19px">AI suggestions</h3><p class="muted" style="font-size:13px;margin:6px 0 10px">Transcribes the recording (Faster-Whisper), picks funny moments, debates and strong takes (Ollama), and drafts captioned clips.</p>'+
+      (rk>=2?'<button class="btn olive sm" data-act="st-gen"'+(ep.recordingKey?'':' disabled title="Upload the recording first"')+'>✦ Generate clips</button>'+(ep.recordingKey?'':'<p class="muted" style="font-size:12.5px;margin-top:6px">Upload the StreamYard recording first. YouTube doesn\'t allow downloading the stream.</p>'):'<p class="muted" style="font-size:13px">Editors and producers can run AI suggestions.</p>')+
+      (jobs.length?'<div style="margin-top:12px;display:flex;flex-direction:column;gap:6px">'+sortBy(jobs,j=>j.createdAt||"").reverse().slice(0,8).map(j=>'<div class="lrow" style="grid-template-columns:minmax(0,1fr) auto"><span style="font-size:13.5px"><b>'+esc({highlights:"AI highlights",transcribe:"Transcription",render:"Render MP4"}[j.type]||j.type)+'</b>'+(j.clipTitle?' · '+esc(j.clipTitle):'')+(j.error?'<br><span style="color:var(--bad)">'+esc(j.error)+'</span>':'')+'</span><span class="pill '+(j.status==="done"?"pub":j.status==="failed"?"over":"priv")+'">'+esc(j.status)+(j.progress?" "+Math.round(j.progress)+"%":"")+'</span></div>').join("")+'</div>':'')+'</div>'+
+      '<div class="mbox"><h3 style="font-size:19px">Clips from this episode</h3>'+(clips.length?sortBy(clips,c=>c.start||0).map(c=>'<div class="lrow" style="grid-template-columns:minmax(0,1fr) auto"><span><b>'+esc(c.title)+'</b><br><span class="muted" style="font-size:12.5px">'+mmss(c.start)+'–'+mmss(c.end)+' · '+esc(c.format)+(c.ai?' · AI':'')+'</span></span><span style="display:flex;gap:6px;align-items:center"><span class="pill '+(c.status==="approved"||c.status==="published"?"pub":"priv")+'">'+esc((CLIP_STATUS.find(x=>x[0]===c.status)||[0,c.status])[1])+'</span>'+(rk>=2||c.createdBy===S.uid?'<button class="rowbtn" data-act="st-editclip" data-id="'+esc(c.id)+'">Edit</button>':'')+'</span></div>').join(""):'<div class="empty" style="padding:14px">No clips yet.</div>')+'</div></aside></div>');
+}
+/* 3. Episode Library */
+function stEpisodes(){const eps=epList(),rk=sRank(),clips=sd("clips");
+  return '<div class="toolbar"><span class="muted">'+eps.length+' episodes · synced from YouTube automatically</span><span class="sp"></span>'+(rk>=2?'<button class="btn olive sm" data-act="st-addep">+ Add episode manually</button>':'')+'</div>'+(SR().epsErr?'<div class="banner warn">Couldn\'t reach the episode archive: '+esc(SR().epsErr)+'</div>':'')+
+  (eps.length?'<div class="tablewrap"><table class="t"><thead><tr><th>Episode</th><th>Date</th><th class="num">Length</th><th class="num">Views</th><th>Recording</th><th class="num">Clips</th><th></th></tr></thead><tbody>'+eps.map(e=>'<tr><td>'+(e.thumb?'<img src="'+esc(e.thumb)+'" alt="" style="width:64px;height:36px;object-fit:cover;border-radius:4px;vertical-align:middle;margin-right:8px">':'')+esc(e.title)+'</td><td>'+esc(e.date?fmtWhen(e.date):"")+'</td><td class="num">'+fmtDur(e.duration)+'</td><td class="num">'+(e.views?e.views.toLocaleString():"")+'</td><td>'+(e.recordingKey?'<span class="pill pub">Attached</span>':'<span class="pill priv">None</span>')+'</td><td class="num">'+clips.filter(c=>c.episodeId===e.id).length+'</td><td style="white-space:nowrap"><button class="rowbtn" data-act="st-openep" data-id="'+esc(e.id)+'">Clip Studio</button>'+(e.url?'<a class="rowbtn" href="'+esc(e.url)+'" target="_blank" rel="noopener">YouTube ↗</a>':'')+'</td></tr>').join("")+'</tbody></table></div>':'<div class="empty">'+(SR().eps==null?"Loading…":"No completed livestreams yet. They appear here automatically after each show.")+'</div>');
+}
+/* 4. Content Calendar */
+function stCalendar(){const rk=sRank(),items=sortBy(sd("calendar"),i=>(i.date||"")+(i.time||"")),clips=sd("clips");
+  const up=items.filter(i=>i.date>=today()),past=items.filter(i=>i.date<today()).reverse().slice(0,10);
+  const row=i=>'<div class="lrow" style="grid-template-columns:90px minmax(0,1fr) auto"><span class="mono" style="font-size:13px">'+esc(fmtDate(i.date))+(i.time?'<br>'+esc(fmtTime(i.time)):'')+'</span><span><b>'+esc(i.title)+'</b><br><span class="muted" style="font-size:12.5px">'+esc(i.platform||"")+(i.clipId&&clips.find(c=>c.id===i.clipId)?' · clip: '+esc(clips.find(c=>c.id===i.clipId).title):'')+'</span></span><span style="display:flex;gap:6px;align-items:center"><span class="pill '+(i.status==="posted"?"pub":"priv")+'">'+esc(i.status||"planned")+'</span>'+(rk>=3?'<button class="rowbtn" data-act="st-cal" data-id="'+esc(i.id)+'">Edit</button>':'')+'</span></div>';
+  return '<div class="toolbar"><span class="muted">Plan shows, clip drops and posts.</span><span class="sp"></span>'+(rk>=3?'<button class="btn olive sm" data-act="st-cal">+ Add to calendar</button>':'')+'</div><div class="mbox"><h3 style="font-size:19px">Coming up</h3>'+(up.length?up.map(row).join(""):'<div class="empty" style="padding:14px">Nothing planned yet.</div>')+'</div>'+(past.length?'<div class="mbox"><h3 style="font-size:19px">Recent</h3>'+past.map(row).join("")+'</div>':'');
+}
+/* 5. Publishing Queue */
+function stQueue(){const rk=sRank(),f=SR().queueF,clips=sd("clips"),cnt=k=>clips.filter(c=>c.status===k).length;
+  const list=sortBy(clips.filter(c=>c.status===f),c=>c.updatedAt||"").reverse();
+  return '<div class="seg" style="margin-bottom:14px">'+CLIP_STATUS.map(([k,l])=>'<button class="'+(f===k?"on":"")+'" data-act="st-qf" data-v="'+k+'">'+l+' · '+cnt(k)+'</button>').join("")+'</div>'+
+  '<p class="muted" style="font-size:13px;margin-bottom:12px">Nothing is posted without a producer\'s approval. Direct posting to YouTube Shorts, Reels and TikTok isn\'t connected; download the approved MP4, post it, then paste the link here.</p>'+
+  (list.length?'<div class="slots">'+list.map(c=>{const ep=epList().find(e=>e.id===c.episodeId)||{};const mine=c.createdBy===S.uid;
+    const acts=[];
+    if(c.status==="suggested"&&rk>=2)acts.push(['draft','Make draft']);
+    if((c.status==="draft"||c.status==="rejected")&&rk>=2)acts.push(['review','Submit for review']);
+    if(c.status==="review"&&rk>=3){acts.push(['approved','Approve']);acts.push(['rejected','Reject'])}
+    if(c.status==="approved"&&rk>=3)acts.push(['publish','Mark published']);
+    return '<div class="slot" style="--c:var(--c-ent)"><h4>'+esc(c.title)+'</h4><div class="muted" style="font-size:12.5px">'+esc(ep.title||"")+' · '+mmss(c.start)+'–'+mmss(c.end)+' · '+esc(c.format)+'</div>'+
+      (c.reviewNote?'<div class="banner warn" style="margin:0;font-size:13px">'+esc(c.reviewNote)+'</div>':'')+
+      '<label class="f">Post caption<textarea class="i" data-cap="'+esc(c.id)+'" style="min-height:70px"'+((rk>=3)||(rk>=2&&["draft","review","suggested","rejected"].includes(c.status))?"":" disabled")+'>'+esc(c.postCaption||"")+'</textarea></label>'+
+      '<div style="display:flex;gap:6px;flex-wrap:wrap;font-size:12.5px">'+PUB_TARGETS.map(p=>'<span class="pill '+((c.platforms||[]).includes(p)?"pub":"priv")+'">'+esc(p)+'</span>').join("")+'</div>'+
+      ((c.publishLog||[]).length?'<div style="font-size:12.5px">'+c.publishLog.map(l=>'✓ '+esc(l.platform)+(l.url?' · <a href="'+esc(l.url)+'" target="_blank" rel="noopener">link</a>':'')+' · '+esc(fmtDate(String(l.at).slice(0,10)))).join("<br>")+'</div>':'')+
+      '<div class="acts">'+(rk>=2||mine?'<button class="btn ghost sm" data-act="st-savecap" data-id="'+esc(c.id)+'">Save caption</button>':'')+acts.map(([k,l])=>'<button class="btn '+(k==="rejected"?"ghost":"olive")+' sm" data-act="st-status" data-id="'+esc(c.id)+'" data-v="'+k+'">'+l+'</button>').join("")+
+      (c.exportKey?'<button class="btn ghost sm" data-act="st-dl" data-key="'+esc(c.exportKey)+'">Download MP4</button>':rk>=2&&["draft","review","approved"].includes(c.status)?'<button class="btn ghost sm" data-act="st-render" data-id="'+esc(c.id)+'">'+(c.renderStatus==="queued"?"Render queued":"Render MP4")+'</button>':'')+
+      (rk>=2?'<button class="btn ghost sm" data-act="st-editclip" data-id="'+esc(c.id)+'">Edit</button>':'')+'</div></div>'}).join("")+'</div>':'<div class="empty">No clips '+esc(((CLIP_STATUS.find(x=>x[0]===f)||[])[1]||"").toLowerCase())+'.</div>');
+}
+/* 6. Team Management */
+function stTeam(){const rk=sRank(),s=SR().show,mem=sd("members"),inv=sd("invites").filter(i=>i.role==="manager"||i.show===s),mgr=sd("managers");
+  return '<div class="cols2"><div style="min-width:0"><div class="mbox"><h3 style="font-size:19px">'+esc(showCfg(s).name)+' team</h3>'+(mem.length?mem.map(m=>'<div class="lrow" style="grid-template-columns:minmax(0,1fr) auto auto"><span style="overflow-wrap:anywhere">'+esc(m.email||m.id)+'</span><select class="i" style="width:auto;padding:5px 8px" data-role="'+esc(m.id)+'">'+["producer","editor","member"].map(r=>'<option value="'+r+'"'+(m.role===r?" selected":"")+'>'+SROLE_NAME[SROLE[r]]+'</option>').join("")+'</select><button class="rowbtn" data-act="st-revoke" data-id="'+esc(m.id)+'">Remove</button></div>').join(""):'<div class="empty" style="padding:14px">No team members yet.</div>')+'</div>'+
+    '<div class="mbox"><h3 style="font-size:19px">Pending invitations</h3>'+(inv.length?inv.map(i=>'<div class="lrow" style="grid-template-columns:minmax(0,1fr) auto auto"><span>'+esc(i.id)+'</span><span class="pill priv">'+esc(i.role==="manager"?"Entertainment Manager":SROLE_NAME[SROLE[i.role]])+'</span><button class="rowbtn" data-act="st-uninvite" data-id="'+esc(i.id)+'">Cancel</button></div>').join(""):'<div class="empty" style="padding:14px">None.</div>')+'</div>'+
+    (S.isAdmin?'<div class="mbox"><h3 style="font-size:19px">Entertainment Managers (all shows)</h3>'+(mgr.length?mgr.map(m=>'<div class="lrow" style="grid-template-columns:minmax(0,1fr) auto"><span>'+esc(m.email||m.id)+'</span><button class="rowbtn" data-act="st-unmgr" data-id="'+esc(m.id)+'">Remove</button></div>').join(""):'<div class="empty" style="padding:14px">None yet.</div>')+'</div>':'')+'</div>'+
+    '<form class="mbox" id="stInvite" style="display:flex;flex-direction:column;gap:10px;align-self:start"><h3 style="font-size:19px">Invite someone</h3><label class="f">Email *<input class="i" type="email" name="email" required></label><label class="f">Role<select class="i" name="role"><option value="editor">Editor: recordings, clips, captions</option><option value="producer">Producer: approvals and publishing</option><option value="member">Show Member: view and suggest clips</option>'+(S.isAdmin?'<option value="manager">Entertainment Manager: all shows + team</option>':'')+'</select></label>'+
+    '<p class="muted" style="font-size:12.5px">They sign in on <b>Groove Team</b> with this exact email (or create an account) and get access to this show only. Studio roles never include finances, other companies, site settings or keys.</p><div><button class="btn olive">Send invitation</button></div><p id="stInvMsg" class="muted" style="font-size:13px"></p></form></div>';
+}
+/* 7. Analytics */
+function stAnalytics(){const eps=epList(),clips=sd("clips"),cal=sd("calendar");
+  const views=eps.reduce((a,e)=>a+(e.views||0),0),pub=clips.filter(c=>c.status==="published"),byP={};pub.forEach(c=>(c.publishLog||[]).forEach(l=>{byP[l.platform]=(byP[l.platform]||0)+1}));
+  const top=sortBy(eps.filter(e=>e.views),e=>e.views).reverse().slice(0,6),mx=Math.max(1,...top.map(e=>e.views));
+  return '<div class="kpis"><div class="kpi"><span class="eyebrow">Episodes</span><b>'+eps.length+'</b></div><div class="kpi"><span class="eyebrow">YouTube views</span><b>'+views.toLocaleString()+'</b></div><div class="kpi"><span class="eyebrow">Clips made</span><b>'+clips.length+'</b></div><div class="kpi"><span class="eyebrow">Clips posted</span><b>'+pub.length+'</b></div></div>'+
+  '<div class="cols2"><div class="mbox"><h3 style="font-size:19px">Most-watched episodes</h3>'+(top.length?top.map(e=>'<div style="margin-top:10px"><div style="display:flex;justify-content:space-between;font-size:13.5px"><span>'+esc(e.title)+'</span><span class="mono">'+e.views.toLocaleString()+'</span></div><div style="height:8px;border-radius:6px;background:var(--surface-2);margin-top:4px"><div style="height:100%;width:'+(e.views/mx*100)+'%;border-radius:6px;background:var(--peach)"></div></div></div>').join(""):'<div class="empty" style="padding:14px">View counts appear after the first sync.</div>')+'<p class="muted" style="font-size:12px;margin-top:10px">Views come from YouTube and refresh with each sync.</p></div>'+
+  '<div class="mbox"><h3 style="font-size:19px">Clip pipeline</h3>'+CLIP_STATUS.map(([k,l])=>'<div class="lrow" style="grid-template-columns:1fr auto"><span>'+l+'</span><b class="mono">'+clips.filter(c=>c.status===k).length+'</b></div>').join("")+'<h3 style="font-size:17px;margin-top:14px">Posted by platform</h3>'+(Object.keys(byP).length?Object.entries(byP).map(([p,n])=>'<div class="lrow" style="grid-template-columns:1fr auto"><span>'+esc(p)+'</span><b class="mono">'+n+'</b></div>').join(""):'<p class="muted" style="font-size:13px">Nothing posted yet.</p>')+'<p class="muted" style="font-size:12.5px;margin-top:10px">'+cal.filter(i=>i.date>=today()).length+' items on the content calendar.</p></div></div>';
+}
+/* 8. Show Settings */
+function stSettings(){const s=SR().show,cfg=showCfg(s),st=SR().status||{},soc=cfg.socials||{};
+  return '<form class="mbox" id="stSettings" style="display:flex;flex-direction:column;gap:12px;max-width:860px"><h3 style="font-size:20px">'+esc(cfg.name)+'</h3>'+
+    '<div class="grid2"><label class="f">Show name<input class="i" name="name" value="'+esc(cfg.name)+'" required></label><label class="f">Tagline<input class="i" name="tagline" value="'+esc(cfg.tagline||"")+'"></label></div>'+
+    '<label class="f">YouTube channel (link, @handle or channel ID)<input class="i" name="youtube" value="'+esc(cfg.youtube||"")+'" placeholder="https://www.youtube.com/@YourShow"></label>'+
+    '<div class="banner" style="margin:0">'+(st.channelId?'Resolved channel ID <b class="mono">'+esc(st.channelId)+'</b>'+(st.channelTitle?' · '+esc(st.channelTitle):'')+(cfg.channelId===st.channelId?' · saved':' <button type="button" class="btn ghost sm" data-act="st-saveid">Save to show</button>'):'The channel ID is looked up automatically with the YouTube Data API after you save. Use "Sync with YouTube now" in Live Control to check it.')+'</div>'+
+    '<h4 style="margin-top:6px">Watch & follow links</h4><p class="muted" style="font-size:13px;margin-top:-6px">Leave blank to hide a platform. Links must be https and on that platform\'s site.</p>'+
+    '<div class="grid2">'+SOC_PLATFORMS.map(([k,n])=>'<label class="f">'+n+'<input class="i" type="url" name="soc_'+k+'" value="'+esc(soc[k]||"")+'" placeholder="https://"></label>').join("")+'</div>'+
+    '<label style="display:flex;gap:8px;align-items:center;font-size:14px"><input type="checkbox" name="disabled"'+(cfg.disabled?" checked":"")+'> Hide this show from Grooveville LIVE</label>'+
+    '<div><button class="btn olive">Save show settings</button></div></form>';
+}
+
+/* ---------- actions ---------- */
+function studioAct(a,t){
+  if(!a.startsWith("st-"))return false;
+  const s=SR().show,rk=sRank(),col=n=>"shows/"+s+"/"+n;
+  if(a==="st-refresh"){studioStatus();studioEpisodes();toast("Refreshing");return true}
+  if(a==="st-sync"){t.disabled=true;sApi("/api/sync").then(r=>{SR().status=Object.assign({},SR().status,r);toast(r.errors&&r.errors.length?"Synced with warnings":"Synced with YouTube");studioEpisodes();render()}).catch(e=>{toast(e.message);t.disabled=false});return true}
+  if(a==="st-qf"){SR().queueF=t.dataset.v;render();return true}
+  if(a==="st-openep"){SR().clipEp=t.dataset.id;SR().edit=null;SR().recUrl="";location.hash="#studio-clips";return true}
+  if(a==="st-newclip"){SR().edit=null;render();return true}
+  if(a==="st-editclip"){const c=sd("clips").find(x=>x.id===t.dataset.id);if(c){SR().edit=Object.assign({},c);SR().clipEp=c.episodeId;if(!S.route.startsWith("studio-clips"))location.hash="#studio-clips";else render();window.scrollTo(0,0)}return true}
+  if(a==="st-mark"){const tm=stCurTime();const inp=$('#stClipForm input[name='+t.dataset.k+']');if(inp&&tm!=null){inp.value=mmss(tm)}else toast("Start the preview, then mark");return true}
+  if(a==="st-preview"){const f=$("#stClipForm"),a1=toSec(f.start.value),b1=toSec(f.end.value);if(isNaN(a1)){toast("Set a start time");return true}stSeek(a1,isNaN(b1)?null:b1);return true}
+  if(a==="st-rec"){const ep=epList().find(e=>e.id===SR().clipEp);if(!ep||!ep.recordingKey)return true;sApi("/api/studio/file",{key:ep.recordingKey}).then(r=>{SR().recUrl=r.url;SR().recFor=ep.id;render()}).catch(e=>toast(e.message));return true}
+  if(a==="st-gen"){const ep=epList().find(e=>e.id===SR().clipEp);if(!ep)return true;save(col("jobs"),uid(),{type:"highlights",episodeId:ep.id,recordingKey:ep.recordingKey||"",status:"queued",createdBy:S.uid,createdAt:new Date().toISOString(),options:{formats:["9:16"],maxClips:8,minSec:15,maxSec:75}}).then(ok=>ok&&toast("Queued for the AI worker"));return true}
+  if(a==="st-render"){const c=sd("clips").find(x=>x.id===t.dataset.id);if(!c)return true;const ep=epList().find(e=>e.id===c.episodeId)||{};if(!ep.recordingKey){toast("Upload the episode recording first");return true}
+    save(col("jobs"),uid(),{type:"render",episodeId:c.episodeId,clipId:c.id,clipTitle:c.title,recordingKey:ep.recordingKey,status:"queued",createdBy:S.uid,createdAt:new Date().toISOString()}).then(ok=>{if(ok){save(col("clips"),c.id,Object.assign(stripC(c),{renderStatus:"queued",updatedAt:new Date().toISOString()}));toast("Render queued")}});return true}
+  if(a==="st-dl"){sApi("/api/studio/file",{key:t.dataset.key}).then(r=>{window.open(r.url,"_blank","noopener")}).catch(e=>toast(e.message));return true}
+  if(a==="st-savecap"){const c=sd("clips").find(x=>x.id===t.dataset.id),ta=document.querySelector('[data-cap="'+t.dataset.id+'"]');if(c&&ta)save(col("clips"),c.id,Object.assign(stripC(c),{postCaption:ta.value,updatedAt:new Date().toISOString()})).then(ok=>ok&&toast("Caption saved"));return true}
+  if(a==="st-status"){const c=sd("clips").find(x=>x.id===t.dataset.id),v=t.dataset.v;if(!c)return true;
+    if(v==="publish"){openModal('<h3>Mark as published</h3><form id="mf" style="display:flex;flex-direction:column;gap:12px"><label class="f">Platform<select class="i" name="platform">'+PUB_TARGETS.map(p=>'<option>'+p+'</option>').join("")+'</select></label><label class="f">Post link<input class="i" type="url" name="url" placeholder="https://"></label><div class="row"><button type="button" class="btn ghost" data-act="close-modal">Cancel</button><button class="btn olive">Save</button></div></form>',
+      el=>el.querySelector("#mf").addEventListener("submit",async ev=>{ev.preventDefault();const o=formObj(ev.target);const log=(c.publishLog||[]).concat({platform:o.platform,url:o.url,at:new Date().toISOString(),by:S.uid});
+        if(await save(col("clips"),c.id,Object.assign(stripC(c),{status:"published",publishLog:log,platforms:[...new Set((c.platforms||[]).concat(o.platform))],updatedAt:new Date().toISOString()}))){closeModal();toast("Logged")}}));return true}
+    if(v==="rejected"){openModal('<h3>Send back with a note</h3><form id="mf"><textarea class="i" name="note" placeholder="What needs to change?"></textarea><div class="row"><button type="button" class="btn ghost" data-act="close-modal">Cancel</button><button class="btn olive">Reject</button></div></form>',el=>el.querySelector("#mf").addEventListener("submit",async ev=>{ev.preventDefault();if(await save(col("clips"),c.id,Object.assign(stripC(c),{status:"rejected",reviewNote:formObj(ev.target).note,reviewedBy:S.uid,updatedAt:new Date().toISOString()}))){closeModal();toast("Sent back")}}));return true}
+    save(col("clips"),c.id,Object.assign(stripC(c),{status:v,reviewNote:v==="approved"?"":c.reviewNote||"",reviewedBy:v==="approved"?S.uid:c.reviewedBy||"",updatedAt:new Date().toISOString()})).then(ok=>ok&&toast("Updated"));return true}
+  if(a==="st-addep"){openModal('<h3>Add an episode</h3><form id="mf" style="display:flex;flex-direction:column;gap:12px"><label class="f">Title *<input class="i" name="title" required></label><label class="f">Date<input class="i" type="date" name="date" value="'+today()+'"></label><label class="f">YouTube link (optional)<input class="i" type="url" name="yt"></label><div class="row"><button type="button" class="btn ghost" data-act="close-modal">Cancel</button><button class="btn olive">Add</button></div></form>',
+    el=>el.querySelector("#mf").addEventListener("submit",async ev=>{ev.preventDefault();const o=formObj(ev.target);const m=/(?:v=|youtu\.be\/|live\/)([A-Za-z0-9_-]{11})/.exec(o.yt||"");const id=m?m[1]:"ep-"+uid();
+      if(await save(col("episodes"),id,{title:o.title,date:o.date,youtubeId:m?m[1]:"",manual:true,createdBy:S.uid})){closeModal();toast("Episode added")}}));return true}
+  if(a==="st-cal"){const it=sd("calendar").find(x=>x.id===t.dataset.id)||{};const clips=sd("clips").filter(c=>["approved","published","review","draft"].includes(c.status));
+    openModal('<h3>'+(it.id?"Edit":"Add")+' calendar item</h3><form id="mf" style="display:flex;flex-direction:column;gap:12px"><label class="f">Title *<input class="i" name="title" required value="'+esc(it.title||"")+'"></label><div class="grid2"><label class="f">Date *<input class="i" type="date" name="date" required value="'+esc(it.date||today())+'"></label><label class="f">Time<input class="i" type="time" name="time" value="'+esc(it.time||"")+'"></label></div><div class="grid2"><label class="f">Where<select class="i" name="platform">'+["Live show"].concat(PUB_TARGETS).map(p=>'<option'+(it.platform===p?" selected":"")+'>'+p+'</option>').join("")+'</select></label><label class="f">Status<select class="i" name="status"><option value="planned">Planned</option><option value="posted"'+(it.status==="posted"?" selected":"")+'>Posted</option></select></label></div><label class="f">Clip<select class="i" name="clipId"><option value="">None</option>'+clips.map(c=>'<option value="'+esc(c.id)+'"'+(it.clipId===c.id?" selected":"")+'>'+esc(c.title)+'</option>').join("")+'</select></label><div class="row">'+(it.id?'<button type="button" class="btn danger left" data-act="del-arm">Delete</button>':'')+'<button type="button" class="btn ghost" data-act="close-modal">Cancel</button><button class="btn olive">Save</button></div></form>',
+    el=>{el._del=async()=>{if(await remove(col("calendar"),it.id)){closeModal();toast("Deleted")}};el.querySelector("#mf").addEventListener("submit",async ev=>{ev.preventDefault();const o=formObj(ev.target);if(await save(col("calendar"),it.id||uid(),Object.assign(o,{by:S.uid}))){closeModal();toast("Saved")}})});return true}
+  if(a==="st-revoke"){remove(col("members"),t.dataset.id).then(ok=>ok&&toast("Access removed"));return true}
+  if(a==="st-uninvite"){remove("invites",t.dataset.id).then(ok=>ok&&toast("Invitation cancelled"));return true}
+  if(a==="st-unmgr"){remove("studioRoles",t.dataset.id).then(ok=>ok&&toast("Manager removed"));return true}
+  if(a==="st-saveid"){const st=SR().status||{};if(st.channelId)save("shows",s,Object.assign({},S.shows[s]||{},{channelId:st.channelId,channelTitle:st.channelTitle||""})).then(ok=>ok&&toast("Channel ID saved"));return true}
+  if(a==="st-newshow"){openModal('<h3>New show</h3><form id="mf" style="display:flex;flex-direction:column;gap:12px"><label class="f">Show name *<input class="i" name="name" required></label><label class="f">Short ID (letters, numbers, dashes) *<input class="i" name="id" required pattern="[a-z0-9-]{2,40}" placeholder="dj-night"></label><label class="f">YouTube channel (link or @handle)<input class="i" name="youtube"></label><div class="row"><button type="button" class="btn ghost" data-act="close-modal">Cancel</button><button class="btn olive">Create</button></div></form>',
+    el=>el.querySelector("#mf").addEventListener("submit",async ev=>{ev.preventDefault();const o=formObj(ev.target);if(S.shows[o.id]||SHOW_DEFAULTS[o.id]){toast("That ID is taken");return}if(await save("shows",o.id,{name:o.name,youtube:o.youtube,socials:{},createdAt:new Date().toISOString()})){closeModal();SR().show=o.id;location.hash="#studio-settings";toast("Show created")}}));return true}
+  return false;
+}
+const stripC=c=>{const o=Object.assign({},c);delete o.id;delete o._col;return o};
+function stCurTime(){const v=$("#stVid");if(v)return v.currentTime;if(SR().ytp&&SR().ytp.getCurrentTime)return SR().ytp.getCurrentTime();return null}
+function stSeek(a,b){const v=$("#stVid");if(v){v.currentTime=a;v.play();if(b!=null){const st=()=>{if(v.currentTime>=b){v.pause();v.removeEventListener("timeupdate",st)}};v.addEventListener("timeupdate",st)}return}
+  const p=SR().ytp;if(p&&p.seekTo){p.seekTo(a,true);p.playVideo();clearInterval(SR().pt);if(b!=null)SR().pt=setInterval(()=>{if(p.getCurrentTime()>=b){p.pauseVideo();clearInterval(SR().pt)}},250)}}
+function studioMount(){
+  const sel=$("#stShow");if(sel)sel.onchange=()=>{SR().show=sel.value;SR().clipEp="";SR().edit=null;SR().status=null;SR().eps=null;render()};
+  const ep=$("#stEp");if(ep)ep.onchange=()=>{SR().clipEp=ep.value;SR().edit=null;SR().recUrl="";render()};
+  const y=$("#stYT");if(y){const vid=y.dataset.vid;if(SR().ytVid!==vid||!document.getElementById("stYTf")){const mk=()=>{const h=$("#stYT");if(!h)return;h.id="stYTf";SR().ytVid=vid;SR().ytp=new YT.Player("stYTf",{videoId:vid,width:"100%",height:"100%",playerVars:{playsinline:1,rel:0}})};
+    if(window.YT&&YT.Player)mk();else{const prev=window.onYouTubeIframeAPIReady;window.onYouTubeIframeAPIReady=()=>{if(prev)prev();mk()};if(!document.getElementById("ytapi")){const s=document.createElement("script");s.id="ytapi";s.src="https://www.youtube.com/iframe_api";document.head.appendChild(s)}}}}
+  const up=$("#stUp");if(up)up.onchange=()=>{if(up.files[0])stUpload(up.files[0])};
+}
+async function stUpload(file){
+  const ep=epList().find(e=>e.id===SR().clipEp),msg=$("#stUpMsg");if(!ep)return;
+  try{msg.textContent="Preparing upload…";const r=await sApi("/api/studio/upload",{episodeId:ep.id,filename:file.name,contentType:file.type||"video/mp4",size:file.size});
+    await new Promise((res,rej)=>{const x=new XMLHttpRequest();x.open("PUT",r.url);x.setRequestHeader("content-type",file.type||"video/mp4");x.upload.onprogress=e=>{if(e.lengthComputable&&$("#stUpMsg"))$("#stUpMsg").textContent="Uploading "+Math.round(e.loaded/e.total*100)+"%"};x.onload=()=>x.status<300?res():rej(new Error("Upload failed ("+x.status+")"));x.onerror=()=>rej(new Error("Upload failed. Check the R2 CORS setting."));x.send(file)});
+    const cur=sd("episodes").find(d=>d.id===ep.id)||{};
+    await save("shows/"+SR().show+"/episodes",ep.id,Object.assign(stripC(cur),{title:ep.title,date:ep.date||"",youtubeId:ep.youtubeId||"",recordingKey:r.key,recordingName:file.name,recordingSize:file.size,recordingAt:new Date().toISOString(),recordingBy:S.uid}));
+    await save("shows/"+SR().show+"/jobs",uid(),{type:"highlights",episodeId:ep.id,recordingKey:r.key,status:"queued",auto:true,createdBy:S.uid,createdAt:new Date().toISOString(),options:{formats:["9:16"],maxClips:8,minSec:15,maxSec:75}});
+    toast("Recording uploaded. AI suggestions are queued.");}catch(e){if($("#stUpMsg"))$("#stUpMsg").textContent="";toast(e.message||"Upload failed")}
+}
+document.addEventListener("submit",async e=>{
+  const f=e.target;if(!f.id||!f.id.startsWith("st"))return;e.preventDefault();
+  const s=SR().show,col=n=>"shows/"+s+"/"+n,rk=sRank();
+  if(f.id==="stClipForm"){const o=formObj(f),a1=toSec(o.start),b1=toSec(o.end);
+    if(isNaN(a1)||isNaN(b1)||b1<=a1){toast("Check the start and end times");return}if(b1-a1>180){toast("Keep clips under 3 minutes");return}
+    const caps=String(o.captions||"").split("\n").map(l=>{const m=/^\s*(\d+:\d{2}(?::\d{2})?)\s+(.+)$/.exec(l);return m?{t:toSec(m[1]),text:m[2].trim()}:null}).filter(Boolean);
+    const ed=SR().edit||{},now=new Date().toISOString();
+    const rec=Object.assign(ed.id?stripC(ed):{createdBy:S.uid,createdByEmail:S.email||"",createdAt:now,status:rk>=2?"draft":"suggested"},{episodeId:SR().clipEp,title:o.title,start:a1,end:b1,format:o.format,preset:o.preset,brand:!!f.brand.checked,captions:caps,notes:o.notes||"",updatedAt:now});
+    if(ed.id&&rk<3&&!["draft","review","suggested","rejected"].includes(rec.status)){toast("Approved clips can only be changed by a producer");return}
+    if(await save(col("clips"),ed.id||uid(),rec)){SR().edit=null;toast(rk>=2?"Clip saved":"Suggestion sent");render()}}
+  if(f.id==="stNext"){const o=formObj(f);const base=Object.assign({},S.shows[s]||{});base.nextShow={title:o.title||"",when:o.when?new Date(o.when).toISOString():""};if(!S.shows[s]){Object.assign(base,{name:showCfg(s).name})}
+    if(await save("shows",s,base))toast("Next show saved")}
+  if(f.id==="stInvite"){const o=formObj(f),email=String(o.email||"").toLowerCase().trim();if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){toast("Enter a valid email");return}
+    if(o.role==="manager"&&!S.isAdmin){toast("Only the owner can add managers");return}
+    if(await save("invites",email,{show:o.role==="manager"?"":s,role:o.role,by:S.uid,at:new Date().toISOString()})){f.reset();const m=$("#stInvMsg");if(m)m.textContent="Invitation saved. Tell "+email+" to sign in on Groove Team with that email.";}}
+  if(f.id==="stSettings"){const o=formObj(f),soc={};let bad="";
+    SOC_PLATFORMS.forEach(([k,n])=>{const v=(o["soc_"+k]||"").trim();if(!v)return;if(!socialOk(k,v))bad=bad||n;else soc[k]=v});
+    if(bad){toast(bad+" link doesn't look like a "+bad+" address");return}
+    const yt=(o.youtube||"").trim();if(yt&&!/(UC[A-Za-z0-9_-]{22})|@[A-Za-z0-9._-]{3,30}/.test(yt)){toast("Use a YouTube channel link, @handle or channel ID");return}
+    const cur=Object.assign({},S.shows[s]||{});const changed=(cur.youtube||showCfg(s).youtube)!==yt;
+    const rec=Object.assign(cur,{name:o.name,tagline:o.tagline||"",youtube:yt,socials:soc,disabled:!!f.disabled.checked});if(changed){rec.channelId="";rec.channelTitle=""}
+    if(await save("shows",s,rec)){toast("Show settings saved"+(changed?". The channel is looked up on the next sync.":""));if(changed)SR().status=null}}
+},true);
+document.addEventListener("change",e=>{const t=e.target;if(!t.dataset||!t.dataset.role||!S.route.startsWith("studio"))return;const m=sd("members").find(x=>x.id===t.dataset.role);if(m)save("shows/"+SR().show+"/members",m.id,Object.assign(stripC(m),{role:t.value})).then(ok=>ok&&toast("Role updated"))});
+
 /* ---------- modals ---------- */
 const brandOpts=(sel,only)=>BRANDS.filter(b=>!only||only.includes(b.id)).map(b=>'<option value="'+b.id+'"'+(b.id===sel?" selected":"")+'>'+esc(brandInfo(b.id).name)+'</option>').join("");
 const delBtn=has=>has?'<button type="button" class="btn danger left" data-act="del-arm">Delete</button>':'';
@@ -2436,6 +2805,7 @@ async function publishSite(btn){
 /* ---------- router & render ---------- */
 let rq=0;
 function scheduleRender(fromData){
+  if(fromData&&S.route.startsWith("studio")&&$("#stClipForm")&&$("#stClipForm").contains(document.activeElement))return;
   if(fromData&&(S.route==="shadowcrown"||S.route.startsWith("collab")||(S.route==="signin"&&$("#authForm"))))return;
   if(rq)return;rq=requestAnimationFrame(()=>{rq=0;render()});
 }
@@ -2462,11 +2832,17 @@ function render(){
     else if(!S.db)h='<div class="wrap gate"><h1>Back office unavailable</h1><p class="muted">Saved records can\'t be reached in this view. Open the page from claude.ai while signed in.</p></div>';
     else{const v={"team":viewDash,"team-time":viewTimesheet,"team-cal":()=>viewCalendar(true),"team-rem":viewReminders,"team-out":viewOutreach,"team-people":viewTeams,"team-vault":viewVault,"team-docs":viewDocs,"team-conv":viewConverter,"team-reports":viewReports,"team-site":viewSite,"team-web":viewWebsite}[r]||viewDash;h=teamShell(TEAM_TABS.some(t=>t[0]===r)?r:"team",v())}
   }
+  else if(r==="live")h=viewLive();
+  else if(r==="studio"||r.startsWith("studio-"))h=viewStudio();
   else if(r==="vine")h=viewVine();
   else if(r==="brands")h=viewBrands();
   else if(r==="story")h=viewStory();
   else h=viewHome();
+  const kept={};app.querySelectorAll("[data-keep]").forEach(n=>{kept[n.dataset.keep]=n;n.remove()});
   app.innerHTML=h;
+  app.querySelectorAll("[data-keep]").forEach(n=>{const o=kept[n.dataset.keep];if(o)n.replaceWith(o)});
+  if(r==="live")liveMount();else liveUnmount();liveTick();
+  if(r.startsWith("studio"))studioMount();
   if(S._lastR!==r){S._lastR=r;app.classList.remove("pagein");void app.offsetWidth;app.classList.add("pagein")}
   const cf=$("#collabForm");if(cf)cf.addEventListener("submit",e=>{e.preventDefault();collabSubmit(cf)});
   const af=$("#authForm");if(af)af.addEventListener("submit",e=>{e.preventDefault();fbAuth(af,(e.submitter&&e.submitter.dataset.mode)||"in")});
@@ -2490,6 +2866,8 @@ document.addEventListener("click",async e=>{
   const a=t.dataset.act, id=t.dataset.id;
   if(a==="scrim"){if(e.target===t)closeModal();return}
   if(webAct(a,t))return;
+  if(studioAct(a,t))return;
+  if(a==="eps-more"){t.disabled=true;t.textContent="Loading…";return liveLoad(S.liveShow,true)}
   if(a==="close-modal")return closeModal();
   if(a==="del-arm"){t.textContent="Tap again to delete";t.dataset.act="del-go";return}
   if(a==="del-go"){const m=t.closest(".modal");if(m&&m._del)m._del();return}
@@ -2620,12 +2998,13 @@ if(introWanted())showIntro();
     const cfg=window.FIREBASE_CONFIG;
     if(!(window.firebase&&cfg&&cfg.apiKey&&!/YOUR_/.test(cfg.apiKey))){S.authChecked=true;render();return}
     try{firebase.initializeApp(cfg);S.db=firebase.firestore();S.fbReady=true}catch(e){S.authChecked=true;render();return}
-    subscribePublic();subscribeMedia();
+    subscribePublic();subscribeMedia();subscribeShows();
     let started=false;
     firebase.auth().onAuthStateChanged(async u=>{
       if(started&&!u){location.hash="#home";location.reload();return}
       if(!u){S.authChecked=true;render();return}
       started=true;S.signedIn=true;S.uid=u.uid;S.email=u.email||"";
+      setTimeout(studioCheck,0);
       try{const back=localStorage.getItem("gvReturn");if(back&&/^\/shadowcrown\//.test(back)){localStorage.removeItem("gvReturn");location.href=back;return}}catch(e){}
       let first=true;
       S.db.doc("access/"+u.uid).onSnapshot(d=>{

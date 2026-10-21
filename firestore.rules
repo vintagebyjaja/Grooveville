@@ -33,6 +33,82 @@ service cloud.firestore {
       allow write: if isFounder();
     }
 
+    // ---------- Grooveville Entertainment Studio ----------
+    function isManager() {
+      return signedIn()
+        && exists(/databases/$(database)/documents/studioRoles/$(request.auth.uid))
+        && get(/databases/$(database)/documents/studioRoles/$(request.auth.uid)).data.role == "manager";
+    }
+    function studioAdmin() { return isFounder() || isManager(); }
+    function memberPath(show) { return /databases/$(database)/documents/shows/$(show)/members/$(request.auth.uid); }
+    function hasShowRole(show, roles) { return signedIn() && exists(memberPath(show)) && get(memberPath(show)).data.role in roles; }
+    function canView(show) { return studioAdmin() || hasShowRole(show, ["producer", "editor", "member"]); }
+    function canEdit(show) { return studioAdmin() || hasShowRole(show, ["producer", "editor"]); }
+    function canProduce(show) { return studioAdmin() || hasShowRole(show, ["producer"]); }
+    function myEmail() { return request.auth.token.email.lower(); }
+    function invitePath() { return /databases/$(database)/documents/invites/$(myEmail()); }
+    function invitedAs(show, role) {
+      return signedIn() && request.auth.token.email != null && exists(invitePath())
+        && get(invitePath()).data.role == role && get(invitePath()).data.show == show;
+    }
+
+    // Show settings (name, YouTube channel, social links) are public so the Watch Live page can read them.
+    match /shows/{show} {
+      allow read: if true;
+      allow create, delete: if studioAdmin();
+      allow update: if studioAdmin()
+        || (canProduce(show) && request.resource.data.diff(resource.data).affectedKeys().hasOnly(["nextShow"]));
+
+      match /members/{uid} {
+        allow read: if (signedIn() && request.auth.uid == uid) || canView(show);
+        allow create: if studioAdmin()
+          || (signedIn() && request.auth.uid == uid && request.resource.data.role in ["producer", "editor", "member"]
+              && invitedAs(show, request.resource.data.role));
+        allow update, delete: if studioAdmin();
+      }
+      match /episodes/{id} {
+        allow read: if canView(show);
+        allow write: if canEdit(show);
+      }
+      match /clips/{id} {
+        allow read: if canView(show);
+        allow create: if canEdit(show) || (hasShowRole(show, ["member"]) && request.resource.data.status == "suggested"
+          && request.resource.data.createdBy == request.auth.uid);
+        allow update: if canProduce(show)
+          || (canEdit(show) && resource.data.status in ["suggested", "draft", "review", "rejected"]
+              && request.resource.data.status in ["suggested", "draft", "review"]);
+        allow delete: if canProduce(show);
+      }
+      match /jobs/{id} {
+        allow read: if canEdit(show);
+        allow create: if canEdit(show) && request.resource.data.status == "queued";
+        allow update, delete: if canProduce(show);
+      }
+      match /calendar/{id} {
+        allow read: if canView(show);
+        allow write: if canProduce(show);
+      }
+    }
+    // Department-wide Entertainment Managers. Only the owner adds them (or the person accepts an owner's invitation).
+    match /studioRoles/{uid} {
+      allow read: if signedIn() && (request.auth.uid == uid || studioAdmin());
+      allow create: if isFounder()
+        || (signedIn() && request.auth.uid == uid && request.resource.data.role == "manager" && invitedAs("", "manager"));
+      allow update, delete: if isFounder();
+    }
+    // Invitations, keyed by lower-case email. Managers can invite to shows; only the owner can invite managers.
+    match /invites/{email} {
+      allow read: if studioAdmin() || (signedIn() && request.auth.token.email != null && myEmail() == email);
+      allow create, update: if (isFounder() || (isManager() && request.resource.data.role in ["producer", "editor", "member"]))
+        && request.resource.data.role in ["manager", "producer", "editor", "member"];
+      allow delete: if studioAdmin() || (signedIn() && request.auth.token.email != null && myEmail() == email);
+    }
+    // AI processing worker heartbeat (written by the worker's service account, which bypasses these rules).
+    match /studioWorker/{id} {
+      allow read: if signedIn();
+      allow write: if false;
+    }
+
     // Website images and links (Back office › Website): everyone can see them, only the founder or HNIC changes them
     match /media/{id} {
       allow read: if true;

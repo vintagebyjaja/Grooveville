@@ -15,6 +15,9 @@ The website for **Grooveville LLC** and the nine companies on the Groove Vine: G
 | `firebase-config.js` | Your public Firebase web config |
 | `firestore.rules` | Security rules. **Publish these in Firebase every time they change** |
 | `_headers` | Security and cache headers for Cloudflare |
+| `worker/`, `wrangler.jsonc` | Cloudflare Worker: YouTube live/archive sync and private Studio file links |
+| `STUDIO-SETUP.md` | Step-by-step setup for Grooveville LIVE and the Studio |
+| `clip-worker/` | Notes for the future AI clip processing computer |
 
 ## 1. Update the site on GitHub
 
@@ -43,6 +46,17 @@ In Firebase: **Authentication › Settings › Authorized domains** should list 
 - **Back office › Website:** Media library (replace any image, focal point, zoom, alt text, publish/unpublish, restore previous, back to default), Companies (order, featured, published), AELIO page text and personalities, Music & Radio lists (featured, trending with source labels, artists, playlists, releases).
 
 **Image storage:** images are resized in the browser and stored in Firestore (the free plan has no file storage). Videos and audio are added as links to files you host (for example a `media/` folder in this repo, or Cloudflare R2).
+
+
+## Grooveville LIVE + Entertainment Studio
+
+**Set up first:** follow `STUDIO-SETUP.md` (R2 bucket, YouTube API key, Worker secrets) **before** uploading this version.
+
+- **Watch Live** (`#live`): The Unc & Neph Show's live YouTube stream plays on Grooveville automatically, with a LIVE badge only when YouTube confirms it. When off air it shows the next scheduled show. Below it: **Watch & follow us everywhere** (YouTube, Twitch, Instagram, Facebook, TikTok) and **Previous episodes** (every completed livestream, newest first, each card opens that episode on YouTube, Load more).
+- **Radio hand-off:** starting the live player pauses Grooveville Radio; stopping it resumes the radio only if it was playing and you didn't pause it yourself.
+- **Back Office › Ent. Studio** (also **Studio** in the menu for invited team members): Live Control, AI Clip Studio, Episode Library, Content Calendar, Publishing Queue, Team Management, Analytics, Show Settings. Add more shows with **+ New show**; each show has its own YouTube channel and social links.
+- **Server code:** `worker/index.js` + `wrangler.jsonc` (Cloudflare Worker). It checks YouTube every 2 minutes and keeps the API key secret.
+- **AI clipping** needs a processing computer later: see `clip-worker/README.md`. Jobs wait safely in the queue until then.
 
 ## 5. Make yourself the founder
 
