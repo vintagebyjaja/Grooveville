@@ -1,54 +1,50 @@
-# Grooveville
+# Grooveville: The Creative House
 
-The website for **Grooveville LLC**, the DrawUp Headquarters, and the companies on the Groove Vine:
-Grooveville Entertainment, Grooveville Music, Vybr8, Pathd, Grooveville Rentals, W4W, DrawUp AEC,
-Shadow Crown Universe and What If Tomorrow.
+The website for **Grooveville LLC** and the nine companies on the Groove Vine: Grooveville Entertainment (with Grooveville Music and Grooveville Radio), AELIO, Vybr8, Pathd, DrawUp AEC, Shadow Crown Universe, What If Tomorrow, Grooveville Rentals and W4W.
 
-It's a single static page (`index.html`) with:
+- **Hosting:** Cloudflare (Workers static assets) at **grooveville.org**. No build step.
+- **Logins and data:** Firebase (free Spark plan): Authentication + Firestore.
 
-- **Public site:** home page with the Groove Vine, a page for every company, a public calendar, and an official collaboration request form.
-- **Sign in portal:**
-  - **Founder:** full back office with the dashboard (hours, money spent and money in for every company), timesheet, private/public calendar, reminders, collabs, team access, private notes and site settings.
-  - **Team members:** a private timesheet for only the companies you assign them.
+## What's in this folder
 
-Logins and private data use **Firebase** (free Spark plan). Hosting is **Cloudflare Pages** with your **grooveville.org** domain. The **Shadow Crown Universe** site lives in `/shadowcrown/` (grooveville.org/shadowcrown/).
+| Path | What it is |
+|---|---|
+| `index.html` | The whole Grooveville site: cinematic entry, home, company pages, Entertainment › Music & Radio, AELIO, calendar, collaborate, Groove Team sign in and the Back office |
+| `media/` | Default photos used by the site. Replace any of them from **Back office › Website › Media library** (no code changes needed) |
+| `shadowcrown/` | The Shadow Crown Universe site and the **Living World** game (see `shadowcrown/README.md`) |
+| `firebase-config.js` | Your public Firebase web config |
+| `firestore.rules` | Security rules. **Publish these in Firebase every time they change** |
+| `_headers` | Security and cache headers for Cloudflare |
 
----
+## 1. Update the site on GitHub
 
-## 1. Put it on GitHub
+Replace the files in your repository with the files in this folder (keep the same folder structure) and commit. Cloudflare redeploys automatically. Delete old leftovers if they're still in the repo (`netlify.toml`, `shadowcrown/source/`, `shadowcrown/styles.css`, `shadowcrown/app.js`, `part*.js`, `build.py`, `grooveville.html`).
 
-1. Your repository (for example `Grooveville`) should contain **only** these files and folders:
-   - `index.html`, `logo.webp`, `firebase-config.js`, `firestore.rules`, `firebase.json`, `_headers`, `README.md`, `.gitignore`
-   - the `shadowcrown/` folder (`index.html`, `styles.css`, `app.js`, `assets/`, notes)
-2. Older working files from earlier versions (`part1.html` to `part5.js`, `t*.js`, `build.py`, `grooveville.html`, `netlify.toml`, the `github/` folder, `download` and so on) aren't needed and are public if left in the repo. Delete them.
+## 2. Publish the new Firebase rules (required for this update)
 
-## 2. Set up Firebase (logins + database)
+Firebase console › **Firestore Database** › **Rules** › replace everything with `firestore.rules` › **Publish**.
+This update adds three collections: `media` (website images, founder/HNIC only can change), `scsave` and `scplayers` (Shadow Crown saves and player cards; each player only writes their own).
 
-1. Go to https://console.firebase.google.com and click **Add project**. Name it `grooveville`. You can turn off Google Analytics.
-2. **Authentication** > Get started > **Email/Password** > Enable > Save.
-3. **Firestore Database** > Create database > choose a location near you > start in **production mode**.
-4. In Firestore, open the **Rules** tab, delete what's there, paste everything from `firestore.rules`, and click **Publish**.
-5. **Project settings** (gear icon) > **Your apps** > click the web icon `</>` > register the app. Firebase shows a `firebaseConfig` block. Copy those values into `firebase-config.js` and commit the change on GitHub.
+Without this step, **Back office › Website** can't save images and Shadow Crown can't sync progress.
 
-The values in `firebase-config.js` are meant to be public. Your data is protected by the rules from step 4.
+## 3. Cloudflare and domain
 
-## 3. Host it on Cloudflare Pages
+Already set up: the Worker serves this repository's files at grooveville.org and www.grooveville.org (Workers & Pages › grooveville › Settings › Domains & Routes). If the site ever stops loading, check that both custom domains are listed there; Cloudflare creates the DNS records for you.
 
-1. In Cloudflare go to **Workers & Pages** > **Create** > **Pages** > **Connect to Git** and pick the repository.
-2. Framework preset: **None**. Build command: leave **empty**. Build output directory: `/` (the repository root). Click **Save and Deploy**.
-3. In the Pages project open **Custom domains** > **Set up a custom domain** > `grooveville.org`, then add `www.grooveville.org` too. If the domain's DNS is on Cloudflare, the records are created for you; otherwise follow the steps shown. HTTPS is automatic.
-4. Back in Firebase: **Authentication** > **Settings** > **Authorized domains** > add `grooveville.org`, `www.grooveville.org` and your `*.pages.dev` address (for example `grooveville.pages.dev`).
-5. `_headers` sets the site's security headers on Cloudflare. (`netlify.toml` isn't used anymore.)
+In Firebase: **Authentication › Settings › Authorized domains** should list `grooveville.org`, `www.grooveville.org` and `grooveville.jaja-a20.workers.dev`.
 
-Every time you change a file on GitHub, Cloudflare republishes the site automatically.
+## 4. What's new
 
-## Shadow Crown Universe
+- **Cinematic entry:** first visit each session opens a built-in animated drive toward the Charlotte skyline with **LET'S GROOVE**, **Skip intro** and **SOUND ON/OFF** (sound starts off). Add a licensed film in **Back office › Website › Media library › Entry film** to replace the animation.
+- **Homepage:** hero, the original **Groove Vine** (hover a grape cluster for details, tap twice on phones), featured company gallery, upcoming events from the calendar, Collaborate, Our Story.
+- **AELIO** replaces MUSIC on the vine (same spot, same lime color) and has its own page with the six personalities and a link to https://aelio.live/.
+- **Entertainment** now has **Overview · Music · Grooveville Radio · Featured Artists · Events**. Old Music links (`#b-music`) forward to Entertainment › Music. Music's timesheet slot and data are unchanged.
+- **Grooveville Radio:** a mini-player that stays open while you move around the site. Set a Spotify playlist link (or a stream you own or license) in **Back office › Website › Music & Radio**.
+- **Back office › Website:** Media library (replace any image, focal point, zoom, alt text, publish/unpublish, restore previous, back to default), Companies (order, featured, published), AELIO page text and personalities, Music & Radio lists (featured, trending with source labels, artists, playlists, releases).
 
-- The **Shadow Crown Universe** company page on Grooveville is the landing page. It has an **Overview** tab and an **✦ Enter the Universe** tab plus a portal card. Both play the purple portal and open grooveville.org/shadowcrown/.
-- On the Shadow Crown site, the **Grooveville logo** (top left) goes back to the Grooveville home page, **‹ Back** goes back a step (or to the Shadow Crown Universe page), and the footer has **Back to Grooveville**. Leaving plays the portal closing.
-- Put the Shadow Crown art in `shadowcrown/assets/` (`showcase.webp`, `daydream-cover.webp`). Until then a purple placeholder shows.
+**Image storage:** images are resized in the browser and stored in Firestore (the free plan has no file storage). Videos and audio are added as links to files you host (for example a `media/` folder in this repo, or Cloudflare R2).
 
-## 4. Make yourself the founder
+## 5. Make yourself the founder
 
 1. Open your site, click **Sign in** > **Create team account** with your email and a strong password.
 2. In Firebase: **Authentication** > **Users**, copy your **User UID**.
@@ -57,7 +53,7 @@ Every time you change a file on GitHub, Cloudflare republishes the site automati
 
 **Backup admin (HNIC):** to give a second account the same full access, have it create an account on the site, copy its User ID from **My portal → Your account**, then add another document in the `access` collection with that User ID as the Document ID and the field `role` (string) = `hnic`. Use it if your main founder account ever has trouble signing in.
 
-## 5. Teams, company heads and join requests
+## 6. Teams, company heads and join requests
 
 1. A new person opens the site > **Sign in** > **Create team account**, then picks the company team(s) they want to join and clicks **Ask to join**.
 2. **You (founder)** see every request in **Back office > Teams**. Click **Approve** or **Decline**, or use **Add a person** to put someone on a team directly.

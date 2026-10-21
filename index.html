@@ -3,47 +3,32 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="description" content="Grooveville LLC, the DrawUp Headquarters, and the companies on the Groove Vine.">
+<meta name="description" content="Grooveville LLC, The Creative House: nine companies, one Groove, rooted in Charlotte, NC.">
+<meta name="theme-color" content="#101112">
 <link rel="icon" href="logo.webp">
 <style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style>
 <title>Grooveville LLC</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
 <style>
-/* Layout concept: the Grooveville tree. HQ is the trunk, six companies branch off it.
-   Public side = storefront for each branch; Team side = one ledger with one slot per company. */
 :root{
-  --bg:#FBF6F2; --surface:#FFFFFF; --surface-2:#F5EEE7; --ink:#141B22; --muted:#56605C; --line:#E7DDD2;
-  --peach:#F4A988; --peach-ink:#B4532E; --peach-soft:#FCE7DC;
-  --olive:#5F6F25; --olive-soft:#E8ECD3;
-  --teal:#0ABAB5; --teal-ink:#0A7471; --teal-soft:#D3F1EF;
-  --ok:#4D7C0F; --warn:#B45309; --bad:#B91C1C;
-  --c-hq:#0A7471; --c-ent:#C2582F; --c-music:#5F6F25; --c-vybr8:#0A9F9A; --c-pathd:#7F8F3E; --c-rentals:#D9794F; --c-w4w:#2F5E5B; --c-aec:#44511A; --c-scu:#2B3A55; --c-wit:#A86F1F;
-  --f-display:"Bricolage Grotesque", "Avenir Next", "Segoe UI", system-ui, sans-serif;
-  --f-body:"Instrument Sans", "Helvetica Neue", "Segoe UI", system-ui, sans-serif;
+  /* Creative House palette: charcoal, peach, cream, white. Cyan, lavender and lime only as glows and accents. */
+  --bg:#101112; --surface:#17191B; --surface-2:#202326; --ink:#F3EFE7; --muted:#A9A49B; --line:#2B2E31;
+  --cream:#F3EFE7; --cream-ink:#17181A; --cream-muted:#5E5850; --white:#FFFFFF;
+  --peach:#F4A987; --peach-ink:#F4A987; --peach-soft:#2E211B;
+  --olive:#B9C978; --olive-soft:#262B1A;
+  --teal:#68D4D0; --teal-ink:#68D4D0; --teal-soft:#14302F;
+  --lav:#B7A1E5; --lime:#B9C978; --cyan:#68D4D0;
+  --ok:#B9C978; --warn:#F4C27A; --bad:#F26B6B;
+  --c-hq:#F4A987; --c-ent:#F6A983; --c-music:#B2C26E; --c-aelio:#B2C26E; --c-vybr8:#81D8D0; --c-pathd:#CBD78F; --c-rentals:#F8C4A9; --c-w4w:#86BDB8; --c-aec:#D5DE9F; --c-scu:#B7A1E5; --c-wit:#EBC27E;
+  --f-display:"Inter Tight", "Helvetica Neue", "Segoe UI", system-ui, sans-serif;
+  --f-body:"Inter", "Helvetica Neue", "Segoe UI", system-ui, sans-serif;
   --f-mono:"JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
   --r:14px; --r-sm:9px;
-  --shadow:0 1px 2px rgba(31,36,25,.06), 0 8px 24px -12px rgba(31,36,25,.18);
+  --shadow:0 1px 2px rgba(0,0,0,.3), 0 10px 28px -14px rgba(0,0,0,.6);
+  color-scheme:dark;
 }
-@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
-  --bg:#11150F; --surface:#191E15; --surface-2:#22291C; --ink:#F2EDE6; --muted:#A8AE9C; --line:#2E3727;
-  --peach:#F6B396; --peach-ink:#F6A983; --peach-soft:#3A251C;
-  --olive:#B2C26E; --olive-soft:#283019;
-  --teal:#3FD0CB; --teal-ink:#6EDCD7; --teal-soft:#113533;
-  --ok:#A3D65C; --warn:#F5B454; --bad:#F87171;
-  --c-hq:#6EDCD7; --c-ent:#F6A983; --c-music:#B2C26E; --c-vybr8:#81D8D0; --c-pathd:#CBD78F; --c-rentals:#F8C4A9; --c-w4w:#86BDB8; --c-aec:#D5DE9F; --c-scu:#AEBCD9; --c-wit:#EBC27E;
-  --shadow:0 1px 2px rgba(0,0,0,.3), 0 10px 28px -14px rgba(0,0,0,.6);
-  color-scheme:dark }}
-:root[data-theme="dark"]{
-  --bg:#11150F; --surface:#191E15; --surface-2:#22291C; --ink:#F2EDE6; --muted:#A8AE9C; --line:#2E3727;
-  --peach:#F6B396; --peach-ink:#F6A983; --peach-soft:#3A251C;
-  --olive:#B2C26E; --olive-soft:#283019;
-  --teal:#3FD0CB; --teal-ink:#6EDCD7; --teal-soft:#113533;
-  --ok:#A3D65C; --warn:#F5B454; --bad:#F87171;
-  --c-hq:#6EDCD7; --c-ent:#F6A983; --c-music:#B2C26E; --c-vybr8:#81D8D0; --c-pathd:#CBD78F; --c-rentals:#F8C4A9; --c-w4w:#86BDB8; --c-aec:#D5DE9F; --c-scu:#AEBCD9; --c-wit:#EBC27E;
-  --shadow:0 1px 2px rgba(0,0,0,.3), 0 10px 28px -14px rgba(0,0,0,.6);
-  color-scheme:dark }
 
 *{box-sizing:border-box}
 body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15.5px;line-height:1.55;-webkit-font-smoothing:antialiased}
@@ -122,6 +107,9 @@ section{padding-block:56px}
 .branch h3{font-size:21px}
 .branch p{color:var(--muted);font-size:14.5px}
 .branch .go{margin-top:auto;font-weight:600;font-size:14px;color:var(--c)}
+body.sc-mode{overflow:hidden;background:#07050d}
+body.sc-mode .nav,body.sc-mode footer{display:none}
+.sc-frame{position:fixed;inset:0;width:100%;height:100%;border:0;z-index:30;background:#07050d;display:block}
 .backbtn{border:1.5px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:4px 12px;font-size:13px;font-weight:600;cursor:pointer;margin-right:10px}
 .backbtn:hover{border-color:var(--c,var(--ink))}
 .subtabs{display:flex;gap:6px;flex-wrap:wrap;margin-top:26px;border-bottom:1px solid var(--line)}
@@ -264,6 +252,230 @@ table.t tfoot td{font-weight:700;background:var(--surface-2);border-top:1px soli
 .gate{max-width:560px;margin:60px auto;text-align:center;display:flex;flex-direction:column;gap:14px;align-items:center}
 .gate h1{font-size:36px;font-weight:800}
 
+/* ===== Creative House ===== */
+.nav{background:color-mix(in srgb,#0b0c0d 72%,transparent);border-bottom:1px solid #ffffff12}
+.logo{color:var(--white);font-weight:700;font-size:21px}
+.logoimg{box-shadow:none}
+.links a{color:#e9e4dc;font-size:14px}
+.links a:hover{background:#ffffff10}
+.links a.on{background:var(--peach);color:#1b120c}
+.links a.team{border:1.3px solid var(--peach);color:var(--peach)}
+.links a.team.on{background:var(--peach);color:#1b120c}
+.soundbtn{border:0;background:none;color:#cfc9bf;font:600 11px/1 var(--f-body);letter-spacing:.18em;display:inline-flex;align-items:center;gap:7px;cursor:pointer;padding:8px 6px;text-transform:uppercase}
+.soundbtn .bars{display:inline-flex;gap:2px;align-items:end;height:12px}
+.soundbtn .bars i{width:2px;background:currentColor;height:4px;border-radius:2px}
+.soundbtn.on{color:var(--peach)}
+.soundbtn.on .bars i{animation:eq 1s ease-in-out infinite}
+.soundbtn.on .bars i:nth-child(2){animation-delay:.2s}.soundbtn.on .bars i:nth-child(3){animation-delay:.4s}.soundbtn.on .bars i:nth-child(4){animation-delay:.1s}
+@keyframes eq{0%,100%{height:3px}50%{height:12px}}
+.btn{letter-spacing:.01em}
+.btn.peach{background:var(--peach);color:#1b120c}
+.btn.line{background:transparent;color:var(--white);border:1.3px solid #ffffff55}
+.btn.line:hover{border-color:var(--peach);color:var(--peach)}
+.arrowbtn{width:46px;height:46px;border-radius:50%;border:1.3px solid currentColor;display:inline-grid;place-items:center;color:var(--peach);background:transparent;cursor:pointer;flex:none;text-decoration:none;font-size:18px;transition:background .2s,color .2s}
+.arrowbtn:hover{background:var(--peach);color:#1b120c;border-color:var(--peach)}
+.kicker{font:600 11.5px/1.2 var(--f-body);letter-spacing:.24em;text-transform:uppercase;color:var(--peach)}
+.disp{font-family:var(--f-display);font-weight:700;letter-spacing:-.035em;line-height:.98}
+/* intro */
+.intro{position:fixed;inset:0;z-index:300;background:#0b0a0c;color:#fff;overflow:hidden;transition:opacity .9s ease,visibility .9s}
+.intro.out{opacity:0;visibility:hidden}
+.intro canvas,.intro video,.intro .ipost{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.intro .ishade{position:absolute;inset:0;background:linear-gradient(180deg,#0006 0,transparent 30%,transparent 55%,#000c 100%)}
+.intro .itop{position:absolute;top:0;left:0;right:0;display:grid;grid-template-columns:1fr auto 1fr;align-items:start;padding:26px clamp(18px,4vw,44px);font:600 12px/1.6 var(--f-body);letter-spacing:.28em;text-transform:uppercase}
+.intro .itop .c{text-align:center;color:#ffffffcc}
+.intro .itop .r{justify-self:end;display:flex;gap:10px;align-items:center}
+.intro .brandmark b{display:block;font-size:17px;letter-spacing:.32em;font-weight:600}
+.intro .brandmark span{color:#ffffffaa;font-size:10.5px}
+.intro .icenter{position:absolute;left:0;right:0;bottom:clamp(26px,6vh,60px);display:flex;flex-direction:column;align-items:center;gap:26px;text-align:center;padding:0 16px}
+.intro .tagline{font:500 13px/1.4 var(--f-body);letter-spacing:.42em;text-transform:uppercase;color:#fff}
+.intro .gobtn{display:inline-flex;align-items:center;gap:22px;background:var(--peach);color:#1b120c;border:0;border-radius:999px;padding:8px 8px 8px 34px;font:700 13px/1 var(--f-body);letter-spacing:.24em;cursor:pointer;box-shadow:0 10px 40px -10px #f4a98799}
+.intro .gobtn i{width:42px;height:42px;border-radius:50%;background:#141516;color:#fff;display:grid;place-items:center;font-style:normal;font-size:18px;letter-spacing:0;transition:transform .2s}
+.intro .gobtn:hover i{transform:translateX(3px)}
+.intro .skip{background:none;border:0;color:#ffffffaa;font:600 11px/1 var(--f-body);letter-spacing:.2em;text-transform:uppercase;cursor:pointer;text-decoration:underline;text-underline-offset:4px}
+.intro .await{position:absolute;left:16px;bottom:12px;font-size:10.5px;color:#ffffff66;letter-spacing:.08em}
+/* home */
+.hh{position:relative;min-height:min(86vh,820px);display:flex;align-items:center;overflow:hidden;padding:0;background:#0d0d0e}
+.hh .bgimg{position:absolute;inset:0 0 0 38%;}
+.hh .bgimg img{width:100%;height:100%;object-fit:cover}
+.hh .bgimg::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,#0d0d0e 0,#0d0d0ee6 14%,#0d0d0e55 46%,#0d0d0e22 70%,#0d0d0e88 100%),linear-gradient(0deg,#0d0d0e 0,transparent 30%)}
+.hh .glow{position:absolute;width:520px;height:520px;border-radius:50%;filter:blur(90px);opacity:.28;pointer-events:none}
+.hh .wrap{position:relative;width:100%;padding-block:90px}
+.hh h1{font-size:clamp(46px,8.2vw,112px);color:var(--white);max-width:9.5ch}
+.hh h1 em{font-style:normal;color:var(--peach);display:block}
+.hh p{color:#e4ded5;font-size:clamp(16px,1.6vw,19px);max-width:44ch;margin-top:26px}
+.hh .ctas{display:flex;gap:16px;align-items:center;flex-wrap:wrap;margin-top:34px}
+.playlink{display:inline-flex;align-items:center;gap:12px;color:#fff;background:none;border:0;cursor:pointer;font:600 14.5px var(--f-body)}
+.playlink span{width:44px;height:44px;border-radius:50%;border:1.3px solid #ffffff88;display:grid;place-items:center;font-size:13px}
+.hh .loc{position:absolute;right:clamp(16px,4vw,44px);bottom:30px;text-align:right;font:600 11px/1.7 var(--f-body);letter-spacing:.24em;color:#ffffffbb;text-transform:uppercase}
+.hh .loc b{color:var(--peach);font-weight:600}
+.vinesec{position:relative;overflow:hidden;background:radial-gradient(60% 70% at 85% 60%,#b7a1e51f,transparent 70%),radial-gradient(40% 50% at 8% 10%,#68d4d014,transparent 70%),#0f1011;padding-block:90px}
+.vinesec .wrap{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.4fr);gap:40px;align-items:center}
+.vinesec h2,.secT{font-size:clamp(38px,5.4vw,68px);color:var(--white)}
+.vinesec p{color:#cfc9bf;margin-top:20px;max-width:34ch;font-size:17px}
+.textlink{display:inline-flex;align-items:center;gap:16px;margin-top:34px;color:#fff;text-decoration:none;font:600 12px/1 var(--f-body);letter-spacing:.2em;text-transform:uppercase;background:none;border:0;cursor:pointer}
+.vtip{position:fixed;z-index:70;max-width:260px;background:#151617f2;border:1px solid #ffffff1f;border-radius:14px;padding:14px 16px;box-shadow:0 20px 50px -20px #000;pointer-events:auto;backdrop-filter:blur(8px)}
+.vtip b{display:block;font:700 17px var(--f-display);color:#fff}
+.vtip small{display:block;font:600 10.5px var(--f-body);letter-spacing:.18em;color:var(--c,var(--peach));text-transform:uppercase;margin-bottom:4px}
+.vtip p{color:#cfc9bf;font-size:13.5px;margin:6px 0 10px}
+.vtip a{color:var(--peach);font-weight:700;font-size:13px;text-decoration:none}
+.tree .node:hover,.tree .node:focus{filter:drop-shadow(0 0 10px var(--hl,#fff6))}
+.tree .node:focus{outline:none}
+.vinelist{display:none;flex-wrap:wrap;gap:8px;margin-top:22px}
+.vinelist a{text-decoration:none}
+.gal{background:var(--cream);color:var(--cream-ink);padding-block:84px 90px}
+.gal .kicker{color:#4b4640}
+.gal h2{font-size:clamp(36px,4.8vw,58px);color:var(--cream-ink)}
+.gal .ghead{display:flex;align-items:flex-end;gap:24px;flex-wrap:wrap;margin-bottom:34px}
+.gal .count{margin-left:auto;display:flex;gap:14px;align-items:center;font:600 13px var(--f-mono);color:#4b4640}
+.gal .count button{background:none;border:0;font-size:20px;cursor:pointer;color:var(--cream-ink);padding:4px 8px}
+.cards{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(250px,23%);gap:16px;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:10px;scrollbar-width:thin}
+.vcard{position:relative;scroll-snap-align:start;aspect-ratio:4/5;border-radius:16px;overflow:hidden;text-decoration:none;color:#fff;background:#1b1c1e;display:block;isolation:isolate}
+.vcard img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .8s cubic-bezier(.2,.7,.2,1)}
+.vcard:hover img{transform:scale(1.05)}
+.vcard::after{content:"";position:absolute;inset:0;background:linear-gradient(0deg,#000d 0,#0006 32%,transparent 60%);z-index:0}
+.vcard .vc{position:absolute;left:18px;right:18px;bottom:18px;z-index:1;display:flex;align-items:flex-end;gap:10px}
+.vcard h3{font:700 clamp(22px,2vw,28px)/1 var(--f-display);letter-spacing:-.02em}
+.vcard small{display:block;font:600 10.5px/1.4 var(--f-body);letter-spacing:.2em;text-transform:uppercase;color:#ffffffcc;margin-top:6px}
+.vcard .arrowbtn{margin-left:auto;width:40px;height:40px;color:#fff;border-color:#ffffff99}
+.vcard .art{position:absolute;inset:0;display:grid;place-items:center;background:radial-gradient(70% 60% at 30% 25%,color-mix(in srgb,var(--c) 70%,transparent),transparent 70%),radial-gradient(60% 60% at 80% 90%,#b7a1e540,transparent 70%),#151617}
+.vcard .art b{font:800 54px var(--f-display);letter-spacing:-.04em;color:#ffffff26}
+.vcard .tag{position:absolute;top:14px;left:14px;z-index:1;font:700 10px var(--f-body);letter-spacing:.18em;background:#000a;color:#fff;padding:5px 9px;border-radius:999px;text-transform:uppercase}
+.vcard.aelio .art{background:radial-gradient(70% 60% at 50% 30%,#ffb54766,transparent 70%),#08090b}
+.culture{background:#0f1011;padding-block:84px}
+.culture .wrap{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.5fr);gap:40px}
+.evx{display:grid;grid-template-columns:86px 64px minmax(0,1fr) auto;gap:18px;align-items:center;padding:16px 0;border-bottom:1px solid #ffffff14;color:#fff;text-decoration:none;background:none;border-left:0;border-right:0;border-top:0;width:100%;text-align:left;cursor:pointer;font:inherit}
+.evx:first-child{border-top:1px solid #ffffff14}
+.evx .d{font:600 13px var(--f-body);letter-spacing:.14em;color:var(--peach);text-transform:uppercase}
+.evx .th{width:64px;height:48px;border-radius:8px;object-fit:cover;background:#1d1f22}
+.evx .t{font-weight:600;font-size:16px}
+.evx .w{font:600 10.5px var(--f-body);letter-spacing:.2em;color:#ffffff88;text-transform:uppercase;text-align:right}
+.split{display:grid;grid-template-columns:1fr 1fr;min-height:520px;background:#0c0d0e}
+.split .ph{position:relative;min-height:340px;overflow:hidden}
+.split .ph img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.split .tx{display:flex;flex-direction:column;justify-content:center;padding:70px clamp(20px,6vw,90px)}
+.split .tx p{color:#cfc9bf;font-size:17px;max-width:40ch;margin-top:18px}
+.split.cream{background:var(--cream);color:var(--cream-ink)}
+.split.cream .secT{color:var(--cream-ink)}
+.split.cream p{color:var(--cream-muted)}
+.split.cream .kicker{color:#7a5a46}
+.split.cream .arrowbtn{color:var(--cream-ink)}
+footer.ft{background:#0b0b0c;border-top:1px solid #ffffff12;padding-block:56px 30px;color:#a9a49b}
+footer.ft .wrap{display:block}
+footer.ft .fgrid{display:grid;grid-template-columns:1.2fr repeat(3,1fr);gap:28px}
+footer.ft h4{font:600 11px var(--f-body);letter-spacing:.22em;text-transform:uppercase;color:#fff;margin-bottom:12px}
+footer.ft a{color:#cfc9bf;text-decoration:none;display:block;padding:3px 0;font-size:14px}
+footer.ft a:hover{color:var(--peach)}
+footer.ft .legal{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;border-top:1px solid #ffffff12;margin-top:36px;padding-top:20px;font-size:13px}
+/* brand pages (dark) */
+.bhero{background:radial-gradient(70% 90% at 90% 0%,color-mix(in srgb,var(--c) 22%,transparent),transparent 70%),#0f1011;position:relative;overflow:hidden}
+.bhero.hasimg{min-height:440px;display:flex;align-items:flex-end}
+.bhero .bimg{position:absolute;inset:0}
+.bhero .bimg img{width:100%;height:100%;object-fit:cover;opacity:.45}
+.bhero .bimg::after{content:"";position:absolute;inset:0;background:linear-gradient(0deg,#0f1011 4%,#0f1011aa 50%,#0f101144)}
+.bhero .wrap{position:relative;width:100%}
+.bhero h1{color:var(--white)}
+.bhero h1 .acc{color:var(--c)}
+.subtabs{border-bottom:1px solid #ffffff1a}
+.subtabs>a.on{color:#fff;border-color:var(--c)}
+/* music */
+.mgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:18px}
+.mitem{display:flex;flex-direction:column;gap:10px;text-decoration:none;color:var(--ink)}
+.mitem .cov{aspect-ratio:1;border-radius:12px;overflow:hidden;background:radial-gradient(70% 70% at 30% 20%,#f4a98755,transparent 70%),radial-gradient(60% 60% at 80% 90%,#68d4d033,transparent 70%),#1a1b1d;display:grid;place-items:center}
+.mitem .cov img{width:100%;height:100%;object-fit:cover}
+.mitem .cov b{font:800 30px var(--f-display);color:#ffffff22}
+.mitem h4{font:600 16px var(--f-body);letter-spacing:0}
+.mitem p{color:var(--muted);font-size:13.5px}
+.trend{display:grid;grid-template-columns:44px 52px minmax(0,1fr) auto;gap:14px;align-items:center;padding:12px 0;border-bottom:1px solid var(--line)}
+.trend .rk{font:700 22px var(--f-display);color:var(--peach)}
+.trend img,.trend .ph0{width:52px;height:52px;border-radius:8px;object-fit:cover;background:#1f2124}
+.srcl{font:700 10px var(--f-body);letter-spacing:.14em;text-transform:uppercase;padding:3px 8px;border-radius:999px;border:1px solid var(--line);color:var(--muted);white-space:nowrap}
+.srcl.ed{color:var(--peach);border-color:#f4a98755}.srcl.li{color:var(--cyan);border-color:#68d4d055}.srcl.ch{color:var(--lav);border-color:#b7a1e555}
+.radiocard{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:24px;align-items:center;background:radial-gradient(80% 120% at 0% 0%,#f4a98733,transparent 60%),radial-gradient(60% 90% at 100% 100%,#b7a1e530,transparent 60%),#151617;border:1px solid #ffffff14;border-radius:22px;padding:28px}
+.radiocard h2{font-size:clamp(30px,4vw,48px)}
+.msec{margin-top:54px}
+.msec>h2{font:700 clamp(24px,3vw,34px) var(--f-display);margin-bottom:18px;letter-spacing:-.02em}
+/* radio mini-player */
+#radio{position:fixed;right:max(16px,env(safe-area-inset-right));bottom:max(16px,env(safe-area-inset-bottom));z-index:65;font-family:var(--f-body)}
+#radio .pill0{display:flex;align-items:center;gap:10px;background:#141516f2;border:1px solid #ffffff1f;color:#fff;border-radius:999px;padding:6px 8px 6px 6px;box-shadow:0 16px 40px -18px #000;backdrop-filter:blur(10px)}
+#radio .pp{width:38px;height:38px;border-radius:50%;border:0;background:var(--peach);color:#1b120c;font-size:13px;cursor:pointer;flex:none}
+#radio .art0{width:38px;height:38px;border-radius:50%;object-fit:cover;flex:none;background:#2a2c2f}
+#radio .meta{min-width:0;max-width:180px;line-height:1.2}
+#radio .meta b{display:block;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#radio .meta small{font-size:11px;color:#a9a49b;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block}
+#radio .ic{background:none;border:0;color:#cfc9bf;cursor:pointer;font-size:15px;padding:6px;border-radius:50%}
+#radio .ic:hover{color:#fff;background:#ffffff14}
+#radio .panel{width:min(360px,calc(100vw - 32px));background:#141516f7;border:1px solid #ffffff1f;border-radius:18px;padding:14px;margin-bottom:10px;box-shadow:0 20px 50px -20px #000}
+#radio .panel .emb{border-radius:12px;overflow:hidden;min-height:80px;background:#0e0f10}
+#radio .panel small.attr{display:block;color:#a9a49b;font-size:11.5px;margin-top:8px}
+#radio input[type=range]{width:100%;accent-color:var(--peach)}
+/* AELIO */
+.ae{--gold:#FFB547;background:#060709;color:#fff}
+.ae .aehero{position:relative;overflow:hidden;padding-block:90px 80px;background:radial-gradient(45% 60% at 30% 55%,#ff8a1f2e,transparent 70%),radial-gradient(40% 40% at 90% 10%,#1d4a6a33,transparent 70%),#060709}
+.ae .aehero::before{content:"";position:absolute;inset:0;background-image:linear-gradient(#ffffff08 1px,transparent 1px),linear-gradient(90deg,#ffffff08 1px,transparent 1px);background-size:56px 56px;mask-image:radial-gradient(70% 70% at 40% 50%,#000,transparent)}
+.ae .wrap{position:relative}
+.ae .eb{font:700 clamp(14px,1.6vw,22px)/1 var(--f-body);letter-spacing:.32em;color:var(--gold)}
+.ae h1{font:800 clamp(56px,11vw,150px)/.95 var(--f-body);letter-spacing:-.03em;margin-top:22px;color:#fff}
+.ae h1 .g{color:var(--gold);text-shadow:0 0 34px #ff9d2e99,0 0 4px #ffb547}
+.ae h1 .w{text-shadow:0 0 40px #ff8a1f55}
+.ae .sub{font:700 clamp(24px,3.2vw,44px)/1.1 var(--f-body);margin-top:18px}
+.ae .desc{color:#c9ccd2;font-size:clamp(16px,1.6vw,21px);line-height:1.6;max-width:52ch;margin-top:20px}
+.ae .gbtn{display:inline-flex;align-items:center;gap:10px;margin-top:34px;background:var(--gold);color:#120a00;font:800 14px var(--f-body);letter-spacing:.16em;padding:15px 26px;border-radius:999px;text-decoration:none;box-shadow:0 10px 40px -10px #ff9d2e}
+.ae .eco{padding-block:70px;background:linear-gradient(180deg,#060709,#0a1520 60%,#060709)}
+.ae .eco h2{font:800 clamp(32px,5vw,62px)/1 var(--f-body);letter-spacing:-.01em;margin-top:14px}
+.ae .eco p{color:#c9ccd2;font-size:18px;line-height:1.7;max-width:60ch;margin-top:18px}
+.ae .pers{padding-block:40px 70px;border-top:1px solid #ffffff12}
+.ae .pershead{display:flex;gap:30px;align-items:flex-end;flex-wrap:wrap;margin-bottom:22px}
+.ae .pershead h2{font:800 clamp(24px,3vw,36px)/1.05 var(--f-body)}
+.ae .pershead small{display:block;font:600 12px var(--f-body);letter-spacing:.26em;color:#c9ccd2;margin-top:10px}
+.ae .eqbars{display:flex;gap:5px;align-items:flex-end;height:34px}
+.ae .eqbars i{width:12px;background:var(--gold);border-radius:2px;box-shadow:0 0 12px #ff9d2e}
+.pcards{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(220px,1fr);gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:8px}
+.pcard{scroll-snap-align:start;position:relative;aspect-ratio:1/1.08;border-radius:12px;overflow:hidden;border:1px solid #ffb54766;background:#141518;outline-offset:3px}
+.pcard img{width:100%;height:100%;object-fit:cover}
+.pcard::after{content:"";position:absolute;inset:0;background:linear-gradient(0deg,#000e 0,#0007 35%,transparent 60%)}
+.pcard .pc{position:absolute;left:14px;right:14px;bottom:14px;z-index:1}
+.pcard .pc i{font:700 18px var(--f-body);color:var(--gold);font-style:normal}
+.pcard .pc b{display:block;font:800 17px var(--f-body);margin-top:4px}
+.pcard .pc span{font-size:13.5px;color:#d6d8dc}
+.pcard:focus-visible,.pcard:hover{border-color:var(--gold);box-shadow:0 0 0 1px var(--gold),0 0 30px -6px #ff9d2e88}
+.ae .closing{padding-block:46px 70px;border-top:1px solid #ffffff12}
+.ae .closing p{font:500 clamp(22px,3vw,36px)/1 var(--f-body);letter-spacing:.02em;color:#c3c7cd}
+/* back office: website */
+.mlib{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px}
+.mslot{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;display:flex;flex-direction:column}
+.mslot .mth{aspect-ratio:16/10;background:#0c0d0e;position:relative;overflow:hidden;display:grid;place-items:center;color:var(--muted);font-size:12px}
+.mslot .mth img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.mslot .mb{padding:12px;display:flex;flex-direction:column;gap:8px;flex:1}
+.mslot .mb b{font-size:14.5px}
+.mslot .acts{display:flex;gap:6px;flex-wrap:wrap;margin-top:auto}
+.focus-frame{position:relative;width:100%;border-radius:12px;overflow:hidden;background:#0c0d0e;cursor:crosshair;max-height:340px}
+.focus-frame img{width:100%;height:100%;object-fit:cover;display:block}
+.focus-dot{position:absolute;width:22px;height:22px;margin:-11px 0 0 -11px;border-radius:50%;border:3px solid #fff;box-shadow:0 0 0 2px #000,0 0 12px #000;pointer-events:none}
+.lrow{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:12px;align-items:center;padding:10px 0;border-top:1px solid var(--line)}
+.lrow .th{width:46px;height:46px;border-radius:8px;object-fit:cover;background:#0c0d0e}
+.mbox{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:18px;margin-bottom:16px}
+@media (max-width:900px){
+  .vinesec .wrap,.culture .wrap,.split,.radiocard{grid-template-columns:1fr}
+  .split .ph{order:-1}
+  .cards{grid-auto-columns:minmax(230px,62%)}
+  footer.ft .wrap{display:block}
+footer.ft .fgrid{grid-template-columns:1fr 1fr}
+  .hh .bgimg{inset:0}
+  .hh .bgimg::after{background:linear-gradient(0deg,#0d0d0e 6%,#0d0d0ecc 45%,#0d0d0e55 100%)}
+  .hh{align-items:flex-end}
+}
+@media (max-width:560px){
+  .vinelist{display:flex}
+  .evx{grid-template-columns:70px minmax(0,1fr);row-gap:4px}
+  .evx .th{display:none}.evx .w{grid-column:2;text-align:left}
+  .intro .itop{grid-template-columns:1fr auto}.intro .itop .c{display:none}
+  .pcards{grid-auto-columns:minmax(200px,72%)}
+  #radio .meta{max-width:120px}
+  .hh .loc{display:none}
+  .nav .wrap{position:relative}
+  .nav .soundbtn{position:absolute;right:12px;top:16px}
+  .nav .soundbtn .lbl{display:none}
+}
 @media (max-width:900px){
   .hero .wrap,.cta,.bcols,.cols2{grid-template-columns:1fr}
   .branches{grid-template-columns:repeat(2,minmax(0,1fr))}
@@ -291,9 +503,11 @@ table.t tfoot td{font-weight:700;background:var(--surface-2);border-top:1px soli
     Grooveville
   </a>
   <nav class="links" id="links"></nav>
+  <button class="soundbtn" id="soundBtn" data-act="sound" aria-pressed="false" aria-label="Sound off. Turn sound on"><span class="bars" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span class="lbl">Sound off</span></button>
 </div></header>
 <main id="app"></main>
-<footer><div class="wrap"><span>© <span id="yr"></span> Grooveville LLC · DrawUp Headquarters</span><span>grooveville.org<span id="footnote"></span></span></div></footer>
+<footer class="ft" id="footer"><div class="wrap"><div class="fgrid" id="footgrid"></div><div class="legal"><span>© <span id="yr"></span> Grooveville LLC · The Creative House · Charlotte, NC</span><span>grooveville.org<span id="footnote"></span></span></div></div></footer>
+<div id="radio" aria-live="polite"></div>
 <div id="modal"></div>
 <script type="application/json" id="snap">{"events":[],"brands":{}}</script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
@@ -314,12 +528,15 @@ const BRANDS = [
   {id:"hq", name:"Grooveville LLC", short:"HQ", role:"DrawUp Headquarters",
    tagline:"The central business behind every branch of the Groove Vine.",
    about:"Grooveville LLC is the DrawUp Headquarters. It is the home office that plans, funds and connects each Grooveville company, from live entertainment and music to rentals and new ventures."},
-  {id:"ent", name:"Grooveville Entertainment", short:"ENT", role:"Entertainment", social:"https://www.instagram.com/grooveville.ent/",
+  {id:"ent", name:"Grooveville Entertainment", short:"ENT", role:"Entertainment · Music · Radio", social:"https://www.instagram.com/grooveville.ent/",
    tagline:"Shows, parties and live experiences.",
    about:"Grooveville Entertainment produces and hosts events across the Grooveville family. Watch the calendar for what is coming next."},
-  {id:"music", name:"Grooveville Music", short:"MUSIC", role:"Music", social:"https://www.instagram.com/grooveville.music/",
+  {id:"music", name:"Grooveville Music", short:"MUSIC", role:"Music · part of Grooveville Entertainment", division:"ent", social:"https://www.instagram.com/grooveville.music/",
    tagline:"Artists, releases and the Grooveville sound.",
-   about:"Grooveville Music is home to the artists, recordings and music projects of Grooveville."},
+   about:"Grooveville Music is the music division of Grooveville Entertainment: artists, recordings, playlists and Grooveville Radio."},
+  {id:"aelio", name:"AELIO", short:"AELIO", role:"Artificial Intelligence / Agent Economy", website:"https://aelio.live/",
+   tagline:"One mind. Infinite possibility.",
+   about:"A connected ecosystem of intelligent tools, creative technology, and independent infrastructure designed to empower people and create a brighter tomorrow."},
   {id:"vybr8", name:"Vybr8", short:"VYBR8", role:"Social dining & nightlife", website:"https://vybr8.live",
    tagline:"Eat • Drink • Live • Connect",
    about:"Vybr8 is a social dining and nightlife platform. Discover highly rated restaurants and bars near you based on real people's reviews, and plan outings with friends at spots where everyone can order. Now in eight cities, including Charlotte, Atlanta and Miami."},
@@ -345,6 +562,9 @@ const BRANDS = [
    about:"What If Tomorrow is a faceless reels venture from the Grooveville family, posting short-form videos on Instagram and TikTok."}
 ];
 const BR = Object.fromEntries(BRANDS.map(b=>[b.id,b]));
+/* the nine companies on the Groove Vine (Music now lives under Entertainment) */
+const VORDER=["aec","vybr8","pathd","aelio","ent","scu","wit","rentals","w4w"];
+const VENTURES = ()=>{const o=b=>{const v=Number(brandInfo(b.id).order);return isFinite(v)&&v>0?v:VORDER.indexOf(b.id)+100};return BRANDS.filter(b=>b.id!=="hq"&&!b.division).sort((a,b)=>o(a)-o(b))};
 const TYPES = [
   {id:"meeting", label:"Meeting"}, {id:"hours", label:"Work hours"}, {id:"expense", label:"Money spent"},
   {id:"receipt", label:"Receipt"}, {id:"income", label:"Money in"}, {id:"note", label:"Note"}
@@ -397,7 +617,8 @@ function livePublic(){
   const site=S.site||{};
   return {
     contactEmail:site.contactEmail||"", signer:site.signer||"", phone:site.phone||"",
-    brands:site.brands||{},
+    brands:site.brands||{}, music:site.music||{}, aelio:site.aelio||{}, home:site.home||{},
+    media:BACKEND==="claude"?pubMedia():undefined,
     events:sortBy(S.events.filter(e=>e.visibility==="public"),e=>e.date+(e.start||"")).map(e=>({
       id:e.id,brand:e.brand,title:e.title,date:e.date,start:e.start||"",end:e.end||"",location:e.location||"",description:e.description||"",link:e.link||"",repeat:e.repeat||"",days:e.repeat?(e.days||[]):[],until:e.until||"",count:e.count||"",exdates:e.repeat?(e.exdates||[]):[]}))
   };
@@ -600,6 +821,7 @@ function navLinks(){
 }
 
 function treeSVG(){
+  const ov=media("vine-art");if(ov)return '<img class="tree" src="'+esc(ov.data)+'" alt="'+esc(ov.alt||"The Groove Vine")+'">';
   const W=560, cy=x=>Math.round(64+0.0011*(x-280)*(x-280)+7*Math.sin((x-30)/34));
   let cane="M24 "+cy(24);for(let x=34;x<=536;x+=10)cane+=" L"+x+" "+cy(x);
   let cane2="M40 "+(cy(40)-8);for(let x=50;x<=520;x+=10)cane2+=" L"+x+" "+(cy(x)-6+5*Math.sin(x/23)).toFixed(1);
@@ -607,8 +829,8 @@ function treeSVG(){
   const curl=(x,y,d)=>'<path d="M'+x+' '+y+' c'+(6*d)+' -2 '+(10*d)+' 4 '+(8*d)+' 9 c'+(-2*d)+' 5 '+(-8*d)+' 4 '+(-8*d)+' -1 c0 -3 '+(3*d)+' -4 '+(4*d)+' -2" stroke="var(--olive)" stroke-width="1.6" fill="none" stroke-linecap="round"/>';
   const rows=[3,4,3,2,1], R=7.8, dx=15.4, dy=13.4;
   let clusters="";
-  const SPOT={ent:[36,0],music:[100,0],vybr8:[164,0],pathd:[228,0],aec:[350,0],scu:[432,0],wit:[514,0],rentals:[188,1],w4w:[372,1]};
-  BRANDS.slice(1).forEach((b,i)=>{
+  const SPOT={ent:[36,0],aelio:[100,0],vybr8:[164,0],pathd:[228,0],aec:[350,0],scu:[432,0],wit:[514,0],rentals:[188,1],w4w:[372,1]};
+  VENTURES().forEach((b,i)=>{
     const sp=SPOT[b.id]||[516,0], x=sp[0], low=sp[1]===1, ay=low?246:cy(x), top=ay+20, info=brandInfo(b.id), c="var(--c-"+b.id+")";
     let g='<path d="M'+x+' '+(ay+2)+' q4 8 0 '+(top-ay-4)+'" stroke="var(--olive)" stroke-width="2.4" fill="none"/>';
     rows.forEach((n,r)=>{for(let k=0;k<n;k++){const gx=x+(k-(n-1)/2)*dx, gy=top+R+r*dy;
@@ -617,7 +839,7 @@ function treeSVG(){
     if(info.logo)g+='<clipPath id="cl-'+b.id+'"><circle cx="'+x+'" cy="'+(top+R+dy)+'" r="17"/></clipPath><circle cx="'+x+'" cy="'+(top+R+dy)+'" r="19" fill="var(--surface)" stroke="'+c+'" stroke-width="2"/><image href="'+esc(info.logo)+'" x="'+(x-17)+'" y="'+(top+R+dy-17)+'" width="34" height="34" preserveAspectRatio="xMidYMid meet" clip-path="url(#cl-'+b.id+')"/>';
     g+='<text x="'+x+'" y="'+(bottom+18)+'" text-anchor="middle" font-size="'+(b.short.length>5?13:15)+'" fill="var(--ink)">'+b.short+'</text>';
     if(low)g+='<text x="'+x+'" y="'+(bottom+32)+'" text-anchor="middle" font-size="10" letter-spacing="1.5" fill="var(--muted)" font-family="var(--f-body)">RIPENING</text>';
-    clusters+='<a class="node" href="#b-'+b.id+'" aria-label="'+esc(info.name)+'"><rect x="'+(x-36)+'" y="'+(ay-4)+'" width="72" height="'+(bottom-ay+30)+'" fill="transparent"/>'+g+'</a>';
+    clusters+='<a class="node" data-vine="'+b.id+'" style="--hl:'+c+'" href="#b-'+b.id+'" aria-label="'+esc(info.name)+': '+esc(info.tagline)+'"><rect x="'+(x-36)+'" y="'+(ay-4)+'" width="72" height="'+(bottom-ay+30)+'" fill="transparent"/>'+g+'</a>';
   });
   const trunk='<path d="M268 452 C258 400 298 372 284 326 C270 282 296 250 282 206 C270 166 294 120 280 '+cy(280)+'" stroke="var(--olive)" stroke-width="15" fill="none" stroke-linecap="round"/>'+
     '<path d="M276 440 C270 400 300 370 288 330 C276 290 298 250 286 210" stroke="var(--bg)" stroke-width="1.6" opacity=".3" fill="none"/>'+
@@ -649,28 +871,28 @@ function upcomingPublic(brand,n){
 }
 
 function viewHome(){
-  const ev=upcomingPublic(null,5);
-  const hq=brandInfo("hq");
-  return '<section class="hero"><div class="wrap"><div>'+
-    '<div class="eyebrow">Grooveville LLC · DrawUp Headquarters</div>'+
-    '<h1 style="margin-top:14px">One root. <em>Nine companies.</em> <span>All on the Groove Vine.</span></h1>'+
-    '<p class="lede">'+esc(hq.tagline)+' Explore each company, see what we are hosting next, or send us an official collaboration request.</p>'+
-    '<div class="ctas"><a class="btn teal" href="#calendar">See the calendar</a><a class="btn peach" href="#collab">Collaborate with us</a></div>'+
-    '</div><div>'+treeSVG()+'</div></div></section>'+
-    '<section style="padding-top:12px"><div class="wrap">'+
-    '<div class="sechead"><div><div class="eyebrow">The Groove Vine</div><h2>Our companies</h2></div></div>'+
-    '<div class="hqband"><div><div class="eyebrow" style="color:inherit;opacity:.75">Root of the vine · '+esc(hq.role)+'</div><h3>'+esc(hq.name)+'</h3><p>'+esc(hq.about)+'</p></div><a class="btn" href="#b-hq">Visit HQ</a></div>'+
-    '<div class="branches">'+BRANDS.slice(1).map(b0=>{const b=brandInfo(b0.id);return '<a class="branch" href="#b-'+b.id+'" style="'+cvar(b.id)+'">'+(b.logo?'<img class="blogo" src="'+esc(b.logo)+'" alt="">':'<div class="mark">'+esc(b.short.slice(0,3))+'</div>')+'<h3>'+esc(b.name)+'</h3>'+(b.developing?'<span class="pill high" style="align-self:flex-start">In development</span>':'')+'<p>'+esc(b.tagline)+'</p><span class="go">'+(b.website?esc(b.website.replace(/^https?:\/\/(www\.)?/,"").replace(/\/$/,""))+" →":b.social&&/instagram/i.test(b.social)?"@"+esc((/instagram\.com\/([^/?#]+)/i.exec(b.social)||[,""])[1])+" →":"Coming soon →")+'</span></a>'}).join("")+'</div>'+
-    '</div></section>'+
-    '<section><div class="wrap"><div class="sechead"><div><div class="eyebrow">What\'s next</div><h2>Heard it through the Groove Vine</h2></div><a class="btn ghost" href="#calendar">Full calendar</a></div>'+
-    (ev.length?'<div class="evlist">'+ev.map(e=>evRow(e)).join("")+'</div>':'<div class="empty">No public events are posted yet. New launches and hosted events will show up here.</div>')+
-    '</div></section>'+
-    '<section style="padding-top:0"><div class="wrap"><div class="cta"><div><div class="eyebrow">Partnerships</div><h2 style="margin-top:8px">Want to build something with Grooveville?</h2><p class="muted" style="margin-top:10px;max-width:52ch">Organizations, brands and businesses can send an official collaboration request to Grooveville LLC or to any one of our companies.</p></div><div><a class="btn peach" href="#collab">Start a collaboration request</a></div></div></div></section>';
+  const hq=brandInfo("hq"), H=siteCfg("home"), ev=upcomingPublic(null,5), V=VENTURES().filter(b=>!brandInfo(b.id).hidden);
+  const feat=V.filter(b=>!brandInfo(b.id).unfeatured);
+  const card=b0=>{const b=brandInfo(b0.id),im=slotSrc("card-"+b.id);return '<a class="vcard'+(b.id==="aelio"?" aelio":"")+'" href="#b-'+b.id+'" style="'+cvar(b.id)+'">'+(im?imgTag("card-"+b.id,b.name,""):'<span class="art" aria-hidden="true"><b>'+esc(b.short.slice(0,4))+'</b></span>')+(b.developing?'<span class="tag">Ripening</span>':'')+'<span class="vc"><span><h3>'+esc(b.name.replace(/^Grooveville /,""))+'</h3><small>'+esc(b.cat||b.role)+'</small></span><span class="arrowbtn" aria-hidden="true">→</span></span></a>'};
+  return '<section class="hh"><div class="bgimg">'+imgTag("home-hero","",'')+'</div><span class="glow" style="background:#68d4d0;left:-160px;top:-120px" aria-hidden="true"></span><span class="glow" style="background:#f4a987;right:10%;bottom:-260px" aria-hidden="true"></span>'+
+    '<div class="wrap"><div class="kicker">'+esc(H.heroEyebrow)+'</div><h1 class="disp" style="margin-top:22px">'+esc(H.heroA)+' <em>'+esc(H.heroB)+'</em></h1><p>'+esc(H.heroP)+'</p>'+
+    '<div class="ctas"><button class="btn peach" data-act="scroll" data-to="vine" style="padding:15px 28px">Explore the Groove</button><button class="playlink" data-act="intro-replay"><span aria-hidden="true">▶</span>Watch our story</button></div></div>'+
+    '<div class="loc">Charlotte, NC<br><b>People. Ideas. Places.</b></div></section>'+
+    '<section class="vinesec" id="vine"><div class="wrap"><div><div class="kicker">The Groove Vine</div><h2 class="disp" style="margin-top:18px">One root.<br>Nine companies.</h2><p>Different paths. Same purpose. Explore each branch and see what we\'re building together.</p><button class="textlink" data-act="scroll" data-to="brands"><span class="arrowbtn" aria-hidden="true">→</span>Explore our companies</button>'+
+    '<div class="vinelist" aria-label="Companies on the Groove Vine">'+V.map(b=>'<a href="#b-'+b.id+'">'+chip(b.id)+'</a>').join("")+'</div></div><div>'+treeSVG()+'</div></div></section>'+
+    '<section class="gal" id="brands"><div class="wrap"><div class="ghead"><div><div class="kicker">Featured companies</div><h2 class="disp" style="margin-top:12px">Explore<br>the brands.</h2></div><a class="arrowbtn" href="#b-hq" aria-label="Visit Grooveville HQ" style="color:var(--peach-ink);margin-bottom:6px">→</a>'+
+    '<div class="count"><span id="galN">01 / '+pad(feat.length)+'</span><button data-act="gal" data-d="-1" aria-label="Previous companies">←</button><button data-act="gal" data-d="1" aria-label="Next companies">→</button></div></div>'+
+    '<div class="cards" id="galCards" tabindex="0" aria-label="Featured companies">'+feat.map(card).join("")+'</div></div></section>'+
+    '<section class="culture"><div class="wrap"><div><div class="kicker">Upcoming events</div><h2 class="disp secT" style="margin-top:16px;font-size:clamp(34px,4.4vw,54px)">Be part of the next chapter.</h2><a class="arrowbtn" href="#calendar" aria-label="Open the full calendar" style="margin-top:30px">→</a></div><div>'+
+    (ev.length?ev.map(e=>{const d=parse(e.date),im=slotSrc("ev-"+e.id);return '<button class="evx" data-act="ev-open" data-id="'+esc(e.id)+'" data-date="'+esc(e.date)+'"><span class="d">'+MON[d.getMonth()]+' '+d.getDate()+'</span>'+(im?'<img class="th" src="'+esc(im)+'" alt="" loading="lazy">':'<span class="th" aria-hidden="true" style="background:radial-gradient(circle at 30% 30%,color-mix(in srgb,var(--c-'+(BR[e.brand]?e.brand:"hq")+') 60%,transparent),#1d1f22)"></span>')+'<span class="t">'+esc(e.title)+'</span><span class="w">'+esc(e.location?e.location.split(",")[0]:brandInfo(e.brand).short)+'</span></button>'}).join(""):'<div class="empty" style="border-color:#ffffff22">No public events are posted yet. New launches and hosted events show up here as soon as they\'re on the calendar.</div>')+
+    '</div></div></section>'+
+    '<section class="split"><div class="ph">'+imgTag("home-collab","",'')+'</div><div class="tx"><div class="kicker">Collaborate</div><h2 class="disp secT" style="margin-top:16px">Good ideas<br>grow together.</h2><p>Partners, creators, institutions and visionaries: let\'s build what\'s next. Send an official collaboration request to Grooveville LLC or any of our companies.</p><a class="btn peach" href="#collab" style="margin-top:30px;align-self:flex-start;padding:14px 26px">Start a collaboration request →</a></div></section>'+
+    '<section class="split cream"><div class="tx"><div class="kicker">Our story</div><h2 class="disp secT" style="margin-top:16px">More than<br>business.</h2><p>It\'s culture. People. Places. '+esc(hq.about)+'</p><a class="arrowbtn" href="#b-hq" aria-label="About Grooveville LLC" style="margin-top:30px">→</a></div><div class="ph">'+imgTag("home-story","",'')+'</div></section>';
 }
-
-function portalLink(b,cls,inner){const u=portalUrl(b);return BACKEND==="firebase"?'<button type="button" class="'+cls+'" data-act="portal" data-url="'+esc(u)+'">'+inner+'</button>':'<a class="'+cls+'" href="'+esc(u)+'" target="_blank" rel="noopener" data-act="portal-ext">'+inner+'</a>'}
-function viewBrand(id){
-  const b=brandInfo(id), ev=upcomingPublic(id,6);
+function portalLink(b,cls,inner){const u=portalUrl(b);return true?'<button type="button" class="'+cls+'" data-act="portal" data-url="'+esc(u)+'">'+inner+'</button>':'<a class="'+cls+'" href="'+esc(u)+'" target="_blank" rel="noopener" data-act="portal-ext">'+inner+'</a>'}
+function viewBrand(id,sub){
+  if(id==="aelio")return viewAelio();
+  const b=brandInfo(id), ev=upcomingPublic(id,6), hero=slotSrc("hero-"+id)?"hero-"+id:slotSrc("card-"+id)?"card-"+id:"";
   const sib=BRANDS.filter(x=>x.id!==id);
   const links=[];
   if(b.cta)links.push('<a class="btn" style="background:var(--c);color:var(--bg)" href="'+esc(b.cta.url)+'" target="_blank" rel="noopener">'+esc(b.cta.label)+' ↗</a>');
@@ -678,19 +900,21 @@ function viewBrand(id){
   if(b.social){const ig=/instagram\.com\/([^/?#]+)/i.exec(b.social);links.push('<a class="btn '+(b.website||b.cta?'ghost':'')+'" '+(b.website||b.cta?'':'style="background:var(--c);color:var(--bg)" ')+'href="'+esc(b.social)+'" target="_blank" rel="noopener">'+(ig?'Follow @'+esc(ig[1])+' on Instagram ↗':'Social ↗')+'</a>')}
   if(b.tiktok){const tk=/tiktok\.com\/@?([^/?#]+)/i.exec(b.tiktok);links.push('<a class="btn ghost" href="'+esc(b.tiktok)+'" target="_blank" rel="noopener">'+(tk?'Follow @'+esc(tk[1])+' on TikTok ↗':'TikTok ↗')+'</a>')}
   if(!b.website&&!b.social)links.push('<span class="pill high" style="align-self:center;font-size:12.5px;padding:6px 10px">Website coming soon</span>');
-  return '<div style="'+cvar(id)+'"><section class="bhero"><div class="wrap">'+
+  const entTabs=id==="ent"?'<nav class="subtabs" aria-label="Grooveville Entertainment">'+ENT_TABS.map(([k,l])=>'<a href="#b-ent'+(k?"/"+k:"")+'"'+((sub||"")===k?' class="on" aria-current="page"':'')+'>'+l+'</a>').join("")+'</nav>':'';
+  if(id==="ent"&&sub)return '<div style="'+cvar(id)+'"><section class="bhero'+(hero?" hasimg":"")+'" style="padding-block:46px 0">'+(hero?'<div class="bimg">'+imgTag(hero,"","")+'</div>':'')+'<div class="wrap"><div class="crumb"><button class="backbtn" data-act="go-back" aria-label="Go back">‹ Back</button><a href="#b-hq">Grooveville LLC</a> › <a href="#b-ent">'+esc(b.name)+'</a> › '+esc((ENT_TABS.find(t=>t[0]===sub)||[,""])[1])+'</div><div class="kicker">Grooveville Entertainment</div><h1 class="disp" style="margin-top:12px;font-size:clamp(40px,7vw,84px)">'+esc((ENT_TABS.find(t=>t[0]===sub)||[,""])[1])+'</h1>'+entTabs+'</div></section><section style="padding-top:34px"><div class="wrap">'+entSub(sub)+'</div></section></div>';
+  return '<div style="'+cvar(id)+'"><section class="bhero'+(hero?" hasimg":"")+'">'+(hero?'<div class="bimg">'+imgTag(hero,"","")+'</div>':'')+'<div class="wrap">'+
     '<div class="crumb"><button class="backbtn" data-act="go-back" aria-label="Go back">‹ Back</button>'+(id==="hq"?'<a href="#home">Home</a> · Headquarters':'<a href="#b-hq">Grooveville LLC</a> › '+esc(b.name))+'</div>'+
-    (b.logo?'<img class="blogo big" src="'+esc(b.logo)+'" alt="'+esc(b.name)+' logo">':'')+'<div class="eyebrow">'+esc(b.role)+'</div><h1 style="margin-top:8px">'+esc(b.name)+'</h1><p class="tag">'+esc(b.tagline)+'</p>'+
+    (b.logo?'<img class="blogo big" src="'+esc(b.logo)+'" alt="'+esc(b.name)+' logo">':'')+'<div class="kicker">'+esc(b.role)+'</div><h1 class="disp" style="margin-top:12px">'+esc(b.name)+'</h1><p class="tag">'+esc(b.tagline)+'</p>'+
     '<div class="ctas" style="display:flex;gap:10px;flex-wrap:wrap;margin-top:22px">'+links.join("")+'<a class="btn peach" href="#collab-'+id+'">Collaborate with '+esc(b.short==="HQ"?"Grooveville":b.name)+'</a></div>'+
-    (b.portal?'<nav class="subtabs" aria-label="'+esc(b.name)+'"><a class="on" href="#b-'+id+'" aria-current="page">Overview</a>'+portalLink(b,'subtab-portal','✦ '+esc(b.portalLabel||"Enter"))+'</nav>':'')+
+    entTabs+(b.portal?'<nav class="subtabs" aria-label="'+esc(b.name)+'"><a class="on" href="#b-'+id+'" aria-current="page">Overview</a>'+portalLink(b,'subtab-portal','✦ '+esc(b.portalLabel||"Enter"))+'</nav>':'')+
     '</div></section>'+
     (b.portal?'<section style="padding-block:6px 0"><div class="wrap">'+portalLink(b,'portalcard','<span class="swirl" aria-hidden="true"><i></i></span><span class="pc-text"><span class="eyebrow" style="color:#d9b3ff">The official Shadow Crown site</span><b>Step through the portal</b><span>Explore the universe, meet the Upendo family, discover Book 1 and enter the Living World.</span></span><span class="pc-go">Enter ✦</span>')+'</div></section>':'')+
     '<section style="padding-top:8px"><div class="wrap bcols"><div style="display:flex;flex-direction:column;gap:20px;min-width:0">'+
-    (b.feature?'<div class="card" style="display:flex;gap:18px;align-items:center;flex-wrap:wrap;border-color:var(--c)"><div style="width:74px;height:104px;border-radius:6px;background:linear-gradient(160deg,var(--c),color-mix(in srgb,var(--c) 40%,#000));display:grid;place-items:center;color:var(--bg);font-family:var(--f-display);font-weight:800;font-size:13px;text-align:center;padding:6px;flex:none">BOOK 1</div><div style="min-width:0;flex:1"><div class="eyebrow">'+esc(b.feature.eyebrow)+'</div><h3 style="font-size:22px;margin-top:4px">'+esc(b.feature.title)+'</h3><p class="muted" style="margin-top:4px">by '+esc(b.feature.by)+' · <span class="mono" style="font-size:13px">'+esc(b.feature.meta)+'</span></p></div><a class="btn peach" href="'+esc(b.feature.url)+'" target="_blank" rel="noopener">'+esc(b.feature.label)+' ↗</a></div>':'')+'<div class="card"><div class="eyebrow">About</div><p style="margin-top:8px;font-size:17px;max-width:62ch">'+esc(b.about)+'</p></div>'+
+    (b.feature?'<div class="card" style="display:flex;gap:18px;align-items:center;flex-wrap:wrap;border-color:var(--c)"><img src="'+esc(ASSETS["sc-cover"]||"")+'" alt="Shadow Crown Book 1: Zeke\'s Daydream cover" width="96" height="96" style="width:96px;height:96px;border-radius:8px;object-fit:cover;flex:none"><div style="min-width:0;flex:1"><div class="eyebrow">'+esc(b.feature.eyebrow)+'</div><h3 style="font-size:22px;margin-top:4px">'+esc(b.feature.title)+'</h3><p class="muted" style="margin-top:4px">by '+esc(b.feature.by)+' · <span class="mono" style="font-size:13px">'+esc(b.feature.meta)+'</span></p></div><a class="btn peach" href="'+esc(b.feature.url)+'" target="_blank" rel="noopener">'+esc(b.feature.label)+' ↗</a></div>':'')+'<div class="card"><div class="eyebrow">About</div><p style="margin-top:8px;font-size:17px;max-width:62ch">'+esc(b.about)+'</p></div>'+
     '<div><h3 style="font-size:22px;margin-bottom:12px">'+(id==="hq"?"Everything coming up":"Coming up at "+esc(b.name))+'</h3>'+
     ((id==="hq"?upcomingPublic(null,8):ev).length?'<div class="evlist">'+(id==="hq"?upcomingPublic(null,8):ev).map(e=>evRow(e)).join("")+'</div>':'<div class="empty">Nothing public on the calendar yet.</div>')+'</div></div>'+
     '<aside class="card" style="align-self:start"><div class="eyebrow">'+(id==="hq"?"Growing on the vine":"Part of the Groove Vine")+'</div><div class="links-list" style="margin-top:12px">'+
-    sib.map(s=>'<a href="#b-'+s.id+'" style="text-decoration:none">'+chip(s.id)+'</a>').join("")+'</div>'+
+    sib.filter(s=>!s.division).map(s=>'<a href="#b-'+s.id+'" style="text-decoration:none">'+chip(s.id)+'</a>').join("")+(id==="ent"?'':'')+'</div>'+
     '<p class="muted" style="margin-top:14px;font-size:13.5px">Every company here is run from Grooveville LLC, the DrawUp Headquarters.</p></aside>'+
     '</div></section></div>';
 }
@@ -745,7 +969,7 @@ function letterText(o){
   }
   return "Ref: "+o.ref+"\nDate: "+longDate(when)+"\n\nTo: "+(o.contact?o.contact+"\n":"")+o.org+(o.email?"\n"+o.email:"")+
     "\n\nSubject: Invitation to collaborate – "+(o.type||"Partnership")+"\n\nDear "+(o.contact||o.org+" team")+",\n\nOn behalf of "+b.name+parent+" we would like to invite "+o.org+" to collaborate with us on a "+String(o.type||"partnership").toLowerCase()+"."+(o.date?" We are proposing "+longDate(o.date)+".":"")+"\n\n"+(o.proposal||"")+
-    "\n\nGrooveville LLC is the DrawUp Headquarters for Grooveville Entertainment, Grooveville Music, Vybr8, Pathd, Grooveville Rentals, W4W, DrawUp AEC, Shadow Crown Universe and What If Tomorrow. Please reply to "+contactLine+" to confirm your interest or to set up a call.\n\nSincerely,\n"+(p.signer||"The Grooveville Team")+"\n"+b.name+(o.brand!=="hq"?"\nGrooveville LLC":"");
+    "\n\nGrooveville LLC is the parent company of "+VENTURES().map(x=>brandInfo(x.id).name).join(", ").replace(/, ([^,]*)$/," and $1")+". Please reply to "+contactLine+" to confirm your interest or to set up a call.\n\nSincerely,\n"+(p.signer||"The Grooveville Team")+"\n"+b.name+(o.brand!=="hq"?"\nGrooveville LLC":"");
 }
 function letterHTML(o){
   const b=brandInfo(o.brand);
@@ -781,7 +1005,7 @@ function collabSubmit(form){
 }
 
 /* ---------- team (back office) ---------- */
-const TEAM_TABS=[["team","Dashboard"],["team-time","Timesheet"],["team-cal","Calendar"],["team-rem","Reminders"],["team-out","Collabs"],["team-people","Teams"],["team-docs","Documents"],["team-conv","Converter"],["team-reports","Reports"],["team-vault","Private notes"],["team-site","Site settings"]];
+const TEAM_TABS=[["team","Dashboard"],["team-time","Timesheet"],["team-cal","Calendar"],["team-rem","Reminders"],["team-out","Collabs"],["team-people","Teams"],["team-docs","Documents"],["team-conv","Converter"],["team-reports","Reports"],["team-vault","Private notes"],["team-web","Website"],["team-site","Site settings"]];
 function teamGate(){
   if(!S.authChecked)return '<div class="wrap gate"><h1>Checking access…</h1><p class="muted">One moment while we confirm who is signed in.</p></div>';
   return '<div class="wrap gate"><div class="eyebrow">Grooveville team</div><h1>Back office sign in</h1><p class="muted">The timesheet, private calendar, reminders and collab tracker are only for the Grooveville team. Open this page while signed in to Claude with the account Grooveville invited as an Editor.</p><p class="muted" style="font-size:13.5px">If you just got access, reload this page.</p><a class="btn" href="#home">Back to the public site</a></div>';
@@ -1567,10 +1791,397 @@ function openPortal(url){
   try{sessionStorage.setItem("scPortal","1")}catch(e){}
   const external=/^https?:/i.test(url)&&!url.startsWith(location.origin);
   if(external){window.open(url,"_blank","noopener");const ov=playPortal(()=>setTimeout(()=>ov.remove(),250));return}
-  playPortal(()=>{location.href=url});
+  playPortal(()=>{if(url.charAt(0)==="#"){location.hash=url;setTimeout(()=>{document.querySelectorAll(".portal-ov").forEach(o=>o.remove())},120)}else location.href=url});
 }
-const portalUrl=b=>BACKEND==="firebase"?b.portal:"https://grooveville.org"+b.portal;
+const portalUrl=b=>BACKEND==="firebase"?"/shadowcrown/":"#shadowcrown";
+const SC_DOC="";
+function scFrame(){return '<iframe class="sc-frame" id="scFrame" title="Shadow Crown Universe" srcdoc="'+esc(SC_DOC.split("/logo.webp").join(LOGO))+'"></iframe>'}
 function goBack(){if(S.navCount>0){S.navCount-=2;history.back()}else location.hash="#home"}
+
+/* ---------- Creative House: managed images, cinematic entry, radio, music, AELIO, Website back office ---------- */
+const ASSETS={"gv-hero": "/media/gv-hero.webp", "gv-collab": "/media/gv-collab.webp", "gv-story": "/media/gv-story.webp", "gv-ent": "/media/gv-ent.webp", "gv-box": "/media/gv-box.webp", "card-aec": "/media/card-aec.webp", "card-vybr8": "/media/card-vybr8.webp", "card-pathd": "/media/card-pathd.webp", "card-aelio": "/media/card-aelio.webp", "card-ent": "/media/card-ent.webp", "sc-cover": "/media/sc-cover.webp", "aelio-p1": "/media/aelio-p1.webp", "aelio-p2": "/media/aelio-p2.webp", "aelio-p3": "/media/aelio-p3.webp", "aelio-p4": "/media/aelio-p4.webp", "aelio-p5": "/media/aelio-p5.webp", "aelio-p6": "/media/aelio-p6.webp"};
+const ENT_TABS=[["","Overview"],["music","Music"],["radio","Grooveville Radio"],["artists","Featured Artists"],["events","Events"]];
+S.media={};S.web={sec:"media"};S.sound=false;
+const DEFIMG={"home-hero":"gv-hero","home-collab":"gv-collab","home-story":"gv-story","hero-ent":"gv-ent","card-aec":"card-aec","card-vybr8":"card-vybr8","card-pathd":"card-pathd","card-aelio":"card-aelio","card-ent":"card-ent","card-scu":"sc-cover","card-hq":"gv-box",
+  "aelio-p1":"aelio-p1","aelio-p2":"aelio-p2","aelio-p3":"aelio-p3","aelio-p4":"aelio-p4","aelio-p5":"aelio-p5","aelio-p6":"aelio-p6"};
+const DEF={
+  home:{heroEyebrow:"Grooveville LLC · The Creative House",heroA:"Different worlds.",heroB:"One Groove.",heroP:"Nine companies. Endless possibilities. A home for creators, innovators, and community."},
+  aelio:{eyebrow:"DREAM BEYOND",headline:"HEY AELIO.",tagline:"One mind. Infinite possibility.",
+    desc:"A connected ecosystem of intelligent tools, creative technology, and independent infrastructure designed to empower people and create a brighter tomorrow.",
+    ecoEyebrow:"THE ECOSYSTEM",ecoHead:"IDEAS. PEOPLE. POSSIBILITIES.",
+    ecoDesc:"A growing ecosystem built to support creators, builders, artists, designers, and everyday dreamers with the tools, infrastructure, and intelligence to go further.",
+    closing:"NEVER SAY NEVER.",persTitle:"AELIO PERSONALITIES",persSub:"ONE MIND. SIX PERSPECTIVES.",
+    pers:[{n:"TECH SAVVY",d:"Focused & direct."},{n:"YOUNG & HIP",d:"Laid back & real."},{n:"PROPER & BRITISH",d:"Refined & polished."},{n:"CLASSY GYAL",d:"Confident & smooth."},{n:"OMG GIRL!",d:"Bubbly & fun."},{n:"THE HOMIE",d:"Familiar & real."}]},
+  music:{station:"Grooveville Radio",spotify:"",stream:"",streamAttr:"",featured:[],trending:[],artists:[],playlists:[],releases:[]}
+};
+[["ent","Culture + Sound"],["aelio","AI + Agent Economy"],["vybr8","Food + Discovery"],["pathd","Careers + Community"],["aec","Architecture + AI"],["scu","Books + Stories"],["wit","Faceless reels"],["rentals","Rentals"],["w4w","Shop"],["hq","The Creative House"],["music","Music + Radio"]].forEach(([k,v])=>{if(BR[k])BR[k].cat=v});
+const MLISTS=[["featured","Featured Music"],["trending","Trending Songs"],["artists","Featured Artists"],["playlists","Curated Playlists"],["releases","Latest Releases"]];
+function siteCfg(k){const o=(pub()[k])||{};const d=DEF[k];const r=Object.assign({},d);Object.keys(o).forEach(x=>{if(o[x]!==""&&o[x]!=null)r[x]=o[x]});if(k==="aelio")r.pers=d.pers.map((p,i)=>Object.assign({},p,((o.pers||[])[i])||{}));return r}
+const mediaMap=()=>BACKEND==="claude"&&!S.isAdmin?(SNAP.media||{}):S.media;
+function media(id){const m=mediaMap()[id];return m&&(m.data||m.url||m.def)&&!m.hidden?m:null}
+function pubMedia(){const o={};Object.entries(S.media||{}).forEach(([k,m])=>{if(m&&!m.hidden){const c=Object.assign({},m);delete c.prev;o[k]=c}});return o}
+function slotSrc(id){const m=media(id);return (m&&m.data)||ASSETS[DEFIMG[id]]||""}
+const DEFPOS={"home-story":"50% 12%","home-collab":"50% 30%","home-hero":"62% 35%","card-scu":"50% 30%"};
+function imgTag(id,alt,cls){const src=slotSrc(id);if(!src)return "";const m=media(id)||{};const f=m.focal||DEFPOS[id]||"50% 50%",z=Number(m.zoom)||1;
+  return '<img'+(cls?' class="'+cls+'"':'')+' src="'+esc(src)+'" alt="'+esc(m.alt||alt||"")+'" loading="lazy" decoding="async" style="object-position:'+esc(f)+(z>1?';transform:scale('+z+');transform-origin:'+esc(f):'')+'">'}
+let mediaSub=false;
+function subscribeMedia(){if(mediaSub||!S.db)return;mediaSub=true;S.db.collection("media").onSnapshot(snap=>{const o={};snap.docs.forEach(d=>{o[d.id]=d.data()});S.media=o;S.loaded.media=true;scheduleRender(true);renderRadio()},()=>{S.loaded.media=true})}
+
+/* ---------- footer ---------- */
+function fillFooter(){
+  const g=$("#footgrid");if(!g)return;
+  g.innerHTML='<div><img src="'+LOGO+'" alt="" width="48" height="48" style="border-radius:50%"><p style="margin-top:14px;max-width:30ch">The Creative House. Different worlds, one Groove, rooted in Charlotte, NC.</p><div style="display:flex;gap:14px;margin-top:12px"><a href="https://www.instagram.com/grooveville.ent/" target="_blank" rel="noopener">Instagram ↗</a></div></div>'+
+    '<div><h4>Companies</h4>'+VENTURES().filter(b=>!brandInfo(b.id).hidden).map(b=>'<a href="#b-'+b.id+'">'+esc(brandInfo(b.id).name)+'</a>').join("")+'</div>'+
+    '<div><h4>Explore</h4><a href="#home">Home</a><a href="#calendar">Calendar</a><a href="#collab">Collaborate</a><a href="#b-ent/music">Music</a><a href="#b-ent/radio">Grooveville Radio</a><a href="#b-hq">Our story</a></div>'+
+    '<div><h4>Groove Team</h4><a href="#groove">Sign in</a><a href="#join">Join a team</a>'+(S.isAdmin?'<a href="#team">Back office</a>':'')+'<a href="mailto:'+esc(pub().contactEmail||"")+'"'+(pub().contactEmail?'':' hidden')+'>Contact</a></div>';
+}
+
+/* ---------- sound ---------- */
+let PAD=null;
+function padStart(){try{const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return;const ac=new AC(),g=ac.createGain(),f=ac.createBiquadFilter();f.type="lowpass";f.frequency.value=700;g.gain.value=0;f.connect(g);g.connect(ac.destination);
+  const osc=[110,164.81,220,277.18].map((hz,i)=>{const o=ac.createOscillator();o.type=i%2?"triangle":"sine";o.frequency.value=hz;o.detune.value=(i-1.5)*4;o.connect(f);o.start();return o});
+  const l=ac.createOscillator(),lg=ac.createGain();l.frequency.value=.08;lg.gain.value=260;l.connect(lg);lg.connect(f.frequency);l.start();
+  g.gain.linearRampToValueAtTime(.055,ac.currentTime+2.2);PAD={ac,g,osc:osc.concat(l)}}catch(e){}}
+function padStop(){if(!PAD)return;const p=PAD;PAD=null;try{p.g.gain.cancelScheduledValues(p.ac.currentTime);p.g.gain.setValueAtTime(p.g.gain.value,p.ac.currentTime);p.g.gain.linearRampToValueAtTime(0,p.ac.currentTime+.8);setTimeout(()=>{try{p.osc.forEach(o=>o.stop());p.ac.close()}catch(e){}},900)}catch(e){}}
+let INTRO_AUDIO=null;
+function syncSoundBtns(){document.querySelectorAll(".soundbtn").forEach(b=>{b.classList.toggle("on",S.sound);b.setAttribute("aria-pressed",S.sound?"true":"false");b.setAttribute("aria-label",S.sound?"Sound on. Turn sound off":"Sound off. Turn sound on");const l=b.querySelector(".lbl");if(l)l.textContent=S.sound?"Sound on":"Sound off"})}
+function setSound(on){
+  S.sound=on;try{sessionStorage.setItem("gvSound",on?"1":"0")}catch(e){}syncSoundBtns();
+  const intro=$(".intro:not(.out)");
+  if(!on){padStop();if(INTRO_AUDIO){INTRO_AUDIO.pause()}const v=intro&&intro.querySelector("video");if(v)v.muted=true;radioPause();return}
+  if(intro){const v=intro.querySelector("video");const au=media("intro-audio");
+    if(au&&au.url){if(!INTRO_AUDIO){INTRO_AUDIO=new Audio(au.url);INTRO_AUDIO.loop=true;INTRO_AUDIO.volume=.6}INTRO_AUDIO.play().catch(()=>{})}
+    else if(v&&v.dataset.hasAudio==="1"){v.muted=false}else padStart();return}
+  if(radioSrc())radioPlay();else toast(S.isAdmin?"Add a playlist or stream in Back office › Website › Music & Radio":"Grooveville Radio is coming soon");
+}
+
+/* ---------- cinematic entry ---------- */
+function introWanted(){try{if(sessionStorage.getItem("gvIntro"))return false}catch(e){}return S.route==="home"}
+let INTRO_RAF=0;
+function showIntro(){
+  if($(".intro"))return;
+  const reduce=window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const slow=navigator.connection&&(navigator.connection.saveData||/2g/.test(navigator.connection.effectiveType||""));
+  const v=media("intro-video"),p=media("intro-poster");
+  const useVid=v&&v.url&&!slow&&!reduce;
+  const el=document.createElement("div");el.className="intro";el.setAttribute("role","dialog");el.setAttribute("aria-modal","true");el.setAttribute("aria-label","Welcome to Grooveville");
+  el.innerHTML=(useVid?'<video muted playsinline autoplay loop preload="metadata"'+(p&&p.data?' poster="'+esc(p.data)+'"':'')+' src="'+esc(v.url)+'" data-has-audio="'+(v.audio?"1":"0")+'"></video>':(p&&p.data?'<img class="ipost" src="'+esc(p.data)+'" alt="'+esc(p.alt||"")+'">':'<canvas aria-hidden="true"></canvas>'))+
+    '<div class="ishade"></div><div class="itop"><div class="brandmark"><b>GROOVEVILLE</b><span>The Creative House</span></div><div class="c">Charlotte, NC</div><div class="r"><button class="soundbtn'+(S.sound?" on":"")+'" data-act="sound" aria-pressed="'+(S.sound?"true":"false")+'"><span class="bars" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span class="lbl">'+(S.sound?"Sound on":"Sound off")+'</span></button></div></div>'+
+    '<div class="icenter"><div class="tagline">Different worlds. One Groove.</div><button class="gobtn" data-act="intro-go">LET\'S GROOVE <i aria-hidden="true">→</i></button><button class="skip" data-act="intro-go">Skip intro</button></div>'+
+    (S.isAdmin&&!useVid&&!(p&&p.data)?'<div class="await">Animated drive (built in). Add a licensed film in Back office › Website.</div>':'');
+  document.body.appendChild(el);document.body.style.overflow="hidden";
+  const cv=el.querySelector("canvas");if(cv)driveScene(cv,reduce);
+  setTimeout(()=>{const b=el.querySelector(".gobtn");if(b)b.focus()},60);
+  el.addEventListener("keydown",e=>{if(e.key==="Escape")introGo();if(e.key==="Tab"){const f=[...el.querySelectorAll("button")];const i=f.indexOf(document.activeElement);if(e.shiftKey&&i<=0){e.preventDefault();f[f.length-1].focus()}else if(!e.shiftKey&&i===f.length-1){e.preventDefault();f[0].focus()}}});
+}
+function introGo(){
+  const el=$(".intro");if(!el)return;try{sessionStorage.setItem("gvIntro","1")}catch(e){}
+  el.classList.add("out");padStop();if(INTRO_AUDIO){INTRO_AUDIO.pause();INTRO_AUDIO=null}
+  document.body.style.overflow="";
+  setTimeout(()=>{cancelAnimationFrame(INTRO_RAF);el.remove()},950);
+  if(S.sound&&radioSrc())radioPlay();
+  const h=$("#app h1");if(h){h.setAttribute("tabindex","-1");h.focus({preventScroll:true})}
+}
+/* The Charlotte drive: a hand-built animation (no stock footage). */
+function driveScene(cv,still){
+  const ctx=cv.getContext("2d");let W,H,dpr;
+  const rnd=(s=>()=>(s=(s*16807)%2147483647)/2147483647)(7);
+  const towers=[];
+  function build(){towers.length=0;let x=-20;while(x<1240){const w=18+rnd()*46,h=40+rnd()*150;towers.push({x,w,h,t:rnd()<.15?"slant":"flat",lit:rnd()});x+=w+2+rnd()*8}
+    towers.push({x:560,w:52,h:330,t:"crown"},{x:640,w:46,h:268,t:"slant"},{x:470,w:40,h:240,t:"spire"},{x:712,w:36,h:210,t:"flat"},{x:420,w:34,h:190,t:"flat"},{x:520,w:30,h:220,t:"flat"})}
+  build();
+  function size(){dpr=Math.min(window.devicePixelRatio||1,1.5);W=cv.clientWidth||innerWidth;H=cv.clientHeight||innerHeight;cv.width=W*dpr;cv.height=H*dpr;ctx.setTransform(dpr,0,0,dpr,0,0)}
+  size();addEventListener("resize",size);
+  const t0=performance.now();
+  function frame(now){
+    const t=(now-t0)/1000,hz=H*.58,cx=W/2,sc=Math.max(W/1200,H/900);
+    let g=ctx.createLinearGradient(0,0,0,hz);g.addColorStop(0,"#151226");g.addColorStop(.35,"#3b2547");g.addColorStop(.7,"#b8607a");g.addColorStop(.9,"#f08f6c");g.addColorStop(1,"#f7b48c");
+    ctx.fillStyle=g;ctx.fillRect(0,0,W,hz+1);
+    let s=ctx.createRadialGradient(cx,hz,0,cx,hz,W*.45);s.addColorStop(0,"#ffd9b0cc");s.addColorStop(.25,"#f4a98755");s.addColorStop(1,"#f4a98700");ctx.fillStyle=s;ctx.fillRect(0,0,W,hz);
+    for(let i=0;i<5;i++){const cx1=(i*277+t*6)%(W+600)-300,cy1=hz*(.22+i*.1),cg=ctx.createRadialGradient(cx1,cy1,0,cx1,cy1,240*sc);cg.addColorStop(0,i%2?"#b7a1e522":"#f4a98722");cg.addColorStop(1,"#0000");ctx.fillStyle=cg;ctx.save();ctx.translate(cx1,cy1);ctx.scale(1,.12);ctx.translate(-cx1,-cy1);ctx.beginPath();ctx.arc(cx1,cy1,240*sc,0,7);ctx.fill();ctx.restore()}
+    ctx.save();ctx.translate(cx-600*sc,hz);ctx.scale(sc,sc);
+    towers.forEach(b=>{const x=b.x,w=b.w,h=b.h;ctx.fillStyle=b.t==="crown"||b.t==="slant"||b.t==="spire"?"#1b1324":"#251a2c";
+      ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,-h);
+      if(b.t==="crown"){for(let k=0;k<=6;k++){const px=x+w*k/6;ctx.lineTo(px,-h-(k%2?6:30))}ctx.lineTo(x+w,-h)}
+      else if(b.t==="slant"){ctx.lineTo(x+w*.5,-h-26);ctx.lineTo(x+w,-h)}
+      else if(b.t==="spire"){ctx.lineTo(x+w/2-3,-h-4);ctx.lineTo(x+w/2,-h-40);ctx.lineTo(x+w/2+3,-h-4);ctx.lineTo(x+w,-h)}
+      else ctx.lineTo(x+w,-h);
+      ctx.lineTo(x+w,0);ctx.closePath();ctx.fill();
+      ctx.fillStyle="#ffd6a8";for(let yy=-h+10;yy<-6;yy+=9)for(let xx=x+4;xx<x+w-4;xx+=7){const n=Math.sin(xx*12.9+yy*78.2+(b.lit||1)*5)*43758.5;if(n-Math.floor(n)>.72){ctx.globalAlpha=.35+.35*Math.sin(t*.7+xx);ctx.fillRect(xx,yy,2.4,3.4)}}ctx.globalAlpha=1;
+      if(b.t==="crown"){ctx.fillStyle="#f4a987";ctx.globalAlpha=.6+.3*Math.sin(t*2);ctx.fillRect(x+w/2-1,-h-40,2,8);ctx.globalAlpha=1}});
+    ctx.restore();
+    g=ctx.createLinearGradient(0,hz,0,H);g.addColorStop(0,"#2a1e2a");g.addColorStop(.25,"#141114");g.addColorStop(1,"#08080a");ctx.fillStyle=g;ctx.fillRect(0,hz,W,H-hz);
+    const vx=cx,roadL=x=>x;ctx.fillStyle="#18161a";ctx.beginPath();ctx.moveTo(vx-8*sc,hz);ctx.lineTo(vx+8*sc,hz);ctx.lineTo(W*1.15,H);ctx.lineTo(-W*.15,H);ctx.closePath();ctx.fill();
+    g=ctx.createLinearGradient(0,hz,0,H);g.addColorStop(0,"#f4a98755");g.addColorStop(.4,"#f4a98710");g.addColorStop(1,"#0000");ctx.fillStyle=g;ctx.beginPath();ctx.moveTo(vx-8*sc,hz);ctx.lineTo(vx+8*sc,hz);ctx.lineTo(vx+W*.25,H);ctx.lineTo(vx-W*.25,H);ctx.closePath();ctx.fill();
+    const speed=still?0:.55,proj=z=>hz+(H-hz)*(1/z)*.18;
+    ctx.fillStyle="#f3efe7";
+    for(let lane of[-1,1]){for(let i=0;i<22;i++){let z=((i*1.2-(t*speed*4))%26+26)%26+.9;const z2=z+.6;const y1=proj(z),y2=proj(z2);if(y1>H+40)continue;const k1=(y1-hz)/(H-hz),k2=(y2-hz)/(H-hz);const lx=a=>vx+lane*a*W*.17;
+      ctx.globalAlpha=Math.min(1,k1*2.2)*.8;ctx.beginPath();ctx.moveTo(lx(k2)-k2*3*sc,y2);ctx.lineTo(lx(k2)+k2*3*sc,y2);ctx.lineTo(lx(k1)+k1*5*sc,y1);ctx.lineTo(lx(k1)-k1*5*sc,y1);ctx.fill()}}
+    ctx.globalAlpha=1;
+    for(let side of[-1,1]){for(let i=0;i<10;i++){let z=((i*2.6-(t*speed*4))%26+26)%26+.7;const y=proj(z),k=(y-hz)/(H-hz);if(y>H+200)continue;const x=vx+side*(k*W*.62+10*sc);
+      ctx.strokeStyle="#2a2530";ctx.lineWidth=Math.max(1,k*5*sc);ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x,y-k*230*sc);ctx.lineTo(x-side*k*40*sc,y-k*236*sc);ctx.stroke();
+      const lg=ctx.createRadialGradient(x-side*k*40*sc,y-k*232*sc,0,x-side*k*40*sc,y-k*232*sc,k*60*sc+2);lg.addColorStop(0,"#ffe2bccc");lg.addColorStop(1,"#ffe2bc00");ctx.fillStyle=lg;ctx.beginPath();ctx.arc(x-side*k*40*sc,y-k*232*sc,k*60*sc+2,0,7);ctx.fill()}}
+    [[.08,-.35],[.15,.32],[.05,.1]].forEach(([d,lx],i)=>{const k=d+.02*Math.sin(t*.3+i),y=hz+(H-hz)*k,x=vx+lx*k*W*.5;ctx.fillStyle="#ff9d6e";ctx.globalAlpha=.85;ctx.fillRect(x-6*k*sc*4,y,3*k*sc*4,2*k*sc*4+1);ctx.fillRect(x+3*k*sc*4,y,3*k*sc*4,2*k*sc*4+1);ctx.globalAlpha=1});
+    const bob=still?0:Math.sin(t*9)*.8,cw=Math.min(W*.5,380*sc),ch=cw*.42,cx0=vx-cw/2,cy0=hz+(H-hz)*.40-ch+bob;
+    ctx.fillStyle="#0007";ctx.beginPath();ctx.ellipse(vx,cy0+ch*1.02,cw*.6,ch*.14,0,0,7);ctx.fill();
+    ctx.fillStyle="#060607";[[.1],[.9]].forEach(([p])=>{ctx.beginPath();ctx.roundRect?ctx.roundRect(cx0+cw*p-cw*.075,cy0+ch*.72,cw*.15,ch*.32,6):ctx.rect(cx0+cw*p-cw*.075,cy0+ch*.72,cw*.15,ch*.32);ctx.fill()});
+    g=ctx.createLinearGradient(0,cy0,0,cy0+ch);g.addColorStop(0,"#3a3340");g.addColorStop(.4,"#18161c");g.addColorStop(1,"#070708");ctx.fillStyle=g;ctx.strokeStyle="#f4a98788";ctx.lineWidth=1.4;
+    ctx.beginPath();ctx.moveTo(cx0+cw*.2,cy0+ch*.05);ctx.bezierCurveTo(cx0+cw*.35,cy0-ch*.12,cx0+cw*.65,cy0-ch*.12,cx0+cw*.8,cy0+ch*.05);ctx.lineTo(cx0+cw*.93,cy0+ch*.38);ctx.quadraticCurveTo(cx0+cw*1.01,cy0+ch*.45,cx0+cw,cy0+ch*.62);ctx.lineTo(cx0+cw*.98,cy0+ch*.9);ctx.lineTo(cx0+cw*.02,cy0+ch*.9);ctx.lineTo(cx0,cy0+ch*.62);ctx.quadraticCurveTo(cx0-cw*.01,cy0+ch*.45,cx0+cw*.07,cy0+ch*.38);ctx.closePath();ctx.fill();ctx.stroke();
+    g=ctx.createLinearGradient(0,cy0,0,cy0+ch*.36);g.addColorStop(0,"#3a2a3a");g.addColorStop(1,"#120f14");ctx.fillStyle=g;ctx.beginPath();ctx.moveTo(cx0+cw*.25,cy0+ch*.06);ctx.bezierCurveTo(cx0+cw*.38,cy0-ch*.05,cx0+cw*.62,cy0-ch*.05,cx0+cw*.75,cy0+ch*.06);ctx.lineTo(cx0+cw*.83,cy0+ch*.33);ctx.lineTo(cx0+cw*.17,cy0+ch*.33);ctx.closePath();ctx.fill();
+    ctx.strokeStyle="#f4a98744";ctx.lineWidth=1.2;ctx.beginPath();ctx.moveTo(cx0+cw*.07,cy0+ch*.39);ctx.lineTo(cx0+cw*.93,cy0+ch*.39);ctx.stroke();
+    const tg=ctx.createLinearGradient(cx0,0,cx0+cw,0);tg.addColorStop(0,"#ffb08a");tg.addColorStop(.5,"#ff9068");tg.addColorStop(1,"#ffb08a");
+    ctx.shadowColor="#ff9068";ctx.shadowBlur=24;ctx.fillStyle=tg;ctx.fillRect(cx0+cw*.06,cy0+ch*.47,cw*.88,ch*.045);ctx.shadowBlur=0;
+    const gl=ctx.createRadialGradient(vx,cy0+ch*.5,0,vx,cy0+ch*.5,cw*.7);gl.addColorStop(0,"#ff906826");gl.addColorStop(1,"#ff906800");ctx.fillStyle=gl;ctx.fillRect(cx0-cw*.3,cy0,cw*1.6,ch*1.4);
+    ctx.fillStyle="#f3efe744";ctx.fillRect(vx-cw*.07,cy0+ch*.62,cw*.14,ch*.08);
+    const cy2=ctx.createRadialGradient(W*.92,H*.2,0,W*.92,H*.2,W*.35);cy2.addColorStop(0,"#68d4d01c");cy2.addColorStop(1,"#68d4d000");ctx.fillStyle=cy2;ctx.fillRect(0,0,W,H);
+    if(!still)INTRO_RAF=requestAnimationFrame(frame);
+  }
+  INTRO_RAF=requestAnimationFrame(frame);
+}
+
+/* ---------- Grooveville Radio (Spotify embed or a licensed stream) ---------- */
+const RD={open:false,playing:false,ctrl:null,audio:null,key:"",wantPlay:false,apiLoading:false};
+function spotifyUri(u){const x=/open\.spotify\.com\/(?:intl-[a-z-]+\/)?(playlist|album|track|artist|show|episode)\/([A-Za-z0-9]+)/.exec(u||"")||/spotify:(playlist|album|track|artist|show|episode):([A-Za-z0-9]+)/.exec(u||"");return x?"spotify:"+x[1]+":"+x[2]:""}
+function radioSrc(){const m=siteCfg("music");const sp=spotifyUri(m.spotify);if(sp)return {kind:"spotify",uri:sp,name:m.station,attr:"Playback and audio by Spotify. Some listeners hear previews unless signed in to Spotify."};if(/^https:\/\//.test(m.stream||""))return {kind:"stream",url:m.stream,name:m.station,attr:m.streamAttr||"Grooveville-licensed stream"};return null}
+function renderRadio(){
+  const el=$("#radio");if(!el)return;const src=radioSrc();
+  if(!src||S.route.startsWith("team")&&!RD.playing){if(!src&&RD.key){radioStop()}if(!src){el.innerHTML="";RD.key="";return}}
+  const key=src.kind+"|"+(src.uri||src.url);
+  if(RD.key!==key){radioStop();RD.key=key;RD.open=false;const art=slotSrc("radio-art")||LOGO;
+    el.innerHTML='<div class="panel" id="rdPanel" hidden><div style="display:flex;align-items:center;gap:8px;margin-bottom:10px"><b style="flex:1">'+esc(src.name)+'</b><button class="ic" data-act="radio-close" aria-label="Collapse player">⌄</button></div><div class="emb" id="rdEmbed">'+(src.kind==="spotify"?'<div id="rdHost"></div>':'<div style="padding:12px;display:flex;flex-direction:column;gap:8px"><label class="f" style="color:#cfc9bf">Volume<input type="range" min="0" max="1" step=".05" value=".8" id="rdVol" aria-label="Volume"></label></div>')+'</div><small class="attr">'+esc(src.attr)+'</small></div>'+
+      '<div class="pill0"><button class="pp" data-act="radio-toggle" aria-label="Play Grooveville Radio">▶</button><img class="art0" src="'+esc(art)+'" alt=""><div class="meta"><b>'+esc(src.name)+'</b><small>'+(src.kind==="spotify"?"Spotify playlist":"Live stream")+'</small></div><button class="ic" data-act="radio-expand" aria-label="Expand player" aria-expanded="false">⌃</button></div>';
+    const vol=$("#rdVol");if(vol)vol.addEventListener("input",()=>{if(RD.audio)RD.audio.volume=Number(vol.value)});
+  }
+  syncRadio();
+}
+function syncRadio(){const b=$("#radio .pp");if(b){b.textContent=RD.playing?"❚❚":"▶";b.setAttribute("aria-label",RD.playing?"Pause Grooveville Radio":"Play Grooveville Radio")}
+  const p=$("#rdPanel");if(p)p.hidden=!RD.open;const x=$("#radio [data-act=radio-expand]");if(x){x.setAttribute("aria-expanded",RD.open?"true":"false");x.textContent=RD.open?"⌄":"⌃"}
+  document.querySelectorAll("[data-act=radio-play]").forEach(btn=>{btn.textContent=RD.playing?"❚❚ Pause radio":"▶ Play radio"})}
+function spotifyInit(){
+  const src=radioSrc();if(!src||src.kind!=="spotify"||RD.ctrl)return;
+  const go=api=>{const host=$("#rdHost");if(!host)return;api.createController(host,{uri:src.uri,width:"100%",height:152},c=>{RD.ctrl=c;c.addListener("playback_update",e=>{RD.playing=!(e.data&&e.data.isPaused);syncRadio()});c.addListener("ready",()=>{if(RD.wantPlay){RD.wantPlay=false;try{c.play()}catch(e){}}})})};
+  if(window.__spApi)return go(window.__spApi);
+  window.onSpotifyIframeApiReady=api=>{window.__spApi=api;go(api)};
+  if(!RD.apiLoading){RD.apiLoading=true;const s=document.createElement("script");s.src="https://open.spotify.com/embed/iframe-api/v1";s.async=true;s.onerror=()=>{const h=$("#rdEmbed");if(h)h.innerHTML='<iframe title="Grooveville Radio on Spotify" style="border:0;width:100%;height:152px" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" src="https://open.spotify.com/embed/'+src.uri.split(":").slice(1).join("/")+'"></iframe>'};document.head.appendChild(s)}
+}
+function radioPlay(){const src=radioSrc();if(!src)return;renderRadio();
+  if(src.kind==="spotify"){RD.open=true;syncRadio();if(RD.ctrl){try{RD.ctrl.play()}catch(e){RD.ctrl.togglePlay()}}else{RD.wantPlay=true;spotifyInit()}return}
+  if(!RD.audio){RD.audio=new Audio(src.url);RD.audio.preload="none";RD.audio.addEventListener("play",()=>{RD.playing=true;syncRadio()});RD.audio.addEventListener("pause",()=>{RD.playing=false;syncRadio()});RD.audio.addEventListener("error",()=>toast("The radio stream couldn't be reached"))}
+  const v=$("#rdVol");if(v)RD.audio.volume=Number(v.value);RD.audio.play().catch(()=>toast("Press play again to start the radio"))}
+function radioPause(){if(RD.ctrl){try{RD.ctrl.pause()}catch(e){}}if(RD.audio)RD.audio.pause();RD.playing=false;syncRadio()}
+function radioStop(){radioPause();if(RD.ctrl){try{RD.ctrl.destroy()}catch(e){}}RD.ctrl=null;RD.audio=null}
+function radioToggle(){if(RD.playing){radioPause();if(S.sound){S.sound=false;syncSoundBtns()}}else{radioPlay();if(!S.sound){S.sound=true;syncSoundBtns()}}}
+
+/* ---------- Entertainment: Music, Radio, Artists, Events ---------- */
+const mItems=k=>{const l=(siteCfg("music")[k]||[]).filter(i=>i&&!i.hidden&&(!i.from||i.from<=today()));return k==="trending"?sortBy(l,i=>Number(i.rank)||999):l};
+function mEmpty(what){return '<div class="empty">'+(S.isAdmin?'No '+what+' yet. Add them in <a href="#team-web" data-act="web-sec" data-v="music">Back office › Website › Music &amp; Radio</a>.':what.charAt(0).toUpperCase()+what.slice(1)+' are coming soon.')+'</div>'}
+function mCard(i){const im=slotSrc("mus-"+i.id);return '<a class="mitem" '+(i.url?'href="'+esc(i.url)+'" target="_blank" rel="noopener"':'href="#b-ent/music"')+'><span class="cov">'+(im?'<img src="'+esc(im)+'" alt="'+esc(i.title)+' artwork" loading="lazy">':'<b aria-hidden="true">♪</b>')+'</span><span><h4>'+esc(i.title)+'</h4><p>'+esc([i.artist,i.kind].filter(Boolean).join(" · "))+'</p>'+(i.desc?'<p style="margin-top:4px">'+esc(i.desc)+'</p>':'')+'</span></a>'}
+function radioCard(big){const src=radioSrc(),m=siteCfg("music"),art=slotSrc("radio-art");
+  return '<div class="radiocard"><div><div class="kicker">Grooveville Radio</div><h2 class="disp" style="margin-top:10px">'+esc(m.station)+'</h2><p class="muted" style="margin-top:10px;max-width:44ch">'+(src?(src.kind==="spotify"?'A Grooveville playlist, played through Spotify. Keep it going in the mini-player while you explore the site.':'A Grooveville-licensed stream. Keep it going in the mini-player while you explore the site.'):'The station is getting tuned. Check back soon.')+'</p>'+
+    (src?'<button class="btn peach" style="margin-top:20px" data-act="radio-play">'+(RD.playing?"❚❚ Pause radio":"▶ Play radio")+'</button><p class="muted" style="font-size:12.5px;margin-top:10px">'+esc(src.attr)+'</p>':'')+'</div>'+
+    '<div style="aspect-ratio:'+(big?"16/10":"16/9")+';border-radius:16px;overflow:hidden;background:radial-gradient(70% 70% at 30% 30%,#f4a98766,transparent 70%),radial-gradient(60% 60% at 80% 80%,#68d4d044,transparent 70%),#111;display:grid;place-items:center">'+(art?'<img src="'+esc(art)+'" alt="Grooveville Radio artwork" style="width:100%;height:100%;object-fit:cover">':'<img src="'+LOGO+'" alt="" width="120" height="120" style="border-radius:50%;opacity:.9">')+'</div></div>'}
+function entSub(sub){
+  if(sub==="music"){
+    const tr=mItems("trending");
+    return radioCard()+
+      MLISTS.map(([k,l])=>{const it=mItems(k);
+        if(k==="trending")return '<div class="msec"><h2>'+l+'</h2><p class="muted" style="margin:-8px 0 12px;font-size:13.5px">Labels show where each ranking comes from: <span class="srcl ed">Grooveville pick</span> <span class="srcl li">Listener favorite</span> <span class="srcl ch">Platform chart</span></p>'+(tr.length?tr.map((i,n)=>{const im=slotSrc("mus-"+i.id);return '<div class="trend"><span class="rk">'+(n+1)+'</span>'+(im?'<img src="'+esc(im)+'" alt="">':'<span class="ph0"></span>')+'<span style="min-width:0"><b>'+esc(i.title)+'</b><div class="muted" style="font-size:13.5px">'+esc(i.artist||"")+'</div></span><span style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:flex-end">'+(i.source==="chart"?'<span class="srcl ch">'+esc(i.chart||"Platform chart")+'</span>':i.source==="listener"?'<span class="srcl li">Listener favorite</span>':'<span class="srcl ed">Grooveville pick</span>')+(i.url?'<a class="btn ghost sm" href="'+esc(i.url)+'" target="_blank" rel="noopener">Listen ↗</a>':'')+'</span></div>'}).join(""):mEmpty("trending songs"))+'</div>';
+        return '<div class="msec"><h2>'+l+'</h2>'+(it.length?'<div class="mgrid">'+it.map(mCard).join("")+'</div>':mEmpty(l.toLowerCase()))+'</div>'}).join("");
+  }
+  if(sub==="radio")return radioCard(true)+'<div class="msec"><h2>How the radio works</h2><div class="card"><p style="max-width:70ch">Grooveville Radio plays a Grooveville playlist through Spotify\'s official player, or a stream Grooveville owns or licenses. The mini-player stays with you as you move around the site. Spotify may play short previews for listeners who aren\'t signed in to Spotify.</p></div></div>'+
+    '<div class="msec"><h2>Curated Playlists</h2>'+(mItems("playlists").length?'<div class="mgrid">'+mItems("playlists").map(mCard).join("")+'</div>':mEmpty("playlists"))+'</div>';
+  if(sub==="artists"){const a=mItems("artists");return a.length?'<div class="mgrid">'+a.map(mCard).join("")+'</div>':mEmpty("featured artists")}
+  if(sub==="events"){const ev=upcomingEvents(pub().events).filter(e=>e.brand==="ent"||e.brand==="music").slice(0,12);return ev.length?'<div class="evlist">'+ev.map(e=>evRow(e)).join("")+'</div>':'<div class="empty">No Entertainment events are posted yet. Watch the <a href="#calendar">calendar</a>.</div>'}
+  return "";
+}
+
+/* ---------- AELIO ---------- */
+function viewAelio(){
+  const b=brandInfo("aelio"),A=siteCfg("aelio"),url=b.website||"https://aelio.live/";
+  const h=A.headline.trim(),sp=h.indexOf(" "),first=sp>0?h.slice(0,sp):h,rest=sp>0?h.slice(sp+1):"";
+  return '<div class="ae" style="'+cvar("aelio")+'"><section class="aehero"><div class="wrap"><div class="crumb" style="margin-bottom:26px;font-size:13px;color:#9aa0a8"><button class="backbtn" data-act="go-back" aria-label="Go back" style="background:#0d0f12;color:#fff;border-color:#ffffff2a">‹ Back</button><a href="#b-hq" style="color:#9aa0a8">Grooveville LLC</a> › AELIO</div>'+
+    '<div class="eb">'+esc(A.eyebrow)+'</div><h1><span class="g">'+esc(first)+'</span> <span class="w">'+esc(rest)+'</span></h1><div class="sub">'+esc(A.tagline)+'</div><p class="desc">'+esc(A.desc)+'</p>'+
+    '<a class="gbtn" href="'+esc(url)+'" target="_blank" rel="noopener noreferrer">EXPLORE AELIO ↗</a></div></section>'+
+    '<section class="eco"><div class="wrap"><div class="eb" style="font-size:13px">'+esc(A.ecoEyebrow)+'</div><h2>'+esc(A.ecoHead)+'</h2><p>'+esc(A.ecoDesc)+'</p></div></section>'+
+    '<section class="pers"><div class="wrap"><div class="pershead"><div><h2>'+esc(A.persTitle).replace(" ","<br>")+'</h2><small>'+esc(A.persSub)+'</small></div><div class="eqbars" aria-hidden="true">'+[10,22,14,26,30,16,8,24,18].map(x=>'<i style="height:'+x+'px"></i>').join("")+'</div></div>'+
+    '<div class="pcards" aria-label="AELIO personalities">'+A.pers.map((p,i)=>'<div class="pcard" tabindex="0" role="group" aria-label="'+pad(i+1)+' '+esc(p.n)+': '+esc(p.d)+'">'+imgTag("aelio-p"+(i+1),p.n+" personality","")+'<div class="pc"><i>'+pad(i+1)+'</i><b>'+esc(p.n)+'</b><span>'+esc(p.d)+'</span></div></div>').join("")+'</div></div></section>'+
+    '<section class="closing"><div class="wrap" style="display:flex;gap:20px;align-items:center;flex-wrap:wrap;justify-content:space-between"><p>'+esc(A.closing)+'</p><div style="display:flex;gap:10px;flex-wrap:wrap"><a class="gbtn" style="margin:0" href="'+esc(url)+'" target="_blank" rel="noopener noreferrer">aelio.live ↗</a><a class="btn line" href="#collab-aelio">Collaborate with AELIO</a></div></div></section></div>';
+}
+
+/* ---------- after-render wiring: vine tooltips, gallery counter ---------- */
+let vtipFor=null;
+function hideVtip(){const t=$(".vtip");if(t)t.remove();vtipFor=null}
+function showVtip(node,x,y){
+  const id=node.dataset.vine,b=brandInfo(id);if(vtipFor===id&&$(".vtip"))return;hideVtip();vtipFor=id;
+  const t=document.createElement("div");t.className="vtip";t.setAttribute("role","tooltip");t.style.cssText=cvar(id);
+  t.innerHTML='<small>'+esc(b.cat||b.role)+'</small><b>'+esc(b.name)+'</b><p>'+esc(b.tagline)+'</p><a href="#b-'+id+'">Explore '+esc(b.short==="AELIO"?"AELIO":b.name.replace(/^Grooveville /,""))+' →</a>';
+  document.body.appendChild(t);const r=t.getBoundingClientRect();
+  t.style.left=Math.max(8,Math.min(innerWidth-r.width-8,x-r.width/2))+"px";t.style.top=Math.max(8,(y-r.height-18<8?y+22:y-r.height-18))+"px";
+}
+function wireHome(){
+  const svg=$("#app svg.tree");if(svg&&!svg._w){svg._w=1;
+    svg.addEventListener("pointerover",e=>{const n=e.target.closest(".node[data-vine]");if(n&&e.pointerType==="mouse")showVtip(n,e.clientX,e.clientY)});
+    svg.addEventListener("pointerleave",e=>{if(e.pointerType==="mouse")setTimeout(()=>{if(!document.querySelector(".vtip:hover"))hideVtip()},250)});
+    svg.addEventListener("focusin",e=>{const n=e.target.closest(".node[data-vine]");if(n){const r=n.getBoundingClientRect();showVtip(n,r.left+r.width/2,r.top)}});
+    svg.addEventListener("click",e=>{const n=e.target.closest(".node[data-vine]");if(!n)return;if(matchMedia("(hover: none)").matches&&vtipFor!==n.dataset.vine){e.preventDefault();const r=n.getBoundingClientRect();showVtip(n,r.left+r.width/2,r.top)}});
+  }
+  const c=$("#galCards");if(c&&!c._w){c._w=1;c.addEventListener("scroll",()=>{const w=(c.firstElementChild||{}).offsetWidth||1;const i=Math.round(c.scrollLeft/(w+16));const n=$("#galN");if(n)n.textContent=pad(Math.min(i+1,c.children.length))+" / "+pad(c.children.length)},{passive:true})}
+}
+document.addEventListener("pointerdown",e=>{if(!e.target.closest(".vtip,.tree"))hideVtip()});
+addEventListener("scroll",()=>{if(vtipFor&&matchMedia("(hover: hover)").matches)hideVtip()},{passive:true});
+
+/* ---------- Back office › Website ---------- */
+const WEB_SECS=[["media","Media library"],["companies","Companies"],["aelio","AELIO"],["music","Music & Radio"]];
+function slotList(){
+  const L=[{id:"intro-poster",g:"Cinematic entry",label:"Entry poster image",r:"16/9",note:"Optional. Replaces the animated Charlotte drive with a still."},
+    {id:"intro-video",g:"Cinematic entry",label:"Entry film",kind:"video",note:"Link to an MP4 or WebM you own or license. Plays muted; skipped on slow connections."},
+    {id:"intro-audio",g:"Cinematic entry",label:"Entry sound",kind:"audio",note:"Optional audio link for SOUND ON. Without it a soft built-in tone plays."},
+    {id:"home-hero",g:"Homepage",label:"Hero photo",r:"16/9"},{id:"home-collab",g:"Homepage",label:"Collaborate photo",r:"4/3"},{id:"home-story",g:"Homepage",label:"Our Story photo",r:"4/3"}];
+  VENTURES().forEach(b=>L.push({id:"card-"+b.id,g:"Company cards & pages",label:brandInfo(b.id).name+" card",r:"4/5"}));
+  L.push({id:"card-hq",g:"Company cards & pages",label:"Grooveville LLC (HQ) page",r:"16/9"},{id:"hero-ent",g:"Entertainment & Music",label:"Entertainment hero",r:"16/9"},{id:"radio-art",g:"Entertainment & Music",label:"Radio artwork",r:"1/1"});
+  for(let i=1;i<=6;i++)L.push({id:"aelio-p"+i,g:"AELIO",label:pad(i)+" "+siteCfg("aelio").pers[i-1].n,r:"1/1"});
+  upcomingEvents(S.events.filter(e=>e.visibility==="public")).slice(0,12).forEach(e=>{if(!L.some(x=>x.id==="ev-"+e.id))L.push({id:"ev-"+e.id,g:"Event images",label:e.title+" · "+fmtDate(e.date),r:"4/3"})});
+  L.push({id:"vine-art",g:"Protected brand assets",label:"The Groove Vine",r:"1/1",prot:true,note:"The original illustrated vine is drawn in code and stays interactive. Only replace it on purpose."});
+  return L;
+}
+function viewWebsite(){
+  const sec=S.web.sec;
+  return '<div class="seg" role="tablist" style="margin-bottom:20px">'+WEB_SECS.map(([k,l])=>'<button role="tab" aria-selected="'+(sec===k)+'" class="'+(sec===k?"on":"")+'" data-act="web-sec" data-v="'+k+'">'+l+'</button>').join("")+'</div>'+
+    ({media:webMedia,companies:webCompanies,aelio:webAelio,music:webMusic}[sec]||webMedia)();
+}
+function slotCard(s){
+  const m=S.media[s.id],src=s.kind?"":(m&&m.data)||ASSETS[DEFIMG[s.id]]||"";
+  const st=m?(m.hidden?'<span class="pill priv">Custom · not published</span>':'<span class="pill pub">Custom · published</span>'):(DEFIMG[s.id]?'<span class="pill priv">Default</span>':'<span class="pill priv">Empty</span>');
+  return '<div class="mslot"><div class="mth">'+(src?'<img src="'+esc(src)+'" alt="" style="object-position:'+esc((m&&m.focal)||"50% 50%")+'">':s.kind?'<span>'+(m&&m.url?(s.kind==="video"?"🎬 ":"♪ ")+esc(m.url.replace(/^https?:\/\//,"").slice(0,40)):"No "+s.kind+" set")+'</span>':s.prot?'<span>Original vine (code)</span>':'<span>No image</span>')+'</div>'+
+    '<div class="mb"><b>'+esc(s.label)+'</b>'+st+(s.note?'<span class="muted" style="font-size:12.5px">'+esc(s.note)+'</span>':'')+(m&&m.alt?'<span class="muted" style="font-size:12.5px">Alt: '+esc(m.alt)+'</span>':'')+
+    '<div class="acts"><button class="btn olive sm" data-act="media-edit" data-id="'+esc(s.id)+'">'+(s.kind?"Set link":m?"Replace / edit":"Replace image")+'</button>'+(m&&m.prev?'<button class="btn ghost sm" data-act="media-restore" data-id="'+esc(s.id)+'">Restore previous</button>':'')+(m?'<button class="btn ghost sm" data-act="media-reset" data-id="'+esc(s.id)+'">'+(DEFIMG[s.id]?"Back to default":"Remove")+'</button>':'')+'</div></div></div>';
+}
+function webMedia(){
+  const L=slotList(),groups=[...new Set(L.map(s=>s.g))];
+  return '<p class="muted" style="max-width:72ch;margin-bottom:16px">Every photo on the public site lives in a slot. Replace an image, set its focal point and alt text, and publish it. Images are resized in your browser and saved to Firebase, so keep uploads to photos you own or license.</p>'+
+    groups.map(g=>'<h3 style="font-size:19px;margin:26px 0 12px">'+esc(g)+'</h3><div class="mlib">'+L.filter(s=>s.g===g).map(slotCard).join("")+'</div>').join("");
+}
+function webCompanies(){
+  return '<p class="muted" style="max-width:72ch;margin-bottom:12px">Order sets where each company appears in the featured gallery, directory and footer. The Groove Vine keeps its original positions.</p><div class="mbox">'+
+    VENTURES().map(b0=>{const b=brandInfo(b0.id);return '<div class="lrow"><img class="th" src="'+esc(slotSrc("card-"+b.id)||b.logo||LOGO)+'" alt=""><div style="min-width:0">'+chip(b.id)+'<div class="muted" style="font-size:12.5px;margin-top:4px">'+esc(b.website||b.social||"No website")+'</div>'+
+      '<div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:8px;font-size:13px;align-items:center"><label>Order <input class="i" type="number" min="1" max="99" style="width:70px;padding:4px 6px" id="ord-'+b.id+'" value="'+esc(b.order||"")+'"></label><label><input type="checkbox" id="feat-'+b.id+'"'+(b.unfeatured?'':' checked')+'> Featured</label><label><input type="checkbox" id="pubv-'+b.id+'"'+(b.hidden?'':' checked')+'> Published</label></div></div>'+
+      '<div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end"><button class="btn ghost sm" data-act="co-save" data-id="'+b.id+'">Save</button><button class="btn ghost sm" data-act="edit-brand" data-id="'+b.id+'">Edit text</button><button class="btn ghost sm" data-act="media-edit" data-id="card-'+b.id+'">Image</button><a class="rowbtn" href="#b-'+b.id+'">View</a></div></div>'}).join("")+'</div>'+
+    '<div class="mbox"><b>Grooveville Music</b><p class="muted" style="font-size:13.5px;margin-top:4px">Music is a division of Grooveville Entertainment now. Its timesheet slot and data are unchanged; the public page lives at Entertainment › Music, and old Music links forward there.</p></div>';
+}
+function webAelio(){
+  const A=siteCfg("aelio"),b=brandInfo("aelio"),f=(k,l,ta)=>'<label class="f">'+l+(ta?'<textarea class="i" name="'+k+'">'+esc(A[k])+'</textarea>':'<input class="i" name="'+k+'" value="'+esc(A[k])+'">')+'</label>';
+  return '<form class="mbox" id="aeForm" style="display:flex;flex-direction:column;gap:12px"><div class="sechead" style="margin:0"><h3 style="font-size:20px">AELIO page</h3><a class="rowbtn" href="#b-aelio">View page</a></div>'+
+    '<div class="grid2"><label class="f">Company name<input class="i" name="name" value="'+esc(b.name)+'"></label><label class="f">Official website<input class="i" type="url" name="website" value="'+esc(b.website||"https://aelio.live/")+'"></label></div>'+
+    '<div class="grid2">'+f("eyebrow","Eyebrow")+f("headline","Headline")+'</div>'+f("tagline","Tagline")+f("desc","Description",1)+
+    '<div class="grid2">'+f("ecoEyebrow","Ecosystem eyebrow")+f("ecoHead","Ecosystem headline")+'</div>'+f("ecoDesc","Ecosystem description",1)+
+    '<div class="grid2">'+f("persTitle","Personalities title")+f("persSub","Personalities subtitle")+'</div>'+f("closing","Closing statement")+
+    '<h4 style="margin-top:8px">Personalities</h4>'+A.pers.map((p,i)=>'<div class="lrow" style="grid-template-columns:auto minmax(0,1fr) minmax(0,1.3fr) auto"><img class="th" src="'+esc(slotSrc("aelio-p"+(i+1)))+'" alt=""><input class="i" name="pn'+i+'" value="'+esc(p.n)+'" aria-label="Personality '+(i+1)+' name"><input class="i" name="pd'+i+'" value="'+esc(p.d)+'" aria-label="Personality '+(i+1)+' description"><button type="button" class="btn ghost sm" data-act="media-edit" data-id="aelio-p'+(i+1)+'">Image</button></div>').join("")+
+    '<div><button class="btn olive" type="submit">Save AELIO</button></div></form>';
+}
+function webMusic(){
+  const m=siteCfg("music");
+  return '<form class="mbox" id="radioForm" style="display:flex;flex-direction:column;gap:12px"><h3 style="font-size:20px">Grooveville Radio</h3>'+
+    '<div class="grid2"><label class="f">Station name<input class="i" name="station" value="'+esc(m.station)+'"></label><label class="f">Featured Spotify playlist link<input class="i" name="spotify" placeholder="https://open.spotify.com/playlist/…" value="'+esc(m.spotify)+'"></label></div>'+
+    '<div class="grid2"><label class="f">Licensed stream URL (optional)<input class="i" type="url" name="stream" placeholder="https://…" value="'+esc(m.stream)+'"></label><label class="f">Stream attribution<input class="i" name="streamAttr" value="'+esc(m.streamAttr)+'"></label></div>'+
+    '<p class="muted" style="font-size:13px">Spotify plays through its official embedded player (no client secret needed). A stream URL is only used when no Spotify link is set. Only add streams Grooveville owns or licenses.</p>'+
+    '<div style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn olive" type="submit">Save radio</button><button type="button" class="btn ghost" data-act="media-edit" data-id="radio-art">Radio artwork</button></div></form>'+
+    MLISTS.map(([k,l])=>{const it=(m[k]||[]);return '<div class="mbox"><div class="sechead" style="margin-bottom:6px"><h3 style="font-size:19px">'+l+'</h3><button class="btn olive sm" data-act="mus-new" data-k="'+k+'">+ Add</button></div>'+
+      (k==="trending"?'<p class="muted" style="font-size:12.5px">Mark each song as a Grooveville pick, a listener favorite, or a platform chart position (name the chart). Never enter numbers you can\'t verify.</p>':'')+
+      (it.length?it.map((i,n)=>'<div class="lrow"><img class="th" src="'+esc(slotSrc("mus-"+i.id)||LOGO)+'" alt=""><div style="min-width:0"><b>'+esc(i.title)+'</b><div class="muted" style="font-size:12.5px">'+esc([i.artist,i.kind,k==="trending"?"#"+(i.rank||"–"):""].filter(Boolean).join(" · "))+(i.hidden?' · <span class="pill priv">Unpublished</span>':'')+(i.from&&i.from>today()?' · <span class="pill high">Shows '+esc(fmtDate(i.from))+'</span>':'')+'</div></div><div style="display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end"><button class="rowbtn" data-act="mus-move" data-k="'+k+'" data-i="'+n+'" data-d="-1" aria-label="Move up">↑</button><button class="rowbtn" data-act="mus-move" data-k="'+k+'" data-i="'+n+'" data-d="1" aria-label="Move down">↓</button><button class="btn ghost sm" data-act="mus-edit" data-k="'+k+'" data-id="'+esc(i.id)+'">Edit</button></div></div>').join(""):'<div class="empty" style="padding:16px">Nothing here yet.</div>')+'</div>'}).join("");
+}
+async function saveSite(patch){return save("settings","site",Object.assign({brands:{}},S.site,patch))}
+async function saveMusic(m){const cur=Object.assign({},(S.site||{}).music||{});return saveSite({music:Object.assign(cur,m)})}
+function shrinkImage(file,maxW,maxChars){return new Promise(res=>{const fr=new FileReader();fr.onload=()=>{const im=new Image();im.onload=()=>{let w=im.width,h=im.height;const k=Math.min(1,maxW/w);w=Math.round(w*k);h=Math.round(h*k);const c=document.createElement("canvas");c.width=w;c.height=h;c.getContext("2d").drawImage(im,0,0,w,h);
+  let q=.86,out=c.toDataURL("image/webp",q);if(!/^data:image\/webp/.test(out))out=c.toDataURL("image/jpeg",q);while(out.length>maxChars&&q>.4){q-=.08;out=c.toDataURL(/webp/.test(out)?"image/webp":"image/jpeg",q)}
+  if(out.length>maxChars){const c2=document.createElement("canvas");c2.width=Math.round(w*.7);c2.height=Math.round(h*.7);c2.getContext("2d").drawImage(c,0,0,c2.width,c2.height);out=c2.toDataURL("image/jpeg",.72)}
+  res(out.length>maxChars?null:out)};im.onerror=()=>res(null);im.src=fr.result};fr.onerror=()=>res(null);fr.readAsDataURL(file)})}
+function mediaModal(id){
+  const s=slotList().find(x=>x.id===id)||{id,label:id.startsWith("mus-")?"Artwork":id,r:"1/1"},m=S.media[id]||{};
+  if(s.kind){
+    openModal('<h3>'+esc(s.label)+'</h3><p class="muted">'+esc(s.note||"")+'</p><form id="mf" style="display:flex;flex-direction:column;gap:12px"><label class="f">Link (https)<input class="i" type="url" name="url" value="'+esc(m.url||"")+'" placeholder="https://…"></label>'+(s.kind==="video"?'<label style="display:flex;gap:8px;align-items:center;font-size:14px"><input type="checkbox" name="audio"'+(m.audio?" checked":"")+'> The film has a licensed soundtrack (plays only when a visitor turns sound on)</label>':'')+'<label style="display:flex;gap:8px;align-items:center;font-size:14px"><input type="checkbox" name="pub"'+(m.hidden?"":" checked")+'> Published</label>'+
+      '<p class="muted" style="font-size:12.5px">Firebase\'s free plan can\'t hold video or audio files, so host the file somewhere you control (for example, a Cloudflare R2 bucket or your repo\'s <span class="mono">media/</span> folder) and paste its link.</p><div class="row"><button type="button" class="btn ghost" data-act="close-modal">Cancel</button><button class="btn olive" type="submit">Save</button></div></form>',
+      el=>el.querySelector("#mf").addEventListener("submit",async ev=>{ev.preventDefault();const f=ev.target;const url=f.url.value.trim();if(url&&!/^https:\/\//.test(url)){toast("Use an https:// link");return}
+        if(!url){if(await remove("media",id)){closeModal();toast("Removed")}return}
+        if(await save("media",id,{kind:s.kind,url,audio:!!(f.audio&&f.audio.checked),hidden:!f.pub.checked,updatedAt:new Date().toISOString()})){closeModal();toast("Saved")}}));return;
+  }
+  const cur=m.data||ASSETS[DEFIMG[id]]||"";let data=null,focal=(m.focal||"50% 50%"),zoom=Number(m.zoom)||1;
+  openModal('<h3>'+esc(s.label)+'</h3>'+(s.prot?'<div class="banner warn" style="margin:0">This is a protected brand asset. The original Groove Vine is interactive; an uploaded picture replaces it with a still image plus a company list.</div>':'')+
+    '<form id="mf" style="display:flex;flex-direction:column;gap:12px"><label class="f">New image (JPG, PNG or WebP)<input class="i" type="file" accept="image/jpeg,image/png,image/webp" id="mfile"></label>'+
+    '<div class="f" style="font-size:13px;font-weight:600;color:var(--muted)">Focal point: click the picture where the subject is<div class="focus-frame" id="ff" style="aspect-ratio:'+esc(s.r||"16/9")+';margin-top:6px">'+(cur?'<img id="fimg" src="'+esc(cur)+'" alt="">':'<div class="empty" id="fimg0" style="height:100%;display:grid;place-items:center">Choose an image</div>')+'<span class="focus-dot" id="fdot"></span></div><span style="font-weight:400">The frame shows how it\'s cropped on the site.</span></div>'+
+    '<label class="f">Zoom<input type="range" min="1" max="2" step=".05" id="mzoom" value="'+zoom+'"></label>'+
+    '<label class="f">Alt text (describe the picture for screen readers)<input class="i" name="alt" value="'+esc(m.alt||"")+'"></label>'+
+    '<label class="f">Description / credit (back office only)<input class="i" name="desc" value="'+esc(m.desc||"")+'"></label>'+
+    '<label style="display:flex;gap:8px;align-items:center;font-size:14px"><input type="checkbox" name="pub"'+(m.hidden?"":" checked")+'> Published (visitors see this image)</label>'+
+    (s.prot?'<label style="display:flex;gap:8px;align-items:center;font-size:14px"><input type="checkbox" name="sure"> I\'m intentionally replacing the original Groove Vine</label>':'')+
+    '<div class="row"><button type="button" class="btn ghost" data-act="close-modal">Cancel</button><button class="btn olive" type="submit">Save image</button></div></form>',
+  el=>{
+    const ff=el.querySelector("#ff"),dot=el.querySelector("#fdot"),zr=el.querySelector("#mzoom");
+    const paint=()=>{const im=el.querySelector("#fimg");const [x,y]=focal.split(" ");dot.style.left=x;dot.style.top=y;if(im){im.style.objectPosition=focal;im.style.transform=zoom>1?"scale("+zoom+")":"";im.style.transformOrigin=focal}};paint();
+    ff.addEventListener("click",e=>{const r=ff.getBoundingClientRect();focal=Math.round((e.clientX-r.left)/r.width*100)+"% "+Math.round((e.clientY-r.top)/r.height*100)+"%";paint()});
+    zr.addEventListener("input",()=>{zoom=Number(zr.value);paint()});
+    el.querySelector("#mfile").addEventListener("change",async e=>{const fl=e.target.files[0];if(!fl)return;if(fl.size>25e6){toast("That file is over 25 MB");return}
+      if(!/^image\/(jpeg|png|webp)$/.test(fl.type)){toast("Use a JPG, PNG or WebP image");return}
+      data=await shrinkImage(fl,id.startsWith("mus-")||id.startsWith("aelio")||id.startsWith("ev-")?900:1800,620000);if(!data){toast("Couldn't read that image");return}
+      const old=el.querySelector("#fimg")||el.querySelector("#fimg0");const im=document.createElement("img");im.id="fimg";im.src=data;im.alt="";old.replaceWith(im);focal="50% 50%";paint()});
+    el.querySelector("#mf").addEventListener("submit",async ev=>{ev.preventDefault();const f=ev.target;
+      if(s.prot&&!f.sure.checked){toast("Tick the box to confirm you're replacing the vine");return}
+      if(!data&&!m.data&&!cur){toast("Choose an image first");return}
+      const rec={alt:f.alt.value.trim(),desc:f.desc.value.trim(),focal,zoom,hidden:!f.pub.checked,updatedAt:new Date().toISOString(),by:S.uid||""};
+      const base=data||m.data||"";if(base)rec.data=base;else if(DEFIMG[id])rec.def=true;else{toast("Choose an image first");return}
+      if(data&&m.data){const prev={data:m.data,alt:m.alt||"",focal:m.focal||"",zoom:m.zoom||1};if(JSON.stringify(rec).length+JSON.stringify(prev).length<980000)rec.prev=prev}
+      if(await save("media",id,rec)){closeModal();toast(rec.hidden?"Saved, not published":"Image published")}});
+  });
+}
+function musModal(k,item){
+  const d=Object.assign({id:uid(),title:"",artist:"",kind:k==="artists"?"Artist":k==="playlists"?"Playlist":"Single",desc:"",url:"",rank:"",source:"editorial",chart:"",from:"",hidden:false},item||{});
+  openModal('<h3>'+(item?"Edit":"Add")+' · '+esc((MLISTS.find(x=>x[0]===k)||[,""])[1])+'</h3><form id="mf" style="display:flex;flex-direction:column;gap:12px">'+
+    '<div class="grid2"><label class="f">'+(k==="artists"?"Artist name":"Title")+' *<input class="i" name="title" required value="'+esc(d.title)+'"></label><label class="f">'+(k==="artists"?"Genre or role":"Artist")+'<input class="i" name="artist" value="'+esc(d.artist)+'"></label></div>'+
+    '<div class="grid2"><label class="f">Type<select class="i" name="kind">'+["Single","Album","EP","Playlist","Radio program","Artist"].map(x=>'<option'+(x===d.kind?" selected":"")+'>'+x+'</option>').join("")+'</select></label><label class="f">Listen / link<input class="i" type="url" name="url" placeholder="https://open.spotify.com/…" value="'+esc(d.url)+'"></label></div>'+
+    '<label class="f">Description<textarea class="i" name="desc" style="min-height:70px">'+esc(d.desc)+'</textarea></label>'+
+    (k==="trending"?'<div class="grid2"><label class="f">Rank<input class="i" type="number" min="1" name="rank" value="'+esc(d.rank)+'"></label><label class="f">Where the ranking comes from<select class="i" name="source"><option value="editorial"'+(d.source==="editorial"?" selected":"")+'>Grooveville pick</option><option value="listener"'+(d.source==="listener"?" selected":"")+'>Grooveville listener favorite</option><option value="chart"'+(d.source==="chart"?" selected":"")+'>Platform chart (name it)</option></select></label></div><label class="f">Chart name (only for platform charts)<input class="i" name="chart" placeholder="e.g. Spotify Top 50 USA" value="'+esc(d.chart)+'"></label>':'')+
+    '<div class="grid2"><label class="f">Show from (optional)<input class="i" type="date" name="from" value="'+esc(d.from)+'"></label><label class="f">Artwork<input class="i" type="file" accept="image/jpeg,image/png,image/webp" id="mart"></label></div>'+
+    '<label style="display:flex;gap:8px;align-items:center;font-size:14px"><input type="checkbox" name="pub"'+(d.hidden?"":" checked")+'> Published</label>'+
+    '<div class="row">'+(item?'<button type="button" class="btn danger left" data-act="del-arm">Delete</button>':'')+'<button type="button" class="btn ghost" data-act="close-modal">Cancel</button><button class="btn olive" type="submit">Save</button></div></form>',
+  el=>{const mod=el;el._del=async()=>{const m=siteCfg("music");const l=(m[k]||[]).filter(x=>x.id!==d.id);if(await saveMusic({[k]:l})){if(S.media["mus-"+d.id])await remove("media","mus-"+d.id);closeModal();toast("Deleted")}};
+    el.querySelector("#mf").addEventListener("submit",async ev=>{ev.preventDefault();const f=ev.target,o=formObj(f);
+      const rec={id:d.id,title:o.title,artist:o.artist,kind:o.kind,desc:o.desc,url:o.url,from:o.from,hidden:!f.pub.checked};if(k==="trending"){rec.rank=o.rank;rec.source=o.source;rec.chart=o.source==="chart"?o.chart:""}
+      if(rec.url&&!/^https:\/\//.test(rec.url)){toast("Links need to start with https://");return}
+      const art=mod.querySelector("#mart").files[0];
+      if(art){const data=await shrinkImage(art,700,400000);if(!data){toast("Couldn't read that artwork");return}if(!await save("media","mus-"+d.id,{data,alt:rec.title+" artwork",updatedAt:new Date().toISOString()}))return}
+      const m=siteCfg("music");const l=(m[k]||[]).slice();const i=l.findIndex(x=>x.id===d.id);if(i>=0)l[i]=rec;else l.push(rec);
+      if(await saveMusic({[k]:l})){closeModal();toast("Saved")}})});
+}
+function webAct(a,t){
+  if(a==="sound"){setSound(!S.sound);return true}
+  if(a==="intro-go"){introGo();return true}
+  if(a==="intro-replay"){try{sessionStorage.removeItem("gvIntro")}catch(e){}showIntro();return true}
+  if(a==="scroll"){const el=document.getElementById(t.dataset.to);if(el)el.scrollIntoView({behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth"});return true}
+  if(a==="gal"){const c=$("#galCards");if(c){const w=(c.firstElementChild||{}).offsetWidth||260;c.scrollBy({left:Number(t.dataset.d)*(w+16),behavior:"smooth"})}return true}
+  if(a==="radio-toggle"||a==="radio-play"){radioToggle();return true}
+  if(a==="radio-expand"){RD.open=!RD.open;if(RD.open)spotifyInit();syncRadio();return true}
+  if(a==="radio-close"){RD.open=false;syncRadio();return true}
+  if(!S.isAdmin)return false;
+  if(a==="web-sec"){S.web.sec=t.dataset.v;if(location.hash!=="#team-web")location.hash="#team-web";else render();return true}
+  if(a==="media-edit"){mediaModal(t.dataset.id);return true}
+  if(a==="media-reset"){const id=t.dataset.id;openModal('<h3>'+(DEFIMG[id]?"Go back to the default image?":"Remove this?")+'</h3><p class="muted">The custom '+(id.startsWith("intro-v")||id.startsWith("intro-a")?"link":"image")+' is removed from the site.</p><div class="row"><button class="btn ghost" data-act="close-modal">Cancel</button><button class="btn danger" data-act="media-reset-go" data-id="'+esc(id)+'">Remove</button></div>');return true}
+  if(a==="media-reset-go"){remove("media",t.dataset.id).then(ok=>{if(ok){closeModal();toast("Removed")}});return true}
+  if(a==="media-restore"){const id=t.dataset.id,m=S.media[id];if(m&&m.prev){const rec=Object.assign({},m,m.prev,{prev:{data:m.data,alt:m.alt||"",focal:m.focal||"",zoom:m.zoom||1},updatedAt:new Date().toISOString()});save("media",id,rec).then(ok=>ok&&toast("Previous image restored"))}return true}
+  if(a==="co-save"){const id=t.dataset.id;const brands=Object.assign({},(S.site||{}).brands);const cur=Object.assign({},brands[id]);
+    cur.order=$("#ord-"+id).value;cur.unfeatured=$("#feat-"+id).checked?"":true;cur.hidden=$("#pubv-"+id).checked?"":true;brands[id]=cur;saveSite({brands}).then(ok=>ok&&toast("Saved"));return true}
+  if(a==="mus-new"){musModal(t.dataset.k);return true}
+  if(a==="mus-edit"){const it=(siteCfg("music")[t.dataset.k]||[]).find(x=>x.id===t.dataset.id);if(it)musModal(t.dataset.k,it);return true}
+  if(a==="mus-move"){const k=t.dataset.k,i=Number(t.dataset.i),d=Number(t.dataset.d),l=(siteCfg("music")[k]||[]).slice(),j=i+d;if(j<0||j>=l.length)return true;[l[i],l[j]]=[l[j],l[i]];saveMusic({[k]:l});return true}
+  return false;
+}
+document.addEventListener("submit",async e=>{
+  const f=e.target;if(!S.isAdmin)return;
+  if(f.id==="aeForm"){e.preventDefault();const o=formObj(f),D=DEF.aelio,ae={};Object.keys(D).forEach(k=>{if(typeof D[k]==="string")ae[k]=o[k]||D[k]});ae.pers=D.pers.map((p,i)=>({n:o["pn"+i]||p.n,d:o["pd"+i]||p.d}));
+    const brands=Object.assign({},(S.site||{}).brands);brands.aelio=Object.assign({},brands.aelio,{name:o.name,website:o.website});
+    if(o.website&&!/^https:\/\//.test(o.website)){toast("The website needs to start with https://");return}
+    if(await saveSite({aelio:ae,brands}))toast("AELIO saved")}
+  if(f.id==="radioForm"){e.preventDefault();const o=formObj(f);if(o.spotify&&!spotifyUri(o.spotify)){toast("That isn't a Spotify playlist, album or track link");return}if(o.stream&&!/^https:\/\//.test(o.stream)){toast("Stream links need to start with https://");return}
+    if(await saveMusic({station:o.station,spotify:o.spotify,stream:o.stream,streamAttr:o.streamAttr})){toast("Radio saved");renderRadio()}}
+},true);
 
 /* ---------- modals ---------- */
 const brandOpts=(sel,only)=>BRANDS.filter(b=>!only||only.includes(b.id)).map(b=>'<option value="'+b.id+'"'+(b.id===sel?" selected":"")+'>'+esc(brandInfo(b.id).name)+'</option>').join("");
@@ -1710,6 +2321,7 @@ function contactModal(){
 function brandModal(id){
   const b=brandInfo(id), cur=((S.site||{}).brands||{})[id]||{};
   openModal('<form id="mf"><h3 style="margin-bottom:4px">'+esc(b.name)+' page</h3><p class="muted" style="margin-bottom:12px;font-size:14px">Leave a field blank to keep the default text.</p><div style="display:flex;flex-direction:column;gap:12px">'+
+    '<label class="f">Company name<input class="i" id="b-name" name="name" value="'+esc(cur.name||"")+'" placeholder="'+esc(BR[id].name)+'"></label>'+
     '<label class="f">Tagline<input class="i" id="b-tag" name="tagline" value="'+esc(cur.tagline)+'" placeholder="'+esc(BR[id].tagline)+'"></label>'+
     '<label class="f">About<textarea class="i" id="b-about" name="about" placeholder="'+esc(BR[id].about)+'">'+esc(cur.about)+'</textarea></label>'+
     '<label class="f">Website (the page links out to it)<input class="i" type="url" id="b-web" name="website" value="'+esc(cur.website)+'" placeholder="https://"></label>'+
@@ -1720,7 +2332,7 @@ function brandModal(id){
     const brands=Object.assign({},(S.site||{}).brands);let logo=cur.logo||"";
     const lf=el.querySelector("#b-logo").files[0];if(lf){logo=await shrinkLogo(lf);if(!logo)return}
     const rm=el.querySelector("#b-rmlogo");if(rm&&rm.checked&&!lf)logo="";
-    brands[id]={tagline:o.tagline,about:o.about,website:o.website,social:o.social,logo};
+    brands[id]=Object.assign({},brands[id],{name:o.name||"",tagline:o.tagline,about:o.about,website:o.website,social:o.social,logo});
     if(await save("settings","site",Object.assign({},S.site,{brands}))){closeModal();toast("Saved. Publish to update the public page.")}}));
 }
 function dayModal(ds){
@@ -1770,17 +2382,22 @@ async function publishSite(btn){
 /* ---------- router & render ---------- */
 let rq=0;
 function scheduleRender(fromData){
-  if(fromData&&(S.route.startsWith("collab")||(S.route==="signin"&&$("#authForm"))))return;
+  if(fromData&&(S.route==="shadowcrown"||S.route.startsWith("collab")||(S.route==="signin"&&$("#authForm"))))return;
   if(rq)return;rq=requestAnimationFrame(()=>{rq=0;render()});
 }
 function render(){
   computeMine();
-  navLinks();
   const r=S.route, app=$("#app");
+  document.body.classList.toggle("sc-mode",r==="shadowcrown");
+  if(r==="shadowcrown"&&BACKEND==="firebase"){location.replace("/shadowcrown/");return}
+  if(r==="shadowcrown"){document.title="Shadow Crown Universe";if(!$("#scFrame"))app.innerHTML=scFrame();return}
+  if(r==="b-music"||r.startsWith("b-music/")){location.replace("#b-ent/music");return}
+  document.title="Grooveville LLC";
+  navLinks();
   let h;
   if(r==="calendar")h=viewPublicCalendar();
   else if(r.startsWith("collab"))h=viewCollab(r.split("-")[1]);
-  else if(r.startsWith("b-")&&BR[r.slice(2)])h=viewBrand(r.slice(2));
+  else if(r.startsWith("b-")&&BR[r.slice(2).split("/")[0]])h=viewBrand(r.slice(2).split("/")[0],r.slice(2).split("/")[1]||"");
   else if(r==="signin"||r==="groove")h=viewGroove();
   else if(r==="portal")h=S.signedIn&&S.db&&!S.isAdmin?viewPortalHome():viewSignin();
   else if(r==="portal-time")h=viewPortal();
@@ -1789,7 +2406,7 @@ function render(){
   else if(r.startsWith("team")){
     if(!S.isAdmin)h=viewSignin();
     else if(!S.db)h='<div class="wrap gate"><h1>Back office unavailable</h1><p class="muted">Saved records can\'t be reached in this view. Open the page from claude.ai while signed in.</p></div>';
-    else{const v={"team":viewDash,"team-time":viewTimesheet,"team-cal":()=>viewCalendar(true),"team-rem":viewReminders,"team-out":viewOutreach,"team-people":viewTeams,"team-vault":viewVault,"team-docs":viewDocs,"team-conv":viewConverter,"team-reports":viewReports,"team-site":viewSite}[r]||viewDash;h=teamShell(TEAM_TABS.some(t=>t[0]===r)?r:"team",v())}
+    else{const v={"team":viewDash,"team-time":viewTimesheet,"team-cal":()=>viewCalendar(true),"team-rem":viewReminders,"team-out":viewOutreach,"team-people":viewTeams,"team-vault":viewVault,"team-docs":viewDocs,"team-conv":viewConverter,"team-reports":viewReports,"team-site":viewSite,"team-web":viewWebsite}[r]||viewDash;h=teamShell(TEAM_TABS.some(t=>t[0]===r)?r:"team",v())}
   }
   else h=viewHome();
   app.innerHTML=h;
@@ -1802,6 +2419,7 @@ function render(){
   const cd=$("#conv-drop");if(cd){cd.addEventListener("dragover",e=>{e.preventDefault();cd.style.borderColor="var(--teal)"});cd.addEventListener("dragleave",()=>{cd.style.borderColor=""});cd.addEventListener("drop",e=>{e.preventDefault();cd.style.borderColor="";if(e.dataTransfer.files[0])convLoadStatement(e.dataTransfer.files[0])})}
   const ct=$("#conv-text");if(ct)ct.addEventListener("input",()=>{S.conv.text=ct.value});
   const tm=$("#ts-month");if(tm)tm.addEventListener("change",()=>{if(tm.value){S.ts.month=tm.value;render()}});
+  fillFooter();renderRadio();wireHome();hideVtip();
   $("#footnote").innerHTML=SNAP.publishedAt?' · Updated '+esc(new Date(SNAP.publishedAt).toLocaleDateString("en-US",{month:"short",day:"numeric",year:"numeric"})):'';
 }
 function route(){S.route=(location.hash||"#home").slice(1)||"home"}
@@ -1813,6 +2431,7 @@ document.addEventListener("click",async e=>{
   const t=e.target.closest("[data-act]");if(!t)return;
   const a=t.dataset.act, id=t.dataset.id;
   if(a==="scrim"){if(e.target===t)closeModal();return}
+  if(webAct(a,t))return;
   if(a==="close-modal")return closeModal();
   if(a==="del-arm"){t.textContent="Tap again to delete";t.dataset.act="del-go";return}
   if(a==="del-go"){const m=t.closest(".modal");if(m&&m._del)m._del();return}
@@ -1935,18 +2554,21 @@ async function fbReset(){
 /* ---------- boot ---------- */
 $("#logoNav").src=LOGO;
 $("#yr").textContent=new Date().getFullYear();
-route();render();
+try{S.sound=sessionStorage.getItem("gvSound")==="1"}catch(e){}
+route();render();syncSoundBtns();
+if(introWanted())showIntro();
 (async()=>{
   if(BACKEND==="firebase"){
     const cfg=window.FIREBASE_CONFIG;
     if(!(window.firebase&&cfg&&cfg.apiKey&&!/YOUR_/.test(cfg.apiKey))){S.authChecked=true;render();return}
     try{firebase.initializeApp(cfg);S.db=firebase.firestore();S.fbReady=true}catch(e){S.authChecked=true;render();return}
-    subscribePublic();
+    subscribePublic();subscribeMedia();
     let started=false;
     firebase.auth().onAuthStateChanged(async u=>{
       if(started&&!u){location.hash="#home";location.reload();return}
       if(!u){S.authChecked=true;render();return}
       started=true;S.signedIn=true;S.uid=u.uid;S.email=u.email||"";
+      try{const back=localStorage.getItem("gvReturn");if(back&&/^\/shadowcrown\//.test(back)){localStorage.removeItem("gvReturn");location.href=back;return}}catch(e){}
       let first=true;
       S.db.doc("access/"+u.uid).onSnapshot(d=>{
         const f=d.exists&&["founder","hnic"].includes(String(d.data().role||"").toLowerCase().replace(/["'\s]/g,""));
@@ -1966,7 +2588,7 @@ route();render();
   }
   S.signedIn=!!S.uid;
   try{S.db=await cu("db")}catch(e){}
-  if(S.db&&S.uid){if(S.isAdmin)subscribeFounder();else subscribeMember()}
+  if(S.db&&S.uid){if(S.isAdmin){subscribeFounder();subscribeMedia()}else subscribeMember()}
   S.authChecked=true;
   render();
 })();
