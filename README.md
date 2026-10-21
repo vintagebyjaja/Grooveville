@@ -35,8 +35,8 @@ In Firebase: **Authentication › Settings › Authorized domains** should list 
 
 ## 4. What's new
 
-- **Cinematic entry:** first visit each session opens a built-in animated drive toward the Charlotte skyline with **LET'S GROOVE**, **Skip intro** and **SOUND ON/OFF** (sound starts off). Add a licensed film in **Back office › Website › Media library › Entry film** to replace the animation.
-- **Homepage:** hero, the original **Groove Vine** (hover a grape cluster for details, tap twice on phones), featured company gallery, upcoming events from the calendar, Collaborate, Our Story.
+- **Cinematic entry:** first visit each session opens a letterboxed, game-style title sequence on the Charlotte drive picture (bars open, light and motion effects, GROOVEVILLE title card, then **LET'S GROOVE**). **Skip intro** and **SOUND ON/OFF** (starts off) are always there. Replace the picture or add a licensed film in **Back office › Website › Media library › Cinematic entry**.
+- **Separate pages instead of one long scroll:** Home (hero), Companies (the original **Groove Vine**; hover a grape cluster for details, tap twice on phones) › Explore the brands, Calendar (upcoming events, then the calendar), Collaborate (photo + request form), Our Story. The Grooveville LLC page's website button returns to the home page.
 - **AELIO** replaces MUSIC on the vine (same spot, same lime color) and has its own page with the six personalities and a link to https://aelio.live/.
 - **Entertainment** now has **Overview · Music · Grooveville Radio · Featured Artists · Events**. Old Music links (`#b-music`) forward to Entertainment › Music. Music's timesheet slot and data are unchanged.
 - **Grooveville Radio:** a mini-player that stays open while you move around the site. Set a Spotify playlist link (or a stream you own or license) in **Back office › Website › Music & Radio**.

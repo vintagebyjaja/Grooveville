@@ -276,25 +276,54 @@ table.t tfoot td{font-weight:700;background:var(--surface-2);border-top:1px soli
 .arrowbtn:hover{background:var(--peach);color:#1b120c;border-color:var(--peach)}
 .kicker{font:600 11.5px/1.2 var(--f-body);letter-spacing:.24em;text-transform:uppercase;color:var(--peach)}
 .disp{font-family:var(--f-display);font-weight:700;letter-spacing:-.035em;line-height:.98}
-/* intro */
-.intro{position:fixed;inset:0;z-index:300;background:#0b0a0c;color:#fff;overflow:hidden;transition:opacity .9s ease,visibility .9s}
+/* intro: cinematic letterbox */
+.intro{position:fixed;inset:0;z-index:300;background:#000;color:#fff;overflow:hidden;transition:opacity .7s ease,visibility .7s;--st:30vh;--sh:40vh}
 .intro.out{opacity:0;visibility:hidden}
-.intro canvas,.intro video,.intro .ipost{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-.intro .ishade{position:absolute;inset:0;background:linear-gradient(180deg,#0006 0,transparent 30%,transparent 55%,#000c 100%)}
-.intro .itop{position:absolute;top:0;left:0;right:0;display:grid;grid-template-columns:1fr auto 1fr;align-items:start;padding:26px clamp(18px,4vw,44px);font:600 12px/1.6 var(--f-body);letter-spacing:.28em;text-transform:uppercase}
-.intro .itop .c{text-align:center;color:#ffffffcc}
-.intro .itop .r{justify-self:end;display:flex;gap:10px;align-items:center}
-.intro .brandmark b{display:block;font-size:17px;letter-spacing:.32em;font-weight:600}
-.intro .brandmark span{color:#ffffffaa;font-size:10.5px}
-.intro .icenter{position:absolute;left:0;right:0;bottom:clamp(26px,6vh,60px);display:flex;flex-direction:column;align-items:center;gap:26px;text-align:center;padding:0 16px}
-.intro .tagline{font:500 13px/1.4 var(--f-body);letter-spacing:.42em;text-transform:uppercase;color:#fff}
-.intro .gobtn{display:inline-flex;align-items:center;gap:22px;background:var(--peach);color:#1b120c;border:0;border-radius:999px;padding:8px 8px 8px 34px;font:700 13px/1 var(--f-body);letter-spacing:.24em;cursor:pointer;box-shadow:0 10px 40px -10px #f4a98799}
+.intro .cine{position:absolute;left:0;right:0;top:var(--st);height:var(--sh);overflow:hidden;background:#000}
+.intro .shot{position:absolute;inset:0;opacity:0;animation:shotIn 1.6s cubic-bezier(.2,.6,.2,1) .35s forwards}
+.intro .shot>img,.intro .shot>video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:52% 50%;transform-origin:52% 70%;animation:kb 18s cubic-bezier(.15,.6,.25,1) forwards}
+.intro .shot>canvas{position:absolute;inset:0;width:100%;height:100%;transform-origin:52% 70%;animation:kb 18s cubic-bezier(.15,.6,.25,1) forwards;mix-blend-mode:screen}
+.intro .rumble{position:absolute;inset:0;animation:rumble .14s steps(2) infinite}
+@keyframes shotIn{0%{opacity:0;filter:brightness(3) saturate(.4) blur(6px)}35%{opacity:1}100%{opacity:1;filter:brightness(1) saturate(1.08) blur(0)}}
+@keyframes kb{from{transform:scale(1.2) translateY(1.5%)}to{transform:scale(1.03) translateY(0)}}
+@keyframes rumble{0%{transform:translate(0,0)}50%{transform:translate(.5px,-.6px)}100%{transform:translate(-.4px,.3px)}}
+.intro .grade{position:absolute;inset:0;background:linear-gradient(180deg,#24124a55 0,transparent 45%,#ff6a2a1f 100%);mix-blend-mode:soft-light;pointer-events:none}
+.intro .vig{position:absolute;inset:0;background:radial-gradient(120% 90% at 50% 55%,transparent 55%,#000c 100%);pointer-events:none}
+.intro .grain{position:absolute;inset:-50%;opacity:.13;pointer-events:none;animation:grain .5s steps(4) infinite;mix-blend-mode:overlay}
+@keyframes grain{0%{transform:translate(0,0)}25%{transform:translate(-3%,2%)}50%{transform:translate(2%,-3%)}75%{transform:translate(-2%,-1%)}100%{transform:translate(1%,3%)}}
+.intro .sweep{position:absolute;top:44%;left:-60%;width:60%;height:3px;background:linear-gradient(90deg,transparent,#ffd2b0,#fff,#9fe8e4,transparent);filter:blur(1px);box-shadow:0 0 30px 8px #ffb08a55;opacity:0;animation:sweep 1.5s ease-in-out 2s forwards;pointer-events:none}
+@keyframes sweep{0%{left:-60%;opacity:0}20%{opacity:.9}100%{left:110%;opacity:0}}
+.intro .bar{position:absolute;left:0;right:0;background:#000;z-index:2;transition:height 1.4s cubic-bezier(.7,0,.2,1),top 1.4s cubic-bezier(.7,0,.2,1)}
+.intro .bar.top{top:0;height:var(--st);display:grid;grid-template-columns:1fr auto 1fr;align-items:start;padding:24px clamp(18px,4vw,44px) 0}
+.intro .bar.bot{top:calc(var(--st) + var(--sh));bottom:0;display:flex;align-items:center;justify-content:center}
+.intro.closed .bar.top{height:50%}
+.intro.closed .bar.bot{top:50%}
+.intro .bar.top>*{opacity:0;animation:fadeIn .8s ease 1.3s forwards}
+.intro .brandmark b{display:block;font:600 17px/1.2 var(--f-body);letter-spacing:.34em}
+.intro .brandmark span{display:block;color:#ffffffa0;font:600 10.5px/1.6 var(--f-body);letter-spacing:.3em;text-transform:uppercase}
+.intro .brandmark::after{content:"";display:block;width:22px;height:1px;background:#ffffff70;margin-top:8px}
+.intro .c{text-align:center;font:600 12px/1.6 var(--f-body);letter-spacing:.3em;text-transform:uppercase}
+.intro .c small{display:block;color:#ffffff90;font-size:10px;letter-spacing:.3em}
+.intro .r{justify-self:end}
+.intro .ttl{position:absolute;left:0;right:0;z-index:3;top:calc(var(--st) + var(--sh)*.46);transform:translateY(-50%);text-align:center;pointer-events:none;opacity:0;animation:ttlIn 1.6s cubic-bezier(.2,.7,.2,1) 1.1s forwards,ttlOut .9s ease 4.5s forwards}
+.intro .ttl b{display:block;font:800 clamp(38px,8.6vw,128px)/.9 var(--f-display);letter-spacing:.16em;padding-left:.16em;background:linear-gradient(180deg,#fff 0,#ffe0cc 40%,#f4a987 70%,#c99be8 100%);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 6px 30px #000c) drop-shadow(0 0 22px #f4a98766)}
+.intro .ttl span{display:block;margin-top:14px;text-transform:uppercase;font:600 clamp(10px,1.2vw,14px)/1 var(--f-body);letter-spacing:.6em;padding-left:.6em;color:#fff;text-shadow:0 2px 14px #000}
+@keyframes ttlIn{0%{opacity:0;letter-spacing:.5em;filter:blur(12px)}100%{opacity:1;filter:blur(0)}}
+@keyframes ttlOut{to{opacity:0;transform:translateY(-50%) scale(1.06);filter:blur(6px)}}
+@keyframes fadeIn{to{opacity:1}}
+@keyframes riseIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.intro .icenter{display:flex;flex-direction:column;align-items:center;gap:18px;text-align:center;padding:0 16px}
+.intro .tagline{font:500 clamp(11px,1.2vw,14px)/1.4 var(--f-body);letter-spacing:.42em;padding-left:.42em;text-transform:uppercase;color:#fff;opacity:0;animation:riseIn 1s ease 4.7s forwards}
+.intro .gobtn{display:inline-flex;align-items:center;gap:22px;background:var(--peach);color:#1b120c;border:0;border-radius:999px;padding:8px 8px 8px 34px;font:700 13px/1 var(--f-body);letter-spacing:.24em;cursor:pointer;box-shadow:0 10px 40px -10px #f4a98799;opacity:0;animation:riseIn 1s ease 5.1s forwards}
 .intro .gobtn i{width:42px;height:42px;border-radius:50%;background:#141516;color:#fff;display:grid;place-items:center;font-style:normal;font-size:18px;letter-spacing:0;transition:transform .2s}
 .intro .gobtn:hover i{transform:translateX(3px)}
-.intro .skip{background:none;border:0;color:#ffffffaa;font:600 11px/1 var(--f-body);letter-spacing:.2em;text-transform:uppercase;cursor:pointer;text-decoration:underline;text-underline-offset:4px}
-.intro .await{position:absolute;left:16px;bottom:12px;font-size:10.5px;color:#ffffff66;letter-spacing:.08em}
+.intro .skip{position:absolute;right:clamp(16px,3vw,40px);bottom:18px;background:none;border:0;color:#ffffff99;font:600 10.5px/1 var(--f-body);letter-spacing:.22em;text-transform:uppercase;cursor:pointer;opacity:0;animation:fadeIn .6s ease .8s forwards}
+.intro .skip:hover{color:#fff}
+.intro.done *,.intro.done{animation-delay:0s!important;animation-duration:.01s!important}
+.intro.done .ttl{display:none}
+@media (max-width:700px){.intro .bar.top{grid-template-columns:1fr auto;padding-top:18px}.intro .c{display:none}.intro .gobtn{padding-left:26px}}
 /* home */
-.hh{position:relative;min-height:min(86vh,820px);display:flex;align-items:center;overflow:hidden;padding:0;background:#0d0d0e}
+.hh{position:relative;min-height:calc(100svh - 62px);display:flex;align-items:center;overflow:hidden;padding:0;background:#0d0d0e}
 .hh .bgimg{position:absolute;inset:0 0 0 38%;}
 .hh .bgimg img{width:100%;height:100%;object-fit:cover}
 .hh .bgimg::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,#0d0d0e 0,#0d0d0ee6 14%,#0d0d0e55 46%,#0d0d0e22 70%,#0d0d0e88 100%),linear-gradient(0deg,#0d0d0e 0,transparent 30%)}
@@ -308,6 +337,18 @@ table.t tfoot td{font-weight:700;background:var(--surface-2);border-top:1px soli
 .playlink span{width:44px;height:44px;border-radius:50%;border:1.3px solid #ffffff88;display:grid;place-items:center;font-size:13px}
 .hh .loc{position:absolute;right:clamp(16px,4vw,44px);bottom:30px;text-align:right;font:600 11px/1.7 var(--f-body);letter-spacing:.24em;color:#ffffffbb;text-transform:uppercase}
 .hh .loc b{color:var(--peach);font-weight:600}
+.page{min-height:calc(100svh - 62px);display:flex;flex-direction:column;justify-content:center}
+.pnext{display:flex;justify-content:flex-end;margin-top:30px}
+.pnext a{display:inline-flex;align-items:center;gap:14px;color:inherit;text-decoration:none;font:600 11.5px var(--f-body);letter-spacing:.22em;text-transform:uppercase;opacity:.85}
+.pnext a:hover{opacity:1}
+#app.pagein{animation:pageIn .55s cubic-bezier(.2,.7,.2,1)}
+@keyframes pageIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+.cpage{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);min-height:calc(100svh - 62px)}
+.cpage .ph{position:relative;overflow:hidden;min-height:320px}
+.cpage .ph img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.cpage .ph::after{content:"";position:absolute;inset:0;background:linear-gradient(0deg,#0c0d0eee 0,#0c0d0e55 45%,transparent 70%)}
+.cpage .ph .tx{position:absolute;left:clamp(20px,4vw,56px);right:20px;bottom:clamp(24px,5vw,56px);z-index:1}
+.cpage .fm{padding:clamp(24px,4vw,56px);display:flex;flex-direction:column;justify-content:center}
 .vinesec{position:relative;overflow:hidden;background:radial-gradient(60% 70% at 85% 60%,#b7a1e51f,transparent 70%),radial-gradient(40% 50% at 8% 10%,#68d4d014,transparent 70%),#0f1011;padding-block:90px}
 .vinesec .wrap{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.4fr);gap:40px;align-items:center}
 .vinesec h2,.secT{font-size:clamp(38px,5.4vw,68px);color:var(--white)}
@@ -359,7 +400,10 @@ table.t tfoot td{font-weight:700;background:var(--surface-2);border-top:1px soli
 .split.cream p{color:var(--cream-muted)}
 .split.cream .kicker{color:#7a5a46}
 .split.cream .arrowbtn{color:var(--cream-ink)}
-footer.ft{background:#0b0b0c;border-top:1px solid #ffffff12;padding-block:56px 30px;color:#a9a49b}
+footer.ft{background:#0b0b0c;border-top:1px solid #ffffff12;padding-block:18px;color:#a9a49b}
+footer.ft .fgrid{display:none!important}
+footer.ft .legal{margin-top:0!important;border-top:0!important;padding-top:0!important;align-items:center}
+footer.ft .legal a{display:inline;padding:0;margin-left:16px;font-size:13px}
 footer.ft .wrap{display:block}
 footer.ft .fgrid{display:grid;grid-template-columns:1.2fr repeat(3,1fr);gap:28px}
 footer.ft h4{font:600 11px var(--f-body);letter-spacing:.22em;text-transform:uppercase;color:#fff;margin-bottom:12px}
@@ -457,6 +501,8 @@ footer.ft .legal{display:flex;justify-content:space-between;gap:14px;flex-wrap:w
 @media (max-width:900px){
   .vinesec .wrap,.culture .wrap,.split,.radiocard{grid-template-columns:1fr}
   .split .ph{order:-1}
+  .cpage{grid-template-columns:1fr}
+  .cpage .ph{min-height:300px}
   .cards{grid-auto-columns:minmax(230px,62%)}
   footer.ft .wrap{display:block}
 footer.ft .fgrid{grid-template-columns:1fr 1fr}
@@ -506,7 +552,7 @@ footer.ft .fgrid{grid-template-columns:1fr 1fr}
   <button class="soundbtn" id="soundBtn" data-act="sound" aria-pressed="false" aria-label="Sound off. Turn sound on"><span class="bars" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span class="lbl">Sound off</span></button>
 </div></header>
 <main id="app"></main>
-<footer class="ft" id="footer"><div class="wrap"><div class="fgrid" id="footgrid"></div><div class="legal"><span>© <span id="yr"></span> Grooveville LLC · The Creative House · Charlotte, NC</span><span>grooveville.org<span id="footnote"></span></span></div></div></footer>
+<footer class="ft" id="footer"><div class="wrap"><div class="fgrid" id="footgrid"></div><div class="legal"><span>© <span id="yr"></span> Grooveville LLC · The Creative House · Charlotte, NC</span><span><span id="footlinks"></span><span id="footnote" style="margin-left:14px"></span></span></div></div></footer>
 <div id="radio" aria-live="polite"></div>
 <div id="modal"></div>
 <script type="application/json" id="snap">{"events":[],"brands":{}}</script>
@@ -813,11 +859,13 @@ function navLinks(){
   const r=S.route, on=(t)=>r===t||r.startsWith(t+"-")?' class="on"':'';
   const team=r.startsWith("team");
   $("#links").innerHTML=
-    '<a href="#home"'+(r==="home"||r.startsWith("b-")?' class="on"':'')+'>Home</a>'+
+    '<a href="#home"'+(r==="home"?' class="on"':'')+'>Home</a>'+
+    '<a href="#vine"'+(r==="vine"||r==="brands"||r.startsWith("b-")?' class="on"':'')+'>Companies</a>'+
     '<a href="#calendar"'+on("calendar")+'>Calendar</a>'+
     '<a href="#collab"'+on("collab")+'>Collaborate</a>'+
+    '<a href="#story"'+on("story")+'>Our Story</a>'+
     '<a href="#groove"'+(["groove","signin","join"].includes(r)||r.startsWith("portal")?' class="on"':'')+'>Groove Team</a>'+
-    (S.isAdmin?'<a href="#team" class="team'+(team?' on':'')+'">Back office</a>':'');
+    (S.isAdmin?'<a href="#team" class="team'+(team?' on':'')+'">Back Office</a>':'');
 }
 
 function treeSVG(){
@@ -870,24 +918,36 @@ function upcomingPublic(brand,n){
   return upcomingEvents(pub().events).filter(e=>!brand||e.brand===brand).slice(0,n||6);
 }
 
+const pnext=(h,l)=>'<div class="pnext"><a href="'+h+'">'+l+' <span class="arrowbtn" aria-hidden="true">→</span></a></div>';
 function viewHome(){
-  const hq=brandInfo("hq"), H=siteCfg("home"), ev=upcomingPublic(null,5), V=VENTURES().filter(b=>!brandInfo(b.id).hidden);
-  const feat=V.filter(b=>!brandInfo(b.id).unfeatured);
-  const card=b0=>{const b=brandInfo(b0.id),im=slotSrc("card-"+b.id);return '<a class="vcard'+(b.id==="aelio"?" aelio":"")+'" href="#b-'+b.id+'" style="'+cvar(b.id)+'">'+(im?imgTag("card-"+b.id,b.name,""):'<span class="art" aria-hidden="true"><b>'+esc(b.short.slice(0,4))+'</b></span>')+(b.developing?'<span class="tag">Ripening</span>':'')+'<span class="vc"><span><h3>'+esc(b.name.replace(/^Grooveville /,""))+'</h3><small>'+esc(b.cat||b.role)+'</small></span><span class="arrowbtn" aria-hidden="true">→</span></span></a>'};
+  const H=siteCfg("home");
   return '<section class="hh"><div class="bgimg">'+imgTag("home-hero","",'')+'</div><span class="glow" style="background:#68d4d0;left:-160px;top:-120px" aria-hidden="true"></span><span class="glow" style="background:#f4a987;right:10%;bottom:-260px" aria-hidden="true"></span>'+
     '<div class="wrap"><div class="kicker">'+esc(H.heroEyebrow)+'</div><h1 class="disp" style="margin-top:22px">'+esc(H.heroA)+' <em>'+esc(H.heroB)+'</em></h1><p>'+esc(H.heroP)+'</p>'+
-    '<div class="ctas"><button class="btn peach" data-act="scroll" data-to="vine" style="padding:15px 28px">Explore the Groove</button><button class="playlink" data-act="intro-replay"><span aria-hidden="true">▶</span>Watch our story</button></div></div>'+
-    '<div class="loc">Charlotte, NC<br><b>People. Ideas. Places.</b></div></section>'+
-    '<section class="vinesec" id="vine"><div class="wrap"><div><div class="kicker">The Groove Vine</div><h2 class="disp" style="margin-top:18px">One root.<br>Nine companies.</h2><p>Different paths. Same purpose. Explore each branch and see what we\'re building together.</p><button class="textlink" data-act="scroll" data-to="brands"><span class="arrowbtn" aria-hidden="true">→</span>Explore our companies</button>'+
-    '<div class="vinelist" aria-label="Companies on the Groove Vine">'+V.map(b=>'<a href="#b-'+b.id+'">'+chip(b.id)+'</a>').join("")+'</div></div><div>'+treeSVG()+'</div></div></section>'+
-    '<section class="gal" id="brands"><div class="wrap"><div class="ghead"><div><div class="kicker">Featured companies</div><h2 class="disp" style="margin-top:12px">Explore<br>the brands.</h2></div><a class="arrowbtn" href="#b-hq" aria-label="Visit Grooveville HQ" style="color:var(--peach-ink);margin-bottom:6px">→</a>'+
+    '<div class="ctas"><a class="btn peach" href="#vine" style="padding:15px 28px">Explore the Groove</a><button class="playlink" data-act="intro-replay"><span aria-hidden="true">▶</span>Watch the story</button></div></div>'+
+    '<div class="loc">Charlotte, NC<br><b>People. Ideas. Places.</b></div></section>';
+}
+function viewVine(){
+  const V=VENTURES().filter(b=>!brandInfo(b.id).hidden);
+  return '<section class="vinesec page" id="vine"><div class="wrap"><div><div class="kicker">The Groove Vine</div><h1 class="disp secT" style="margin-top:18px">One root.<br>Nine companies.</h1><p>Different paths. Same purpose. Explore each branch and see what we\'re building together.</p><a class="textlink" href="#brands"><span class="arrowbtn" aria-hidden="true">→</span>Explore our companies</a>'+
+    '<div class="vinelist" aria-label="Companies on the Groove Vine">'+V.map(b=>'<a href="#b-'+b.id+'">'+chip(b.id)+'</a>').join("")+'</div></div><div>'+treeSVG()+'</div></div></section>';
+}
+function viewBrands(){
+  const feat=VENTURES().filter(b=>!brandInfo(b.id).hidden&&!brandInfo(b.id).unfeatured);
+  const card=b0=>{const b=brandInfo(b0.id),im=slotSrc("card-"+b.id);return '<a class="vcard'+(b.id==="aelio"?" aelio":"")+'" href="#b-'+b.id+'" style="'+cvar(b.id)+'">'+(im?imgTag("card-"+b.id,b.name,""):'<span class="art" aria-hidden="true"><b>'+esc(b.short.slice(0,4))+'</b></span>')+(b.developing?'<span class="tag">Ripening</span>':'')+'<span class="vc"><span><h3>'+esc(b.name.replace(/^Grooveville /,""))+'</h3><small>'+esc(b.cat||b.role)+'</small></span><span class="arrowbtn" aria-hidden="true">→</span></span></a>'};
+  return '<section class="gal page" id="brands"><div class="wrap"><div class="ghead"><div><div class="kicker">Featured companies</div><h1 class="disp" style="margin-top:12px;font-size:clamp(36px,4.8vw,58px)">Explore<br>the brands.</h1></div><a class="arrowbtn" href="#vine" aria-label="Back to the Groove Vine" style="color:var(--peach-ink);margin-bottom:6px">→</a>'+
     '<div class="count"><span id="galN">01 / '+pad(feat.length)+'</span><button data-act="gal" data-d="-1" aria-label="Previous companies">←</button><button data-act="gal" data-d="1" aria-label="Next companies">→</button></div></div>'+
-    '<div class="cards" id="galCards" tabindex="0" aria-label="Featured companies">'+feat.map(card).join("")+'</div></div></section>'+
-    '<section class="culture"><div class="wrap"><div><div class="kicker">Upcoming events</div><h2 class="disp secT" style="margin-top:16px;font-size:clamp(34px,4.4vw,54px)">Be part of the next chapter.</h2><a class="arrowbtn" href="#calendar" aria-label="Open the full calendar" style="margin-top:30px">→</a></div><div>'+
+    '<div class="cards" id="galCards" tabindex="0" aria-label="Featured companies">'+feat.map(card).join("")+'</div>'+pnext("#calendar","Upcoming events")+'</div></section>';
+}
+function eventsEditorial(){
+  const ev=upcomingPublic(null,6);
+  return '<section class="culture"><div class="wrap"><div><div class="kicker">Upcoming events</div><h1 class="disp secT" style="margin-top:16px;font-size:clamp(34px,4.4vw,54px)">Be part of the next chapter.</h1><a class="arrowbtn" href="#calgrid" data-act="scroll" data-to="calgrid" aria-label="Open the full calendar" style="margin-top:30px">→</a></div><div>'+
     (ev.length?ev.map(e=>{const d=parse(e.date),im=slotSrc("ev-"+e.id);return '<button class="evx" data-act="ev-open" data-id="'+esc(e.id)+'" data-date="'+esc(e.date)+'"><span class="d">'+MON[d.getMonth()]+' '+d.getDate()+'</span>'+(im?'<img class="th" src="'+esc(im)+'" alt="" loading="lazy">':'<span class="th" aria-hidden="true" style="background:radial-gradient(circle at 30% 30%,color-mix(in srgb,var(--c-'+(BR[e.brand]?e.brand:"hq")+') 60%,transparent),#1d1f22)"></span>')+'<span class="t">'+esc(e.title)+'</span><span class="w">'+esc(e.location?e.location.split(",")[0]:brandInfo(e.brand).short)+'</span></button>'}).join(""):'<div class="empty" style="border-color:#ffffff22">No public events are posted yet. New launches and hosted events show up here as soon as they\'re on the calendar.</div>')+
-    '</div></div></section>'+
-    '<section class="split"><div class="ph">'+imgTag("home-collab","",'')+'</div><div class="tx"><div class="kicker">Collaborate</div><h2 class="disp secT" style="margin-top:16px">Good ideas<br>grow together.</h2><p>Partners, creators, institutions and visionaries: let\'s build what\'s next. Send an official collaboration request to Grooveville LLC or any of our companies.</p><a class="btn peach" href="#collab" style="margin-top:30px;align-self:flex-start;padding:14px 26px">Start a collaboration request →</a></div></section>'+
-    '<section class="split cream"><div class="tx"><div class="kicker">Our story</div><h2 class="disp secT" style="margin-top:16px">More than<br>business.</h2><p>It\'s culture. People. Places. '+esc(hq.about)+'</p><a class="arrowbtn" href="#b-hq" aria-label="About Grooveville LLC" style="margin-top:30px">→</a></div><div class="ph">'+imgTag("home-story","",'')+'</div></section>';
+    '</div></div></section>';
+}
+function viewStory(){
+  const hq=brandInfo("hq");
+  return '<section class="split cream page" style="padding:0"><div class="tx"><div class="kicker">Our story</div><h1 class="disp secT" style="margin-top:16px">More than<br>business.</h1><p>It\'s culture. People. Places. A creative house with purpose.</p><p>'+esc(hq.about)+'</p>'+
+    '<div style="display:flex;gap:14px;align-items:center;margin-top:30px;flex-wrap:wrap"><a class="arrowbtn" href="#vine" aria-label="Meet the nine companies">→</a><a href="#vine" style="color:inherit;font:600 12px var(--f-body);letter-spacing:.2em;text-transform:uppercase;text-decoration:none">Meet the nine companies</a></div></div><div class="ph">'+imgTag("home-story","",'')+'</div></section>';
 }
 function portalLink(b,cls,inner){const u=portalUrl(b);return true?'<button type="button" class="'+cls+'" data-act="portal" data-url="'+esc(u)+'">'+inner+'</button>':'<a class="'+cls+'" href="'+esc(u)+'" target="_blank" rel="noopener" data-act="portal-ext">'+inner+'</a>'}
 function viewBrand(id,sub){
@@ -899,7 +959,8 @@ function viewBrand(id,sub){
   if(b.website)links.push('<a class="btn" style="background:var(--c);color:var(--bg)" href="'+esc(b.website)+'" target="_blank" rel="noopener">Visit '+esc(b.name)+' website ↗</a>');
   if(b.social){const ig=/instagram\.com\/([^/?#]+)/i.exec(b.social);links.push('<a class="btn '+(b.website||b.cta?'ghost':'')+'" '+(b.website||b.cta?'':'style="background:var(--c);color:var(--bg)" ')+'href="'+esc(b.social)+'" target="_blank" rel="noopener">'+(ig?'Follow @'+esc(ig[1])+' on Instagram ↗':'Social ↗')+'</a>')}
   if(b.tiktok){const tk=/tiktok\.com\/@?([^/?#]+)/i.exec(b.tiktok);links.push('<a class="btn ghost" href="'+esc(b.tiktok)+'" target="_blank" rel="noopener">'+(tk?'Follow @'+esc(tk[1])+' on TikTok ↗':'TikTok ↗')+'</a>')}
-  if(!b.website&&!b.social)links.push('<span class="pill high" style="align-self:center;font-size:12.5px;padding:6px 10px">Website coming soon</span>');
+  if(id==="hq")links.push('<a class="btn" style="background:var(--c);color:var(--bg)" href="#home">Visit the Grooveville website →</a>');
+  else if(!b.website&&!b.social)links.push('<span class="pill high" style="align-self:center;font-size:12.5px;padding:6px 10px">Website coming soon</span>');
   const entTabs=id==="ent"?'<nav class="subtabs" aria-label="Grooveville Entertainment">'+ENT_TABS.map(([k,l])=>'<a href="#b-ent'+(k?"/"+k:"")+'"'+((sub||"")===k?' class="on" aria-current="page"':'')+'>'+l+'</a>').join("")+'</nav>':'';
   if(id==="ent"&&sub)return '<div style="'+cvar(id)+'"><section class="bhero'+(hero?" hasimg":"")+'" style="padding-block:46px 0">'+(hero?'<div class="bimg">'+imgTag(hero,"","")+'</div>':'')+'<div class="wrap"><div class="crumb"><button class="backbtn" data-act="go-back" aria-label="Go back">‹ Back</button><a href="#b-hq">Grooveville LLC</a> › <a href="#b-ent">'+esc(b.name)+'</a> › '+esc((ENT_TABS.find(t=>t[0]===sub)||[,""])[1])+'</div><div class="kicker">Grooveville Entertainment</div><h1 class="disp" style="margin-top:12px;font-size:clamp(40px,7vw,84px)">'+esc((ENT_TABS.find(t=>t[0]===sub)||[,""])[1])+'</h1>'+entTabs+'</div></section><section style="padding-top:34px"><div class="wrap">'+entSub(sub)+'</div></section></div>';
   return '<div style="'+cvar(id)+'"><section class="bhero'+(hero?" hasimg":"")+'">'+(hero?'<div class="bimg">'+imgTag(hero,"","")+'</div>':'')+'<div class="wrap">'+
@@ -953,7 +1014,7 @@ function viewCalendar(team){
     '<h3 style="font-size:22px;margin:30px 0 12px">Upcoming</h3>'+(up.length?'<div class="evlist">'+up.map(e=>evRow(e,{team})).join("")+'</div>':'<div class="empty">'+(team?'No upcoming events. Add one with “+ Event”.':'No public events posted yet. Check back soon.')+'</div>');
 }
 function viewPublicCalendar(){
-  return '<section class="teamhead"><div class="wrap"><div class="eyebrow">Open to everyone</div><h1>Grooveville calendar</h1><p class="muted" style="margin-top:8px;max-width:60ch">Launches, shows and hosted events from every Grooveville company.</p></div></section><section style="padding-top:20px"><div class="wrap">'+viewCalendar(false)+'</div></section>';
+  return eventsEditorial()+'<section class="teamhead" id="calgrid"><div class="wrap"><div class="eyebrow">Open to everyone</div><h2 style="font-size:clamp(28px,3.6vw,40px);font-weight:800">Grooveville calendar</h2><p class="muted" style="margin-top:8px;max-width:60ch">Launches, shows and hosted events from every Grooveville company.</p></div></section><section style="padding-top:20px"><div class="wrap">'+viewCalendar(false)+'</div></section>';
 }
 
 /* ---------- collaborate ---------- */
@@ -979,20 +1040,20 @@ function letterHTML(o){
 function viewCollab(pre){
   const p=pub();
   const opts=BRANDS.map(b=>'<option value="'+b.id+'"'+(b.id===(pre||"hq")?" selected":"")+'>'+esc(brandInfo(b.id).name)+'</option>').join("");
-  return '<section class="teamhead"><div class="wrap"><div class="eyebrow">Official outreach</div><h1>Collaborate with Grooveville</h1><p class="muted" style="margin-top:8px;max-width:64ch">Send an official request to work with Grooveville LLC or one of our companies. Fill in the form to create a formal, reference-numbered request, then send it to us.</p></div></section>'+
-  '<section style="padding-top:20px"><div class="wrap cols2">'+
-  '<form class="card" id="collabForm" style="display:flex;flex-direction:column;gap:14px;min-width:0">'+
+  return '<section class="cpage" style="padding:0"><div class="ph">'+imgTag("home-collab","",'')+'<div class="tx"><div class="kicker">Collaborate</div><h1 class="disp secT" style="margin-top:14px">Good ideas<br>grow together.</h1><p style="color:#e4ded5;margin-top:14px;max-width:40ch">Partners, creators, institutions and visionaries: let\'s build what\'s next.</p></div></div><div class="fm">'+collabForm(pre)+'</div></section>';
+}
+function collabForm(pre){
+  const p=pub();
+  const opts=BRANDS.map(b=>'<option value="'+b.id+'"'+(b.id===(pre||"hq")?" selected":"")+'>'+esc(brandInfo(b.id).name)+'</option>').join("");
+  return '<div class="kicker">Official outreach</div><h2 style="font-size:clamp(24px,2.6vw,32px);margin:8px 0 6px">Send a collaboration request</h2><p class="muted" style="max-width:60ch;font-size:14.5px">We turn it into a formal, reference-numbered request for you to send'+(p.contactEmail?' to <b>'+esc(p.contactEmail)+'</b>':'')+'. Our team replies to set up next steps.</p>'+
+  '<form id="collabForm" style="display:flex;flex-direction:column;gap:12px;margin-top:18px;min-width:0">'+
     '<div class="grid2"><label class="f">Organization or business *<input class="i" id="c-org" name="org" required></label><label class="f">Your name *<input class="i" id="c-contact" name="contact" required></label></div>'+
     '<div class="grid2"><label class="f">Email *<input class="i" id="c-email" name="email" type="email" required></label><label class="f">Phone<input class="i" id="c-phone" name="phone" type="tel"></label></div>'+
-    '<label class="f">Website or social link<input class="i" id="c-web" name="website" type="url" placeholder="https://"></label>'+
     '<div class="grid2"><label class="f">Collaborate with *<select class="i" id="c-brand" name="brand">'+opts+'</select></label><label class="f">Type of collaboration *<select class="i" id="c-type" name="type">'+COLLAB_TYPES.map(t=>'<option>'+t+'</option>').join("")+'</select></label></div>'+
-    '<label class="f">Proposed date<input class="i" id="c-date" name="date" type="date"></label>'+
-    '<label class="f">Tell us about the collaboration *<textarea class="i" id="c-proposal" name="proposal" required placeholder="What you have in mind, who it is for, and what you would like from Grooveville."></textarea></label>'+
-    '<div><button class="btn peach" type="submit">Create official request</button></div></form>'+
-  '<aside style="display:flex;flex-direction:column;gap:14px"><div class="card"><div class="eyebrow">How it works</div><ol style="margin:10px 0 0;padding-left:20px;display:grid;gap:8px"><li>Fill in the form with your organization\'s details.</li><li>We format it as an official request with a reference number.</li><li>Copy it and email it to Grooveville'+(p.contactEmail?' at <b>'+esc(p.contactEmail)+'</b>':'')+'.</li><li>Our team replies to set up next steps.</li></ol></div>'+
-  '<div class="card" style="background:var(--teal-soft);border-color:transparent"><div class="eyebrow" style="color:var(--teal-ink)">Grooveville companies</div><div class="links-list" style="margin-top:10px">'+BRANDS.map(b=>chip(b.id)).join("")+'</div></div>'+
-  (S.isAdmin&&!p.contactEmail?'<div class="banner warn" style="margin:0">Add a contact email in Back office › Site settings so visitors know where to send requests.</div>':'')+
-  '</aside></div></section>';
+    '<div class="grid2"><label class="f">Website or social link<input class="i" id="c-web" name="website" type="url" placeholder="https://"></label><label class="f">Proposed date<input class="i" id="c-date" name="date" type="date"></label></div>'+
+    '<label class="f">Tell us about the collaboration *<textarea class="i" id="c-proposal" name="proposal" required style="min-height:84px" placeholder="What you have in mind, who it is for, and what you would like from Grooveville."></textarea></label>'+
+    '<div><button class="btn peach" type="submit" style="padding:13px 24px">Create official request →</button></div></form>'+
+  (S.isAdmin&&!p.contactEmail?'<div class="banner warn">Add a contact email in Back office › Site settings so visitors know where to send requests.</div>':'');
 }
 function collabSubmit(form){
   const o=formObj(form);o.direction="incoming";o.created=today();o.id=uid();o.ref=refCode(o.brand,o.created,o.id);o.status="talking";
@@ -1799,10 +1860,10 @@ function scFrame(){return '<iframe class="sc-frame" id="scFrame" title="Shadow C
 function goBack(){if(S.navCount>0){S.navCount-=2;history.back()}else location.hash="#home"}
 
 /* ---------- Creative House: managed images, cinematic entry, radio, music, AELIO, Website back office ---------- */
-const ASSETS={"gv-hero": "/media/gv-hero.webp", "gv-collab": "/media/gv-collab.webp", "gv-story": "/media/gv-story.webp", "gv-ent": "/media/gv-ent.webp", "gv-box": "/media/gv-box.webp", "card-aec": "/media/card-aec.webp", "card-vybr8": "/media/card-vybr8.webp", "card-pathd": "/media/card-pathd.webp", "card-aelio": "/media/card-aelio.webp", "card-ent": "/media/card-ent.webp", "sc-cover": "/media/sc-cover.webp", "aelio-p1": "/media/aelio-p1.webp", "aelio-p2": "/media/aelio-p2.webp", "aelio-p3": "/media/aelio-p3.webp", "aelio-p4": "/media/aelio-p4.webp", "aelio-p5": "/media/aelio-p5.webp", "aelio-p6": "/media/aelio-p6.webp"};
+const ASSETS={"gv-intro": "/media/gv-intro.webp", "gv-hero": "/media/gv-hero.webp", "gv-collab": "/media/gv-collab.webp", "gv-story": "/media/gv-story.webp", "gv-ent": "/media/gv-ent.webp", "gv-box": "/media/gv-box.webp", "card-aec": "/media/card-aec.webp", "card-vybr8": "/media/card-vybr8.webp", "card-pathd": "/media/card-pathd.webp", "card-aelio": "/media/card-aelio.webp", "card-ent": "/media/card-ent.webp", "sc-cover": "/media/sc-cover.webp", "aelio-p1": "/media/aelio-p1.webp", "aelio-p2": "/media/aelio-p2.webp", "aelio-p3": "/media/aelio-p3.webp", "aelio-p4": "/media/aelio-p4.webp", "aelio-p5": "/media/aelio-p5.webp", "aelio-p6": "/media/aelio-p6.webp"};
 const ENT_TABS=[["","Overview"],["music","Music"],["radio","Grooveville Radio"],["artists","Featured Artists"],["events","Events"]];
 S.media={};S.web={sec:"media"};S.sound=false;
-const DEFIMG={"home-hero":"gv-hero","home-collab":"gv-collab","home-story":"gv-story","hero-ent":"gv-ent","card-aec":"card-aec","card-vybr8":"card-vybr8","card-pathd":"card-pathd","card-aelio":"card-aelio","card-ent":"card-ent","card-scu":"sc-cover","card-hq":"gv-box",
+const DEFIMG={"intro-poster":"gv-intro","home-hero":"gv-hero","home-collab":"gv-collab","home-story":"gv-story","hero-ent":"gv-ent","card-aec":"card-aec","card-vybr8":"card-vybr8","card-pathd":"card-pathd","card-aelio":"card-aelio","card-ent":"card-ent","card-scu":"sc-cover","card-hq":"gv-box",
   "aelio-p1":"aelio-p1","aelio-p2":"aelio-p2","aelio-p3":"aelio-p3","aelio-p4":"aelio-p4","aelio-p5":"aelio-p5","aelio-p6":"aelio-p6"};
 const DEF={
   home:{heroEyebrow:"Grooveville LLC · The Creative House",heroA:"Different worlds.",heroB:"One Groove.",heroP:"Nine companies. Endless possibilities. A home for creators, innovators, and community."},
@@ -1829,10 +1890,11 @@ function subscribeMedia(){if(mediaSub||!S.db)return;mediaSub=true;S.db.collectio
 
 /* ---------- footer ---------- */
 function fillFooter(){
+  const lg=$("#footlinks");if(lg)lg.innerHTML='<a href="#vine">Companies</a><a href="#b-ent/radio">Radio</a><a href="#story">Our Story</a><a href="https://www.instagram.com/grooveville.ent/" target="_blank" rel="noopener">Instagram ↗</a><a href="#groove">Sign in</a>';
   const g=$("#footgrid");if(!g)return;
   g.innerHTML='<div><img src="'+LOGO+'" alt="" width="48" height="48" style="border-radius:50%"><p style="margin-top:14px;max-width:30ch">The Creative House. Different worlds, one Groove, rooted in Charlotte, NC.</p><div style="display:flex;gap:14px;margin-top:12px"><a href="https://www.instagram.com/grooveville.ent/" target="_blank" rel="noopener">Instagram ↗</a></div></div>'+
     '<div><h4>Companies</h4>'+VENTURES().filter(b=>!brandInfo(b.id).hidden).map(b=>'<a href="#b-'+b.id+'">'+esc(brandInfo(b.id).name)+'</a>').join("")+'</div>'+
-    '<div><h4>Explore</h4><a href="#home">Home</a><a href="#calendar">Calendar</a><a href="#collab">Collaborate</a><a href="#b-ent/music">Music</a><a href="#b-ent/radio">Grooveville Radio</a><a href="#b-hq">Our story</a></div>'+
+    '<div><h4>Explore</h4><a href="#home">Home</a><a href="#vine">Companies</a><a href="#calendar">Calendar</a><a href="#collab">Collaborate</a><a href="#b-ent/radio">Grooveville Radio</a><a href="#story">Our story</a></div>'+
     '<div><h4>Groove Team</h4><a href="#groove">Sign in</a><a href="#join">Join a team</a>'+(S.isAdmin?'<a href="#team">Back office</a>':'')+'<a href="mailto:'+esc(pub().contactEmail||"")+'"'+(pub().contactEmail?'':' hidden')+'>Contact</a></div>';
 }
 
@@ -1841,7 +1903,7 @@ let PAD=null;
 function padStart(){try{const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return;const ac=new AC(),g=ac.createGain(),f=ac.createBiquadFilter();f.type="lowpass";f.frequency.value=700;g.gain.value=0;f.connect(g);g.connect(ac.destination);
   const osc=[110,164.81,220,277.18].map((hz,i)=>{const o=ac.createOscillator();o.type=i%2?"triangle":"sine";o.frequency.value=hz;o.detune.value=(i-1.5)*4;o.connect(f);o.start();return o});
   const l=ac.createOscillator(),lg=ac.createGain();l.frequency.value=.08;lg.gain.value=260;l.connect(lg);lg.connect(f.frequency);l.start();
-  g.gain.linearRampToValueAtTime(.055,ac.currentTime+2.2);PAD={ac,g,osc:osc.concat(l)}}catch(e){}}
+  g.gain.linearRampToValueAtTime(.055,ac.currentTime+2.2);const sub=ac.createOscillator(),sg=ac.createGain();sub.type="sine";sub.frequency.value=55;sg.gain.value=0;sub.connect(sg);sg.connect(ac.destination);sub.start();for(let k=0;k<120;k++){const tt=ac.currentTime+1.5+k*.68;sg.gain.setValueAtTime(0,tt);sg.gain.linearRampToValueAtTime(.09,tt+.02);sg.gain.exponentialRampToValueAtTime(.0001,tt+.5)}PAD={ac,g,osc:osc.concat(l,sub)}}catch(e){}}
 function padStop(){if(!PAD)return;const p=PAD;PAD=null;try{p.g.gain.cancelScheduledValues(p.ac.currentTime);p.g.gain.setValueAtTime(p.g.gain.value,p.ac.currentTime);p.g.gain.linearRampToValueAtTime(0,p.ac.currentTime+.8);setTimeout(()=>{try{p.osc.forEach(o=>o.stop());p.ac.close()}catch(e){}},900)}catch(e){}}
 let INTRO_AUDIO=null;
 function syncSoundBtns(){document.querySelectorAll(".soundbtn").forEach(b=>{b.classList.toggle("on",S.sound);b.setAttribute("aria-pressed",S.sound?"true":"false");b.setAttribute("aria-label",S.sound?"Sound on. Turn sound off":"Sound off. Turn sound on");const l=b.querySelector(".lbl");if(l)l.textContent=S.sound?"Sound on":"Sound off"})}
@@ -1857,85 +1919,77 @@ function setSound(on){
 
 /* ---------- cinematic entry ---------- */
 function introWanted(){try{if(sessionStorage.getItem("gvIntro"))return false}catch(e){}return S.route==="home"}
-let INTRO_RAF=0;
+let INTRO_RAF=0,INTRO_T=[];
+const SHOT_R=2.73;
+function introLayout(el){const W=innerWidth,H=innerHeight;let sh,st;
+  if(W/H>=1.15){sh=Math.min(W/SHOT_R,H*.72);st=(H-sh)/2}else{sh=Math.min(H*.56,W*1.25);st=Math.max(70,H*.16)}
+  el.style.setProperty("--st",Math.round(st)+"px");el.style.setProperty("--sh",Math.round(sh)+"px")}
+function grainURL(){const c=document.createElement("canvas");c.width=c.height=180;const x=c.getContext("2d"),d=x.createImageData(180,180);for(let i=0;i<d.data.length;i+=4){const v=Math.random()*255;d.data[i]=d.data[i+1]=d.data[i+2]=v;d.data[i+3]=255}x.putImageData(d,0,0);return c.toDataURL()}
 function showIntro(){
   if($(".intro"))return;
   const reduce=window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches;
   const slow=navigator.connection&&(navigator.connection.saveData||/2g/.test(navigator.connection.effectiveType||""));
   const v=media("intro-video"),p=media("intro-poster");
   const useVid=v&&v.url&&!slow&&!reduce;
-  const el=document.createElement("div");el.className="intro";el.setAttribute("role","dialog");el.setAttribute("aria-modal","true");el.setAttribute("aria-label","Welcome to Grooveville");
-  el.innerHTML=(useVid?'<video muted playsinline autoplay loop preload="metadata"'+(p&&p.data?' poster="'+esc(p.data)+'"':'')+' src="'+esc(v.url)+'" data-has-audio="'+(v.audio?"1":"0")+'"></video>':(p&&p.data?'<img class="ipost" src="'+esc(p.data)+'" alt="'+esc(p.alt||"")+'">':'<canvas aria-hidden="true"></canvas>'))+
-    '<div class="ishade"></div><div class="itop"><div class="brandmark"><b>GROOVEVILLE</b><span>The Creative House</span></div><div class="c">Charlotte, NC</div><div class="r"><button class="soundbtn'+(S.sound?" on":"")+'" data-act="sound" aria-pressed="'+(S.sound?"true":"false")+'"><span class="bars" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span class="lbl">'+(S.sound?"Sound on":"Sound off")+'</span></button></div></div>'+
-    '<div class="icenter"><div class="tagline">Different worlds. One Groove.</div><button class="gobtn" data-act="intro-go">LET\'S GROOVE <i aria-hidden="true">→</i></button><button class="skip" data-act="intro-go">Skip intro</button></div>'+
-    (S.isAdmin&&!useVid&&!(p&&p.data)?'<div class="await">Animated drive (built in). Add a licensed film in Back office › Website.</div>':'');
+  const still=(p&&p.data)||ASSETS["gv-intro"]||"";
+  const el=document.createElement("div");el.className="intro closed"+(reduce?" done":"");el.setAttribute("role","dialog");el.setAttribute("aria-modal","true");el.setAttribute("aria-label","Welcome to Grooveville");
+  el.innerHTML='<div class="cine"><div class="rumble"><div class="shot">'+(useVid?'<video muted playsinline autoplay loop preload="metadata" poster="'+esc(still)+'" src="'+esc(v.url)+'" data-has-audio="'+(v.audio?"1":"0")+'"></video>':'<img src="'+esc(still)+'" alt="'+esc((p&&p.alt)||"A dark car drives toward the Charlotte skyline at sunset")+'">'+(reduce?'':'<canvas aria-hidden="true"></canvas>'))+'</div></div>'+
+    '<div class="grade"></div><div class="grain" style="background-image:url('+grainURL()+')"></div><div class="vig"></div><div class="sweep"></div></div>'+
+    '<div class="bar top"><div class="brandmark"><b>GROOVEVILLE</b><span>The Creative House</span></div><div class="c">Charlotte, NC<small>Est. MMXXVI</small></div><div class="r"><button class="soundbtn'+(S.sound?" on":"")+'" data-act="sound" aria-pressed="'+(S.sound?"true":"false")+'"><span class="lbl">'+(S.sound?"Sound on":"Sound off")+'</span><span class="bars" aria-hidden="true"><i></i><i></i><i></i><i></i></span></button></div></div>'+
+    '<div class="ttl" aria-hidden="true"><b>GROOVEVILLE</b><span>The Creative House</span></div>'+
+    '<div class="bar bot"><div class="icenter"><div class="tagline">Different worlds. One Groove.</div><button class="gobtn" data-act="intro-go">LET\'S GROOVE <i aria-hidden="true">→</i></button></div><button class="skip" data-act="intro-go">Skip intro</button></div>';
   document.body.appendChild(el);document.body.style.overflow="hidden";
-  const cv=el.querySelector("canvas");if(cv)driveScene(cv,reduce);
-  setTimeout(()=>{const b=el.querySelector(".gobtn");if(b)b.focus()},60);
+  introLayout(el);const onR=()=>introLayout(el);addEventListener("resize",onR);el._off=()=>removeEventListener("resize",onR);
+  requestAnimationFrame(()=>requestAnimationFrame(()=>el.classList.remove("closed")));
+  const cv=el.querySelector(".shot canvas");if(cv)introFX(cv);
+  INTRO_T.push(setTimeout(()=>{const b=el.querySelector(".gobtn");if(b)b.focus({preventScroll:true})},reduce?60:5300));
   el.addEventListener("keydown",e=>{if(e.key==="Escape")introGo();if(e.key==="Tab"){const f=[...el.querySelectorAll("button")];const i=f.indexOf(document.activeElement);if(e.shiftKey&&i<=0){e.preventDefault();f[f.length-1].focus()}else if(!e.shiftKey&&i===f.length-1){e.preventDefault();f[0].focus()}}});
 }
 function introGo(){
-  const el=$(".intro");if(!el)return;try{sessionStorage.setItem("gvIntro","1")}catch(e){}
-  el.classList.add("out");padStop();if(INTRO_AUDIO){INTRO_AUDIO.pause();INTRO_AUDIO=null}
-  document.body.style.overflow="";
-  setTimeout(()=>{cancelAnimationFrame(INTRO_RAF);el.remove()},950);
-  if(S.sound&&radioSrc())radioPlay();
-  const h=$("#app h1");if(h){h.setAttribute("tabindex","-1");h.focus({preventScroll:true})}
+  const el=$(".intro");if(!el||el._leaving)return;el._leaving=1;try{sessionStorage.setItem("gvIntro","1")}catch(e){}
+  INTRO_T.forEach(clearTimeout);INTRO_T=[];
+  const reduce=el.classList.contains("done");
+  el.classList.add("closed");padStop();if(INTRO_AUDIO){INTRO_AUDIO.pause();INTRO_AUDIO=null}
+  setTimeout(()=>{el.classList.add("out");document.body.style.overflow="";if(el._off)el._off();
+    if(S.sound&&radioSrc())radioPlay();const h=$("#app h1");if(h){h.setAttribute("tabindex","-1");h.focus({preventScroll:true})}},reduce?0:900);
+  setTimeout(()=>{cancelAnimationFrame(INTRO_RAF);el.remove()},reduce?700:1700);
 }
-/* The Charlotte drive: a hand-built animation (no stock footage). */
-function driveScene(cv,still){
-  const ctx=cv.getContext("2d");let W,H,dpr;
-  const rnd=(s=>()=>(s=(s*16807)%2147483647)/2147483647)(7);
-  const towers=[];
-  function build(){towers.length=0;let x=-20;while(x<1240){const w=18+rnd()*46,h=40+rnd()*150;towers.push({x,w,h,t:rnd()<.15?"slant":"flat",lit:rnd()});x+=w+2+rnd()*8}
-    towers.push({x:560,w:52,h:330,t:"crown"},{x:640,w:46,h:268,t:"slant"},{x:470,w:40,h:240,t:"spire"},{x:712,w:36,h:210,t:"flat"},{x:420,w:34,h:190,t:"flat"},{x:520,w:30,h:220,t:"flat"})}
-  build();
-  function size(){dpr=Math.min(window.devicePixelRatio||1,1.5);W=cv.clientWidth||innerWidth;H=cv.clientHeight||innerHeight;cv.width=W*dpr;cv.height=H*dpr;ctx.setTransform(dpr,0,0,dpr,0,0)}
+/* Light, motion and lens effects layered on the entry still (positions are fractions of the picture). */
+function introFX(cv){
+  const ctx=cv.getContext("2d");let W,H,dpr,img={x:0,y:0,w:1,h:1};
+  const size=()=>{dpr=Math.min(devicePixelRatio||1,1.5);W=cv.clientWidth;H=cv.clientHeight;cv.width=W*dpr;cv.height=H*dpr;ctx.setTransform(dpr,0,0,dpr,0,0);
+    let w=W,h=W/SHOT_R;if(h<H){h=H;w=H*SHOT_R}img={x:(W-w)*.52,y:(H-h)*.5,w,h}};
   size();addEventListener("resize",size);
+  const P=(fx,fy)=>[img.x+fx*img.w,img.y+fy*img.h];
+  const TAIL=[[.371,.88,.6],[.678,.871,.5],[.732,.889,.7],[.848,.894,.8]],LAMPS=[[.083,.537],[.171,.461],[.255,.674],[.342,.674],[.841,.722],[.66,.69]];
+  const VP=[.534,.79];
+  const streaks=Array.from({length:26},(_,i)=>({s:Math.random(),side:i%2?1:-1,off:.15+Math.random()*.85,sp:.35+Math.random()*.5,c:Math.random()<.5?"#fff1dc":"#ffb27a"}));
+  const dust=Array.from({length:34},()=>({x:Math.random(),y:Math.random(),r:.5+Math.random()*2.2,v:.004+Math.random()*.01,a:.15+Math.random()*.35}));
+  const glow=(x,y,r,col,a)=>{const g=ctx.createRadialGradient(x,y,0,x,y,r);g.addColorStop(0,col);g.addColorStop(1,"rgba(0,0,0,0)");ctx.globalAlpha=a;ctx.fillStyle=g;ctx.beginPath();ctx.arc(x,y,r,0,7);ctx.fill();ctx.globalAlpha=1};
   const t0=performance.now();
-  function frame(now){
-    const t=(now-t0)/1000,hz=H*.58,cx=W/2,sc=Math.max(W/1200,H/900);
-    let g=ctx.createLinearGradient(0,0,0,hz);g.addColorStop(0,"#151226");g.addColorStop(.35,"#3b2547");g.addColorStop(.7,"#b8607a");g.addColorStop(.9,"#f08f6c");g.addColorStop(1,"#f7b48c");
-    ctx.fillStyle=g;ctx.fillRect(0,0,W,hz+1);
-    let s=ctx.createRadialGradient(cx,hz,0,cx,hz,W*.45);s.addColorStop(0,"#ffd9b0cc");s.addColorStop(.25,"#f4a98755");s.addColorStop(1,"#f4a98700");ctx.fillStyle=s;ctx.fillRect(0,0,W,hz);
-    for(let i=0;i<5;i++){const cx1=(i*277+t*6)%(W+600)-300,cy1=hz*(.22+i*.1),cg=ctx.createRadialGradient(cx1,cy1,0,cx1,cy1,240*sc);cg.addColorStop(0,i%2?"#b7a1e522":"#f4a98722");cg.addColorStop(1,"#0000");ctx.fillStyle=cg;ctx.save();ctx.translate(cx1,cy1);ctx.scale(1,.12);ctx.translate(-cx1,-cy1);ctx.beginPath();ctx.arc(cx1,cy1,240*sc,0,7);ctx.fill();ctx.restore()}
-    ctx.save();ctx.translate(cx-600*sc,hz);ctx.scale(sc,sc);
-    towers.forEach(b=>{const x=b.x,w=b.w,h=b.h;ctx.fillStyle=b.t==="crown"||b.t==="slant"||b.t==="spire"?"#1b1324":"#251a2c";
-      ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,-h);
-      if(b.t==="crown"){for(let k=0;k<=6;k++){const px=x+w*k/6;ctx.lineTo(px,-h-(k%2?6:30))}ctx.lineTo(x+w,-h)}
-      else if(b.t==="slant"){ctx.lineTo(x+w*.5,-h-26);ctx.lineTo(x+w,-h)}
-      else if(b.t==="spire"){ctx.lineTo(x+w/2-3,-h-4);ctx.lineTo(x+w/2,-h-40);ctx.lineTo(x+w/2+3,-h-4);ctx.lineTo(x+w,-h)}
-      else ctx.lineTo(x+w,-h);
-      ctx.lineTo(x+w,0);ctx.closePath();ctx.fill();
-      ctx.fillStyle="#ffd6a8";for(let yy=-h+10;yy<-6;yy+=9)for(let xx=x+4;xx<x+w-4;xx+=7){const n=Math.sin(xx*12.9+yy*78.2+(b.lit||1)*5)*43758.5;if(n-Math.floor(n)>.72){ctx.globalAlpha=.35+.35*Math.sin(t*.7+xx);ctx.fillRect(xx,yy,2.4,3.4)}}ctx.globalAlpha=1;
-      if(b.t==="crown"){ctx.fillStyle="#f4a987";ctx.globalAlpha=.6+.3*Math.sin(t*2);ctx.fillRect(x+w/2-1,-h-40,2,8);ctx.globalAlpha=1}});
-    ctx.restore();
-    g=ctx.createLinearGradient(0,hz,0,H);g.addColorStop(0,"#2a1e2a");g.addColorStop(.25,"#141114");g.addColorStop(1,"#08080a");ctx.fillStyle=g;ctx.fillRect(0,hz,W,H-hz);
-    const vx=cx,roadL=x=>x;ctx.fillStyle="#18161a";ctx.beginPath();ctx.moveTo(vx-8*sc,hz);ctx.lineTo(vx+8*sc,hz);ctx.lineTo(W*1.15,H);ctx.lineTo(-W*.15,H);ctx.closePath();ctx.fill();
-    g=ctx.createLinearGradient(0,hz,0,H);g.addColorStop(0,"#f4a98755");g.addColorStop(.4,"#f4a98710");g.addColorStop(1,"#0000");ctx.fillStyle=g;ctx.beginPath();ctx.moveTo(vx-8*sc,hz);ctx.lineTo(vx+8*sc,hz);ctx.lineTo(vx+W*.25,H);ctx.lineTo(vx-W*.25,H);ctx.closePath();ctx.fill();
-    const speed=still?0:.55,proj=z=>hz+(H-hz)*(1/z)*.18;
-    ctx.fillStyle="#f3efe7";
-    for(let lane of[-1,1]){for(let i=0;i<22;i++){let z=((i*1.2-(t*speed*4))%26+26)%26+.9;const z2=z+.6;const y1=proj(z),y2=proj(z2);if(y1>H+40)continue;const k1=(y1-hz)/(H-hz),k2=(y2-hz)/(H-hz);const lx=a=>vx+lane*a*W*.17;
-      ctx.globalAlpha=Math.min(1,k1*2.2)*.8;ctx.beginPath();ctx.moveTo(lx(k2)-k2*3*sc,y2);ctx.lineTo(lx(k2)+k2*3*sc,y2);ctx.lineTo(lx(k1)+k1*5*sc,y1);ctx.lineTo(lx(k1)-k1*5*sc,y1);ctx.fill()}}
-    ctx.globalAlpha=1;
-    for(let side of[-1,1]){for(let i=0;i<10;i++){let z=((i*2.6-(t*speed*4))%26+26)%26+.7;const y=proj(z),k=(y-hz)/(H-hz);if(y>H+200)continue;const x=vx+side*(k*W*.62+10*sc);
-      ctx.strokeStyle="#2a2530";ctx.lineWidth=Math.max(1,k*5*sc);ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x,y-k*230*sc);ctx.lineTo(x-side*k*40*sc,y-k*236*sc);ctx.stroke();
-      const lg=ctx.createRadialGradient(x-side*k*40*sc,y-k*232*sc,0,x-side*k*40*sc,y-k*232*sc,k*60*sc+2);lg.addColorStop(0,"#ffe2bccc");lg.addColorStop(1,"#ffe2bc00");ctx.fillStyle=lg;ctx.beginPath();ctx.arc(x-side*k*40*sc,y-k*232*sc,k*60*sc+2,0,7);ctx.fill()}}
-    [[.08,-.35],[.15,.32],[.05,.1]].forEach(([d,lx],i)=>{const k=d+.02*Math.sin(t*.3+i),y=hz+(H-hz)*k,x=vx+lx*k*W*.5;ctx.fillStyle="#ff9d6e";ctx.globalAlpha=.85;ctx.fillRect(x-6*k*sc*4,y,3*k*sc*4,2*k*sc*4+1);ctx.fillRect(x+3*k*sc*4,y,3*k*sc*4,2*k*sc*4+1);ctx.globalAlpha=1});
-    const bob=still?0:Math.sin(t*9)*.8,cw=Math.min(W*.5,380*sc),ch=cw*.42,cx0=vx-cw/2,cy0=hz+(H-hz)*.40-ch+bob;
-    ctx.fillStyle="#0007";ctx.beginPath();ctx.ellipse(vx,cy0+ch*1.02,cw*.6,ch*.14,0,0,7);ctx.fill();
-    ctx.fillStyle="#060607";[[.1],[.9]].forEach(([p])=>{ctx.beginPath();ctx.roundRect?ctx.roundRect(cx0+cw*p-cw*.075,cy0+ch*.72,cw*.15,ch*.32,6):ctx.rect(cx0+cw*p-cw*.075,cy0+ch*.72,cw*.15,ch*.32);ctx.fill()});
-    g=ctx.createLinearGradient(0,cy0,0,cy0+ch);g.addColorStop(0,"#3a3340");g.addColorStop(.4,"#18161c");g.addColorStop(1,"#070708");ctx.fillStyle=g;ctx.strokeStyle="#f4a98788";ctx.lineWidth=1.4;
-    ctx.beginPath();ctx.moveTo(cx0+cw*.2,cy0+ch*.05);ctx.bezierCurveTo(cx0+cw*.35,cy0-ch*.12,cx0+cw*.65,cy0-ch*.12,cx0+cw*.8,cy0+ch*.05);ctx.lineTo(cx0+cw*.93,cy0+ch*.38);ctx.quadraticCurveTo(cx0+cw*1.01,cy0+ch*.45,cx0+cw,cy0+ch*.62);ctx.lineTo(cx0+cw*.98,cy0+ch*.9);ctx.lineTo(cx0+cw*.02,cy0+ch*.9);ctx.lineTo(cx0,cy0+ch*.62);ctx.quadraticCurveTo(cx0-cw*.01,cy0+ch*.45,cx0+cw*.07,cy0+ch*.38);ctx.closePath();ctx.fill();ctx.stroke();
-    g=ctx.createLinearGradient(0,cy0,0,cy0+ch*.36);g.addColorStop(0,"#3a2a3a");g.addColorStop(1,"#120f14");ctx.fillStyle=g;ctx.beginPath();ctx.moveTo(cx0+cw*.25,cy0+ch*.06);ctx.bezierCurveTo(cx0+cw*.38,cy0-ch*.05,cx0+cw*.62,cy0-ch*.05,cx0+cw*.75,cy0+ch*.06);ctx.lineTo(cx0+cw*.83,cy0+ch*.33);ctx.lineTo(cx0+cw*.17,cy0+ch*.33);ctx.closePath();ctx.fill();
-    ctx.strokeStyle="#f4a98744";ctx.lineWidth=1.2;ctx.beginPath();ctx.moveTo(cx0+cw*.07,cy0+ch*.39);ctx.lineTo(cx0+cw*.93,cy0+ch*.39);ctx.stroke();
-    const tg=ctx.createLinearGradient(cx0,0,cx0+cw,0);tg.addColorStop(0,"#ffb08a");tg.addColorStop(.5,"#ff9068");tg.addColorStop(1,"#ffb08a");
-    ctx.shadowColor="#ff9068";ctx.shadowBlur=24;ctx.fillStyle=tg;ctx.fillRect(cx0+cw*.06,cy0+ch*.47,cw*.88,ch*.045);ctx.shadowBlur=0;
-    const gl=ctx.createRadialGradient(vx,cy0+ch*.5,0,vx,cy0+ch*.5,cw*.7);gl.addColorStop(0,"#ff906826");gl.addColorStop(1,"#ff906800");ctx.fillStyle=gl;ctx.fillRect(cx0-cw*.3,cy0,cw*1.6,ch*1.4);
-    ctx.fillStyle="#f3efe744";ctx.fillRect(vx-cw*.07,cy0+ch*.62,cw*.14,ch*.08);
-    const cy2=ctx.createRadialGradient(W*.92,H*.2,0,W*.92,H*.2,W*.35);cy2.addColorStop(0,"#68d4d01c");cy2.addColorStop(1,"#68d4d000");ctx.fillStyle=cy2;ctx.fillRect(0,0,W,H);
-    if(!still)INTRO_RAF=requestAnimationFrame(frame);
-  }
+  const frame=now=>{const t=(now-t0)/1000,u=img.w/1562;ctx.clearRect(0,0,W,H);
+    ctx.globalCompositeOperation="lighter";
+    // main car taillights: glow + anamorphic streak
+    const pulse=.85+.15*Math.sin(t*2.1)+(Math.sin(t*.7)>.96?.25:0);
+    const [ax,ay]=P(.396,.905),[bx]=P(.652,.905);
+    for(let k=0;k<6;k++){const x=ax+(bx-ax)*k/5;glow(x,ay,46*u,"rgba(255,70,40,.9)",.22*pulse)}
+    let g=ctx.createLinearGradient(ax-420*u,0,bx+420*u,0);g.addColorStop(0,"rgba(255,80,50,0)");g.addColorStop(.3,"rgba(255,90,60,.35)");g.addColorStop(.5,"rgba(255,170,140,.55)");g.addColorStop(.7,"rgba(255,90,60,.35)");g.addColorStop(1,"rgba(255,80,50,0)");
+    ctx.globalAlpha=.5*pulse;ctx.fillStyle=g;ctx.fillRect(ax-420*u,ay-1.6*u,bx-ax+840*u,3.2*u);ctx.globalAlpha=1;
+    TAIL.forEach(([x,y,a],i)=>{const [px,py]=P(x,y);glow(px,py,26*u,"rgba(255,60,40,.9)",.25*a*(.8+.2*Math.sin(t*3+i)))});
+    LAMPS.forEach(([x,y],i)=>{const [px,py]=P(x,y);glow(px,py,(38+6*Math.sin(t*1.3+i*2))*u,"rgba(255,190,120,.9)",.28)});
+    // road speed streaks flowing from the vanishing point toward the camera
+    const [vx,vy]=P(VP[0],VP[1]);const [c1x,c1y]=P(.35,.6),[c2x]=P(.67,.6);ctx.save();ctx.beginPath();ctx.rect(0,0,W,H);ctx.rect(c2x,c1y,c1x-c2x,H);ctx.clip("evenodd");
+    streaks.forEach(s=>{s.s+=s.sp*.016*(1+s.s*2.5);if(s.s>1){s.s=0;s.off=.15+Math.random()*.85}
+      const k=s.s*s.s,x=vx+s.side*(s.off*img.w*.75)*k,y=vy+(H-vy+40*u)*k,len=(10+160*k)*u;
+      const dx=s.side*s.off*img.w*.75,dy=H-vy,dl=Math.hypot(dx,dy);
+      ctx.strokeStyle=s.c;ctx.globalAlpha=Math.min(.55,k*1.3);ctx.lineWidth=Math.max(.6,2.6*k*u*2);ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x-dx/dl*len,y-dy/dl*len);ctx.stroke()});
+    ctx.globalAlpha=1;ctx.restore();
+    // floating dust and bokeh catching the sunset
+    dust.forEach(d=>{d.x+=d.v*.06;d.y-=d.v*.02;if(d.x>1)d.x=0;if(d.y<0)d.y=1;glow(d.x*W,d.y*H,d.r*6,"rgba(255,200,160,.9)",d.a*.4)});
+    // sun bloom behind the skyline
+    const [sx,sy]=P(.5,.42);glow(sx,sy,img.w*.35,"rgba(255,140,90,.5)",.18+.04*Math.sin(t*.5));
+    ctx.globalCompositeOperation="source-over";
+    INTRO_RAF=requestAnimationFrame(frame)};
   INTRO_RAF=requestAnimationFrame(frame);
 }
 
@@ -2033,7 +2087,7 @@ addEventListener("scroll",()=>{if(vtipFor&&matchMedia("(hover: hover)").matches)
 /* ---------- Back office › Website ---------- */
 const WEB_SECS=[["media","Media library"],["companies","Companies"],["aelio","AELIO"],["music","Music & Radio"]];
 function slotList(){
-  const L=[{id:"intro-poster",g:"Cinematic entry",label:"Entry poster image",r:"16/9",note:"Optional. Replaces the animated Charlotte drive with a still."},
+  const L=[{id:"intro-poster",g:"Cinematic entry",label:"Entry picture",r:"2.73/1",note:"The cinematic entry frame. Lights, motion and lens effects are layered on top."},
     {id:"intro-video",g:"Cinematic entry",label:"Entry film",kind:"video",note:"Link to an MP4 or WebM you own or license. Plays muted; skipped on slow connections."},
     {id:"intro-audio",g:"Cinematic entry",label:"Entry sound",kind:"audio",note:"Optional audio link for SOUND ON. Without it a soft built-in tone plays."},
     {id:"home-hero",g:"Homepage",label:"Hero photo",r:"16/9"},{id:"home-collab",g:"Homepage",label:"Collaborate photo",r:"4/3"},{id:"home-story",g:"Homepage",label:"Our Story photo",r:"4/3"}];
@@ -2408,8 +2462,12 @@ function render(){
     else if(!S.db)h='<div class="wrap gate"><h1>Back office unavailable</h1><p class="muted">Saved records can\'t be reached in this view. Open the page from claude.ai while signed in.</p></div>';
     else{const v={"team":viewDash,"team-time":viewTimesheet,"team-cal":()=>viewCalendar(true),"team-rem":viewReminders,"team-out":viewOutreach,"team-people":viewTeams,"team-vault":viewVault,"team-docs":viewDocs,"team-conv":viewConverter,"team-reports":viewReports,"team-site":viewSite,"team-web":viewWebsite}[r]||viewDash;h=teamShell(TEAM_TABS.some(t=>t[0]===r)?r:"team",v())}
   }
+  else if(r==="vine")h=viewVine();
+  else if(r==="brands")h=viewBrands();
+  else if(r==="story")h=viewStory();
   else h=viewHome();
   app.innerHTML=h;
+  if(S._lastR!==r){S._lastR=r;app.classList.remove("pagein");void app.offsetWidth;app.classList.add("pagein")}
   const cf=$("#collabForm");if(cf)cf.addEventListener("submit",e=>{e.preventDefault();collabSubmit(cf)});
   const af=$("#authForm");if(af)af.addEventListener("submit",e=>{e.preventDefault();fbAuth(af,(e.submitter&&e.submitter.dataset.mode)||"in")});
   [["docf-cat","cat"],["docf-year","year"],["docf-q","q"]].forEach(([i,k])=>{const el=$("#"+i);if(el)el.addEventListener("change",()=>{S.docf[k]=el.value;render()})});
