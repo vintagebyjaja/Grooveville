@@ -122,6 +122,29 @@ section{padding-block:56px}
 .branch h3{font-size:21px}
 .branch p{color:var(--muted);font-size:14.5px}
 .branch .go{margin-top:auto;font-weight:600;font-size:14px;color:var(--c)}
+.backbtn{border:1.5px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:4px 12px;font-size:13px;font-weight:600;cursor:pointer;margin-right:10px}
+.backbtn:hover{border-color:var(--c,var(--ink))}
+.subtabs{display:flex;gap:6px;flex-wrap:wrap;margin-top:26px;border-bottom:1px solid var(--line)}
+.subtabs>a,.subtabs>button{border:0;background:none;font:inherit;font-weight:600;font-size:15px;color:var(--muted);padding:10px 14px;border-bottom:2.5px solid transparent;margin-bottom:-1px;cursor:pointer;text-decoration:none}
+.subtabs>.on{color:var(--ink);border-color:var(--c)}
+.subtabs>.subtab-portal{color:#fff;background:linear-gradient(135deg,#7a1fe0,#b44dff 55%,#ff8b32);border-radius:999px 999px 0 0;border-bottom-color:#b44dff}
+.portalcard{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:20px;align-items:center;width:100%;text-align:left;cursor:pointer;text-decoration:none;color:#f4ecff;border:1px solid #9c45ff;border-radius:18px;padding:20px 24px;background:radial-gradient(circle at 12% 50%,#5a1a9a 0,#1a0b2e 45%,#0c0616 100%);box-shadow:0 0 0 1px #9c45ff33,0 18px 50px -20px #8a2bff;font:inherit;transition:transform .2s,box-shadow .2s}
+.portalcard:hover{transform:translateY(-2px);box-shadow:0 0 0 1px #c07bff66,0 22px 60px -18px #a447ff}
+.portalcard b{display:block;font-family:var(--f-display);font-size:clamp(22px,3vw,30px);margin:4px 0}
+.portalcard .pc-text span:last-child{color:#cdbbe6;font-size:14.5px}
+.portalcard .pc-go{font-weight:800;padding:10px 18px;border-radius:999px;background:linear-gradient(135deg,#9a35ff,#5a13ba);white-space:nowrap}
+.swirl{width:84px;height:84px;border-radius:50%;display:grid;place-items:center;background:conic-gradient(from 0deg,#2a0750,#9a35ff,#ff8bf5,#6b1bd8,#ff8b32,#2a0750);animation:spin 3.2s linear infinite;box-shadow:0 0 30px #a64cff}
+.swirl i{width:52px;height:52px;border-radius:50%;background:radial-gradient(circle,#fff6ff 0,#d58bff 30%,#3d0a78 75%)}
+@keyframes spin{to{transform:rotate(360deg)}}
+.portal-ov{position:fixed;inset:0;z-index:200;display:grid;place-items:center;background:transparent}
+.portal-ov canvas{position:absolute;inset:0}
+.portal-ov.calm{background:#12041f;animation:pfade .5s ease forwards}
+@keyframes pfade{from{opacity:0}to{opacity:1}}
+.portal-txt{position:relative;color:#fff;font-family:var(--f-display);font-weight:800;font-size:clamp(18px,2.6vw,28px);letter-spacing:.06em;text-transform:uppercase;text-shadow:0 0 18px #b44dff;display:flex;flex-direction:column;align-items:center;gap:6px;animation:ptxt 1.9s ease forwards}
+.portal-txt span{font-size:42px}
+@keyframes ptxt{0%{opacity:0;transform:scale(.9)}25%{opacity:1}75%{opacity:1;transform:scale(1.04)}100%{opacity:0;transform:scale(1.4)}}
+@media (max-width:560px){.portalcard{grid-template-columns:1fr;justify-items:start}.swirl{width:64px;height:64px}.swirl i{width:40px;height:40px}}
+@media (prefers-reduced-motion:reduce){.swirl{animation:none}}
 .hqband{display:flex;gap:20px;align-items:center;flex-wrap:wrap;background:var(--olive);color:var(--bg);border-radius:var(--r);padding:22px 24px;margin-bottom:14px}
 .hqband h3{font-size:24px}
 .hqband p{opacity:.85;max-width:60ch}
@@ -312,7 +335,7 @@ const BRANDS = [
   {id:"aec", name:"DrawUp AEC", short:"AEC", role:"Architecture · Engineering · Construction", website:"https://drawup.studio",
    tagline:"Plans, checkups and firm projects.",
    about:"DrawUp AEC builds DrawUp, a working product app for architecture, engineering and construction. It brings plans, checkups and firm projects together, with tools like Arch Coach, Check, Resources and Firm Profiles."},
-  {id:"scu", name:"Shadow Crown Universe", short:"SCU", role:"Books & stories",
+  {id:"scu", name:"Shadow Crown Universe", short:"SCU", role:"Books & stories", portal:"/shadowcrown/", portalLabel:"Enter the Universe",
    social:"https://www.instagram.com/shadowcrown.ent/", cta:{label:"Buy Book 1 on Amazon", url:"https://www.amazon.com/dp/B0HJZFTWF4"},
    feature:{eyebrow:"Book 1 · Out now", title:"Shadow Crown: Zeke's Daydream", by:"Jabari J. Bailey", meta:"ISBN 9798171324193", url:"https://www.amazon.com/dp/B0HJZFTWF4", label:"Buy on Amazon"},
    tagline:"The story world of Shadow Crown. Book 1, Zeke's Daydream, is out now.",
@@ -362,7 +385,7 @@ try{SNAP=JSON.parse(document.getElementById("snap").textContent)||{}}catch(e){SN
 SNAP.events=SNAP.events||[]; SNAP.brands=SNAP.brands||{};
 
 const S = {
-  route:"home", authChecked:false, isAdmin:false, uid:null, db:null, userCap:null, signedIn:false, email:"",
+  route:"home", navCount:0, authChecked:false, isAdmin:false, uid:null, db:null, userCap:null, signedIn:false, email:"",
   myBrands:[], myEntries:[], vault:[], vaultMeta:null, vkey:null, vraw:null, vplain:{}, conv:{mode:"stmt",saveDoc:true}, conversions:[], convRules:null, docs:[], docf:{brand:"all",cat:"all",year:"all",q:""}, rep:{year:new Date().getFullYear()}, requested:false, members:{}, access:{}, org:{founder:"",heads:{}}, requests:{}, grants:{}, myReq:null, memberLogs:{}, names:{}, fbReady:false,
   ledger:[], events:[], reminders:[], outreach:[], site:{brands:{}}, loaded:{},
   ts:{brand:"all", month:today().slice(0,7), type:"all"},
@@ -645,6 +668,7 @@ function viewHome(){
     '<section style="padding-top:0"><div class="wrap"><div class="cta"><div><div class="eyebrow">Partnerships</div><h2 style="margin-top:8px">Want to build something with Grooveville?</h2><p class="muted" style="margin-top:10px;max-width:52ch">Organizations, brands and businesses can send an official collaboration request to Grooveville LLC or to any one of our companies.</p></div><div><a class="btn peach" href="#collab">Start a collaboration request</a></div></div></div></section>';
 }
 
+function portalLink(b,cls,inner){const u=portalUrl(b);return BACKEND==="firebase"?'<button type="button" class="'+cls+'" data-act="portal" data-url="'+esc(u)+'">'+inner+'</button>':'<a class="'+cls+'" href="'+esc(u)+'" target="_blank" rel="noopener" data-act="portal-ext">'+inner+'</a>'}
 function viewBrand(id){
   const b=brandInfo(id), ev=upcomingPublic(id,6);
   const sib=BRANDS.filter(x=>x.id!==id);
@@ -655,10 +679,12 @@ function viewBrand(id){
   if(b.tiktok){const tk=/tiktok\.com\/@?([^/?#]+)/i.exec(b.tiktok);links.push('<a class="btn ghost" href="'+esc(b.tiktok)+'" target="_blank" rel="noopener">'+(tk?'Follow @'+esc(tk[1])+' on TikTok ↗':'TikTok ↗')+'</a>')}
   if(!b.website&&!b.social)links.push('<span class="pill high" style="align-self:center;font-size:12.5px;padding:6px 10px">Website coming soon</span>');
   return '<div style="'+cvar(id)+'"><section class="bhero"><div class="wrap">'+
-    '<div class="crumb">'+(id==="hq"?'<a href="#home">Home</a> · Headquarters':'<a href="#b-hq">Grooveville LLC</a> › '+esc(b.name))+'</div>'+
+    '<div class="crumb"><button class="backbtn" data-act="go-back" aria-label="Go back">‹ Back</button>'+(id==="hq"?'<a href="#home">Home</a> · Headquarters':'<a href="#b-hq">Grooveville LLC</a> › '+esc(b.name))+'</div>'+
     (b.logo?'<img class="blogo big" src="'+esc(b.logo)+'" alt="'+esc(b.name)+' logo">':'')+'<div class="eyebrow">'+esc(b.role)+'</div><h1 style="margin-top:8px">'+esc(b.name)+'</h1><p class="tag">'+esc(b.tagline)+'</p>'+
     '<div class="ctas" style="display:flex;gap:10px;flex-wrap:wrap;margin-top:22px">'+links.join("")+'<a class="btn peach" href="#collab-'+id+'">Collaborate with '+esc(b.short==="HQ"?"Grooveville":b.name)+'</a></div>'+
+    (b.portal?'<nav class="subtabs" aria-label="'+esc(b.name)+'"><a class="on" href="#b-'+id+'" aria-current="page">Overview</a>'+portalLink(b,'subtab-portal','✦ '+esc(b.portalLabel||"Enter"))+'</nav>':'')+
     '</div></section>'+
+    (b.portal?'<section style="padding-block:6px 0"><div class="wrap">'+portalLink(b,'portalcard','<span class="swirl" aria-hidden="true"><i></i></span><span class="pc-text"><span class="eyebrow" style="color:#d9b3ff">The official Shadow Crown site</span><b>Step through the portal</b><span>Explore the universe, meet the Upendo family, discover Book 1 and enter the Living World.</span></span><span class="pc-go">Enter ✦</span>')+'</div></section>':'')+
     '<section style="padding-top:8px"><div class="wrap bcols"><div style="display:flex;flex-direction:column;gap:20px;min-width:0">'+
     (b.feature?'<div class="card" style="display:flex;gap:18px;align-items:center;flex-wrap:wrap;border-color:var(--c)"><div style="width:74px;height:104px;border-radius:6px;background:linear-gradient(160deg,var(--c),color-mix(in srgb,var(--c) 40%,#000));display:grid;place-items:center;color:var(--bg);font-family:var(--f-display);font-weight:800;font-size:13px;text-align:center;padding:6px;flex:none">BOOK 1</div><div style="min-width:0;flex:1"><div class="eyebrow">'+esc(b.feature.eyebrow)+'</div><h3 style="font-size:22px;margin-top:4px">'+esc(b.feature.title)+'</h3><p class="muted" style="margin-top:4px">by '+esc(b.feature.by)+' · <span class="mono" style="font-size:13px">'+esc(b.feature.meta)+'</span></p></div><a class="btn peach" href="'+esc(b.feature.url)+'" target="_blank" rel="noopener">'+esc(b.feature.label)+' ↗</a></div>':'')+'<div class="card"><div class="eyebrow">About</div><p style="margin-top:8px;font-size:17px;max-width:62ch">'+esc(b.about)+'</p></div>'+
     '<div><h3 style="font-size:22px;margin-bottom:12px">'+(id==="hq"?"Everything coming up":"Coming up at "+esc(b.name))+'</h3>'+
@@ -1502,6 +1528,50 @@ function rulesModal(){
   });
 }
 
+/* ---------- the Shadow Crown portal (purple vortex transition) ---------- */
+function portalCanvas(ov){
+  const cv=ov.querySelector("canvas"),ctx=cv.getContext("2d"),dpr=1;
+  const W=cv.width=innerWidth*dpr,H=cv.height=innerHeight*dpr;cv.style.width=innerWidth+"px";cv.style.height=innerHeight+"px";
+  return {ctx,W,H,cx:W/2,cy:H/2,R:Math.hypot(W,H)/2,dpr};
+}
+function playPortal(onDone){
+  const reduce=window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const ov=document.createElement("div");ov.className="portal-ov";ov.setAttribute("role","status");
+  ov.innerHTML='<canvas aria-hidden="true"></canvas><div class="portal-txt"><span>♛</span>Entering the Shadow Crown Universe</div>';
+  document.body.appendChild(ov);
+  if(reduce){ov.classList.add("calm");setTimeout(onDone,500);return ov}
+  const {ctx,W,H,cx,cy,R,dpr}=portalCanvas(ov);const D=1900,t0=performance.now();
+  let finished=false;const finish=()=>{if(finished)return;finished=true;onDone()};
+  setTimeout(finish,D+1200);
+  const parts=Array.from({length:240},()=>({a:Math.random()*Math.PI*2,r:(0.15+Math.random()*0.95)*R,w:(1+Math.random()*2.6)*dpr,h:262+Math.random()*48,l:55+Math.random()*25}));
+  const frame=now=>{if(finished)return;try{
+    const p=Math.min(1,(now-t0)/D),e=p*p;
+    ctx.globalCompositeOperation="source-over";
+    ctx.fillStyle="rgba(10,3,20,"+(0.18+p*0.5)+")";ctx.fillRect(0,0,W,H);
+    const disc=R*(0.04+e*1.25);
+    const g=ctx.createRadialGradient(cx,cy,0,cx,cy,Math.max(1,disc*1.7));
+    g.addColorStop(0,"rgba(255,244,255,"+(0.55+p*0.45)+")");g.addColorStop(0.22,"rgba(214,120,255,.95)");g.addColorStop(0.5,"rgba(142,40,255,.75)");g.addColorStop(0.78,"rgba(78,12,170,.35)");g.addColorStop(1,"rgba(40,0,90,0)");
+    ctx.fillStyle=g;ctx.beginPath();ctx.arc(cx,cy,disc*1.7,0,Math.PI*2);ctx.fill();
+    ctx.globalCompositeOperation="lighter";ctx.lineCap="round";
+    for(let k=0;k<5;k++){const rr=disc*(0.6+k*0.28),rot=now/(380-k*40)*(k%2?1:-1);ctx.strokeStyle="hsla("+(270+k*9)+",95%,"+(62+k*3)+"%,"+(0.32-k*0.04)+")";ctx.lineWidth=(6-k)*dpr;ctx.beginPath();ctx.arc(cx,cy,rr,rot,rot+Math.PI*1.3);ctx.stroke()}
+    parts.forEach(q=>{const sp=(0.015+(1-q.r/R)*0.09)*(1+p*5);const a0=q.a;q.a+=sp;q.r*=1-(0.006+p*0.05);
+      if(q.r<disc*0.35){q.r=(0.7+Math.random()*0.5)*R;q.a=Math.random()*Math.PI*2}
+      ctx.strokeStyle="hsla("+q.h+",95%,"+q.l+"%,"+(0.35+p*0.5)+")";ctx.lineWidth=q.w;ctx.beginPath();ctx.arc(cx,cy,q.r,a0,q.a);ctx.stroke()});
+    if(p>0.78){ctx.globalCompositeOperation="source-over";ctx.fillStyle="rgba(246,232,255,"+Math.min(1,(p-0.78)/0.22)+")";ctx.fillRect(0,0,W,H)}
+    if(p<1)requestAnimationFrame(frame);else finish();
+  }catch(err){finish()}};
+  requestAnimationFrame(frame);
+  return ov;
+}
+function openPortal(url){
+  try{sessionStorage.setItem("scPortal","1")}catch(e){}
+  const external=/^https?:/i.test(url)&&!url.startsWith(location.origin);
+  if(external){window.open(url,"_blank","noopener");const ov=playPortal(()=>setTimeout(()=>ov.remove(),250));return}
+  playPortal(()=>{location.href=url});
+}
+const portalUrl=b=>BACKEND==="firebase"?b.portal:"https://grooveville.org"+b.portal;
+function goBack(){if(S.navCount>0){S.navCount-=2;history.back()}else location.hash="#home"}
+
 /* ---------- modals ---------- */
 const brandOpts=(sel,only)=>BRANDS.filter(b=>!only||only.includes(b.id)).map(b=>'<option value="'+b.id+'"'+(b.id===sel?" selected":"")+'>'+esc(brandInfo(b.id).name)+'</option>').join("");
 const delBtn=has=>has?'<button type="button" class="btn danger left" data-act="del-arm">Delete</button>':'';
@@ -1735,7 +1805,7 @@ function render(){
   $("#footnote").innerHTML=SNAP.publishedAt?' · Updated '+esc(new Date(SNAP.publishedAt).toLocaleDateString("en-US",{month:"short",day:"numeric",year:"numeric"})):'';
 }
 function route(){S.route=(location.hash||"#home").slice(1)||"home"}
-window.addEventListener("hashchange",()=>{route();render();window.scrollTo(0,0)});
+window.addEventListener("hashchange",()=>{S.navCount++;route();render();window.scrollTo(0,0)});
 
 /* ---------- events ---------- */
 const byId=(col,id)=>S[col].find(x=>x.id===id);
@@ -1749,6 +1819,9 @@ document.addEventListener("click",async e=>{
   if(a==="copy-letter"){const m=t.closest(".modal");return copyText(m._letter,t)}
   if(a==="log-incoming"){const m=t.closest(".modal");const o=Object.assign({},m._rec);const rid=o.id;delete o.id;if(await save("outreach",rid,o)){t.disabled=true;t.textContent="Saved to Collabs"}return}
   if(a==="ev-open")return eventDetail(id,t.dataset.date);
+  if(a==="go-back")return goBack();
+  if(a==="portal")return openPortal(t.dataset.url);
+  if(a==="portal-ext"){try{sessionStorage.setItem("scPortal","1")}catch(_){}const ov=playPortal(()=>setTimeout(()=>ov.remove(),250));return}
   if(a==="day")return dayModal(t.dataset.date);
   if(a==="cal-prev"||a==="cal-next"){const [y,m]=S.cal.month.split("-").map(Number);const d=new Date(y,m-1+(a==="cal-next"?1:-1),1);S.cal.month=iso(d).slice(0,7);return render()}
   if(a==="cal-today"){S.cal.month=today().slice(0,7);return render()}
