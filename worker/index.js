@@ -1,3 +1,4 @@
+import { musicApi, fsPublic } from "./music.js";
 /* Grooveville Worker
    - Serves the static site (ASSETS binding). Only /api/* runs this code first.
    - YouTube sync for Grooveville LIVE: live status, upcoming show, completed livestream archive.
@@ -247,6 +248,7 @@ const safeName = s => String(s || "file").replace(/[^A-Za-z0-9._-]+/g, "-").slic
 async function api(req, env, ctx) {
   const url = new URL(req.url), p = url.pathname, show = url.searchParams.get("show") || "uncneph";
   if (req.method === "OPTIONS") return new Response(null, { status: 204 });
+  if (/^\/api\/(music|tv|songrate)\//.test(p)) return musicApi(req, env, ctx, { p, url, verifyIdToken, fsField, presignR2: r2Link, yt, isoDur });
   const SH = await getShows(env);
   if (p === "/api/live" || p === "/api/episodes") {
     if (!SH[show] || SH[show].disabled) return json({ error: "Unknown show" }, 404);
@@ -296,9 +298,21 @@ async function api(req, env, ctx) {
   return json({ error: "Not found" }, 404);
 }
 
+/* Share links for artist pages (grooveville.org/artist/<id>): social apps get a real preview, people land on the page. */
+async function artistShare(env, id, url) {
+  let a = null; try { a = await fsPublic(env, "musicArtists/" + id) } catch (e) { }
+  const e = s => String(s || "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+  const name = a && a.name ? a.name : "Grooveville Artists", desc = a && a.bio ? String(a.bio).slice(0, 180) : "Official Grooveville Artist on Grooveville Music.";
+  const img = a && a.portrait ? url.origin + "/api/music/img/" + a.portrait : url.origin + "/media/og-share.jpg", dest = "/#artist/" + id;
+  return new Response('<!doctype html><html lang="en"><head><meta charset="utf-8"><title>' + e(name) + ' · Grooveville Music</title><meta name="description" content="' + e(desc) + '">' +
+    '<meta property="og:type" content="profile"><meta property="og:site_name" content="Grooveville"><meta property="og:title" content="' + e(name) + ' · Grooveville Music"><meta property="og:description" content="' + e(desc) + '"><meta property="og:image" content="' + e(img) + '"><meta property="og:url" content="' + e(url.origin + "/artist/" + id) + '">' +
+    '<meta name="twitter:card" content="summary_large_image"><meta http-equiv="refresh" content="0; url=' + e(dest) + '"><script>location.replace(' + JSON.stringify(dest) + ')</script></head><body style="background:#101112;color:#f3efe7;font-family:system-ui;padding:40px"><a style="color:#f4a987" href="' + e(dest) + '">' + e(name) + ' on Grooveville</a></body></html>', { headers: { "content-type": "text/html; charset=utf-8", "cache-control": "public, max-age=300" } });
+}
 export default {
   async fetch(req, env, ctx) {
     const url = new URL(req.url);
+    const am = /^\/artist\/([a-z0-9-]{1,60})\/?$/.exec(url.pathname);
+    if (am) return artistShare(env, am[1], url);
     if (url.pathname.startsWith("/api/")) {
       try { return await api(req, env, ctx) } catch (e) { return json({ error: "Server error" }, 500) }
     }

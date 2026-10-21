@@ -109,6 +109,55 @@ service cloud.firestore {
       allow write: if false;
     }
 
+    // ---------- Grooveville Music, TV and Charts ----------
+    // Everyone can read what's published; only the founder (or HNIC) creates, edits, publishes, ranks or verifies.
+    // MP3s and artwork live in Cloudflare R2; these documents only hold details and storage references.
+    match /musicSongs/{id} {
+      allow read: if resource.data.published == true || isFounder();
+      allow write: if isFounder();
+    }
+    match /musicArtists/{id} {
+      allow read: if resource.data.published == true || isFounder();
+      allow write: if isFounder();
+    }
+    match /musicAlbums/{id} {
+      allow read: if resource.data.published == true || isFounder();
+      allow write: if isFounder();
+    }
+    match /musicPlaylists/{id} {
+      allow read: if resource.data.published == true || isFounder();
+      allow write: if isFounder();
+    }
+    match /tvVideos/{id} {
+      allow read: if resource.data.published == true || isFounder();
+      allow write: if isFounder();
+    }
+    match /tvPlaylists/{id} {
+      allow read: if resource.data.published == true || isFounder();
+      allow write: if isFounder();
+    }
+    match /musicCharts/{id} {
+      allow read: if resource.data.published == true || isFounder();
+      allow write: if isFounder();
+    }
+    match /musicChartEntries/{id} {
+      allow read: if resource.data.published == true || isFounder();
+      allow write: if isFounder();
+    }
+    // Sound On rotation, feature switches (Song Rate, Charts), TV channel, rating weights: public to read, founder to change.
+    match /musicSettings/{id} {
+      allow read: if true;
+      allow write: if isFounder();
+    }
+    match /tvCategories/{id} {
+      allow read: if true;
+      allow write: if isFounder();
+    }
+    // Song Rate reviews (scores, private notes): founder only. Submissions themselves are stored privately in R2.
+    match /songReviews/{id} {
+      allow read, write: if isFounder();
+    }
+
     // Website images and links (Back office › Website): everyone can see them, only the founder or HNIC changes them
     match /media/{id} {
       allow read: if true;

@@ -57,3 +57,17 @@ Studio people never get the Back Office: finances, timesheets, other companies, 
 - R2: free for the first 10 GB stored/month, then about $0.015 per GB per month. A 2-hour 1080p StreamYard recording is about 2–4 GB.
 - YouTube Data API: free within quota.
 - AI clipping: needs a computer you run (see `clip-worker/README.md`). Software is free; electricity/hardware or a cloud server (about $10–40/month) are the real costs.
+
+---
+
+# Grooveville Music, TV, Song Rate and Charts
+
+Uses the same Worker, R2 bucket and keys as above. Nothing new to create in Cloudflare.
+
+1. **Publish the Firestore rules again** (Firebase › Firestore › Rules › paste `firestore.rules` › Publish). The new rules add `musicSongs`, `musicArtists`, `musicAlbums`, `musicPlaylists`, `musicSettings`, `tvVideos`, `tvPlaylists`, `tvCategories`, `musicCharts`, `musicChartEntries` and `songReviews`. Everything you already had is unchanged.
+2. **Indexes:** none needed. Public pages only ask for `published == true`, which Firestore handles automatically.
+3. **YouTube:** Grooveville TV reuses `YOUTUBE_API_KEY`. If the key isn't working, adding a single video still works through YouTube's public oEmbed (title + thumbnail); channel playlists need the key.
+4. **Where files go:** MP3s → R2 `music/audio/…`, artwork → R2 `music/img/…`. Only published songs can be streamed (`/api/music/a/<songId>`), with byte-range support for seeking. Song Rate submissions are stored privately in R2 under `songrate/` and never in Firestore.
+5. **Artist share links:** `grooveville.org/artist/<id>` gives social apps a proper preview, then opens the artist page.
+
+**Switches (both off until you turn them on in Back office › Entertainment):** Song Rate public submissions, and public Charts. You can preview both as founder before launch.

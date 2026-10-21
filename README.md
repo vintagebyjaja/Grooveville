@@ -58,6 +58,14 @@ In Firebase: **Authentication › Settings › Authorized domains** should list 
 - **Server code:** `worker/index.js` + `wrangler.jsonc` (Cloudflare Worker). It checks YouTube every 2 minutes and keeps the API key secret.
 - **AI clipping** needs a processing computer later: see `clip-worker/README.md`. Jobs wait safely in the queue until then.
 
+
+## Grooveville Music, Radio, TV, Song Rate and Charts
+
+- **Public:** `#music` (Music · Artists · Albums · Playlists · TV · Charts), `#artist/<id>` (share as `grooveville.org/artist/<id>`), `#album/<id>`, `#playlist/<id>`, `#tv` and `#tv/<category>`, `#charts`, `#songrate`.
+- **Grooveville Radio / Sound On** play exclusive Grooveville songs: your published Originals in the Sound On rotation. One shared player at the bottom keeps playing across pages; videos and live shows pause it.
+- **Back office › Entertainment:** Dashboard, Music Library, Upload Song (MP3 → R2), Artists, Albums & EPs, Playlists, Sound On / Radio, Grooveville TV, TV Categories, Song Rate, Charts, Verification. Founder/HNIC only.
+- Song Rate and public Charts are **off** until you switch them on. Setup notes are at the end of `STUDIO-SETUP.md`.
+
 ## 5. Make yourself the founder
 
 1. Open your site, click **Sign in** > **Create team account** with your email and a strong password.

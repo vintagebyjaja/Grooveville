@@ -276,7 +276,11 @@ table.t tfoot td{font-weight:700;background:var(--surface-2);border-top:1px soli
 .links a.on{background:var(--peach);color:#1b120c}
 .links a.team{border:1.3px solid var(--peach);color:var(--peach)}
 .links a.team.on{background:var(--peach);color:#1b120c}
-.soundbtn{border:0;background:none;color:#cfc9bf;font:600 11px/1 var(--f-body);letter-spacing:.18em;display:inline-flex;align-items:center;gap:7px;cursor:pointer;padding:8px 6px;text-transform:uppercase}
+.nav .wrap{flex-wrap:nowrap}
+.links{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;min-width:0}
+.links::-webkit-scrollbar{display:none}
+.links a{white-space:nowrap;padding:7px 10px}
+.soundbtn{flex:none;border:0;background:none;color:#cfc9bf;font:600 11px/1 var(--f-body);letter-spacing:.18em;display:inline-flex;align-items:center;gap:7px;cursor:pointer;padding:8px 6px;text-transform:uppercase}
 .soundbtn .bars{display:inline-flex;gap:2px;align-items:end;height:12px}
 .soundbtn .bars i{width:2px;background:currentColor;height:4px;border-radius:2px}
 .soundbtn.on{color:var(--peach)}
@@ -582,6 +586,79 @@ dl.kv{display:grid;grid-template-columns:auto 1fr;gap:6px 16px;margin:14px 0 0;f
 dl.kv dt{color:var(--muted)}dl.kv dd{margin:0;overflow-wrap:anywhere}
 @media (max-width:1000px){.socgrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media (max-width:480px){.socgrid{grid-template-columns:1fr}}
+/* Grooveville Music + shared player */
+#mp{position:fixed;left:0;right:0;bottom:0;z-index:66}
+body.mp-on{padding-bottom:78px}
+body.mp-on .toast{bottom:92px}
+.mpbar{display:grid;grid-template-columns:minmax(0,1.1fr) auto minmax(0,1.3fr) auto;gap:18px;align-items:center;background:#0c0d0ef5;border-top:1px solid #ffffff1a;padding:10px max(16px,env(safe-area-inset-left)) calc(10px + env(safe-area-inset-bottom));backdrop-filter:blur(14px)}
+.mpnow{display:flex;gap:12px;align-items:center;min-width:0}
+.mpnow img,.mpart0{width:52px;height:52px;border-radius:8px;object-fit:cover;flex:none;background:#1d1f22;display:grid;place-items:center;color:var(--peach)}
+.mpnow b{display:block;font-size:14.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#fff}
+.mpnow small{display:block;font-size:12.5px;color:#a9a49b;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mpnow small a{color:#cfc9bf;text-decoration:none}
+.mpctl{display:flex;align-items:center;gap:6px}
+.mpi{background:none;border:0;color:#cfc9bf;cursor:pointer;font-size:16px;padding:7px;border-radius:50%;line-height:1;min-width:34px}
+.mpi:hover{color:#fff;background:#ffffff12}.mpi.on{color:var(--peach)}
+.mpp{width:44px;height:44px;border-radius:50%;border:0;background:var(--peach);color:#1b120c;font-size:15px;cursor:pointer;display:grid;place-items:center}
+.mpseek{display:flex;align-items:center;gap:10px;font-size:12px;color:#a9a49b}
+.mpseek input{flex:1;accent-color:var(--peach)}
+.mpvol{display:flex;align-items:center;gap:4px}.mpvol input{width:90px;accent-color:var(--peach)}
+.spin{width:16px;height:16px;border:2px solid #1b120c55;border-top-color:#1b120c;border-radius:50%;animation:spin .8s linear infinite;display:inline-block}
+.mpq{position:absolute;right:16px;bottom:calc(100% + 8px);width:min(380px,calc(100vw - 32px));max-height:50vh;overflow:auto;background:#141516f7;border:1px solid #ffffff1f;border-radius:16px;padding:14px;box-shadow:0 20px 50px -20px #000}
+.mpqi{display:grid;grid-template-columns:26px minmax(0,1fr) auto;gap:10px;align-items:center;width:100%;background:none;border:0;color:#fff;text-align:left;padding:8px;border-radius:8px;cursor:pointer}
+.mpqi:hover,.mpqi.on{background:#ffffff10}.mpqi small{display:block;color:#a9a49b;font-size:12px}.mpqi b{font-size:14px;font-weight:600}
+.vbadge{display:inline-flex;vertical-align:-.15em;font-size:1em;margin-left:2px}
+.ex{display:inline-grid;place-items:center;font:700 10px var(--f-body);width:15px;height:15px;border-radius:3px;background:#ffffff26;color:#fff;vertical-align:1px}
+.muhead{padding-block:42px 0;background:radial-gradient(60% 80% at 90% 0%,#f4a98722,transparent 70%),radial-gradient(40% 60% at 0% 100%,#b7a1e51a,transparent 70%),#0f1011}
+.muhead h1{font-size:clamp(38px,6vw,76px);color:#fff}
+.mutabs{margin-top:22px}
+.slist{display:flex;flex-direction:column}
+.srow{display:grid;grid-template-columns:40px 48px minmax(0,1fr) auto;gap:14px;align-items:center;padding:8px 6px;border-radius:10px}
+.srow:hover{background:#ffffff08}
+.srow .stt b{display:block;font-size:15px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.srow .stt small{color:#a9a49b;font-size:13px}.srow .stt small a{color:#cfc9bf;text-decoration:none}
+.sart{width:48px;height:48px;border-radius:6px;object-fit:cover;background:#1d1f22}
+.splay{width:36px;height:36px;border-radius:50%;border:0;background:none;color:#a9a49b;cursor:pointer;position:relative;font:600 14px var(--f-mono)}
+.splay .ic{display:none;color:var(--peach)}.srow:hover .splay .n,.splay.on .n{display:none}.srow:hover .splay .ic,.splay.on .ic{display:inline}.splay.on{color:var(--peach)}
+.cgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:18px}
+.ccard{display:flex;flex-direction:column;gap:6px;text-decoration:none;color:var(--ink)}
+.ccard .cc{aspect-ratio:1;border-radius:12px;overflow:hidden;background:radial-gradient(70% 70% at 30% 20%,#f4a98755,transparent 70%),#1a1b1d;display:grid;place-items:center}
+.ccard .cc img{width:100%;height:100%;object-fit:cover;transition:transform .5s}.ccard:hover .cc img{transform:scale(1.04)}
+.ccard .cc b{font:800 34px var(--f-display);color:#ffffff22}.ccard>b{font-size:15px}.ccard small{color:#a9a49b;font-size:13px}
+.agrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:20px}
+.acard{display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center;text-decoration:none;color:var(--ink)}
+.acard .ap{width:100%;aspect-ratio:1;border-radius:50%;overflow:hidden;background:radial-gradient(circle at 30% 30%,#f4a98766,#1a1b1d);display:grid;place-items:center}
+.acard .ap img{width:100%;height:100%;object-fit:cover}.acard .ap b{font:800 48px var(--f-display);color:#fff6}
+.acard small{color:#a9a49b;font-size:13px}
+.arthero{position:relative;padding-block:40px 30px;background:#0f1011;overflow:hidden}
+.arthero .abn{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.35}
+.arthero::after{content:"";position:absolute;inset:0;background:linear-gradient(0deg,#0f1011 5%,#0f101199 60%,#0f101144)}
+.arthero .wrap{position:relative;z-index:1}
+.arow{display:flex;gap:24px;align-items:flex-end;flex-wrap:wrap;margin-top:18px}
+.arow h1{font-size:clamp(38px,6.5vw,84px);color:#fff;margin-top:6px}
+.apo{width:clamp(120px,18vw,200px);aspect-ratio:1;border-radius:50%;object-fit:cover;box-shadow:0 20px 50px -20px #000}
+.arow .cov{width:clamp(140px,20vw,230px);aspect-ratio:1;border-radius:14px;object-fit:cover;box-shadow:0 20px 50px -20px #000}
+.rcart{display:grid;grid-template-columns:1fr 1fr;gap:10px;aspect-ratio:1;max-width:320px;justify-self:end;width:100%}
+.rcart img,.rcart span{width:100%;height:100%;object-fit:cover;border-radius:12px;background:#1d1f22;display:grid;place-items:center;color:var(--peach);font-size:28px}
+.rcart:has(> :only-child){grid-template-columns:1fr}
+.tvwrap{display:grid;grid-template-columns:1fr;gap:18px;margin-top:6px}
+.tvwrap.hasside{grid-template-columns:minmax(0,1fr) 320px}
+.tvside{background:#141516;border:1px solid #ffffff14;border-radius:16px;padding:12px;max-height:min(70vh,560px);overflow:auto;display:flex;flex-direction:column;gap:6px}
+.tvitem{display:grid;grid-template-columns:110px minmax(0,1fr);gap:10px;align-items:center;background:none;border:0;color:#fff;text-align:left;padding:6px;border-radius:10px;cursor:pointer;font:500 13.5px var(--f-body)}
+.tvitem img{width:110px;aspect-ratio:16/9;object-fit:cover;border-radius:6px}.tvitem:hover,.tvitem.on{background:#ffffff10}.tvitem.on{outline:1px solid var(--peach)}
+.crow{display:grid;grid-template-columns:44px 56px minmax(0,1fr) auto auto;gap:14px;align-items:center;padding:12px 6px;border-bottom:1px solid #ffffff12}
+.crow img,.crow .ph0{width:56px;height:56px;border-radius:8px;object-fit:cover;background:#1d1f22}
+.crow .stt b{display:block}.crow .stt small{color:#a9a49b;font-size:13px}
+.cpos{font:800 26px var(--f-display);color:var(--peach);text-align:center}
+.crate{font:800 22px var(--f-display);color:#fff;text-align:right}.crate small{font-size:12px;color:#a9a49b}
+.cemb{grid-column:1/-1}
+.entnav{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:18px}
+.entnav a{padding:7px 12px;border-radius:999px;border:1px solid var(--line);color:var(--muted);text-decoration:none;font-weight:600;font-size:13.5px}
+.entnav a.on{background:var(--peach);color:#1b120c;border-color:var(--peach)}
+.dz{border:1.5px dashed var(--line);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:8px}.dz.over{border-color:var(--peach);background:#f4a98710}
+.prog{height:6px;border-radius:6px;background:var(--surface-2);overflow:hidden}.prog i{display:block;height:100%;width:0;background:var(--peach);transition:width .2s}
+@media (max-width:900px){.mpbar{grid-template-columns:minmax(0,1fr) auto;gap:10px}.mpseek{grid-column:1/-1;order:3}.mpvol{display:none}.mpctl .mpi[data-act=mp-shuffle],.mpctl .mpi[data-act=mp-repeat]{display:none}body.mp-on{padding-bottom:112px}.tvwrap.hasside{grid-template-columns:1fr}.crow{grid-template-columns:34px 48px minmax(0,1fr) auto}.crow>.btnrow0{grid-column:3/-1}.rcart{justify-self:start;max-width:240px}}
+@media (max-width:560px){.srow{grid-template-columns:34px 44px minmax(0,1fr) auto;gap:10px}.mpvol{display:flex}.mpvol input{display:none}}
 @media (max-width:900px){
   .hero .wrap,.cta,.bcols,.cols2{grid-template-columns:1fr}
   .branches{grid-template-columns:repeat(2,minmax(0,1fr))}
@@ -614,6 +691,7 @@ dl.kv dt{color:var(--muted)}dl.kv dd{margin:0;overflow-wrap:anywhere}
 <main id="app"></main>
 <footer class="ft" id="footer"><div class="wrap"><div class="fgrid" id="footgrid"></div><div class="legal"><span>© <span id="yr"></span> Grooveville LLC · The Creative House · Charlotte, NC</span><span><span id="footlinks"></span><span id="footnote" style="margin-left:14px"></span></span></div></div></footer>
 <div id="radio" aria-live="polite"></div>
+<div id="mp" aria-label="Grooveville player"></div>
 <div id="modal"></div>
 <script type="application/json" id="snap">{"events":[],"brands":{}}</script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
@@ -922,6 +1000,7 @@ function navLinks(){
     '<a href="#home"'+(r==="home"?' class="on"':'')+'>Home</a>'+
     '<a href="#vine"'+(r==="vine"||r==="brands"||r.startsWith("b-")?' class="on"':'')+'>Companies</a>'+
     '<a href="#live" class="watchlive'+(r==="live"?' on':'')+'">'+(LV.live&&LV.live.live?'<i class="ldot" aria-hidden="true"></i>':'')+'Watch Live</a>'+
+    '<a href="#music"'+(/^(music|artist|album|playlist|tv|charts|songrate)/.test(r)?' class="on"':'')+'>Music</a>'+
     '<a href="#calendar"'+on("calendar")+'>Calendar</a>'+
     '<a href="#collab"'+on("collab")+'>Collaborate</a>'+
     '<a href="#story"'+on("story")+'>Our Story</a>'+
@@ -1023,7 +1102,7 @@ function viewBrand(id,sub){
   if(b.tiktok){const tk=/tiktok\.com\/@?([^/?#]+)/i.exec(b.tiktok);links.push('<a class="btn ghost" href="'+esc(b.tiktok)+'" target="_blank" rel="noopener">'+(tk?'Follow @'+esc(tk[1])+' on TikTok ↗':'TikTok ↗')+'</a>')}
   if(id==="hq")links.push('<a class="btn" style="background:var(--c);color:var(--bg)" href="#home">Visit the Grooveville website →</a>');
   else if(!b.website&&!b.social)links.push('<span class="pill high" style="align-self:center;font-size:12.5px;padding:6px 10px">Website coming soon</span>');
-  const entTabs=id==="ent"?'<nav class="subtabs" aria-label="Grooveville Entertainment">'+ENT_TABS.map(([k,l])=>'<a href="'+(k==="live"?"#live":"#b-ent"+(k?"/"+k:""))+'"'+((sub||"")===k?' class="on" aria-current="page"':'')+'>'+l+'</a>').join("")+'</nav>':'';
+  const entTabs=id==="ent"?'<nav class="subtabs" aria-label="Grooveville Entertainment">'+ENT_TABS.map(([k,l])=>'<a href="'+(k==="live"?"#live":k==="music"?"#music":k==="artists"?"#music/artists":k==="tv"?"#tv":"#b-ent"+(k?"/"+k:""))+'"'+((sub||"")===k?' class="on" aria-current="page"':'')+'>'+l+'</a>').join("")+'</nav>':'';
   if(id==="ent"&&sub)return '<div style="'+cvar(id)+'"><section class="bhero'+(hero?" hasimg":"")+'" style="padding-block:46px 0">'+(hero?'<div class="bimg">'+imgTag(hero,"","")+'</div>':'')+'<div class="wrap"><div class="crumb"><button class="backbtn" data-act="go-back" aria-label="Go back">‹ Back</button><a href="#b-hq">Grooveville LLC</a> › <a href="#b-ent">'+esc(b.name)+'</a> › '+esc((ENT_TABS.find(t=>t[0]===sub)||[,""])[1])+'</div><div class="kicker">Grooveville Entertainment</div><h1 class="disp" style="margin-top:12px;font-size:clamp(40px,7vw,84px)">'+esc((ENT_TABS.find(t=>t[0]===sub)||[,""])[1])+'</h1>'+entTabs+'</div></section><section style="padding-top:34px"><div class="wrap">'+entSub(sub)+'</div></section></div>';
   return '<div style="'+cvar(id)+'"><section class="bhero'+(hero?" hasimg":"")+'">'+(hero?'<div class="bimg">'+imgTag(hero,"","")+'</div>':'')+'<div class="wrap">'+
     '<div class="crumb"><button class="backbtn" data-act="go-back" aria-label="Go back">‹ Back</button>'+(id==="hq"?'<a href="#home">Home</a> · Headquarters':'<a href="#b-hq">Grooveville LLC</a> › '+esc(b.name))+'</div>'+
@@ -1128,7 +1207,7 @@ function collabSubmit(form){
 }
 
 /* ---------- team (back office) ---------- */
-const TEAM_TABS=[["team","Dashboard"],["team-time","Timesheet"],["team-cal","Calendar"],["team-rem","Reminders"],["team-out","Collabs"],["team-people","Teams"],["team-docs","Documents"],["team-conv","Converter"],["team-reports","Reports"],["team-vault","Private notes"],["team-web","Website"],["studio","Ent. Studio"],["team-site","Site settings"]];
+const TEAM_TABS=[["team","Dashboard"],["team-time","Timesheet"],["team-cal","Calendar"],["team-rem","Reminders"],["team-out","Collabs"],["team-people","Teams"],["team-docs","Documents"],["team-conv","Converter"],["team-reports","Reports"],["team-vault","Private notes"],["team-web","Website"],["ent","Entertainment"],["studio","Ent. Studio"],["team-site","Site settings"]];
 function teamGate(){
   if(!S.authChecked)return '<div class="wrap gate"><h1>Checking access…</h1><p class="muted">One moment while we confirm who is signed in.</p></div>';
   return '<div class="wrap gate"><div class="eyebrow">Grooveville team</div><h1>Back office sign in</h1><p class="muted">The timesheet, private calendar, reminders and collab tracker are only for the Grooveville team. Open this page while signed in to Claude with the account Grooveville invited as an Editor.</p><p class="muted" style="font-size:13.5px">If you just got access, reload this page.</p><a class="btn" href="#home">Back to the public site</a></div>';
@@ -1923,7 +2002,7 @@ function goBack(){if(S.navCount>0){S.navCount-=2;history.back()}else location.ha
 
 /* ---------- Creative House: managed images, cinematic entry, radio, music, AELIO, Website back office ---------- */
 const ASSETS={"gv-intro": "/media/gv-intro.webp", "gv-hero": "/media/gv-hero.webp", "gv-collab": "/media/gv-collab.webp", "gv-story": "/media/gv-story.webp", "gv-ent": "/media/gv-ent.webp", "gv-box": "/media/gv-box.webp", "card-aec": "/media/card-aec.webp", "card-vybr8": "/media/card-vybr8.webp", "card-pathd": "/media/card-pathd.webp", "card-aelio": "/media/card-aelio.webp", "card-ent": "/media/card-ent.webp", "sc-cover": "/media/sc-cover.webp", "aelio-p1": "/media/aelio-p1.webp", "aelio-p2": "/media/aelio-p2.webp", "aelio-p3": "/media/aelio-p3.webp", "aelio-p4": "/media/aelio-p4.webp", "aelio-p5": "/media/aelio-p5.webp", "aelio-p6": "/media/aelio-p6.webp"};
-const ENT_TABS=[["","Overview"],["live","Watch Live"],["music","Music"],["radio","Grooveville Radio"],["artists","Featured Artists"],["events","Events"]];
+const ENT_TABS=[["","Overview"],["live","Watch Live"],["music","Music"],["radio","Grooveville Radio"],["artists","Artists"],["tv","Grooveville TV"],["events","Events"]];
 S.media={};S.web={sec:"media"};S.sound=false;
 const DEFIMG={"intro-poster":"gv-intro","home-hero":"gv-hero","home-collab":"gv-collab","home-story":"gv-story","hero-ent":"gv-ent","card-aec":"card-aec","card-vybr8":"card-vybr8","card-pathd":"card-pathd","card-aelio":"card-aelio","card-ent":"card-ent","card-scu":"sc-cover","card-hq":"gv-box",
   "aelio-p1":"aelio-p1","aelio-p2":"aelio-p2","aelio-p3":"aelio-p3","aelio-p4":"aelio-p4","aelio-p5":"aelio-p5","aelio-p6":"aelio-p6"};
@@ -1968,15 +2047,15 @@ function padStart(){try{const AC=window.AudioContext||window.webkitAudioContext;
   g.gain.linearRampToValueAtTime(.055,ac.currentTime+2.2);const sub=ac.createOscillator(),sg=ac.createGain();sub.type="sine";sub.frequency.value=55;sg.gain.value=0;sub.connect(sg);sg.connect(ac.destination);sub.start();for(let k=0;k<120;k++){const tt=ac.currentTime+1.5+k*.68;sg.gain.setValueAtTime(0,tt);sg.gain.linearRampToValueAtTime(.09,tt+.02);sg.gain.exponentialRampToValueAtTime(.0001,tt+.5)}PAD={ac,g,osc:osc.concat(l,sub)}}catch(e){}}
 function padStop(){if(!PAD)return;const p=PAD;PAD=null;try{p.g.gain.cancelScheduledValues(p.ac.currentTime);p.g.gain.setValueAtTime(p.g.gain.value,p.ac.currentTime);p.g.gain.linearRampToValueAtTime(0,p.ac.currentTime+.8);setTimeout(()=>{try{p.osc.forEach(o=>o.stop());p.ac.close()}catch(e){}},900)}catch(e){}}
 let INTRO_AUDIO=null;
-function syncSoundBtns(){document.querySelectorAll(".soundbtn").forEach(b=>{b.classList.toggle("on",S.sound);b.setAttribute("aria-pressed",S.sound?"true":"false");b.setAttribute("aria-label",S.sound?"Sound on. Turn sound off":"Sound off. Turn sound on");const l=b.querySelector(".lbl");if(l)l.textContent=S.sound?"Sound on":"Sound off"})}
+function syncSoundBtns(){if(typeof MP!=="undefined"&&MP.ctx==="soundtrack")S.sound=MP.playing||S.sound&&MP.loading;document.querySelectorAll(".soundbtn").forEach(b=>{b.classList.toggle("on",S.sound);b.setAttribute("aria-pressed",S.sound?"true":"false");b.setAttribute("aria-label",S.sound?"Sound on. Turn sound off":"Sound off. Turn sound on");const l=b.querySelector(".lbl");if(l)l.textContent=S.sound?"Sound on":"Sound off"})}
 function setSound(on){
   S.sound=on;try{sessionStorage.setItem("gvSound",on?"1":"0")}catch(e){}syncSoundBtns();
   const intro=$(".intro:not(.out)");
-  if(!on){RD.userPaused=true;padStop();if(INTRO_AUDIO){INTRO_AUDIO.pause()}const v=intro&&intro.querySelector("video");if(v)v.muted=true;radioPause();return}
+  if(!on){MP.userPaused=true;padStop();if(INTRO_AUDIO){INTRO_AUDIO.pause()}const v=intro&&intro.querySelector("video");if(v)v.muted=true;mpPause(true);return}
   if(intro){const v=intro.querySelector("video");const au=media("intro-audio");
     if(au&&au.url){if(!INTRO_AUDIO){INTRO_AUDIO=new Audio(au.url);INTRO_AUDIO.loop=true;INTRO_AUDIO.volume=.6}INTRO_AUDIO.play().catch(()=>{})}
-    else if(v&&v.dataset.hasAudio==="1"){v.muted=false}else padStart();return}
-  if(radioSrc())radioPlay();else toast(S.isAdmin?"Add a playlist or stream in Back office › Website › Music & Radio":"Grooveville Radio is coming soon");
+    else if(v&&v.dataset.hasAudio==="1"){v.muted=false}else if(soundtrackOn())mpSoundtrack();else padStart();return}
+  if(!mpSoundtrack()){S.sound=false;try{sessionStorage.setItem("gvSound","0")}catch(e){}syncSoundBtns()}
 }
 
 /* ---------- cinematic entry ---------- */
@@ -2055,58 +2134,27 @@ function introFX(cv){
   INTRO_RAF=requestAnimationFrame(frame);
 }
 
-/* ---------- Grooveville Radio (Spotify embed or a licensed stream) ---------- */
-const RD={open:false,playing:false,ctrl:null,audio:null,key:"",wantPlay:false,apiLoading:false};
-function spotifyUri(u){const x=/open\.spotify\.com\/(?:intl-[a-z-]+\/)?(playlist|album|track|artist|show|episode)\/([A-Za-z0-9]+)/.exec(u||"")||/spotify:(playlist|album|track|artist|show|episode):([A-Za-z0-9]+)/.exec(u||"");return x?"spotify:"+x[1]+":"+x[2]:""}
-function radioSrc(){const m=siteCfg("music");const sp=spotifyUri(m.spotify);if(sp)return {kind:"spotify",uri:sp,name:m.station,attr:"Playback and audio by Spotify. Some listeners hear previews unless signed in to Spotify."};if(/^https:\/\//.test(m.stream||""))return {kind:"stream",url:m.stream,name:m.station,attr:m.streamAttr||"Grooveville-licensed stream"};return null}
-function renderRadio(){
-  const el=$("#radio");if(!el)return;const src=radioSrc();
-  if(!src||S.route.startsWith("team")&&!RD.playing){if(!src&&RD.key){radioStop()}if(!src){el.innerHTML="";RD.key="";return}}
-  const key=src.kind+"|"+(src.uri||src.url);
-  if(RD.key!==key){radioStop();RD.key=key;RD.open=false;const art=slotSrc("radio-art")||LOGO;
-    el.innerHTML='<div class="panel" id="rdPanel" hidden><div style="display:flex;align-items:center;gap:8px;margin-bottom:10px"><b style="flex:1">'+esc(src.name)+'</b><button class="ic" data-act="radio-close" aria-label="Collapse player">⌄</button></div><div class="emb" id="rdEmbed">'+(src.kind==="spotify"?'<div id="rdHost"></div>':'<div style="padding:12px;display:flex;flex-direction:column;gap:8px"><label class="f" style="color:#cfc9bf">Volume<input type="range" min="0" max="1" step=".05" value=".8" id="rdVol" aria-label="Volume"></label></div>')+'</div><small class="attr">'+esc(src.attr)+'</small></div>'+
-      '<div class="pill0"><button class="pp" data-act="radio-toggle" aria-label="Play Grooveville Radio">▶</button><img class="art0" src="'+esc(art)+'" alt=""><div class="meta"><b>'+esc(src.name)+'</b><small>'+(src.kind==="spotify"?"Spotify playlist":"Live stream")+'</small></div><button class="ic" data-act="radio-expand" aria-label="Expand player" aria-expanded="false">⌃</button></div>';
-    const vol=$("#rdVol");if(vol)vol.addEventListener("input",()=>{if(RD.audio)RD.audio.volume=Number(vol.value)});
-  }
-  syncRadio();
-}
-function syncRadio(){const b=$("#radio .pp");if(b){b.textContent=RD.playing?"❚❚":"▶";b.setAttribute("aria-label",RD.playing?"Pause Grooveville Radio":"Play Grooveville Radio")}
-  const p=$("#rdPanel");if(p)p.hidden=!RD.open;const x=$("#radio [data-act=radio-expand]");if(x){x.setAttribute("aria-expanded",RD.open?"true":"false");x.textContent=RD.open?"⌄":"⌃"}
-  document.querySelectorAll("[data-act=radio-play]").forEach(btn=>{btn.textContent=RD.playing?"❚❚ Pause radio":"▶ Play radio"})}
-function spotifyInit(){
-  const src=radioSrc();if(!src||src.kind!=="spotify"||RD.ctrl)return;
-  const go=api=>{const host=$("#rdHost");if(!host)return;api.createController(host,{uri:src.uri,width:"100%",height:152},c=>{RD.ctrl=c;c.addListener("playback_update",e=>{RD.playing=!(e.data&&e.data.isPaused);syncRadio()});c.addListener("ready",()=>{if(RD.wantPlay){RD.wantPlay=false;try{c.play()}catch(e){}}})})};
-  if(window.__spApi)return go(window.__spApi);
-  window.onSpotifyIframeApiReady=api=>{window.__spApi=api;go(api)};
-  if(!RD.apiLoading){RD.apiLoading=true;const s=document.createElement("script");s.src="https://open.spotify.com/embed/iframe-api/v1";s.async=true;s.onerror=()=>{const h=$("#rdEmbed");if(h)h.innerHTML='<iframe title="Grooveville Radio on Spotify" style="border:0;width:100%;height:152px" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" src="https://open.spotify.com/embed/'+src.uri.split(":").slice(1).join("/")+'"></iframe>'};document.head.appendChild(s)}
-}
-function radioPlay(){const src=radioSrc();if(!src)return;if(window.__liveStop)window.__liveStop();renderRadio();
-  if(src.kind==="spotify"){RD.open=true;syncRadio();if(RD.ctrl){try{RD.ctrl.play()}catch(e){RD.ctrl.togglePlay()}}else{RD.wantPlay=true;spotifyInit()}return}
-  if(!RD.audio){RD.audio=new Audio(src.url);RD.audio.preload="none";RD.audio.addEventListener("play",()=>{RD.playing=true;syncRadio()});RD.audio.addEventListener("pause",()=>{RD.playing=false;syncRadio()});RD.audio.addEventListener("error",()=>toast("The radio stream couldn't be reached"))}
-  const v=$("#rdVol");if(v)RD.audio.volume=Number(v.value);RD.audio.play().catch(()=>toast("Press play again to start the radio"))}
-function radioPause(){if(RD.ctrl){try{RD.ctrl.pause()}catch(e){}}if(RD.audio)RD.audio.pause();RD.playing=false;syncRadio()}
-function radioStop(){radioPause();if(RD.ctrl){try{RD.ctrl.destroy()}catch(e){}}RD.ctrl=null;RD.audio=null}
-function radioToggle(){if(RD.playing){radioPause();RD.userPaused=true;if(S.sound){S.sound=false;syncSoundBtns()}}else{RD.userPaused=false;radioPlay();if(!S.sound){S.sound=true;syncSoundBtns()}}}
-
-/* ---------- Entertainment: Music, Radio, Artists, Events ---------- */
-const mItems=k=>{const l=(siteCfg("music")[k]||[]).filter(i=>i&&!i.hidden&&(!i.from||i.from<=today()));return k==="trending"?sortBy(l,i=>Number(i.rank)||999):l};
-function mEmpty(what){return '<div class="empty">'+(S.isAdmin?'No '+what+' yet. Add them in <a href="#team-web" data-act="web-sec" data-v="music">Back office › Website › Music &amp; Radio</a>.':what.charAt(0).toUpperCase()+what.slice(1)+' are coming soon.')+'</div>'}
-function mCard(i){const im=slotSrc("mus-"+i.id);return '<a class="mitem" '+(i.url?'href="'+esc(i.url)+'" target="_blank" rel="noopener"':'href="#b-ent/music"')+'><span class="cov">'+(im?'<img src="'+esc(im)+'" alt="'+esc(i.title)+' artwork" loading="lazy">':'<b aria-hidden="true">♪</b>')+'</span><span><h4>'+esc(i.title)+'</h4><p>'+esc([i.artist,i.kind].filter(Boolean).join(" · "))+'</p>'+(i.desc?'<p style="margin-top:4px">'+esc(i.desc)+'</p>':'')+'</span></a>'}
-function radioCard(big){const src=radioSrc(),m=siteCfg("music"),art=slotSrc("radio-art");
-  return '<div class="radiocard"><div><div class="kicker">Grooveville Radio</div><h2 class="disp" style="margin-top:10px">'+esc(m.station)+'</h2><p class="muted" style="margin-top:10px;max-width:44ch">'+(src?(src.kind==="spotify"?'A Grooveville playlist, played through Spotify. Keep it going in the mini-player while you explore the site.':'A Grooveville-licensed stream. Keep it going in the mini-player while you explore the site.'):'The station is getting tuned. Check back soon.')+'</p>'+
-    (src?'<button class="btn peach" style="margin-top:20px" data-act="radio-play">'+(RD.playing?"❚❚ Pause radio":"▶ Play radio")+'</button><p class="muted" style="font-size:12.5px;margin-top:10px">'+esc(src.attr)+'</p>':'')+'</div>'+
-    '<div style="aspect-ratio:'+(big?"16/10":"16/9")+';border-radius:16px;overflow:hidden;background:radial-gradient(70% 70% at 30% 30%,#f4a98766,transparent 70%),radial-gradient(60% 60% at 80% 80%,#68d4d044,transparent 70%),#111;display:grid;place-items:center">'+(art?'<img src="'+esc(art)+'" alt="Grooveville Radio artwork" style="width:100%;height:100%;object-fit:cover">':'<img src="'+LOGO+'" alt="" width="120" height="120" style="border-radius:50%;opacity:.9">')+'</div></div>'}
+/* ---------- Grooveville Radio = exclusive Grooveville songs ----------
+   Radio and Sound On both play the founder's Sound On rotation of Grooveville Originals through the shared player (music.js).
+   These wrappers keep older callers (Watch Live hand-off) working. */
+const RD={get playing(){return MP.playing},get userPaused(){return MP.userPaused},set userPaused(v){MP.userPaused=v},open:false};
+function radioSrc(){return soundtrackOn()?{kind:"originals",name:"Grooveville Radio"}:null}
+function radioPlay(){if(MP.q.length&&MP.ctx)return mpResume();mpSoundtrack()}
+function radioPause(){mpPause(false)}
+function radioToggle(){mpToggle()}
+function renderRadio(){mpRender()}
+function syncRadio(){mpRender()}
+function radioCard(big){const on=soundtrackOn(),ids=soundtrackIds(),art=slotSrc("radio-art"),now=MP.ctx==="soundtrack"?mpSong():null;
+  return '<div class="radiocard"><div><div class="kicker">Grooveville Radio · Sound On</div><h2 class="disp" style="margin-top:10px">Exclusive Grooveville songs.</h2><p class="muted" style="margin-top:10px;max-width:46ch">'+(on?'Grooveville Originals, nonstop. Keep it playing in the player while you explore the site.':'The station is getting tuned. Check back soon.')+'</p>'+
+    (on?'<button class="btn peach" style="margin-top:20px" data-act="mu-radio">'+(MP.ctx==="soundtrack"&&MP.playing?"❚❚ Pause Grooveville Radio":"▶ Play Grooveville Radio")+'</button>'+(now?'<p class="muted" style="font-size:13px;margin-top:10px">Now playing: <b style="color:var(--ink)">'+esc(now.title)+'</b> · '+esc(artistName(now))+'</p>':''):'')+'</div>'+
+    '<div class="rcart">'+(ids.length?ids.slice(0,4).map(id=>{const s=MU().songs[id],im=muImg(s.art||((MU().albums[s.albumId]||{}).art)||"");return im?'<img src="'+esc(im)+'" alt="">':'<span>♪</span>'}).join(""):(art?'<img src="'+esc(art)+'" alt="Grooveville Radio">':'<img src="'+LOGO+'" alt="" style="border-radius:50%">'))+'</div></div>'}
+/* ---------- Entertainment tabs ---------- */
 function entSub(sub){
-  if(sub==="music"){
-    const tr=mItems("trending");
-    return radioCard()+
-      MLISTS.map(([k,l])=>{const it=mItems(k);
-        if(k==="trending")return '<div class="msec"><h2>'+l+'</h2><p class="muted" style="margin:-8px 0 12px;font-size:13.5px">Labels show where each ranking comes from: <span class="srcl ed">Grooveville pick</span> <span class="srcl li">Listener favorite</span> <span class="srcl ch">Platform chart</span></p>'+(tr.length?tr.map((i,n)=>{const im=slotSrc("mus-"+i.id);return '<div class="trend"><span class="rk">'+(n+1)+'</span>'+(im?'<img src="'+esc(im)+'" alt="">':'<span class="ph0"></span>')+'<span style="min-width:0"><b>'+esc(i.title)+'</b><div class="muted" style="font-size:13.5px">'+esc(i.artist||"")+'</div></span><span style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:flex-end">'+(i.source==="chart"?'<span class="srcl ch">'+esc(i.chart||"Platform chart")+'</span>':i.source==="listener"?'<span class="srcl li">Listener favorite</span>':'<span class="srcl ed">Grooveville pick</span>')+(i.url?'<a class="btn ghost sm" href="'+esc(i.url)+'" target="_blank" rel="noopener">Listen ↗</a>':'')+'</span></div>'}).join(""):mEmpty("trending songs"))+'</div>';
-        return '<div class="msec"><h2>'+l+'</h2>'+(it.length?'<div class="mgrid">'+it.map(mCard).join("")+'</div>':mEmpty(l.toLowerCase()))+'</div>'}).join("");
-  }
-  if(sub==="radio")return radioCard(true)+'<div class="msec"><h2>How the radio works</h2><div class="card"><p style="max-width:70ch">Grooveville Radio plays a Grooveville playlist through Spotify\'s official player, or a stream Grooveville owns or licenses. The mini-player stays with you as you move around the site. Spotify may play short previews for listeners who aren\'t signed in to Spotify.</p></div></div>'+
-    '<div class="msec"><h2>Curated Playlists</h2>'+(mItems("playlists").length?'<div class="mgrid">'+mItems("playlists").map(mCard).join("")+'</div>':mEmpty("playlists"))+'</div>';
-  if(sub==="artists"){const a=mItems("artists");return a.length?'<div class="mgrid">'+a.map(mCard).join("")+'</div>':mEmpty("featured artists")}
+  musicSubscribe();
+  if(sub==="music"){setTimeout(()=>location.replace("#music"),0);return '<div class="empty">Opening Grooveville Music…</div>'}
+  if(sub==="artists"){setTimeout(()=>location.replace("#music/artists"),0);return '<div class="empty">Opening artists…</div>'}
+  if(sub==="radio"){const ids=soundtrackIds();return radioCard(true)+'<div class="msec"><h2>On the station</h2>'+(ids.length?songList(ids.map(id=>MU().songs[id]),"soundtrack"):'<div class="empty">'+(S.isAdmin?'No songs in the rotation yet. <a href="#ent-soundon">Add them in Back office › Entertainment › Sound On / Radio</a>.':'Songs will appear here soon.')+'</div>')+'</div>'+
+    '<div class="msec"><h2>How the radio works</h2><div class="card"><p style="max-width:70ch">Grooveville Radio plays exclusive Grooveville songs: music owned or authorized by Grooveville and streamed right here. Turn on <b>Sound On</b> anywhere on the site and the station keeps playing as you move around. Starting a video pauses the radio.</p></div></div>'}
   if(sub==="events"){const ev=upcomingEvents(pub().events).filter(e=>e.brand==="ent"||e.brand==="music").slice(0,12);return ev.length?'<div class="evlist">'+ev.map(e=>evRow(e)).join("")+'</div>':'<div class="empty">No Entertainment events are posted yet. Watch the <a href="#calendar">calendar</a>.</div>'}
   return "";
 }
@@ -2194,17 +2242,7 @@ function webAelio(){
     '<h4 style="margin-top:8px">Personalities</h4>'+A.pers.map((p,i)=>'<div class="lrow" style="grid-template-columns:auto minmax(0,1fr) minmax(0,1.3fr) auto"><img class="th" src="'+esc(slotSrc("aelio-p"+(i+1)))+'" alt=""><input class="i" name="pn'+i+'" value="'+esc(p.n)+'" aria-label="Personality '+(i+1)+' name"><input class="i" name="pd'+i+'" value="'+esc(p.d)+'" aria-label="Personality '+(i+1)+' description"><button type="button" class="btn ghost sm" data-act="media-edit" data-id="aelio-p'+(i+1)+'">Image</button></div>').join("")+
     '<div><button class="btn olive" type="submit">Save AELIO</button></div></form>';
 }
-function webMusic(){
-  const m=siteCfg("music");
-  return '<form class="mbox" id="radioForm" style="display:flex;flex-direction:column;gap:12px"><h3 style="font-size:20px">Grooveville Radio</h3>'+
-    '<div class="grid2"><label class="f">Station name<input class="i" name="station" value="'+esc(m.station)+'"></label><label class="f">Featured Spotify playlist link<input class="i" name="spotify" placeholder="https://open.spotify.com/playlist/…" value="'+esc(m.spotify)+'"></label></div>'+
-    '<div class="grid2"><label class="f">Licensed stream URL (optional)<input class="i" type="url" name="stream" placeholder="https://…" value="'+esc(m.stream)+'"></label><label class="f">Stream attribution<input class="i" name="streamAttr" value="'+esc(m.streamAttr)+'"></label></div>'+
-    '<p class="muted" style="font-size:13px">Spotify plays through its official embedded player (no client secret needed). A stream URL is only used when no Spotify link is set. Only add streams Grooveville owns or licenses.</p>'+
-    '<div style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn olive" type="submit">Save radio</button><button type="button" class="btn ghost" data-act="media-edit" data-id="radio-art">Radio artwork</button></div></form>'+
-    MLISTS.map(([k,l])=>{const it=(m[k]||[]);return '<div class="mbox"><div class="sechead" style="margin-bottom:6px"><h3 style="font-size:19px">'+l+'</h3><button class="btn olive sm" data-act="mus-new" data-k="'+k+'">+ Add</button></div>'+
-      (k==="trending"?'<p class="muted" style="font-size:12.5px">Mark each song as a Grooveville pick, a listener favorite, or a platform chart position (name the chart). Never enter numbers you can\'t verify.</p>':'')+
-      (it.length?it.map((i,n)=>'<div class="lrow"><img class="th" src="'+esc(slotSrc("mus-"+i.id)||LOGO)+'" alt=""><div style="min-width:0"><b>'+esc(i.title)+'</b><div class="muted" style="font-size:12.5px">'+esc([i.artist,i.kind,k==="trending"?"#"+(i.rank||"–"):""].filter(Boolean).join(" · "))+(i.hidden?' · <span class="pill priv">Unpublished</span>':'')+(i.from&&i.from>today()?' · <span class="pill high">Shows '+esc(fmtDate(i.from))+'</span>':'')+'</div></div><div style="display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end"><button class="rowbtn" data-act="mus-move" data-k="'+k+'" data-i="'+n+'" data-d="-1" aria-label="Move up">↑</button><button class="rowbtn" data-act="mus-move" data-k="'+k+'" data-i="'+n+'" data-d="1" aria-label="Move down">↓</button><button class="btn ghost sm" data-act="mus-edit" data-k="'+k+'" data-id="'+esc(i.id)+'">Edit</button></div></div>').join(""):'<div class="empty" style="padding:16px">Nothing here yet.</div>')+'</div>'}).join("");
-}
+function webMusic(){return '<div class="mbox"><h3 style="font-size:20px">Grooveville Radio now plays exclusive Grooveville songs</h3><p class="muted" style="margin-top:6px">Upload Grooveville Originals and choose the station rotation in <b>Back office › Entertainment</b>. Sound On and Grooveville Radio both play that rotation.</p><div class="btnrow0" style="margin-top:12px"><a class="btn olive" href="#ent-upload">Upload a song</a><a class="btn ghost" href="#ent-soundon">Sound On / Radio rotation</a><button type="button" class="btn ghost" data-act="media-edit" data-id="radio-art">Radio artwork</button></div></div>'}
 async function saveSite(patch){return save("settings","site",Object.assign({brands:{}},S.site,patch))}
 async function saveMusic(m){const cur=Object.assign({},(S.site||{}).music||{});return saveSite({music:Object.assign(cur,m)})}
 function shrinkImage(file,maxW,maxChars){return new Promise(res=>{const fr=new FileReader();fr.onload=()=>{const im=new Image();im.onload=()=>{let w=im.width,h=im.height;const k=Math.min(1,maxW/w);w=Math.round(w*k);h=Math.round(h*k);const c=document.createElement("canvas");c.width=w;c.height=h;c.getContext("2d").drawImage(im,0,0,w,h);
@@ -2274,8 +2312,6 @@ function webAct(a,t){
   if(a==="scroll"){const el=document.getElementById(t.dataset.to);if(el)el.scrollIntoView({behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth"});return true}
   if(a==="gal"){const c=$("#galCards");if(c){const w=(c.firstElementChild||{}).offsetWidth||260;c.scrollBy({left:Number(t.dataset.d)*(w+16),behavior:"smooth"})}return true}
   if(a==="radio-toggle"||a==="radio-play"){radioToggle();return true}
-  if(a==="radio-expand"){RD.open=!RD.open;if(RD.open)spotifyInit();syncRadio();return true}
-  if(a==="radio-close"){RD.open=false;syncRadio();return true}
   if(!S.isAdmin)return false;
   if(a==="web-sec"){S.web.sec=t.dataset.v;if(location.hash!=="#team-web")location.hash="#team-web";else render();return true}
   if(a==="media-edit"){mediaModal(t.dataset.id);return true}
@@ -2621,6 +2657,472 @@ document.addEventListener("submit",async e=>{
 },true);
 document.addEventListener("change",e=>{const t=e.target;if(!t.dataset||!t.dataset.role||!S.route.startsWith("studio"))return;const m=sd("members").find(x=>x.id===t.dataset.role);if(m)save("shows/"+SR().show+"/members",m.id,Object.assign(stripC(m),{role:t.value})).then(ok=>ok&&toast("Role updated"))});
 
+/* ---------- Grooveville Music · Grooveville TV · Charts (public) + the one shared player ----------
+   Grooveville Originals: founder-uploaded MP3s in R2, streamed via /api/music/a/{songId} (published songs only).
+   Grooveville Radio and Sound On both play the founder's Sound On rotation of Originals. */
+S.mu={reviews:{},songs:{},artists:{},albums:{},playlists:{},tvVideos:{},tvPlaylists:{},tvCats:{},charts:{},entries:{},settings:{},loaded:false,subbed:""};
+const MU=()=>S.mu;
+const muImg=k=>k?(/^(https?:|data:)/.test(k)?k:"/api/music/img/"+k):"";
+const byOrder=a=>a.slice().sort((x,y)=>(Number(x.order)||999)-(Number(y.order)||999)||String(y.releaseDate||y.createdAt||"").localeCompare(String(x.releaseDate||x.createdAt||"")));
+const pubList=o=>byOrder(Object.values(o).filter(x=>x&&(x.published||S.isAdmin)));
+const TV_DEFAULT_CATS=[["music-videos","Music Videos"],["shows","Shows"],["memes","Memes"],["podcasts","Podcasts"],["playlists","Playlists"]];
+function musicSubscribe(){
+  if(!S.db)return;const mode=S.isAdmin?"admin":"public";if(MU().subbed===mode)return;MU().subbed=mode;
+  const on=(name,col,pub)=>{let q=S.db.collection(col);if(!S.isAdmin&&pub&&q.where)q=q.where("published","==",true);
+    q.onSnapshot(snap=>{const o={};snap.docs.forEach(d=>{o[d.id]=Object.assign({id:d.id},d.data())});MU()[name]=o;MU().loaded=true;muRefresh()},()=>{MU().loaded=true})};
+  on("songs","musicSongs",1);on("artists","musicArtists",1);on("albums","musicAlbums",1);on("playlists","musicPlaylists",1);on("tvVideos","tvVideos",1);on("tvPlaylists","tvPlaylists",1);on("tvCats","tvCategories",0);
+  on("charts","musicCharts",1);on("entries","musicChartEntries",1);on("settings","musicSettings",0);if(S.isAdmin)on("reviews","songReviews",0);
+}
+let muRT=0;function muRefresh(){clearTimeout(muRT);muRT=setTimeout(()=>{mpRender();if(/^(music|artist|album|playlist|tv|charts|songrate|ent|b-ent|home)/.test(S.route))scheduleRender(true)},60)}
+const muSet=k=>(MU().settings[k]||{});
+const songArtist=s=>MU().artists[s.artistId]||null;
+const artistName=s=>{const a=songArtist(s);return (a&&a.name)||s.artistName||""};
+const fmtSec=s=>{s=Math.max(0,Math.floor(Number(s)||0));return Math.floor(s/60)+":"+pad(s%60)};
+/* peach-and-black verification badges */
+function vBadge(kind,onPeach){const lbl=kind==="artist"?"Grooveville Artist (verified by Grooveville)":"Grooveville Song (verified by Grooveville)";const bg=onPeach?"#101112":"#F4A987",fg=onPeach?"#F4A987":"#101112";
+  return '<span class="vbadge" role="img" aria-label="'+lbl+'" title="'+lbl+'"><svg viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true"><path d="M12 1.5l2.6 1.9 3.2-.2 1 3.1 2.6 1.9-1 3.1 1 3.1-2.6 1.9-1 3.1-3.2-.2L12 22.5l-2.6-1.9-3.2.2-1-3.1L2.6 15.8l1-3.1-1-3.1 2.6-1.9 1-3.1 3.2.2z" fill="'+bg+'"/><path d="M7.4 12.3l3 3 6.2-6.4" fill="none" stroke="'+fg+'" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>'}
+
+/* ---------- the shared player ---------- */
+const MP={audio:null,q:[],i:-1,ctx:"",playing:false,shuffle:false,repeat:"off",vol:.85,muted:false,userPaused:false,qOpen:false,loading:false,sig:""};
+try{const v=JSON.parse(localStorage.getItem("gvPlayer")||"{}");if(typeof v.vol==="number")MP.vol=v.vol;MP.muted=!!v.muted}catch(e){}
+const mpSong=()=>MU().songs[MP.q[MP.i]]||null;
+function mpAudio(){if(MP.audio)return MP.audio;const a=MP.audio=new Audio();a.preload="metadata";a.volume=MP.vol;a.muted=MP.muted;
+  a.addEventListener("play",()=>{MP.playing=true;mpRender();syncSoundBtns()});a.addEventListener("pause",()=>{MP.playing=false;mpRender();syncSoundBtns()});
+  a.addEventListener("waiting",()=>{MP.loading=true;mpTick()});a.addEventListener("playing",()=>{MP.loading=false;mpTick()});
+  a.addEventListener("timeupdate",mpTick);a.addEventListener("loadedmetadata",mpTick);
+  a.addEventListener("ended",()=>mpNext(true));
+  a.addEventListener("error",()=>{if(!a.src)return;toast("Couldn't play that song. Skipping.");MP.playing=false;setTimeout(()=>mpNext(true),600)});
+  return a}
+function soundtrackIds(){const st=muSet("soundtrack"),songs=MU().songs;return (st.trackIds||[]).filter(id=>songs[id]&&songs[id].published&&songs[id].soundOn)}
+const soundtrackOn=()=>muSet("soundtrack").enabled!==false&&soundtrackIds().length>0;
+function mpStopOthers(){try{if(window.__liveStop)window.__liveStop()}catch(e){}try{if(window.__tvStop)window.__tvStop()}catch(e){}}
+async function mpSrc(s){if(s.published)return "/api/music/a/"+encodeURIComponent(s.id);if(S.isAdmin&&s.audioKey){const r=await muApi("/api/music/file",{key:s.audioKey});return r.url}throw new Error("unpublished")}
+async function mpLoad(i,auto){
+  if(i<0||i>=MP.q.length)return;MP.i=i;const s=mpSong();if(!s)return mpNext(true);
+  const a=mpAudio();MP.loading=true;mpRender();
+  try{a.src=await mpSrc(s)}catch(e){toast("That song isn't published yet");MP.loading=false;return}
+  mpSession(s);if(auto){mpStopOthers();MP.userPaused=false;a.play().catch(()=>{MP.loading=false;mpRender();toast("Press play to start the music")})}
+}
+function mpPlay(ids,start,ctx){ids=(ids||[]).filter(id=>MU().songs[id]);if(!ids.length){toast("Nothing to play yet");return}
+  let q=ids.slice(),i=Math.max(0,Math.min(start||0,q.length-1));
+  if(MP.shuffle){const first=q[i];q.splice(i,1);q.sort(()=>Math.random()-.5);q.unshift(first);i=0}
+  MP.q=q;MP.ctx=ctx||"user";mpLoad(i,true)}
+function mpSoundtrack(){const ids=soundtrackIds();if(!ids.length){toast(S.isAdmin?"Add published songs to the Sound On rotation in Back office › Entertainment":"Grooveville Radio is getting ready. Check back soon.");return false}
+  if(MP.ctx==="soundtrack"&&MP.q.length){if(!MP.playing)mpResume();return true}
+  const st=muSet("soundtrack");MP.shuffle=!!st.shuffle;MP.repeat=st.repeat===false?"off":"all";
+  let q=ids.slice();if(st.shuffle)q.sort(()=>Math.random()-.5);if(st.firstId&&q.includes(st.firstId)){q=q.filter(x=>x!==st.firstId);q.unshift(st.firstId)}
+  MP.shuffle=false;mpPlay(q,0,"soundtrack");MP.shuffle=!!st.shuffle;return true}
+function mpResume(){if(!MP.q.length)return mpSoundtrack();const a=mpAudio();if(!a.src)return mpLoad(MP.i<0?0:MP.i,true);mpStopOthers();MP.userPaused=false;a.play().catch(()=>toast("Press play to start the music"))}
+function mpPause(user){if(MP.audio)MP.audio.pause();if(user)MP.userPaused=true}
+function mpToggle(){if(MP.playing){mpPause(true);if(S.sound&&MP.ctx==="soundtrack"){S.sound=false;try{sessionStorage.setItem("gvSound","0")}catch(e){}syncSoundBtns()}}else mpResume()}
+function mpNext(auto){if(!MP.q.length)return;if(auto&&MP.repeat==="one")return mpLoad(MP.i,true);
+  let n=MP.i+1;if(n>=MP.q.length){if(MP.repeat==="all"||MP.ctx==="soundtrack"&&muSet("soundtrack").repeat!==false)n=0;else{MP.playing=false;mpRender();return}}mpLoad(n,true)}
+function mpPrev(){const a=mpAudio();if(a.currentTime>4){a.currentTime=0;return}mpLoad(Math.max(0,MP.i-1),true)}
+function mpSession(s){if(!("mediaSession" in navigator))return;try{const art=muImg(s.art||((MU().albums[s.albumId]||{}).art)||"");navigator.mediaSession.metadata=new MediaMetadata({title:s.title,artist:artistName(s),album:(MU().albums[s.albumId]||{}).title||"Grooveville Originals",artwork:art?[{src:art,sizes:"512x512"}]:[]});
+  [["play",mpResume],["pause",()=>mpPause(true)],["nexttrack",()=>mpNext()],["previoustrack",mpPrev],["seekto",d=>{if(MP.audio&&d.seekTime!=null)MP.audio.currentTime=d.seekTime}]].forEach(([k,f])=>{try{navigator.mediaSession.setActionHandler(k,f)}catch(e){}})}catch(e){}}
+function mpSave(){try{localStorage.setItem("gvPlayer",JSON.stringify({vol:MP.vol,muted:MP.muted}))}catch(e){}}
+function mpRender(){
+  const el=$("#mp");if(!el)return;const s=mpSong();document.body.classList.toggle("mp-on",!!s);
+  if(!s){el.innerHTML="";MP.sig="";return}
+  const ar=songArtist(s),art=muImg(s.art||((MU().albums[s.albumId]||{}).art)||(ar&&ar.portrait)||"");
+  const sig=[s.id,MP.playing,MP.loading,MP.shuffle,MP.repeat,MP.muted,MP.qOpen,MP.q.length,MP.ctx].join("|");
+  if(sig===MP.sig)return mpTick();MP.sig=sig;
+  el.innerHTML=(MP.qOpen?'<div class="mpq" role="dialog" aria-label="Queue"><div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><b style="flex:1">Up next'+(MP.ctx==="soundtrack"?' · Grooveville Radio':'')+'</b><button class="mpi" data-act="mp-queue" aria-label="Close queue">✕</button></div>'+MP.q.map((id,n)=>{const x=MU().songs[id];return x?'<button class="mpqi'+(n===MP.i?" on":"")+'" data-act="mp-jump" data-i="'+n+'"><span>'+(n===MP.i?(MP.playing?"▶":"❚❚"):n+1)+'</span><span><b>'+esc(x.title)+'</b><small>'+esc(artistName(x))+'</small></span><span class="mono">'+fmtSec(x.duration)+'</span></button>':''}).join("")+'</div>':'')+
+    '<div class="mpbar"><div class="mpnow">'+(art?'<img src="'+esc(art)+'" alt="">':'<span class="mpart0">♪</span>')+'<div style="min-width:0"><b>'+esc(s.title)+(s.verified?' '+vBadge("song"):'')+(s.explicit?' <span class="ex" title="Explicit">E</span>':'')+'</b><small>'+(ar?'<a href="#artist/'+esc(ar.id)+'">'+esc(ar.name)+'</a>'+(ar.verified?' '+vBadge("artist"):''):esc(artistName(s)))+(MP.ctx==="soundtrack"?' · <span style="color:var(--peach)">Grooveville Radio</span>':'')+'</small></div></div>'+
+    '<div class="mpctl"><button class="mpi'+(MP.shuffle?" on":"")+'" data-act="mp-shuffle" aria-pressed="'+MP.shuffle+'" aria-label="Shuffle">⤮</button><button class="mpi" data-act="mp-prev" aria-label="Previous">⏮</button><button class="mpp" data-act="mp-toggle" aria-label="'+(MP.playing?"Pause":"Play")+'">'+(MP.loading?'<span class="spin" aria-hidden="true"></span>':MP.playing?"❚❚":"▶")+'</button><button class="mpi" data-act="mp-next" aria-label="Next">⏭</button><button class="mpi'+(MP.repeat!=="off"?" on":"")+'" data-act="mp-repeat" aria-label="Repeat: '+MP.repeat+'">'+(MP.repeat==="one"?"↻1":"↻")+'</button></div>'+
+    '<div class="mpseek"><span class="mono" id="mpT">0:00</span><input type="range" id="mpS" min="0" max="1000" value="0" aria-label="Seek"><span class="mono" id="mpD">'+fmtSec(s.duration)+'</span></div>'+
+    '<div class="mpvol"><button class="mpi" data-act="mp-mute" aria-label="'+(MP.muted?"Unmute":"Mute")+'">'+(MP.muted?"🔇":"🔊")+'</button><input type="range" id="mpV" min="0" max="1" step=".05" value="'+(MP.muted?0:MP.vol)+'" aria-label="Volume"><button class="mpi'+(MP.qOpen?" on":"")+'" data-act="mp-queue" aria-label="Queue">☰</button><button class="mpi" data-act="mp-close" aria-label="Stop and close player">✕</button></div></div>';
+  const sk=$("#mpS");if(sk){sk.oninput=()=>{const a=MP.audio;if(a&&a.duration)a.currentTime=sk.value/1000*a.duration}}
+  const vv=$("#mpV");if(vv){vv.oninput=()=>{MP.vol=Number(vv.value);MP.muted=MP.vol===0;const a=mpAudio();a.volume=MP.vol;a.muted=MP.muted;mpSave();const mb=$('[data-act=mp-mute]');if(mb)mb.textContent=MP.muted?"🔇":"🔊"}}
+  mpTick();
+}
+function mpTick(){const a=MP.audio;if(!a)return;const t=$("#mpT"),d=$("#mpD"),sk=$("#mpS");if(t)t.textContent=fmtSec(a.currentTime);if(d&&a.duration&&isFinite(a.duration))d.textContent=fmtSec(a.duration);if(sk&&a.duration&&document.activeElement!==sk)sk.value=Math.round(a.currentTime/a.duration*1000);
+  const pp=$("#mp .mpp");if(pp)pp.innerHTML=MP.loading&&!MP.playing?'<span class="spin" aria-hidden="true"></span>':MP.playing?"❚❚":"▶";
+  document.querySelectorAll("[data-playing]").forEach(b=>{const on=MP.playing&&b.dataset.playing===MP.q[MP.i];b.classList.toggle("on",on)})}
+function mpAct(a,t){
+  if(!a.startsWith("mp-")&&!a.startsWith("mu-"))return false;
+  if(a==="mp-toggle")mpToggle();else if(a==="mp-next")mpNext();else if(a==="mp-prev")mpPrev();
+  else if(a==="mp-shuffle"){MP.shuffle=!MP.shuffle;mpRender()}else if(a==="mp-repeat"){MP.repeat={off:"all",all:"one",one:"off"}[MP.repeat];mpRender()}
+  else if(a==="mp-mute"){MP.muted=!MP.muted;mpAudio().muted=MP.muted;mpSave();mpRender()}else if(a==="mp-queue"){MP.qOpen=!MP.qOpen;mpRender()}
+  else if(a==="mp-jump")mpLoad(Number(t.dataset.i),true);
+  else if(a==="mp-close"){mpPause(true);MP.q=[];MP.i=-1;MP.qOpen=false;if(MP.audio){MP.audio.removeAttribute("src");MP.audio.load()}S.sound=false;syncSoundBtns();mpRender()}
+  else if(a==="mu-play"){const ids=(t.dataset.ids||"").split(",").filter(Boolean),i=Number(t.dataset.i)||0;if(MP.q[MP.i]===ids[i]&&MP.ctx==="user:"+(t.dataset.ctx||"")){mpToggle();return true}mpPlay(ids,i,"user:"+(t.dataset.ctx||""))}
+  else if(a==="mu-radio"){if(MP.ctx==="soundtrack"&&MP.playing)mpPause(true);else{S.sound=true;try{sessionStorage.setItem("gvSound","1")}catch(e){}if(!mpSoundtrack())S.sound=false;syncSoundBtns()}}
+  else if(a==="mu-share"){const u=t.dataset.url;if(navigator.share)navigator.share({title:t.dataset.title||"Grooveville",url:u}).catch(()=>{});else copyText(u,t)}
+  else if(a==="mu-tv"){tvSelect(t.dataset.kind,t.dataset.id,t.dataset.v)}
+  else if(a==="mu-embed"){const box=document.getElementById("emb-"+t.dataset.id);if(box){box.hidden=!box.hidden;if(!box.hidden&&!box.innerHTML)box.innerHTML='<iframe title="'+esc(t.dataset.title||"Player")+'" src="'+esc(t.dataset.src)+'" style="width:100%;height:'+(t.dataset.h||152)+'px;border:0;border-radius:12px" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>';if(!box.hidden)mpPause(false)}}
+  return true}
+/* remember Sound On across visits: resume on the visitor's first tap (browsers block sound before that) */
+(function(){let pref=false;try{pref=sessionStorage.getItem("gvSound")==="1"}catch(e){}if(!pref)return;
+  const go=e=>{if(e.target.closest&&e.target.closest("[data-act=sound],.intro,#mp,[data-act^=mu-],[data-act^=mp-]"))return;document.removeEventListener("pointerdown",go,true);if(S.sound&&!MP.playing&&!MP.userPaused)setTimeout(()=>{if(soundtrackOn())mpSoundtrack()},50)};
+  document.addEventListener("pointerdown",go,true)})();
+
+/* ---------- public pages ---------- */
+const MU_TABS=[["music","Music"],["music/artists","Artists"],["music/albums","Albums"],["music/playlists","Playlists"],["tv","TV"],["charts","Charts"]];
+function muTabs(cur){const flags=muSet("flags");return '<nav class="subtabs mutabs" aria-label="Grooveville Music">'+MU_TABS.filter(([k])=>k!=="charts"||flags.charts||S.isAdmin).concat(flags.songRate||S.isAdmin?[["songrate","Song Rate"]]:[]).map(([k,l])=>'<a href="#'+k+'"'+(cur===k?' class="on" aria-current="page"':'')+'>'+l+(k==="charts"&&!flags.charts?' <span class="pill priv">Preview</span>':'')+(k==="songrate"&&!flags.songRate?' <span class="pill priv">Off</span>':'')+'</a>').join("")+'</nav>'}
+function muHead(kick,title,sub,cur){return '<section class="muhead"><div class="wrap"><div class="kicker">'+kick+'</div><h1 class="disp" style="margin-top:12px">'+title+'</h1>'+(sub?'<p class="muted" style="margin-top:10px;max-width:60ch">'+sub+'</p>':'')+muTabs(cur)+'</div></section>'}
+function songRow(s,ids,i,ctx,showArt){const ar=songArtist(s);
+  return '<div class="srow"><button class="splay" data-act="mu-play" data-ids="'+esc(ids.join(","))+'" data-i="'+i+'" data-ctx="'+esc(ctx)+'" data-playing="'+esc(s.id)+'" aria-label="Play '+esc(s.title)+'"><span class="n">'+(i+1)+'</span><span class="ic">▶</span></button>'+
+    (showArt!==false?'<img class="sart" src="'+esc(muImg(s.art||((MU().albums[s.albumId]||{}).art)||""))+'" alt="" loading="lazy" onerror="this.style.visibility=\'hidden\'">':'')+
+    '<span class="stt"><b>'+esc(s.title)+(s.verified?' '+vBadge("song"):'')+(s.explicit?' <span class="ex" title="Explicit">E</span>':'')+(!s.published?' <span class="pill priv">Draft</span>':'')+'</b><small>'+(ar?'<a href="#artist/'+esc(ar.id)+'">'+esc(ar.name)+'</a>'+(ar.verified?' '+vBadge("artist"):''):esc(artistName(s)))+(s.featuring?' feat. '+esc(s.featuring):'')+'</small></span><span class="mono muted">'+fmtSec(s.duration)+'</span></div>'}
+function songList(list,ctx,showArt){const ids=list.map(s=>s.id);return '<div class="slist">'+list.map((s,i)=>songRow(s,ids,i,ctx,showArt)).join("")+'</div>'}
+function coverCard(href,img,title,sub,badge){return '<a class="ccard" href="'+href+'"><span class="cc">'+(img?'<img src="'+esc(img)+'" alt="" loading="lazy">':'<b aria-hidden="true">♪</b>')+'</span><b>'+esc(title)+(badge||"")+'</b><small>'+esc(sub||"")+'</small></a>'}
+function artistCard(a){return '<a class="acard" href="#artist/'+esc(a.id)+'"><span class="ap">'+(a.portrait?'<img src="'+esc(muImg(a.portrait))+'" alt="" loading="lazy">':'<b>'+esc((a.name||"?").slice(0,1))+'</b>')+'</span><b>'+esc(a.name)+(a.verified?' '+vBadge("artist"):'')+'</b><small>'+esc((a.genres||[]).slice(0,2).join(" · ")||a.hometown||"")+'</small></a>'}
+const muEmpty=(t,admin)=>'<div class="empty">'+t+(S.isAdmin&&admin?' <a href="#ent-'+admin+'">Open the back office</a>.':'')+'</div>';
+function muSec(title,body,more){return '<div class="msec"><div class="sechead" style="margin-bottom:14px"><h2 style="font:700 clamp(22px,2.8vw,32px) var(--f-display);letter-spacing:-.02em">'+title+'</h2>'+(more||"")+'</div>'+body+'</div>'}
+function viewMusic(){musicSubscribe();
+  const songs=pubList(MU().songs),artists=pubList(MU().artists),albums=pubList(MU().albums),pls=pubList(MU().playlists);
+  const feat=songs.filter(s=>s.featured),newr=songs.slice().sort((a,b)=>String(b.releaseDate||b.createdAt||"").localeCompare(String(a.releaseDate||a.createdAt||""))).slice(0,10);
+  const mv=pubList(MU().tvVideos).filter(v=>v.categoryId==="music-videos").slice(0,6),entries=Object.values(MU().entries).filter(e=>e.published).sort((a,b)=>(a.position||99)-(b.position||99)).slice(0,5);
+  return muHead("Grooveville Entertainment","Grooveville Music","Originals, artists and the Grooveville sound. Everything here plays right on Grooveville.","music")+
+  '<section style="padding-top:26px"><div class="wrap">'+
+    '<div class="radiocard"><div><div class="kicker">Grooveville Radio · Sound On</div><h2 class="disp" style="margin-top:10px">Exclusive Grooveville songs, nonstop.</h2><p class="muted" style="margin-top:10px;max-width:46ch">Turn Sound On and the Grooveville Originals rotation plays as you move around the site.</p>'+(soundtrackOn()?'<button class="btn peach" style="margin-top:18px" data-act="mu-radio">'+(MP.ctx==="soundtrack"&&MP.playing?"❚❚ Pause Grooveville Radio":"▶ Play Grooveville Radio")+'</button>':'<p class="muted" style="margin-top:14px">The station is getting tuned. Check back soon.</p>')+'</div><div class="rcart">'+soundtrackIds().slice(0,4).map(id=>{const s=MU().songs[id],im=muImg(s.art||((MU().albums[s.albumId]||{}).art)||"");return im?'<img src="'+esc(im)+'" alt="">':'<span>♪</span>'}).join("")+'</div></div>'+
+    muSec("Featured Grooveville Originals",feat.length?songList(feat,"featured"):muEmpty("Featured songs appear here once they're released.","upload"))+
+    muSec("New releases",newr.length?songList(newr,"new"):muEmpty("New music is on the way.","upload"))+
+    muSec("Official Grooveville Artists",artists.length?'<div class="agrid">'+artists.slice(0,8).map(artistCard).join("")+'</div>':muEmpty("Artist profiles are coming soon.","artists"),artists.length>8?'<a class="btn ghost sm" href="#music/artists">All artists</a>':'')+
+    muSec("Albums &amp; EPs",albums.length?'<div class="cgrid">'+albums.slice(0,8).map(a=>coverCard("#album/"+esc(a.id),muImg(a.art),a.title,(a.type||"Album")+" · "+((MU().artists[a.artistId]||{}).name||""))).join("")+'</div>':muEmpty("Albums and EPs appear here when they're released.","albums"))+
+    muSec("Grooveville Selects",pls.filter(p=>p.selects).length?'<div class="cgrid">'+pls.filter(p=>p.selects).map(p=>coverCard("#playlist/"+esc(p.id),muImg(p.art),p.title,(p.songIds||[]).length+" songs")).join("")+'</div>':muEmpty("Hand-picked Grooveville Selects are coming.","playlists"))+
+    muSec("Curated playlists",pls.filter(p=>!p.selects).length?'<div class="cgrid">'+pls.filter(p=>!p.selects).map(p=>coverCard("#playlist/"+esc(p.id),muImg(p.art),p.title,(p.songIds||[]).length+" songs")).join("")+'</div>':muEmpty("Playlists are coming soon.","playlists"))+
+    muSec("Music videos",mv.length?'<div class="epgrid">'+mv.map(v=>'<a class="ep" href="#tv/music-videos" data-act="mu-tv" data-kind="video" data-id="'+esc(v.id)+'"><span class="th"><img src="'+esc(v.thumb)+'" alt="" loading="lazy">'+(v.duration?'<span class="dur">'+fmtSec(v.duration)+'</span>':'')+'</span><b>'+esc(v.title)+'</b></a>').join("")+'</div>':muEmpty("Music videos from Grooveville TV appear here.","tv"),'<a class="btn ghost sm" href="#tv">Grooveville TV</a>')+
+    (muSet("flags").charts||S.isAdmin?muSec("Grooveville Charts",entries.length?'<div class="slist">'+entries.map(chartRow).join("")+'</div>':muEmpty("The first Grooveville Charts are on the way.","charts"),'<a class="btn ghost sm" href="#charts">All charts</a>'):'')+
+  '</div></section>';
+}
+function viewMusicList(kind){musicSubscribe();
+  if(kind==="artists"){const a=pubList(MU().artists);return muHead("Grooveville Music","Artists","Official Grooveville Artists.","music/artists")+'<section style="padding-top:26px"><div class="wrap">'+(a.length?'<div class="agrid">'+a.map(artistCard).join("")+'</div>':muEmpty("Artist profiles are coming soon.","artists"))+'</div></section>'}
+  if(kind==="albums"){const a=pubList(MU().albums);return muHead("Grooveville Music","Albums &amp; EPs","","music/albums")+'<section style="padding-top:26px"><div class="wrap">'+(a.length?'<div class="cgrid">'+a.map(x=>coverCard("#album/"+esc(x.id),muImg(x.art),x.title,(x.type||"Album")+" · "+((MU().artists[x.artistId]||{}).name||""))).join("")+'</div>':muEmpty("Albums and EPs appear here when they're released.","albums"))+'</div></section>'}
+  const p=pubList(MU().playlists);return muHead("Grooveville Music","Playlists","Grooveville Selects and curated playlists.","music/playlists")+'<section style="padding-top:26px"><div class="wrap">'+(p.length?'<div class="cgrid">'+p.map(x=>coverCard("#playlist/"+esc(x.id),muImg(x.art),x.title,(x.selects?"Grooveville Selects · ":"")+(x.songIds||[]).length+" songs")).join("")+'</div>':muEmpty("Playlists are coming soon.","playlists"))+'</div></section>';
+}
+const SOC_MU=[["instagram","Instagram"],["tiktok","TikTok"],["youtube","YouTube"],["spotify","Spotify"],["apple","Apple Music"],["soundcloud","SoundCloud"],["facebook","Facebook"],["x","X"],["website","Website"]];
+function viewArtist(id){musicSubscribe();const a=MU().artists[id];
+  if(!a)return '<div class="wrap gate"><h1>'+(MU().loaded?"Artist not found":"Loading…")+'</h1><a class="btn ghost" href="#music/artists">All artists</a></div>';
+  const songs=pubList(MU().songs).filter(s=>s.artistId===id),albums=pubList(MU().albums).filter(x=>x.artistId===id),vids=pubList(MU().tvVideos).filter(v=>v.artistId===id);
+  const soc=SOC_MU.filter(([k])=>a.socials&&/^https:\/\//.test(a.socials[k]||"")).map(([k,l])=>'<a class="btn line sm" href="'+esc(a.socials[k])+'" target="_blank" rel="noopener noreferrer">'+l+' ↗</a>').concat((a.custom||[]).filter(c=>c&&/^https:\/\//.test(c.url||"")).map(c=>'<a class="btn line sm" href="'+esc(c.url)+'" target="_blank" rel="noopener noreferrer">'+esc(c.label||"Link")+' ↗</a>'));
+  const share=location.origin+"/artist/"+encodeURIComponent(id);
+  return '<section class="arthero">'+(a.banner?'<img class="abn" src="'+esc(muImg(a.banner))+'" alt="">':'')+'<div class="wrap"><div class="crumb"><button class="backbtn" data-act="go-back">‹ Back</button><a href="#music/artists">Artists</a></div><div class="arow">'+(a.portrait?'<img class="apo" src="'+esc(muImg(a.portrait))+'" alt="'+esc(a.name)+'">':'')+'<div><div class="kicker">'+(a.verified?"Grooveville Artist":"Artist")+(a.hometown?' · '+esc(a.hometown):'')+'</div><h1 class="disp">'+esc(a.name)+(a.verified?' '+vBadge("artist"):'')+'</h1><p class="muted">'+esc((a.genres||[]).join(" · "))+'</p>'+
+    '<div class="btnrow0" style="margin-top:14px">'+(songs.length?'<button class="btn peach" data-act="mu-play" data-ids="'+esc(songs.map(s=>s.id).join(","))+'" data-i="0" data-ctx="artist:'+esc(id)+'">▶ Play</button>':'')+'<button class="btn line sm" data-act="mu-share" data-url="'+esc(share)+'" data-title="'+esc(a.name)+' on Grooveville">Share</button></div></div></div></div></section>'+
+    '<section style="padding-top:20px"><div class="wrap">'+(a.bio?'<p style="max-width:70ch;font-size:17px;white-space:pre-line">'+esc(a.bio)+'</p>':'')+(soc.length?'<div class="btnrow0" style="margin-top:16px">'+soc.join("")+'</div>':'')+
+    muSec("Songs",songs.length?songList(songs,"artist:"+id):muEmpty("No songs released yet."))+
+    (albums.length?muSec("Albums &amp; EPs",'<div class="cgrid">'+albums.map(x=>coverCard("#album/"+esc(x.id),muImg(x.art),x.title,x.type||"Album")).join("")+'</div>'):'')+
+    (vids.length?muSec("Music videos",'<div class="epgrid">'+vids.map(v=>'<a class="ep" href="#tv/'+esc(v.categoryId||"music-videos")+'" data-act="mu-tv" data-kind="video" data-id="'+esc(v.id)+'"><span class="th"><img src="'+esc(v.thumb)+'" alt="" loading="lazy"></span><b>'+esc(v.title)+'</b></a>').join("")+'</div>'):'')+'</div></section>';
+}
+function viewCollection(kind,id){musicSubscribe();const c=(kind==="album"?MU().albums:MU().playlists)[id];
+  if(!c)return '<div class="wrap gate"><h1>'+(MU().loaded?"Not found":"Loading…")+'</h1><a class="btn ghost" href="#music">Grooveville Music</a></div>';
+  const songs=(c.songIds||[]).map(x=>MU().songs[x]).filter(s=>s&&(s.published||S.isAdmin)),ar=MU().artists[c.artistId];
+  return '<section class="muhead"><div class="wrap"><div class="crumb"><button class="backbtn" data-act="go-back">‹ Back</button><a href="#music/'+(kind==="album"?"albums":"playlists")+'">'+(kind==="album"?"Albums":"Playlists")+'</a></div><div class="arow">'+(c.art?'<img class="cov" src="'+esc(muImg(c.art))+'" alt="">':'')+'<div><div class="kicker">'+(kind==="album"?esc(c.type||"Album"):c.selects?"Grooveville Selects":"Playlist")+'</div><h1 class="disp" style="margin-top:8px">'+esc(c.title)+'</h1><p class="muted">'+(ar?'<a href="#artist/'+esc(ar.id)+'">'+esc(ar.name)+'</a>'+(ar.verified?' '+vBadge("artist"):'')+' · ':'')+songs.length+' songs'+(c.releaseDate?' · '+esc(fmtDate(c.releaseDate)):'')+'</p>'+(c.description?'<p style="margin-top:8px;max-width:60ch">'+esc(c.description)+'</p>':'')+
+    (songs.length?'<div class="btnrow0" style="margin-top:14px"><button class="btn peach" data-act="mu-play" data-ids="'+esc(songs.map(s=>s.id).join(","))+'" data-i="0" data-ctx="'+kind+':'+esc(id)+'">▶ Play all</button></div>':'')+'</div></div></div></section><section style="padding-top:20px"><div class="wrap">'+(songs.length?songList(songs,kind+":"+id,kind!=="album"):muEmpty("No songs here yet."))+'</div></section>';
+}
+/* ---------- Grooveville TV ---------- */
+const TV={sel:null,player:null,vid:"",wasPlaying:false};
+function tvCats(){const c=Object.values(MU().tvCats).filter(x=>S.isAdmin||!x.hidden);return c.length?byOrder(c):TV_DEFAULT_CATS.map(([id,name],i)=>({id,name,order:i+1}))}
+function viewTV(cat){musicSubscribe();
+  const cats=tvCats(),cur=cat||(cats[0]||{}).id||"",vids=pubList(MU().tvVideos).filter(v=>v.categoryId===cur),pls=pubList(MU().tvPlaylists).filter(p=>p.categoryId===cur||(cur==="playlists"&&!p.categoryId));
+  const feat=TV.sel||(vids.find(v=>v.featured)||vids[0])&&{kind:"video",id:(vids.find(v=>v.featured)||vids[0]).id}||(pls[0]&&{kind:"playlist",id:pls[0].id,v:((pls[0].items||[])[0]||{}).id})||null;
+  let stage='<div class="lvplayer off"><div class="offmsg"><div class="kicker">Grooveville TV</div><h2 class="disp">'+(MU().loaded?"Nothing in this channel yet.":"Loading…")+'</h2></div></div>',side="";
+  if(feat){const v=feat.kind==="video"?MU().tvVideos[feat.id]:null,pl=feat.kind==="playlist"?MU().tvPlaylists[feat.id]:null,vidId=v?v.youtubeId||v.id:(feat.v||((pl&&pl.items||[])[0]||{}).id);
+    if(vidId)stage='<div class="lvplayer" data-keep="tv:'+esc(vidId)+'"><div id="tvP" data-vid="'+esc(vidId)+'"></div></div>';
+    const meta=v||(pl&&(pl.items||[]).find(x=>x.id===vidId))||{};
+    stage+='<div style="margin-top:12px"><h2 style="font:700 22px var(--f-display)">'+esc(meta.title||(pl&&pl.title)||"")+'</h2>'+(v&&v.description?'<p class="muted" style="margin-top:6px;max-width:80ch;white-space:pre-line">'+esc(v.description.slice(0,280))+'</p>':'')+'<a class="btn ghost sm" style="margin-top:10px" href="https://www.youtube.com/watch?v='+esc(vidId||"")+'" target="_blank" rel="noopener">Watch on YouTube to like &amp; comment ↗</a></div>';
+    if(pl)side='<aside class="tvside"><b>'+esc(pl.title)+'</b><small class="muted">'+(pl.items||[]).length+' videos</small>'+(pl.items||[]).map((x,n)=>'<button class="tvitem'+(x.id===vidId?" on":"")+'" data-act="mu-tv" data-kind="playlist" data-id="'+esc(pl.id)+'" data-v="'+esc(x.id)+'"><img src="'+esc(x.thumb)+'" alt="" loading="lazy"><span>'+esc(x.title)+'</span></button>').join("")+'</aside>'}
+  return muHead("Grooveville Entertainment","Grooveville TV","Music videos, shows, memes and podcasts from @GroovevilleEnt.","tv")+
+  '<section style="padding-top:20px"><div class="wrap"><div class="brandtabs">'+cats.map(c=>'<a class="btn '+(c.id===cur?"peach":"ghost")+' sm" href="#tv/'+esc(c.id)+'">'+esc(c.name)+(c.hidden?' (hidden)':'')+'</a>').join("")+'</div>'+
+  '<div class="tvwrap'+(side?" hasside":"")+'"><div>'+stage+'</div>'+side+'</div>'+
+  (vids.length?muSec("Videos",'<div class="epgrid">'+vids.map(v=>'<button class="ep" style="background:none;border:0;padding:0;text-align:left;cursor:pointer" data-act="mu-tv" data-kind="video" data-id="'+esc(v.id)+'"><span class="th"><img src="'+esc(v.thumb)+'" alt="" loading="lazy">'+(v.duration?'<span class="dur">'+fmtSec(v.duration)+'</span>':'')+(v.featured?'<span class="tag" style="position:absolute;top:8px;left:8px">Featured</span>':'')+'</span><b>'+esc(v.title)+(!v.published?' <span class="pill priv">Draft</span>':'')+'</b></button>').join("")+'</div>'):'')+
+  (pls.length?muSec("Playlists",'<div class="epgrid">'+pls.map(p=>'<button class="ep" style="background:none;border:0;padding:0;text-align:left;cursor:pointer" data-act="mu-tv" data-kind="playlist" data-id="'+esc(p.id)+'"><span class="th"><img src="'+esc(p.thumb)+'" alt="" loading="lazy"><span class="dur">☰ '+(p.items||[]).length+'</span></span><b>'+esc(p.title)+'</b></button>').join("")+'</div>'):'')+
+  (!vids.length&&!pls.length&&MU().loaded?muEmpty("Nothing published in this category yet.","tv"):'')+'</div></section>';
+}
+function tvSelect(kind,id,v){TV.sel={kind,id,v};if(!S.route.startsWith("tv")){location.hash="#tv/"+((kind==="video"?(MU().tvVideos[id]||{}).categoryId:(MU().tvPlaylists[id]||{}).categoryId)||"")}else{render();window.scrollTo({top:0,behavior:"smooth"})}}
+function tvMount(){const el=$("#tvP");if(!el)return;const vid=el.dataset.vid;if(TV.player&&TV.vid===vid&&document.getElementById("tvPf"))return;
+  const mk=()=>{const h=$("#tvP");if(!h)return;h.id="tvPf";TV.vid=vid;TV.player=new YT.Player("tvPf",{videoId:vid,width:"100%",height:"100%",playerVars:{playsinline:1,rel:0,modestbranding:1},events:{onStateChange:e=>{if(e.data===1){mpPause(false);if(typeof radioPause==="function")try{radioPause()}catch(_){}try{if(window.__liveStop)window.__liveStop()}catch(_){}}}}})};
+  if(window.YT&&YT.Player)mk();else{const prev=window.onYouTubeIframeAPIReady;window.onYouTubeIframeAPIReady=()=>{if(prev)prev();mk()};if(!document.getElementById("ytapi")){const s=document.createElement("script");s.id="ytapi";s.src="https://www.youtube.com/iframe_api";s.onerror=()=>{const h=$("#tvP");if(h)h.outerHTML='<iframe title="Grooveville TV" style="position:absolute;inset:0;width:100%;height:100%;border:0" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen src="https://www.youtube-nocookie.com/embed/'+esc(vid)+'"></iframe>'};document.head.appendChild(s)}}}
+window.__tvStop=()=>{try{if(TV.player&&TV.player.pauseVideo)TV.player.pauseVideo()}catch(e){}};
+/* ---------- Charts & Song Rate ---------- */
+function embedFor(url,platform){try{const u=new URL(url);
+  if(platform==="spotify"){const m=/\/(track|album|playlist|episode)\/([A-Za-z0-9]+)/.exec(u.pathname);return m?{src:"https://open.spotify.com/embed/"+m[1]+"/"+m[2],h:152}:null}
+  if(platform==="youtube"){const v=u.hostname==="youtu.be"?u.pathname.slice(1,12):(u.searchParams.get("v")||(/\/(?:shorts|live|embed)\/([A-Za-z0-9_-]{11})/.exec(u.pathname)||[])[1]);return v?{src:"https://www.youtube-nocookie.com/embed/"+v,h:315}:null}
+  if(platform==="soundcloud")return {src:"https://w.soundcloud.com/player/?url="+encodeURIComponent(url)+"&color=%23f4a987",h:166};
+  if(platform==="apple")return {src:"https://embed.music.apple.com"+u.pathname+u.search,h:175};
+  return null}catch(e){return null}}
+const PLAT_NAME={spotify:"Spotify",youtube:"YouTube",soundcloud:"SoundCloud",apple:"Apple Music",audiomack:"Audiomack",tidal:"TIDAL",deezer:"Deezer",bandcamp:"Bandcamp"};
+function chartRow(e){const emb=embedFor(e.url,e.platform);
+  return '<div class="crow"><span class="cpos">'+(e.position||"–")+'</span>'+(e.art?'<img src="'+esc(e.art)+'" alt="" loading="lazy">':'<span class="ph0"></span>')+'<span class="stt"><b>'+esc(e.title)+'</b><small>'+esc(e.artist)+(e.genre?' · '+esc(e.genre):'')+' · added '+esc(fmtDate(String(e.addedAt||"").slice(0,10)))+'</small>'+(e.summary?'<small style="display:block;margin-top:4px;color:var(--ink)">'+esc(e.summary)+'</small>':'')+'</span>'+
+    (e.rating!=null&&e.rating!==""?'<span class="crate" title="Grooveville Rating">'+Number(e.rating).toFixed(1)+'<small>/10</small></span>':'<span></span>')+
+    '<span class="btnrow0">'+(emb?'<button class="btn ghost sm" data-act="mu-embed" data-id="'+esc(e.id)+'" data-src="'+esc(emb.src)+'" data-h="'+emb.h+'" data-title="'+esc(e.title)+'">▶ Listen here</button>':'')+'<a class="btn ghost sm" href="'+esc(e.url)+'" target="_blank" rel="noopener noreferrer">'+esc(PLAT_NAME[e.platform]||"Listen")+' ↗</a></span><div class="cemb" id="emb-'+esc(e.id)+'" hidden></div></div>'}
+function viewCharts(cid){musicSubscribe();const flags=muSet("flags");
+  if(!flags.charts&&!S.isAdmin)return muHead("Grooveville Music","Grooveville Charts","","charts")+'<section><div class="wrap"><div class="empty">Grooveville Charts are coming soon.</div></div></section>';
+  const charts=byOrder(Object.values(MU().charts).filter(c=>(c.published||S.isAdmin)&&!c.archived)),cur=MU().charts[cid]||charts.find(c=>c.featured)||charts[0];
+  const entries=cur?Object.values(MU().entries).filter(e=>e.chartId===cur.id&&(e.published||S.isAdmin)).sort((a,b)=>(a.position||99)-(b.position||99)):[];
+  return muHead("Grooveville Music","Grooveville Charts","Independent music, rated by Grooveville. Listen on the original platform.","charts")+'<section style="padding-top:20px"><div class="wrap">'+
+    (!flags.charts?'<div class="banner warn" style="margin:0 0 14px">Founder preview: Charts are hidden from the public until you switch them on in Back office › Entertainment › Charts.</div>':'')+
+    (charts.length?'<div class="brandtabs">'+charts.map(c=>'<a class="btn '+(cur&&c.id===cur.id?"peach":"ghost")+' sm" href="#charts/'+esc(c.id)+'">'+esc(c.name)+'</a>').join("")+'</div>':'')+
+    (entries.length?'<div class="slist">'+entries.map(chartRow).join("")+'</div>':muEmpty("No songs on this chart yet.","charts"))+'</div></section>'}
+function viewSongRate(){musicSubscribe();const on=!!muSet("flags").songRate;
+  if(!on&&!S.isAdmin)return muHead("Grooveville Music","Grooveville Song Rate","","songrate")+'<section><div class="wrap"><div class="empty">Song Rate submissions open soon. Follow Grooveville for the announcement.</div></div></section>';
+  return muHead("Grooveville Music","Grooveville Song Rate","Independent artist? Send a link to your song. Grooveville listens, rates the best, and features them on Grooveville Charts.","songrate")+'<section style="padding-top:20px"><div class="wrap cols2">'+
+    '<form class="card" id="srForm" style="display:flex;flex-direction:column;gap:12px">'+(!on?'<div class="banner warn" style="margin:0">Founder preview: submissions are closed to the public.</div>':'')+
+    '<div class="grid2"><label class="f">Artist name *<input class="i" name="artist" required maxlength="80"></label><label class="f">Song title *<input class="i" name="title" required maxlength="120"></label></div>'+
+    '<label class="f">Song link * (Spotify, YouTube, SoundCloud, Apple Music, Audiomack, TIDAL, Deezer, Bandcamp)<input class="i" type="url" name="url" required placeholder="https://"></label>'+
+    '<div class="grid2"><label class="f">Genre<input class="i" name="genre" maxlength="40"></label><label class="f">Artist social link<input class="i" type="url" name="social" placeholder="https://"></label></div>'+
+    '<label class="f">Contact email (kept private)<input class="i" type="email" name="email"></label><label class="f">Message<textarea class="i" name="message" maxlength="800"></textarea></label>'+
+    '<input name="website2" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px">'+
+    '<p class="muted" style="font-size:12.5px">Links only: we never ask for audio files. Submitting doesn\'t make you a Grooveville Artist or guarantee a review.</p><div><button class="btn peach">Submit for review</button></div><p id="srMsg" class="muted"></p></form>'+
+    '<aside class="card" style="align-self:start"><div class="eyebrow">How Grooveville rates</div><ul style="margin:10px 0 0;padding-left:18px;display:grid;gap:6px"><li>Production</li><li>Vocals / Performance</li><li>Lyrics / Songwriting</li><li>Originality</li><li>Replay value</li></ul><p class="muted" style="font-size:13px;margin-top:10px">Each scored 1–10 by the Grooveville team after listening. Top songs are added to Grooveville Charts.</p></aside></div></section>'}
+document.addEventListener("submit",async e=>{const f=e.target;if(f.id!=="srForm")return;e.preventDefault();const m=$("#srMsg"),b=f.querySelector("button");b.disabled=true;
+  try{const r=await fetch("/api/songrate/submit",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify(formObj(f))});const j=await r.json().catch(()=>({}));if(!r.ok)throw new Error(j.error||"Couldn't submit");f.reset();m.textContent="Thanks! Your song is in the review queue.";m.style.color="var(--ok)"}
+  catch(err){m.textContent=err.message;m.style.color="var(--warn)"}b.disabled=false},true);
+
+/* ---------- Back office › Entertainment (founder / HNIC only) ----------
+   Music library + MP3 uploads (R2), artists, albums, playlists, Sound On / Grooveville Radio, Grooveville TV,
+   Song Rate submissions + reviews, Charts, verification. Firestore rules make every write founder-only. */
+const ENT_SECS=[["dash","Dashboard"],["library","Music Library"],["upload","Upload Song"],["artists","Artists"],["albums","Albums & EPs"],["playlists","Playlists"],["soundon","Sound On / Radio"],["tv","Grooveville TV"],["tvcats","TV Categories"],["songrate","Song Rate"],["charts","Charts"],["verify","Verification"]];
+const RATE_CATS=[["production","Production"],["vocals","Vocals / Performance"],["lyrics","Lyrics / Songwriting"],["originality","Originality"],["replay","Replay value"]];
+const CHART_DEFAULTS=["Grooveville Top 10","R&B / Soul","Hip-Hop","Afrobeats / Dancehall","Independent Artists","New Discoveries"];
+S.ent={q:"",f:"all",edit:null,sr:null,srF:"submitted",chart:"",tvList:null};
+async function muApi(path,body){const t=await idToken();const r=await fetch(path,{method:"POST",headers:{"content-type":"application/json",authorization:"Bearer "+t},body:JSON.stringify(body||{})});const j=await r.json().catch(()=>({}));if(!r.ok)throw new Error(j.error||("HTTP "+r.status));return j}
+function xhrPut(url,blob,ct,onp){return new Promise((res,rej)=>{const x=new XMLHttpRequest();x.open("PUT",url);x.setRequestHeader("content-type",ct);x.upload.onprogress=e=>{if(e.lengthComputable&&onp)onp(e.loaded/e.total)};x.onload=()=>x.status<300?res():rej(new Error("Upload failed ("+x.status+")"));x.onerror=()=>rej(new Error("Upload failed. Check the R2 CORS setting in STUDIO-SETUP.md."));x.send(blob)})}
+async function isMp3(file){const b=new Uint8Array(await file.slice(0,4).arrayBuffer());return (b[0]===0x49&&b[1]===0x44&&b[2]===0x33)||(b[0]===0xff&&(b[1]&0xe0)===0xe0)}
+function fileDuration(file){return new Promise(res=>{const a=new Audio(),u=URL.createObjectURL(file);a.preload="metadata";a.onloadedmetadata=()=>{const d=a.duration;URL.revokeObjectURL(u);res(isFinite(d)?Math.round(d):0)};a.onerror=()=>{URL.revokeObjectURL(u);res(0)};a.src=u})}
+async function upAudio(file,id,onp){if(file.size>100*1024*1024)throw new Error("MP3s can be up to 100 MB");if(!(/\.mp3$/i.test(file.name)||file.type==="audio/mpeg")||!(await isMp3(file)))throw new Error("That file isn't an MP3");
+  const r=await muApi("/api/music/upload",{kind:"audio",id,filename:file.name,contentType:"audio/mpeg",size:file.size});await xhrPut(r.url,file,"audio/mpeg",onp);await muApi("/api/music/verify",{key:r.key});return r.key}
+async function upImage(file,id){if(!/^image\/(jpeg|png|webp)$/.test(file.type))throw new Error("Use a JPG, PNG or WebP image");const d=await shrinkImage(file,1400,4e6);if(!d)throw new Error("Couldn't read that image");
+  const blob=await (await fetch(d)).blob(),ct=blob.type||"image/jpeg";const r=await muApi("/api/music/upload",{kind:"image",id,filename:file.name.replace(/\.[a-z0-9]+$/i,"")+(ct==="image/webp"?".webp":".jpg"),contentType:ct,size:blob.size});await xhrPut(r.url,blob,r.contentType,null);return r.key}
+const slugify=s=>String(s||"").toLowerCase().normalize("NFKD").replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"").slice(0,40);
+const strip=o=>{const c=Object.assign({},o);delete c.id;delete c._col;return c};
+const nowISO=()=>new Date().toISOString();
+const allSongs=()=>byOrder(Object.values(MU().songs));
+const optArtists=sel=>'<option value="">Choose an artist…</option>'+byOrder(Object.values(MU().artists)).map(a=>'<option value="'+esc(a.id)+'"'+(a.id===sel?" selected":"")+'>'+esc(a.name)+'</option>').join("")+'<option value="__new">+ New artist…</option>';
+const yes=(v,l)=>'<span class="pill '+(v?"pub":"priv")+'">'+l+'</span>';
+
+function viewEnt(){
+  if(!S.isAdmin)return viewSignin();musicSubscribe();
+  const sec=(S.route.split("-")[1])||"dash";
+  const body={dash:entDash,library:entLibrary,upload:entUpload,artists:entArtists,albums:()=>entCollections("albums"),playlists:()=>entCollections("playlists"),soundon:entSoundOn,tv:entTV,tvcats:entTVCats,songrate:entSongRate,charts:entCharts,verify:entVerify}[sec]||entDash;
+  return teamShell("ent",'<div class="entnav">'+ENT_SECS.map(([k,l])=>'<a href="#ent-'+k+'"'+(k===sec?' class="on"':'')+'>'+l+'</a>').join("")+'</div>'+(MU().loaded?body():'<div class="empty">Loading the music library…</div>'));
+}
+function entDash(){const s=Object.values(MU().songs),a=Object.values(MU().artists),al=Object.values(MU().albums),tv=Object.values(MU().tvVideos),tp=Object.values(MU().tvPlaylists),en=Object.values(MU().entries),f=muSet("flags");
+  const k=(l,v,h)=>'<a class="kpi" href="#ent-'+h+'" style="text-decoration:none;color:inherit"><span class="eyebrow">'+l+'</span><b>'+v+'</b></a>';
+  return '<div class="kpis">'+k("Official artists",a.length,"artists")+k("Uploaded songs",s.length,"library")+k("Published songs",s.filter(x=>x.published).length,"library")+k("Albums & EPs",al.length,"albums")+'</div>'+
+    '<div class="kpis">'+k("Sound On rotation",soundtrackIds().length,"soundon")+k("Published TV videos",tv.filter(x=>x.published).length,"tv")+k("TV playlists",tp.length,"tv")+k("Chart entries",en.length,"charts")+'</div>'+
+    '<div class="kpis">'+k("Verified artists",a.filter(x=>x.verified).length,"verify")+k("Verified songs",s.filter(x=>x.verified).length,"verify")+k("Song Rate",f.songRate?"Open":"Off","songrate")+k("Charts",f.charts?"Public":"Preview","charts")+'</div>'+
+    '<div class="btnrow0"><a class="btn olive" href="#ent-upload">⬆ Upload a song</a><a class="btn ghost" href="#music">View Grooveville Music</a><a class="btn ghost" href="#tv">View Grooveville TV</a></div>';
+}
+function entLibrary(){const q=S.ent.q.toLowerCase(),f=S.ent.f;
+  const list=allSongs().filter(s=>(!q||(s.title+" "+artistName(s)+" "+(s.genre||"")).toLowerCase().includes(q))&&(f==="all"||(f==="published"&&s.published)||(f==="draft"&&!s.published)||(f==="soundon"&&s.soundOn)||(f==="featured"&&s.featured)||(f==="verified"&&s.verified)));
+  return '<div class="toolbar"><input class="i" style="max-width:280px" id="entQ" placeholder="Search songs, artists, genres" value="'+esc(S.ent.q)+'"><div class="seg">'+[["all","All"],["published","Published"],["draft","Drafts"],["soundon","Sound On"],["featured","Featured"],["verified","Verified"]].map(([k,l])=>'<button class="'+(f===k?"on":"")+'" data-act="ent-f" data-v="'+k+'">'+l+'</button>').join("")+'</div><span class="sp"></span><a class="btn olive sm" href="#ent-upload">⬆ Upload song</a></div>'+
+  (list.length?'<div class="tablewrap"><table class="t"><thead><tr><th></th><th>Song</th><th>Artist</th><th>Status</th><th class="num">Length</th><th></th></tr></thead><tbody>'+list.map(s=>'<tr><td><button class="rowbtn" data-act="ent-preview" data-id="'+esc(s.id)+'" aria-label="Preview">▶</button></td><td><b>'+esc(s.title)+'</b>'+(s.verified?' '+vBadge("song"):'')+(s.explicit?' <span class="ex">E</span>':'')+'<div class="muted" style="font-size:12px">'+esc([(MU().albums[s.albumId]||{}).title,s.genre].filter(Boolean).join(" · "))+'</div></td><td>'+esc(artistName(s))+'</td><td style="white-space:nowrap">'+yes(s.published,s.published?"Published":"Draft")+' '+(s.soundOn?yes(1,"Sound On"):'')+' '+(s.featured?yes(1,"Featured"):'')+'</td><td class="num">'+fmtSec(s.duration)+'</td><td style="white-space:nowrap"><button class="rowbtn" data-act="ent-pub" data-id="'+esc(s.id)+'">'+(s.published?"Unpublish":"Publish")+'</button><button class="rowbtn" data-act="ent-son" data-id="'+esc(s.id)+'">'+(s.soundOn?"Remove from Sound On":"Add to Sound On")+'</button><button class="rowbtn" data-act="ent-edit" data-id="'+esc(s.id)+'">Edit</button><button class="rowbtn" data-act="ent-del" data-id="'+esc(s.id)+'">Delete</button></td></tr>').join("")+'</tbody></table></div>':'<div class="empty">'+(Object.keys(MU().songs).length?"No songs match.":"No songs yet. Upload your first Grooveville Original.")+'</div>');
+}
+function entUpload(){const e=S.ent.edit||{},isE=!!e.id;
+  const ck=(n,l,v)=>'<label style="display:flex;gap:8px;align-items:center;font-size:14px"><input type="checkbox" name="'+n+'"'+(v?" checked":"")+'> '+l+'</label>';
+  return '<form class="mbox" id="songForm" style="display:flex;flex-direction:column;gap:12px;max-width:900px"><h3 style="font-size:20px">'+(isE?"Edit: "+esc(e.title):"Upload a Grooveville Original")+'</h3>'+
+    '<div class="dz" id="mp3Drop"><b>'+(isE?"Replace MP3 (optional)":"MP3 file *")+'</b><input type="file" id="mp3File" accept=".mp3,audio/mpeg"'+(isE?"":" required")+'><span class="muted" id="mp3Info">'+(isE&&e.audioName?esc(e.audioName)+" · "+fmtSec(e.duration):"Up to 100 MB. Only upload music Grooveville has the rights to.")+'</span><audio id="mp3Prev" controls preload="none" style="width:100%;margin-top:8px"'+(isE?"":" hidden")+'></audio></div>'+
+    '<div class="grid2"><label class="f">Song title *<input class="i" name="title" required value="'+esc(e.title||"")+'"></label><label class="f">Primary artist *<select class="i" name="artistId" id="artistSel" required>'+optArtists(e.artistId)+'</select></label></div>'+
+    '<div class="grid2"><label class="f">Featured artists<input class="i" name="featuring" value="'+esc(e.featuring||"")+'"></label><label class="f">Album / EP<select class="i" name="albumId"><option value="">None</option>'+byOrder(Object.values(MU().albums)).map(a=>'<option value="'+esc(a.id)+'"'+(a.id===e.albumId?" selected":"")+'>'+esc(a.title)+'</option>').join("")+'</select></label></div>'+
+    '<div class="grid2"><label class="f">Genre<input class="i" name="genre" value="'+esc(e.genre||"")+'"></label><label class="f">Release date<input class="i" type="date" name="releaseDate" value="'+esc(e.releaseDate||today())+'"></label></div>'+
+    '<div class="grid2"><label class="f">Track number<input class="i" type="number" min="1" name="track" value="'+esc(e.track||"")+'"></label><label class="f">Duration (m:ss, filled from the MP3)<input class="i" name="duration" value="'+(e.duration?fmtSec(e.duration):"")+'"></label></div>'+
+    '<label class="f">Description<textarea class="i" name="description">'+esc(e.description||"")+'</textarea></label>'+
+    '<label class="f">Credits &amp; producers<textarea class="i" name="credits" style="min-height:70px" placeholder="Produced by…, Mixed by…, Written by…">'+esc(e.credits||"")+'</textarea></label>'+
+    '<div class="grid2"><label class="f">ISRC (optional)<input class="i" name="isrc" value="'+esc(e.isrc||"")+'" pattern="[A-Za-z]{2}[A-Za-z0-9]{3}[0-9]{7}" placeholder="USABC2600001"></label><label class="f">Cover artwork<input class="i" type="file" id="artFile" accept="image/jpeg,image/png,image/webp">'+(e.art?'<img src="'+esc(muImg(e.art))+'" alt="" style="width:64px;height:64px;object-fit:cover;border-radius:8px;margin-top:6px">':'')+'</label></div>'+
+    '<div class="grid2"><label class="f">Spotify link (optional)<input class="i" type="url" name="spotify" value="'+esc(e.spotify||"")+'"></label><label class="f">YouTube link (optional)<input class="i" type="url" name="youtube" value="'+esc(e.youtube||"")+'"></label></div>'+
+    '<div style="display:flex;gap:18px;flex-wrap:wrap">'+ck("explicit","Explicit",e.explicit)+ck("published","Published (visible to everyone)",e.published)+ck("featured","Featured release",e.featured)+ck("verified","Grooveville Song verification",e.verified)+ck("soundOn","Include in Sound On / Grooveville Radio",e.soundOn)+'</div>'+
+    '<div class="prog" id="upProg" hidden><i></i></div><p id="upMsg" class="muted"></p>'+
+    '<div class="btnrow0"><button class="btn olive" id="upBtn">'+(isE?"Save changes":"Upload & save")+'</button>'+(isE?'<button type="button" class="btn ghost" data-act="ent-newsong">Cancel</button>':'')+'</div></form>';
+}
+function entMount(){
+  const q=$("#entQ");if(q)q.oninput=()=>{S.ent.q=q.value;clearTimeout(q._t);q._t=setTimeout(()=>{render();const n=$("#entQ");if(n){n.focus();n.setSelectionRange(n.value.length,n.value.length)}},250)};
+  const sel=$("#artistSel");if(sel)sel.onchange=()=>{if(sel.value==="__new"){sel.value="";artistModal()}};
+  const mf=$("#mp3File");if(mf)mf.onchange=async()=>{const f=mf.files[0];if(!f)return;const info=$("#mp3Info"),pv=$("#mp3Prev");
+    if(!(await isMp3(f))){info.textContent="That file isn't an MP3.";mf.value="";return}const d=await fileDuration(f);info.textContent=f.name+" · "+(f.size/1048576).toFixed(1)+" MB · "+fmtSec(d);
+    const df=$('#songForm [name=duration]');if(df&&d)df.value=fmtSec(d);pv.hidden=false;pv.src=URL.createObjectURL(f);const tf=$('#songForm [name=title]');if(tf&&!tf.value)tf.value=f.name.replace(/\.mp3$/i,"").replace(/[_-]+/g," ")};
+  const dz=$("#mp3Drop");if(dz){dz.ondragover=e=>{e.preventDefault();dz.classList.add("over")};dz.ondragleave=()=>dz.classList.remove("over");dz.ondrop=e=>{e.preventDefault();dz.classList.remove("over");const f=e.dataTransfer.files[0];if(f&&mf){const dt=new DataTransfer();dt.items.add(f);mf.files=dt.files;mf.onchange()}}}
+  const pv=$("#mp3Prev");if(pv&&S.ent.edit&&S.ent.edit.audioKey&&!pv.src){pv.onplay=null;muApi("/api/music/file",{key:S.ent.edit.audioKey}).then(r=>{if(!pv.src)pv.src=r.url}).catch(()=>{})}
+}
+async function saveSong(form){
+  const o=formObj(form),e=S.ent.edit||{},id=e.id||uid(),msg=$("#upMsg"),pr=$("#upProg"),btn=$("#upBtn");
+  const file=$("#mp3File").files[0],art=$("#artFile").files[0];
+  if(!o.artistId){toast("Choose the primary artist");return}if(!file&&!e.audioKey){toast("Choose an MP3");return}
+  if(o.isrc&&!/^[A-Za-z]{2}[A-Za-z0-9]{3}\d{7}$/.test(o.isrc)){toast("ISRC looks wrong (e.g. USABC2600001)");return}
+  for(const k of ["spotify","youtube"])if(o[k]&&!/^https:\/\//.test(o[k])){toast("Links need to start with https://");return}
+  btn.disabled=true;try{
+    let audioKey=e.audioKey||"",audioName=e.audioName||"",audioSize=e.audioSize||0,oldAudio="";
+    if(file){pr.hidden=false;msg.textContent="Uploading MP3…";const k=await upAudio(file,id,p=>{pr.firstChild.style.width=Math.round(p*100)+"%";msg.textContent="Uploading MP3… "+Math.round(p*100)+"%"});oldAudio=audioKey;audioKey=k;audioName=file.name;audioSize=file.size}
+    let artKey=e.art||"",oldArt="";if(art){msg.textContent="Uploading artwork…";oldArt=artKey;artKey=await upImage(art,id)}
+    const dur=toSec(o.duration);
+    const rec=Object.assign(strip(e),{title:o.title,artistId:o.artistId,artistName:(MU().artists[o.artistId]||{}).name||"",featuring:o.featuring||"",albumId:o.albumId||"",genre:o.genre||"",releaseDate:o.releaseDate||"",description:o.description||"",credits:o.credits||"",isrc:(o.isrc||"").toUpperCase(),spotify:o.spotify||"",youtube:o.youtube||"",
+      track:Number(o.track)||"",duration:isNaN(dur)?(e.duration||0):dur,explicit:!!form.explicit.checked,published:!!form.published.checked,featured:!!form.featured.checked,verified:!!form.verified.checked,soundOn:!!form.soundOn.checked,
+      audioKey,audioName,audioSize,art:artKey,createdAt:e.createdAt||nowISO(),updatedAt:nowISO()});
+    msg.textContent="Saving…";if(!await save("musicSongs",id,rec))throw new Error("Couldn't save the song details");
+    if(rec.albumId){const al=MU().albums[rec.albumId];if(al&&!(al.songIds||[]).includes(id))await save("musicAlbums",al.id,Object.assign(strip(al),{songIds:(al.songIds||[]).concat(id)}))}
+    if(rec.soundOn)await soundtrackAdd(id);
+    const old=[oldAudio,oldArt].filter(Boolean);if(old.length)muApi("/api/music/delete",{keys:old}).catch(()=>{});
+    S.ent.edit=null;toast(e.id?"Song updated":"Song uploaded");location.hash="#ent-library";
+  }catch(err){msg.textContent=err.message||"Upload failed";msg.style.color="var(--warn)";toast(err.message||"Upload failed")}btn.disabled=false;
+}
+async function soundtrackAdd(id){const st=Object.assign({enabled:true,trackIds:[],shuffle:false,repeat:true},muSet("soundtrack"));if(st.trackIds.includes(id))return;st.trackIds=st.trackIds.concat(id);await save("musicSettings","soundtrack",strip(st))}
+function artistModal(id){const a=MU().artists[id]||{},soc=a.socials||{};
+  openModal('<h3>'+(a.id?"Edit artist":"New official artist")+'</h3><form id="mf" style="display:flex;flex-direction:column;gap:10px"><div class="grid2"><label class="f">Stage name *<input class="i" name="name" required value="'+esc(a.name||"")+'"></label><label class="f">Hometown<input class="i" name="hometown" value="'+esc(a.hometown||"")+'"></label></div>'+
+    '<label class="f">Genres (comma separated)<input class="i" name="genres" value="'+esc((a.genres||[]).join(", "))+'"></label><label class="f">Biography<textarea class="i" name="bio">'+esc(a.bio||"")+'</textarea></label>'+
+    '<div class="grid2"><label class="f">Portrait<input class="i" type="file" name="portraitF" accept="image/jpeg,image/png,image/webp"></label><label class="f">Banner<input class="i" type="file" name="bannerF" accept="image/jpeg,image/png,image/webp"></label></div>'+
+    '<div class="grid2">'+SOC_MU.map(([k,l])=>'<label class="f">'+l+'<input class="i" type="url" name="s_'+k+'" value="'+esc(soc[k]||"")+'" placeholder="https://"></label>').join("")+'</div>'+
+    '<label class="f">Custom links (one per line: Label | https://…)<textarea class="i" name="custom" style="min-height:60px">'+esc((a.custom||[]).map(c=>c.label+" | "+c.url).join("\n"))+'</textarea></label>'+
+    '<div style="display:flex;gap:18px;flex-wrap:wrap"><label><input type="checkbox" name="published"'+(a.published!==false?" checked":"")+'> Published</label><label><input type="checkbox" name="featured"'+(a.featured?" checked":"")+'> Featured</label><label><input type="checkbox" name="verified"'+(a.verified?" checked":"")+'> Grooveville Artist verification</label></div>'+
+    '<p id="amMsg" class="muted"></p><div class="row">'+(a.id?'<button type="button" class="btn danger left" data-act="del-arm">Delete</button>':'')+'<button type="button" class="btn ghost" data-act="close-modal">Cancel</button><button class="btn olive">Save artist</button></div></form>',
+  el=>{el._del=async()=>{if(Object.values(MU().songs).some(s=>s.artistId===a.id)){toast("Move or delete this artist's songs first");return}if(await remove("musicArtists",a.id)){closeModal();toast("Artist deleted")}};
+    el.querySelector("#mf").addEventListener("submit",async ev=>{ev.preventDefault();const f=ev.target,o=formObj(f),m=el.querySelector("#amMsg");
+      const HOSTS={instagram:/instagram\.com$/,tiktok:/tiktok\.com$/,youtube:/(youtube\.com|youtu\.be)$/,spotify:/spotify\.com$/,apple:/apple\.com$/,soundcloud:/soundcloud\.com$/,facebook:/(facebook\.com|fb\.com)$/,x:/(x\.com|twitter\.com)$/,website:/./};
+      const socials={};for(const [k,l] of SOC_MU){const v=(o["s_"+k]||"").trim();if(!v)continue;let ok=false;try{const u=new URL(v);ok=u.protocol==="https:"&&HOSTS[k].test(u.hostname.replace(/^www\./,""))}catch(e){}if(!ok){toast(l+" link doesn't look right");return}socials[k]=v}
+      const custom=String(o.custom||"").split("\n").map(l=>l.split("|").map(x=>x.trim())).filter(x=>x[0]&&x[1]).map(([label,url])=>({label:label.slice(0,40),url}));if(custom.some(c=>!/^https:\/\//.test(c.url))){toast("Custom links need https://");return}
+      let id2=a.id;if(!id2){id2=slugify(o.name)||uid();if(MU().artists[id2])id2+="-"+uid().slice(-4)}
+      try{m.textContent="Saving…";let portrait=a.portrait||"",banner=a.banner||"";if(f.portraitF.files[0])portrait=await upImage(f.portraitF.files[0],"artist-"+id2);if(f.bannerF.files[0])banner=await upImage(f.bannerF.files[0],"artist-"+id2);
+        const rec=Object.assign(strip(a),{name:o.name,hometown:o.hometown||"",genres:String(o.genres||"").split(",").map(x=>x.trim()).filter(Boolean).slice(0,6),bio:o.bio||"",portrait,banner,socials,custom,published:!!f.published.checked,featured:!!f.featured.checked,verified:!!f.verified.checked,createdAt:a.createdAt||nowISO(),updatedAt:nowISO()});
+        if(await save("musicArtists",id2,rec)){closeModal();toast("Artist saved");const sel=$("#artistSel");if(sel){setTimeout(()=>{const s2=$("#artistSel");if(s2){s2.innerHTML=optArtists(id2);s2.value=id2}},400)}}}catch(err){m.textContent=err.message}})});
+}
+function entArtists(){const a=byOrder(Object.values(MU().artists));return '<div class="toolbar"><span class="muted">Only you can create official Grooveville Artist profiles.</span><span class="sp"></span><button class="btn olive sm" data-act="ent-artist">+ New artist</button></div>'+
+  (a.length?'<div class="mbox">'+a.map(x=>'<div class="lrow"><img class="th" src="'+esc(muImg(x.portrait)||LOGO)+'" alt=""><div><b>'+esc(x.name)+'</b>'+(x.verified?' '+vBadge("artist"):'')+'<div class="muted" style="font-size:12.5px">'+Object.values(MU().songs).filter(s=>s.artistId===x.id).length+' songs · '+yes(x.published,x.published?"Published":"Hidden")+(x.featured?' '+yes(1,"Featured"):'')+' · <span class="mono">/artist/'+esc(x.id)+'</span></div></div><div class="btnrow0"><a class="rowbtn" href="#artist/'+esc(x.id)+'">View</a><button class="btn ghost sm" data-act="ent-artist" data-id="'+esc(x.id)+'">Edit</button></div></div>').join("")+'</div>':'<div class="empty">No artists yet.</div>')}
+function entCollections(kind){const col=kind==="albums"?"musicAlbums":"musicPlaylists",list=byOrder(Object.values(MU()[kind]));
+  return '<div class="toolbar"><span class="sp"></span><button class="btn olive sm" data-act="ent-coll" data-k="'+kind+'">+ New '+(kind==="albums"?"album / EP":"playlist")+'</button></div>'+(list.length?'<div class="mbox">'+list.map(c=>'<div class="lrow"><img class="th" src="'+esc(muImg(c.art)||LOGO)+'" alt=""><div><b>'+esc(c.title)+'</b><div class="muted" style="font-size:12.5px">'+(kind==="albums"?esc(c.type||"Album")+" · "+esc((MU().artists[c.artistId]||{}).name||""):c.selects?"Grooveville Selects":"Playlist")+' · '+(c.songIds||[]).length+' songs · '+yes(c.published,c.published?"Published":"Draft")+(c.featured?' '+yes(1,"Featured"):'')+'</div></div><div class="btnrow0"><a class="rowbtn" href="#'+(kind==="albums"?"album":"playlist")+'/'+esc(c.id)+'">View</a><button class="btn ghost sm" data-act="ent-coll" data-k="'+kind+'" data-id="'+esc(c.id)+'">Edit</button></div></div>').join("")+'</div>':'<div class="empty">None yet.</div>')}
+function collModal(kind,id){const col=kind==="albums"?"musicAlbums":"musicPlaylists",c=MU()[kind][id]||{songIds:[]};let ids=(c.songIds||[]).slice();
+  const draw=el=>{el.querySelector("#cSongs").innerHTML=ids.map((sid,n)=>{const s=MU().songs[sid];return s?'<div class="lrow" style="grid-template-columns:24px minmax(0,1fr) auto"><span class="mono">'+(n+1)+'</span><span>'+esc(s.title)+' <span class="muted">· '+esc(artistName(s))+'</span></span><span><button type="button" class="rowbtn" data-mv="'+n+'" data-d="-1">↑</button><button type="button" class="rowbtn" data-mv="'+n+'" data-d="1">↓</button><button type="button" class="rowbtn" data-rm="'+n+'">✕</button></span></div>':''}).join("")||'<p class="muted">No songs yet.</p>';
+    el.querySelector("#cAdd").innerHTML='<option value="">+ Add a song…</option>'+allSongs().filter(s=>!ids.includes(s.id)).map(s=>'<option value="'+esc(s.id)+'">'+esc(s.title)+' · '+esc(artistName(s))+'</option>').join("")};
+  openModal('<h3>'+(c.id?"Edit":"New")+' '+(kind==="albums"?"album / EP":"playlist")+'</h3><form id="mf" style="display:flex;flex-direction:column;gap:10px"><label class="f">Title *<input class="i" name="title" required value="'+esc(c.title||"")+'"></label>'+
+    (kind==="albums"?'<div class="grid2"><label class="f">Artist *<select class="i" name="artistId" required>'+optArtists(c.artistId).replace('<option value="__new">+ New artist…</option>','')+'</select></label><label class="f">Type<select class="i" name="type">'+["Album","EP","Single","Mixtape"].map(t=>'<option'+(c.type===t?" selected":"")+'>'+t+'</option>').join("")+'</select></label></div><label class="f">Release date<input class="i" type="date" name="releaseDate" value="'+esc(c.releaseDate||"")+'"></label>':'<label><input type="checkbox" name="selects"'+(c.selects?" checked":"")+'> Grooveville Selects</label>')+
+    '<label class="f">Description<textarea class="i" name="description" style="min-height:60px">'+esc(c.description||"")+'</textarea></label><label class="f">Cover art<input class="i" type="file" name="artF" accept="image/jpeg,image/png,image/webp"></label>'+
+    '<b>Songs</b><div id="cSongs"></div><select class="i" id="cAdd"></select>'+
+    '<div style="display:flex;gap:18px"><label><input type="checkbox" name="published"'+(c.published?" checked":"")+'> Published</label><label><input type="checkbox" name="featured"'+(c.featured?" checked":"")+'> Featured</label></div><p id="cmMsg" class="muted"></p>'+
+    '<div class="row">'+(c.id?'<button type="button" class="btn danger left" data-act="del-arm">Delete</button>':'')+'<button type="button" class="btn ghost" data-act="close-modal">Cancel</button><button class="btn olive">Save</button></div></form>',
+  el=>{draw(el);el.querySelector("#cAdd").onchange=e=>{if(e.target.value){ids.push(e.target.value);draw(el)}};
+    el.querySelector("#cSongs").onclick=e=>{const b=e.target.closest("button");if(!b)return;if(b.dataset.rm!=null)ids.splice(Number(b.dataset.rm),1);else{const i=Number(b.dataset.mv),j=i+Number(b.dataset.d);if(j>=0&&j<ids.length)[ids[i],ids[j]]=[ids[j],ids[i]]}draw(el)};
+    el._del=async()=>{if(await remove(col,c.id)){closeModal();toast("Deleted")}};
+    el.querySelector("#mf").addEventListener("submit",async ev=>{ev.preventDefault();const f=ev.target,o=formObj(f),id2=c.id||uid();
+      try{let art=c.art||"";if(f.artF.files[0]){el.querySelector("#cmMsg").textContent="Uploading art…";art=await upImage(f.artF.files[0],kind+"-"+id2)}
+        const rec=Object.assign(strip(c),{title:o.title,description:o.description||"",art,songIds:ids,published:!!f.published.checked,featured:!!f.featured.checked,updatedAt:nowISO(),createdAt:c.createdAt||nowISO()},kind==="albums"?{artistId:o.artistId,type:o.type,releaseDate:o.releaseDate||""}:{selects:!!f.selects.checked});
+        if(await save(col,id2,rec)){closeModal();toast("Saved")}}catch(err){el.querySelector("#cmMsg").textContent=err.message}})});
+}
+function entSoundOn(){const st=Object.assign({enabled:true,trackIds:[],shuffle:false,repeat:true,firstId:""},muSet("soundtrack")),songs=MU().songs;
+  const rot=st.trackIds.filter(id=>songs[id]),elig=allSongs().filter(s=>s.published&&s.soundOn&&!st.trackIds.includes(s.id)),bad=rot.filter(id=>!(songs[id].published&&songs[id].soundOn));
+  return '<div class="cols2"><div style="min-width:0"><div class="mbox"><h3 style="font-size:19px">Grooveville Radio rotation</h3><p class="muted" style="font-size:13px;margin:4px 0 10px">Sound On and Grooveville Radio play exactly these songs. A song needs to be <b>published</b> and marked <b>Include in Sound On</b> to play.</p>'+
+    (rot.length?rot.map((id,n)=>{const s=songs[id],ok=s.published&&s.soundOn;return '<div class="lrow" style="grid-template-columns:28px minmax(0,1fr) auto"><span class="mono">'+(n+1)+'</span><span><b>'+esc(s.title)+'</b> <span class="muted">· '+esc(artistName(s))+'</span>'+(st.firstId===id?' '+yes(1,"Plays first"):'')+(ok?'':' <span class="pill over">Not eligible: '+(!s.published?"unpublished":"Sound On off")+'</span>')+'</span><span><button class="rowbtn" data-act="so-mv" data-i="'+n+'" data-d="-1">↑</button><button class="rowbtn" data-act="so-mv" data-i="'+n+'" data-d="1">↓</button><button class="rowbtn" data-act="so-first" data-id="'+esc(id)+'">First</button><button class="rowbtn" data-act="so-rm" data-id="'+esc(id)+'">Remove</button></span></div>'}).join(""):'<div class="empty" style="padding:14px">The rotation is empty, so Sound On shows "getting tuned" instead of playing anything.</div>')+'</div>'+
+    '<div class="mbox"><h3 style="font-size:19px">Eligible songs</h3>'+(elig.length?elig.map(s=>'<div class="lrow" style="grid-template-columns:minmax(0,1fr) auto"><span>'+esc(s.title)+' <span class="muted">· '+esc(artistName(s))+'</span></span><button class="btn ghost sm" data-act="so-add" data-id="'+esc(s.id)+'">+ Add</button></div>').join(""):'<p class="muted" style="font-size:13px">No other eligible songs. Publish a song and tick "Include in Sound On" in the Music Library.</p>')+'</div></div>'+
+    '<aside class="mbox" style="align-self:start;display:flex;flex-direction:column;gap:10px"><h3 style="font-size:19px">Settings</h3><label><input type="checkbox" data-so="enabled"'+(st.enabled!==false?" checked":"")+'> Sound On / Grooveville Radio is on</label><label><input type="checkbox" data-so="shuffle"'+(st.shuffle?" checked":"")+'> Shuffle</label><label><input type="checkbox" data-so="repeat"'+(st.repeat!==false?" checked":"")+'> Repeat the playlist</label>'+
+    '<p class="muted" style="font-size:13px">'+soundtrackIds().length+' songs will play'+(bad.length?' ('+bad.length+' in the list are skipped)':'')+'.</p><button class="btn olive" data-act="so-preview">▶ Preview the soundtrack</button></aside></div>';
+}
+async function soSave(patch){const st=Object.assign({enabled:true,trackIds:[],shuffle:false,repeat:true,firstId:""},muSet("soundtrack"),patch);return save("musicSettings","soundtrack",strip(st))}
+/* TV */
+function entTV(){const cats=tvCats(),vids=byOrder(Object.values(MU().tvVideos)),pls=byOrder(Object.values(MU().tvPlaylists)),ch=muSet("tv").channel||"@GroovevilleEnt";
+  const catOpt=sel=>cats.map(c=>'<option value="'+esc(c.id)+'"'+(c.id===sel?" selected":"")+'>'+esc(c.name)+'</option>').join("");
+  const row=(x,kind)=>'<div class="lrow"><img class="th" src="'+esc(x.thumb)+'" alt=""><div><b>'+esc(x.title)+'</b><div class="muted" style="font-size:12.5px">'+esc((cats.find(c=>c.id===x.categoryId)||{}).name||"No category")+(kind==="pl"?' · playlist · '+(x.items||[]).length+' videos':(x.duration?' · '+fmtSec(x.duration):''))+' · '+yes(x.published,x.published?"Published":"Draft")+(x.featured?' '+yes(1,"Featured"):'')+(x.embeddable===false?' <span class="pill over">Embedding off</span>':'')+'</div></div><div class="btnrow0"><button class="rowbtn" data-act="tv-mv" data-k="'+kind+'" data-id="'+esc(x.id)+'" data-d="-1">↑</button><button class="rowbtn" data-act="tv-mv" data-k="'+kind+'" data-id="'+esc(x.id)+'" data-d="1">↓</button><button class="rowbtn" data-act="tv-pub" data-k="'+kind+'" data-id="'+esc(x.id)+'">'+(x.published?"Unpublish":"Publish")+'</button><button class="rowbtn" data-act="tv-feat" data-k="'+kind+'" data-id="'+esc(x.id)+'">'+(x.featured?"Unfeature":"Feature")+'</button><button class="rowbtn" data-act="tv-edit" data-k="'+kind+'" data-id="'+esc(x.id)+'">Edit</button><button class="rowbtn" data-act="tv-refresh" data-k="'+kind+'" data-id="'+esc(x.id)+'">Refresh</button><button class="rowbtn" data-act="tv-rm" data-k="'+kind+'" data-id="'+esc(x.id)+'">Remove</button></div></div>';
+  return '<form class="mbox" id="tvAdd" style="display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end"><label class="f" style="flex:1;min-width:260px">YouTube video or playlist link<input class="i" name="url" type="url" required placeholder="https://www.youtube.com/watch?v=…"></label><label class="f">Category<select class="i" name="cat">'+catOpt("music-videos")+'</select></label><button class="btn olive">Add</button><p class="muted" style="width:100%;font-size:12.5px;margin:0">New items start as drafts. Nothing from the channel is published without you.</p></form>'+
+    '<div class="mbox"><div class="sechead" style="margin-bottom:6px"><h3 style="font-size:19px">Channel playlists</h3><form id="tvCh" style="display:flex;gap:6px"><input class="i" name="ch" value="'+esc(ch)+'" style="width:200px"><button class="btn ghost sm">Load</button></form></div>'+
+    (S.ent.tvList?(S.ent.tvList.error?'<p class="muted">'+esc(S.ent.tvList.error)+'</p>':(S.ent.tvList.playlists||[]).map(p=>'<div class="lrow"><img class="th" src="'+esc(p.thumb)+'" alt=""><span>'+esc(p.title)+' <span class="muted">· '+p.count+' videos</span></span>'+(MU().tvPlaylists[p.playlistId]?yes(1,"Added"):'<button class="btn ghost sm" data-act="tv-addpl" data-id="'+esc(p.playlistId)+'">+ Add as draft</button>')+'</div>').join("")||'<p class="muted">No public playlists on this channel.</p>'):'<p class="muted" style="font-size:13px">Load the channel\'s playlists to add them in one click.</p>')+'</div>'+
+    '<div class="mbox"><h3 style="font-size:19px">Videos</h3>'+(vids.length?vids.map(v=>row(v,"v")).join(""):'<p class="muted">No videos yet.</p>')+'</div><div class="mbox"><h3 style="font-size:19px">Playlists</h3>'+(pls.length?pls.map(p=>row(p,"pl")).join(""):'<p class="muted">No playlists yet.</p>')+'</div>';
+}
+async function tvSaveResolved(r,cat,existing){const ex=existing||{},now=nowISO();
+  if(r.type==="playlist")return save("tvPlaylists",r.playlistId,Object.assign(strip(ex),{playlistId:r.playlistId,title:ex.customTitle||r.title,ytTitle:r.title,description:r.description||"",thumb:r.thumb||"",channel:r.channel||"",items:r.items&&r.items.length?r.items:(ex.items||[]),categoryId:cat||ex.categoryId||"playlists",published:!!ex.published,featured:!!ex.featured,order:ex.order||"",fetchedAt:now,via:r.via}));
+  return save("tvVideos",r.youtubeId,Object.assign(strip(ex),{youtubeId:r.youtubeId,title:ex.customTitle||r.title,ytTitle:r.title,description:r.description||"",thumb:r.thumb||"",channel:r.channel||"",duration:r.duration||ex.duration||0,embeddable:r.embeddable!==false,categoryId:cat||ex.categoryId||"music-videos",published:!!ex.published,featured:!!ex.featured,order:ex.order||"",artistId:ex.artistId||"",fetchedAt:now,via:r.via}))}
+function entTVCats(){const c=Object.values(MU().tvCats);
+  return (c.length?'':'<div class="banner" style="margin:0 0 12px">Using the built-in categories. <button class="btn olive sm" data-act="tvc-defaults">Save them so you can edit</button></div>')+'<div class="toolbar"><span class="sp"></span><button class="btn olive sm" data-act="tvc-new">+ New category</button></div><div class="mbox">'+tvCats().map((x,n,arr)=>'<div class="lrow" style="grid-template-columns:minmax(0,1fr) auto"><span><b>'+esc(x.name)+'</b> <span class="muted mono">#tv/'+esc(x.id)+'</span>'+(x.hidden?' '+yes(0,"Hidden"):'')+'</span><span class="btnrow0">'+(c.length?'<button class="rowbtn" data-act="tvc-mv" data-id="'+esc(x.id)+'" data-d="-1">↑</button><button class="rowbtn" data-act="tvc-mv" data-id="'+esc(x.id)+'" data-d="1">↓</button><button class="rowbtn" data-act="tvc-ren" data-id="'+esc(x.id)+'">Rename</button><button class="rowbtn" data-act="tvc-hide" data-id="'+esc(x.id)+'">'+(x.hidden?"Show":"Hide")+'</button>':'')+'</span></div>').join("")+'</div>'}
+/* Song Rate */
+function entSongRate(){const f=muSet("flags"),sr=S.ent.sr;if(!sr){S.ent.sr={loading:true};muApi("/api/songrate/list").then(r=>{S.ent.sr={items:r.items}}).catch(e=>{S.ent.sr={error:e.message}}).then(()=>{if(S.route==="ent-songrate")render()})}
+  const items=(sr&&sr.items)||[],F=S.ent.srF,list=items.filter(x=>F==="all"||x.status===F),cnt=k=>items.filter(x=>x.status===k).length;
+  return '<div class="mbox" style="display:flex;gap:14px;align-items:center;flex-wrap:wrap"><b>Public submissions</b>'+(f.songRate?yes(1,"Open"):yes(0,"Closed"))+'<button class="btn '+(f.songRate?"ghost":"olive")+' sm" data-act="flag" data-k="songRate">'+(f.songRate?"Close submissions":"Open submissions")+'</button><a class="rowbtn" href="#songrate">Preview the form</a><span class="sp" style="flex:1"></span><button class="btn ghost sm" data-act="sr-reload">Refresh</button><button class="btn ghost sm" data-act="sr-weights">Rating weights</button></div>'+
+    '<div class="seg" style="margin-bottom:12px">'+[["submitted","Submitted"],["pending","Pending review"],["reviewed","Reviewed"],["approved","Approved"],["charted","On charts"],["declined","Declined"],["all","All"]].map(([k,l])=>'<button class="'+(F===k?"on":"")+'" data-act="sr-f" data-v="'+k+'">'+l+(k!=="all"?" · "+cnt(k):"")+'</button>').join("")+'</div>'+
+    (sr&&sr.loading?'<div class="empty">Loading…</div>':sr&&sr.error?'<div class="banner warn">'+esc(sr.error)+'</div>':list.length?'<div class="slots">'+list.map(srCard).join("")+'</div>':'<div class="empty">Nothing here.</div>');
+}
+const SR_NEXT={submitted:[["pending","Start review"],["declined","Decline"]],pending:[["reviewed","Mark reviewed"],["declined","Decline"]],reviewed:[["approved","Approve"],["declined","Decline"],["pending","Back to review"]],approved:[["declined","Decline"]],declined:[["pending","Reopen"]],charted:[]};
+function srCard(x){const rv=MU().reviews&&MU().reviews[x.id],m=x.meta||{},emb=embedFor(x.url,x.platform);
+  return '<div class="slot" style="--c:var(--c-ent)">'+(m.thumb?'<img src="'+esc(m.thumb)+'" alt="" style="width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:8px">':'')+'<h4>'+esc(x.title)+'</h4><div class="muted" style="font-size:13px">'+esc(x.artist)+(x.genre?' · '+esc(x.genre):'')+' · '+esc(x.platformName||x.platform)+' · '+esc(fmtDate(String(x.submittedAt).slice(0,10)))+(x.metaOk?'':' · <span class="pill high">Check details by hand</span>')+'</div>'+
+    (m.title&&m.title!==x.title?'<div class="muted" style="font-size:12px">Platform says: '+esc(m.title)+(m.author?' · '+esc(m.author):'')+'</div>':'')+(x.message?'<p style="font-size:13.5px">'+esc(x.message)+'</p>':'')+'<div style="font-size:12.5px">'+(x.email?'✉ '+esc(x.email)+' ':'')+(x.social?'<a href="'+esc(x.social)+'" target="_blank" rel="noopener">social ↗</a>':'')+'</div>'+
+    '<div class="btnrow0"><a class="btn ghost sm" href="'+esc(x.url)+'" target="_blank" rel="noopener noreferrer">Open ↗</a>'+(emb?'<button class="btn ghost sm" data-act="mu-embed" data-id="sr'+esc(x.id)+'" data-src="'+esc(emb.src)+'" data-h="'+emb.h+'">▶ Listen</button>':'')+'</div><div class="cemb" id="emb-sr'+esc(x.id)+'" hidden></div>'+
+    (rv?'<div class="kpi" style="padding:10px"><span class="eyebrow">Grooveville rating</span><b>'+Number(rv.overall).toFixed(1)+'</b></div>':'')+
+    '<div class="acts">'+(SR_NEXT[x.status]||[]).map(([s,l])=>'<button class="btn '+(s==="declined"?"ghost":"olive")+' sm" data-act="sr-st" data-id="'+esc(x.id)+'" data-v="'+s+'">'+l+'</button>').join("")+(["pending","reviewed","approved"].includes(x.status)?'<button class="btn ghost sm" data-act="sr-rate" data-id="'+esc(x.id)+'">'+(rv?"Edit rating":"Rate")+'</button>':'')+(x.status==="approved"?'<button class="btn olive sm" data-act="sr-chart" data-id="'+esc(x.id)+'">Add to chart</button>':'')+'<button class="rowbtn" data-act="sr-del" data-id="'+esc(x.id)+'">Delete</button></div></div>'}
+function rateWeights(){const w=(muSet("rating").weights)||{};const o={};RATE_CATS.forEach(([k])=>{o[k]=Number(w[k])>0?Number(w[k]):1});return o}
+function srOverall(sc,w){let t=0,ws=0;RATE_CATS.forEach(([k])=>{const v=Number(sc[k]);if(v>=1&&v<=10){t+=v*w[k];ws+=w[k]}});return ws?Math.round(t/ws*10)/10:null}
+/* Charts */
+function entCharts(){const f=muSet("flags"),charts=byOrder(Object.values(MU().charts)),cur=MU().charts[S.ent.chart]||charts[0],entries=cur?Object.values(MU().entries).filter(e=>e.chartId===cur.id).sort((a,b)=>(a.position||99)-(b.position||99)):[];
+  return '<div class="mbox" style="display:flex;gap:14px;align-items:center;flex-wrap:wrap"><b>Grooveville Charts</b>'+(f.charts?yes(1,"Public"):yes(0,"Founder preview"))+'<button class="btn '+(f.charts?"ghost":"olive")+' sm" data-act="flag" data-k="charts">'+(f.charts?"Hide from public":"Make public")+'</button><a class="rowbtn" href="#charts">Preview</a><span style="flex:1"></span>'+(charts.length?'':'<button class="btn ghost sm" data-act="ch-defaults">Create starter categories</button>')+'<button class="btn olive sm" data-act="ch-new">+ New chart</button></div>'+
+    (charts.length?'<div class="brandtabs">'+charts.map(c=>'<button class="'+(cur&&c.id===cur.id?"on":"")+'" data-act="ch-sel" data-id="'+esc(c.id)+'">'+esc(c.name)+(c.featured?" ★":"")+(c.archived?" (archived)":"")+'</button>').join("")+'</div>':'<div class="empty">No charts yet.</div>')+
+    (cur?'<div class="mbox"><div class="sechead" style="margin-bottom:8px"><h3 style="font-size:19px">'+esc(cur.name)+'</h3><div class="btnrow0">'+yes(cur.published,cur.published?"Published":"Draft")+'<button class="rowbtn" data-act="ch-flag" data-k="published" data-id="'+esc(cur.id)+'">'+(cur.published?"Unpublish":"Publish")+'</button><button class="rowbtn" data-act="ch-feature" data-id="'+esc(cur.id)+'">'+(cur.featured?"Featured ★":"Make featured")+'</button><button class="rowbtn" data-act="ch-flag" data-k="archived" data-id="'+esc(cur.id)+'">'+(cur.archived?"Unarchive":"Archive")+'</button><button class="btn ghost sm" data-act="ce-edit" data-chart="'+esc(cur.id)+'">+ Add entry</button></div></div>'+
+      (entries.length?entries.map((e,n)=>'<div class="lrow" style="grid-template-columns:34px 46px minmax(0,1fr) auto"><b class="mono">'+(e.position||n+1)+'</b>'+(e.art?'<img class="th" src="'+esc(e.art)+'" alt="">':'<span class="th"></span>')+'<span><b>'+esc(e.title)+'</b> <span class="muted">· '+esc(e.artist)+(e.rating!=null&&e.rating!==""?' · '+Number(e.rating).toFixed(1):'')+'</span> '+yes(e.published,e.published?"Live":"Draft")+'</span><span class="btnrow0"><button class="rowbtn" data-act="ce-mv" data-id="'+esc(e.id)+'" data-d="-1">↑</button><button class="rowbtn" data-act="ce-mv" data-id="'+esc(e.id)+'" data-d="1">↓</button><button class="rowbtn" data-act="ce-pub" data-id="'+esc(e.id)+'">'+(e.published?"Unpublish":"Publish")+'</button><button class="rowbtn" data-act="ce-edit" data-id="'+esc(e.id)+'">Edit</button><button class="rowbtn" data-act="ce-rm" data-id="'+esc(e.id)+'">Remove</button></span></div>').join(""):'<p class="muted">No entries. Approve songs in Song Rate, then use "Add to chart".</p>')+'</div>':'');
+}
+function chartEntryModal(e,chartId){e=e||{};const charts=byOrder(Object.values(MU().charts));
+  openModal('<h3>'+(e.id?"Edit chart entry":"Add chart entry")+'</h3><form id="mf" style="display:flex;flex-direction:column;gap:10px"><div class="grid2"><label class="f">Chart<select class="i" name="chartId">'+charts.map(c=>'<option value="'+esc(c.id)+'"'+(c.id===(e.chartId||chartId)?" selected":"")+'>'+esc(c.name)+'</option>').join("")+'</select></label><label class="f">Position<input class="i" type="number" min="1" name="position" value="'+esc(e.position||"")+'"></label></div>'+
+    '<div class="grid2"><label class="f">Song title *<input class="i" name="title" required value="'+esc(e.title||"")+'"></label><label class="f">Artist *<input class="i" name="artist" required value="'+esc(e.artist||"")+'"></label></div>'+
+    '<label class="f">Song link * (original platform)<input class="i" type="url" name="url" required value="'+esc(e.url||"")+'"></label><div class="grid2"><label class="f">Genre<input class="i" name="genre" value="'+esc(e.genre||"")+'"></label><label class="f">Grooveville Rating (1–10)<input class="i" type="number" step=".1" min="1" max="10" name="rating" value="'+esc(e.rating!=null?e.rating:"")+'"></label></div>'+
+    '<label class="f">Artwork URL (from the platform)<input class="i" type="url" name="art" value="'+esc(e.art||"")+'"></label><label class="f">Public review summary<textarea class="i" name="summary" style="min-height:60px">'+esc(e.summary||"")+'</textarea></label><label><input type="checkbox" name="published"'+(e.published?" checked":"")+'> Live on the chart</label>'+
+    '<div class="row"><button type="button" class="btn ghost" data-act="close-modal">Cancel</button><button class="btn olive">Save</button></div></form>',
+  el=>el.querySelector("#mf").addEventListener("submit",async ev=>{ev.preventDefault();const o=formObj(ev.target);const plat=srPlatform(o.url);if(!plat){toast("Use a Spotify, YouTube, SoundCloud, Apple Music, Audiomack, TIDAL, Deezer or Bandcamp link");return}
+    const r=o.rating===""?"":Math.max(1,Math.min(10,Number(o.rating)));
+    const rec=Object.assign(strip(e),{chartId:o.chartId,position:Number(o.position)||Object.values(MU().entries).filter(x=>x.chartId===o.chartId).length+1,title:o.title,artist:o.artist,url:o.url,platform:plat,genre:o.genre||"",rating:r,art:/^https:\/\//.test(o.art||"")?o.art:"",summary:o.summary||"",published:!!ev.target.published.checked,addedAt:e.addedAt||nowISO(),submissionId:e.submissionId||""});
+    if(await save("musicChartEntries",e.id||uid(),rec)){closeModal();toast("Saved")}}));
+}
+function srPlatform(url){try{const h=new URL(url).hostname.toLowerCase();if(new URL(url).protocol!=="https:")return "";return /spotify\.com$/.test(h)?"spotify":/(youtube\.com|youtu\.be)$/.test(h)?"youtube":/soundcloud\.com$/.test(h)?"soundcloud":/^music\.apple\.com$/.test(h)?"apple":/audiomack\.com$/.test(h)?"audiomack":/tidal\.com$/.test(h)?"tidal":/deezer\.com$/.test(h)?"deezer":/\.bandcamp\.com$/.test(h)?"bandcamp":""}catch(e){return ""}}
+function entVerify(){const a=byOrder(Object.values(MU().artists)),s=allSongs();
+  return '<p class="muted" style="max-width:70ch;margin-bottom:12px">Verification is set only here (or in the song/artist forms) by you. Charting or high ratings never verify anyone automatically.</p><div class="cols2"><div class="mbox"><h3 style="font-size:19px">Grooveville Artists</h3>'+(a.length?a.map(x=>'<div class="lrow" style="grid-template-columns:minmax(0,1fr) auto"><span>'+esc(x.name)+' '+(x.verified?vBadge("artist"):'')+'</span><button class="btn '+(x.verified?"ghost":"olive")+' sm" data-act="vf" data-k="musicArtists" data-id="'+esc(x.id)+'">'+(x.verified?"Remove":"Verify")+'</button></div>').join(""):'<p class="muted">No artists.</p>')+'</div>'+
+    '<div class="mbox"><h3 style="font-size:19px">Grooveville Songs</h3>'+(s.length?s.map(x=>'<div class="lrow" style="grid-template-columns:minmax(0,1fr) auto"><span>'+esc(x.title)+' <span class="muted">· '+esc(artistName(x))+'</span> '+(x.verified?vBadge("song"):'')+'</span><button class="btn '+(x.verified?"ghost":"olive")+' sm" data-act="vf" data-k="musicSongs" data-id="'+esc(x.id)+'">'+(x.verified?"Remove":"Verify")+'</button></div>').join(""):'<p class="muted">No songs.</p>')+'</div></div><div class="mbox"><b>Badge preview</b><div style="display:flex;gap:18px;align-items:center;margin-top:8px;font-size:28px"><span style="background:#101112;padding:10px 14px;border-radius:10px">'+vBadge("artist")+'</span><span style="background:#F4A987;padding:10px 14px;border-radius:10px">'+vBadge("song",true)+'</span></div></div>';
+}
+/* actions */
+async function flipDoc(col,id,key){const d=MU()[{musicSongs:"songs",musicArtists:"artists",tvVideos:"tvVideos",tvPlaylists:"tvPlaylists",musicCharts:"charts",musicChartEntries:"entries"}[col]][id];if(!d)return;const rec=strip(d);rec[key]=!rec[key];rec.updatedAt=nowISO();if(await save(col,id,rec))toast("Updated")}
+function entAct(a,t){
+  if(!/^(ent-|so-|tv-|tvc-|sr-|ch-|ce-|vf$|flag$)/.test(a))return false;if(!S.isAdmin)return true;const id=t.dataset.id;
+  if(a==="ent-f"){S.ent.f=t.dataset.v;render()}
+  else if(a==="ent-preview"){mpPlay([id],0,"preview")}
+  else if(a==="ent-pub")flipDoc("musicSongs",id,"published");
+  else if(a==="ent-son"){const s=MU().songs[id];if(s){const on=!s.soundOn;save("musicSongs",id,Object.assign(strip(s),{soundOn:on,updatedAt:nowISO()})).then(ok=>{if(ok){if(on)soundtrackAdd(id);else soSave({trackIds:(muSet("soundtrack").trackIds||[]).filter(x=>x!==id)});toast(on?"Added to Sound On":"Removed from Sound On")}})}}
+  else if(a==="ent-edit"){S.ent.edit=Object.assign({},MU().songs[id]);S.entForce=true;if(location.hash==="#ent-upload")render();else location.hash="#ent-upload"}
+  else if(a==="ent-newsong"){S.ent.edit=null;S.entForce=true;render()}
+  else if(a==="ent-del"){const s=MU().songs[id];if(!s)return true;openModal('<h3>Delete "'+esc(s.title)+'"?</h3><p class="muted">The MP3 and artwork are permanently removed from storage, and the song is taken out of albums, playlists and Sound On.</p><div class="row"><button class="btn ghost" data-act="close-modal">Cancel</button><button class="btn danger" data-act="ent-delgo" data-id="'+esc(id)+'">Delete forever</button></div>')}
+  else if(a==="ent-delgo"){const s=MU().songs[id];(async()=>{try{await muApi("/api/music/delete",{keys:[s.audioKey,s.art].filter(Boolean)})}catch(e){toast("Storage cleanup failed: "+e.message)}
+      for(const [k,col] of [["albums","musicAlbums"],["playlists","musicPlaylists"]])for(const c of Object.values(MU()[k]))if((c.songIds||[]).includes(id))await save(col,c.id,Object.assign(strip(c),{songIds:c.songIds.filter(x=>x!==id)}));
+      if((muSet("soundtrack").trackIds||[]).includes(id))await soSave({trackIds:muSet("soundtrack").trackIds.filter(x=>x!==id)});
+      if(await remove("musicSongs",id)){closeModal();toast("Song deleted")}})()}
+  else if(a==="ent-artist")artistModal(id);
+  else if(a==="ent-coll")collModal(t.dataset.k,id);
+  else if(a==="so-add"){const st=muSet("soundtrack");soSave({trackIds:(st.trackIds||[]).concat(id)})}
+  else if(a==="so-rm")soSave({trackIds:(muSet("soundtrack").trackIds||[]).filter(x=>x!==id),firstId:muSet("soundtrack").firstId===id?"":muSet("soundtrack").firstId||""});
+  else if(a==="so-first")soSave({firstId:id});
+  else if(a==="so-mv"){const l=(muSet("soundtrack").trackIds||[]).slice(),i=Number(t.dataset.i),j=i+Number(t.dataset.d);if(j>=0&&j<l.length){[l[i],l[j]]=[l[j],l[i]];soSave({trackIds:l})}}
+  else if(a==="so-preview"){MP.ctx="";mpSoundtrack()}
+  else if(a==="tv-pub"||a==="tv-feat")flipDoc(t.dataset.k==="pl"?"tvPlaylists":"tvVideos",id,a==="tv-pub"?"published":"featured");
+  else if(a==="tv-rm"){remove(t.dataset.k==="pl"?"tvPlaylists":"tvVideos",id).then(ok=>ok&&toast("Removed"))}
+  else if(a==="tv-mv"){const k=t.dataset.k==="pl"?"tvPlaylists":"tvVideos",col=k,list=byOrder(Object.values(MU()[k])),i=list.findIndex(x=>x.id===id),j=i+Number(t.dataset.d);if(j<0||j>=list.length)return true;[list[i],list[j]]=[list[j],list[i]];(async()=>{for(let n=0;n<list.length;n++)if(Number(list[n].order)!==n+1)await save(col,list[n].id,Object.assign(strip(list[n]),{order:n+1}))})()}
+  else if(a==="tv-refresh"){const pl=t.dataset.k==="pl",x=(pl?MU().tvPlaylists:MU().tvVideos)[id];muApi("/api/tv/resolve",{url:pl?"https://www.youtube.com/playlist?list="+id:"https://www.youtube.com/watch?v="+id,as:pl?"playlist":"video"}).then(r=>tvSaveResolved(r,x.categoryId,x)).then(ok=>ok&&toast("Metadata refreshed")).catch(e=>toast(e.message))}
+  else if(a==="tv-addpl"){muApi("/api/tv/resolve",{url:"https://www.youtube.com/playlist?list="+id,as:"playlist"}).then(r=>tvSaveResolved(r,"playlists")).then(ok=>ok&&toast("Playlist added as a draft")).catch(e=>toast(e.message))}
+  else if(a==="tv-edit"){const pl=t.dataset.k==="pl",x=(pl?MU().tvPlaylists:MU().tvVideos)[id];openModal('<h3>Edit</h3><form id="mf" style="display:flex;flex-direction:column;gap:10px"><label class="f">Display title<input class="i" name="title" value="'+esc(x.title)+'"></label><label class="f">Description<textarea class="i" name="description">'+esc(x.description||"")+'</textarea></label><label class="f">Category<select class="i" name="cat">'+tvCats().map(c=>'<option value="'+esc(c.id)+'"'+(c.id===x.categoryId?" selected":"")+'>'+esc(c.name)+'</option>').join("")+'</select></label>'+(pl?'':'<label class="f">Artist (shows on their page)<select class="i" name="artistId"><option value="">None</option>'+byOrder(Object.values(MU().artists)).map(r=>'<option value="'+esc(r.id)+'"'+(r.id===x.artistId?" selected":"")+'>'+esc(r.name)+'</option>').join("")+'</select></label>')+'<div class="row"><button type="button" class="btn ghost" data-act="close-modal">Cancel</button><button class="btn olive">Save</button></div></form>',
+      el=>el.querySelector("#mf").addEventListener("submit",async ev=>{ev.preventDefault();const o=formObj(ev.target);if(await save(pl?"tvPlaylists":"tvVideos",id,Object.assign(strip(x),{title:o.title,customTitle:o.title!==x.ytTitle?o.title:"",description:o.description,categoryId:o.cat},pl?{}:{artistId:o.artistId||""}))){closeModal();toast("Saved")}}))}
+  else if(a==="tvc-defaults"){(async()=>{for(const [i,[cid,name]] of TV_DEFAULT_CATS.entries())await save("tvCategories",cid,{name,order:i+1,hidden:false});toast("Categories saved")})()}
+  else if(a==="tvc-new"){openModal('<h3>New TV category</h3><form id="mf" style="display:flex;flex-direction:column;gap:10px"><label class="f">Name *<input class="i" name="name" required></label><div class="row"><button type="button" class="btn ghost" data-act="close-modal">Cancel</button><button class="btn olive">Add</button></div></form>',el=>el.querySelector("#mf").addEventListener("submit",async ev=>{ev.preventDefault();const n=formObj(ev.target).name,cid=slugify(n)||uid();if(Object.keys(MU().tvCats).length===0)for(const [i,[c2,nm]] of TV_DEFAULT_CATS.entries())await save("tvCategories",c2,{name:nm,order:i+1,hidden:false});if(await save("tvCategories",cid,{name:n,order:tvCats().length+1,hidden:false})){closeModal();toast("Added")}}))}
+  else if(a==="tvc-ren"){const c=MU().tvCats[id];openModal('<h3>Rename</h3><form id="mf"><input class="i" name="name" value="'+esc(c.name)+'"><div class="row"><button type="button" class="btn ghost" data-act="close-modal">Cancel</button><button class="btn olive">Save</button></div></form>',el=>el.querySelector("#mf").addEventListener("submit",async ev=>{ev.preventDefault();if(await save("tvCategories",id,Object.assign(strip(c),{name:formObj(ev.target).name}))){closeModal()}}))}
+  else if(a==="tvc-hide"){const c=MU().tvCats[id];save("tvCategories",id,Object.assign(strip(c),{hidden:!c.hidden}))}
+  else if(a==="tvc-mv"){const l=tvCats(),i=l.findIndex(x=>x.id===id),j=i+Number(t.dataset.d);if(j>=0&&j<l.length){[l[i],l[j]]=[l[j],l[i]];l.forEach((c,n)=>save("tvCategories",c.id,Object.assign(strip(c),{order:n+1})))}}
+  else if(a==="flag"){const f=Object.assign({songRate:false,charts:false},muSet("flags"));f[t.dataset.k]=!f[t.dataset.k];save("musicSettings","flags",strip(f)).then(ok=>ok&&toast(t.dataset.k==="songRate"?(f.songRate?"Song Rate is open to the public":"Song Rate submissions closed"):(f.charts?"Charts are public":"Charts hidden from the public")))}
+  else if(a==="sr-f"){S.ent.srF=t.dataset.v;render()}
+  else if(a==="sr-reload"){S.ent.sr=null;render()}
+  else if(a==="sr-st"||a==="sr-del"){muApi("/api/songrate/update",a==="sr-del"?{id,delete:true}:{id,status:t.dataset.v}).then(()=>{S.ent.sr=null;render();toast(a==="sr-del"?"Deleted":"Updated")}).catch(e=>toast(e.message))}
+  else if(a==="sr-weights"){const w=rateWeights();openModal('<h3>Rating weights</h3><p class="muted">How much each category counts toward the overall score.</p><form id="mf" style="display:flex;flex-direction:column;gap:10px">'+RATE_CATS.map(([k,l])=>'<label class="f">'+l+'<input class="i" type="number" min="0" max="5" step=".5" name="'+k+'" value="'+w[k]+'"></label>').join("")+'<div class="row"><button type="button" class="btn ghost" data-act="close-modal">Cancel</button><button class="btn olive">Save</button></div></form>',el=>el.querySelector("#mf").addEventListener("submit",async ev=>{ev.preventDefault();const o=formObj(ev.target),weights={};RATE_CATS.forEach(([k])=>{weights[k]=Math.max(0,Number(o[k])||0)});if(await save("musicSettings","rating",{weights})){closeModal();toast("Saved")}}))}
+  else if(a==="sr-rate"){const x=((S.ent.sr||{}).items||[]).find(i=>i.id===id),rv=(MU().reviews||{})[id]||{scores:{}},w=rateWeights();
+    openModal('<h3>Rate "'+esc(x.title)+'"</h3><p class="muted">'+esc(x.artist)+' · <a href="'+esc(x.url)+'" target="_blank" rel="noopener">listen ↗</a></p><form id="mf" style="display:flex;flex-direction:column;gap:10px">'+RATE_CATS.map(([k,l])=>'<label class="f">'+l+' (1–10)<input class="i" type="number" min="1" max="10" step=".5" name="'+k+'" value="'+esc(rv.scores[k]||"")+'"></label>').join("")+'<p>Overall: <b id="ovr">'+(srOverall(rv.scores,w)??"–")+'</b></p><label class="f">Private notes<textarea class="i" name="notes">'+esc(rv.notes||"")+'</textarea></label><label class="f">Public review summary (optional)<textarea class="i" name="summary">'+esc(rv.summary||"")+'</textarea></label><div class="row"><button type="button" class="btn ghost" data-act="close-modal">Cancel</button><button class="btn olive">Save rating</button></div></form>',
+      el=>{const f=el.querySelector("#mf");f.oninput=()=>{const o=formObj(f);el.querySelector("#ovr").textContent=srOverall(o,w)??"–"};
+        f.addEventListener("submit",async ev=>{ev.preventDefault();const o=formObj(f),scores={};RATE_CATS.forEach(([k])=>{const v=Number(o[k]);if(v>=1&&v<=10)scores[k]=v});const ov=srOverall(scores,w);if(ov==null){toast("Score at least one category");return}
+          if(await save("songReviews",id,{scores,weights:w,overall:ov,notes:o.notes||"",summary:o.summary||"",title:x.title,artist:x.artist,url:x.url,reviewedAt:nowISO(),reviewer:"human"})){closeModal();toast("Rating saved");if(x.status==="pending")muApi("/api/songrate/update",{id,status:"reviewed"}).then(()=>{S.ent.sr=null;render()}).catch(()=>{})}})})}
+  else if(a==="sr-chart"){const x=((S.ent.sr||{}).items||[]).find(i=>i.id===id),rv=(MU().reviews||{})[id]||{};if(!Object.keys(MU().charts).length){toast("Create a chart first in Charts");return true}
+    chartEntryModal({title:x.title,artist:x.artist,url:x.url,genre:x.genre,art:(x.meta||{}).thumb||"",rating:rv.overall!=null?rv.overall:"",summary:rv.summary||"",submissionId:x.id,published:false});
+    const m=$("#modal form");if(m)m.addEventListener("submit",()=>setTimeout(()=>muApi("/api/songrate/update",{id,status:"charted"}).then(()=>{S.ent.sr=null}).catch(()=>{}),400))}
+  else if(a==="ch-defaults"){(async()=>{for(const [i,n] of CHART_DEFAULTS.entries())await save("musicCharts",slugify(n),{name:n,order:i+1,featured:i===0,published:false,archived:false});toast("Starter categories created (no songs, unpublished)")})()}
+  else if(a==="ch-new"){openModal('<h3>New chart</h3><form id="mf"><input class="i" name="name" required placeholder="Chart name"><div class="row"><button type="button" class="btn ghost" data-act="close-modal">Cancel</button><button class="btn olive">Create</button></div></form>',el=>el.querySelector("#mf").addEventListener("submit",async ev=>{ev.preventDefault();const n=formObj(ev.target).name;if(await save("musicCharts",slugify(n)||uid(),{name:n,order:Object.keys(MU().charts).length+1,featured:false,published:false,archived:false})){closeModal()}}))}
+  else if(a==="ch-sel"){S.ent.chart=id;render()}
+  else if(a==="ch-flag")flipDoc("musicCharts",id,t.dataset.k);
+  else if(a==="ch-feature"){(async()=>{for(const c of Object.values(MU().charts))if(!!c.featured!==(c.id===id))await save("musicCharts",c.id,Object.assign(strip(c),{featured:c.id===id}))})()}
+  else if(a==="ce-edit")chartEntryModal(MU().entries[id],t.dataset.chart);
+  else if(a==="ce-pub")flipDoc("musicChartEntries",id,"published");
+  else if(a==="ce-rm"){remove("musicChartEntries",id).then(ok=>ok&&toast("Removed"))}
+  else if(a==="ce-mv"){const e=MU().entries[id],l=Object.values(MU().entries).filter(x=>x.chartId===e.chartId).sort((p,q)=>(p.position||99)-(q.position||99)),i=l.findIndex(x=>x.id===id),j=i+Number(t.dataset.d);if(j<0||j>=l.length)return true;[l[i],l[j]]=[l[j],l[i]];l.forEach((x,n)=>{if(x.position!==n+1)save("musicChartEntries",x.id,Object.assign(strip(x),{position:n+1}))})}
+  else if(a==="vf")flipDoc(t.dataset.k,id,"verified");
+  return true}
+document.addEventListener("submit",async e=>{const f=e.target;if(!S.isAdmin)return;
+  if(f.id==="songForm"){e.preventDefault();saveSong(f)}
+  if(f.id==="tvAdd"){e.preventDefault();const o=formObj(f),b=f.querySelector("button");b.disabled=true;try{const r=await muApi("/api/tv/resolve",{url:o.url});const ex=r.type==="playlist"?MU().tvPlaylists[r.playlistId]:MU().tvVideos[r.youtubeId];if(ex){toast("Already added");b.disabled=false;return}if(await tvSaveResolved(r,o.cat)){f.reset();toast((r.type==="playlist"?"Playlist":"Video")+" added as a draft"+(r.embeddable===false?". Note: the owner turned off embedding":""))}}catch(err){toast(err.message)}b.disabled=false}
+  if(f.id==="tvCh"){e.preventDefault();const ch=formObj(f).ch;S.ent.tvList={loading:true};try{S.ent.tvList=await muApi("/api/tv/channel-playlists",{channel:ch});save("musicSettings","tv",{channel:ch,channelId:S.ent.tvList.channelId||""})}catch(err){S.ent.tvList={error:err.message}}render()}
+},true);
+document.addEventListener("change",e=>{const t=e.target;if(!S.isAdmin||!t.dataset||!t.dataset.so)return;soSave({[t.dataset.so]:t.checked}).then(ok=>ok&&toast("Saved"))});
+
 /* ---------- modals ---------- */
 const brandOpts=(sel,only)=>BRANDS.filter(b=>!only||only.includes(b.id)).map(b=>'<option value="'+b.id+'"'+(b.id===sel?" selected":"")+'>'+esc(brandInfo(b.id).name)+'</option>').join("");
 const delBtn=has=>has?'<button type="button" class="btn danger left" data-act="del-arm">Delete</button>':'';
@@ -2820,6 +3322,7 @@ async function publishSite(btn){
 /* ---------- router & render ---------- */
 let rq=0;
 function scheduleRender(fromData){
+  if(fromData&&S.route==="ent-upload"&&$("#songForm"))return;
   if(fromData&&S.route.startsWith("studio")&&$("#stClipForm")&&$("#stClipForm").contains(document.activeElement))return;
   if(fromData&&(S.route==="shadowcrown"||S.route.startsWith("collab")||(S.route==="signin"&&$("#authForm"))))return;
   if(rq)return;rq=requestAnimationFrame(()=>{rq=0;render()});
@@ -2831,6 +3334,8 @@ function render(){
   if(r==="shadowcrown"&&BACKEND==="firebase"){location.replace("/shadowcrown/");return}
   if(r==="shadowcrown"){document.title="Shadow Crown Universe";if(!$("#scFrame"))app.innerHTML=scFrame();return}
   if(r==="b-music"||r.startsWith("b-music/")){location.replace("#b-ent/music");return}
+  if(r==="ent-upload"&&S._lastR===r&&$("#songForm")&&!S.entForce)return;   // never wipe a song form the founder is filling in
+  S.entForce=false;
   document.title="Grooveville LLC";
   navLinks();
   let h;
@@ -2849,6 +3354,15 @@ function render(){
   }
   else if(r==="live")h=viewLive();
   else if(r==="studio"||r.startsWith("studio-"))h=viewStudio();
+  else if(r==="music")h=viewMusic();
+  else if(r.startsWith("music/"))h=viewMusicList(r.split("/")[1]);
+  else if(r.startsWith("artist/"))h=viewArtist(decodeURIComponent(r.slice(7)));
+  else if(r.startsWith("album/"))h=viewCollection("album",r.slice(6));
+  else if(r.startsWith("playlist/"))h=viewCollection("playlist",r.slice(9));
+  else if(r==="tv"||r.startsWith("tv/"))h=viewTV(r.split("/")[1]||"");
+  else if(r==="charts"||r.startsWith("charts/"))h=viewCharts(r.split("/")[1]||"");
+  else if(r==="songrate")h=viewSongRate();
+  else if(r==="ent"||r.startsWith("ent-"))h=viewEnt();
   else if(r==="vine")h=viewVine();
   else if(r==="brands")h=viewBrands();
   else if(r==="story")h=viewStory();
@@ -2858,6 +3372,9 @@ function render(){
   app.querySelectorAll("[data-keep]").forEach(n=>{const o=kept[n.dataset.keep];if(o)n.replaceWith(o)});
   if(r==="live")liveMount();else liveUnmount();liveTick();
   if(r.startsWith("studio"))studioMount();
+  if(r==="tv"||r.startsWith("tv/"))tvMount();else if(TV.player){try{TV.player.destroy()}catch(e){}TV.player=null}
+  if(r.startsWith("ent"))entMount();
+  mpTick();
   if(S._lastR!==r){S._lastR=r;app.classList.remove("pagein");void app.offsetWidth;app.classList.add("pagein")}
   const cf=$("#collabForm");if(cf)cf.addEventListener("submit",e=>{e.preventDefault();collabSubmit(cf)});
   const af=$("#authForm");if(af)af.addEventListener("submit",e=>{e.preventDefault();fbAuth(af,(e.submitter&&e.submitter.dataset.mode)||"in")});
@@ -2882,6 +3399,8 @@ document.addEventListener("click",async e=>{
   if(a==="scrim"){if(e.target===t)closeModal();return}
   if(webAct(a,t))return;
   if(studioAct(a,t))return;
+  if(mpAct(a,t))return;
+  if(entAct(a,t))return;
   if(a==="eps-more"){t.disabled=true;t.textContent="Loading…";return liveLoad(S.liveShow,true)}
   if(a==="close-modal")return closeModal();
   if(a==="del-arm"){t.textContent="Tap again to delete";t.dataset.act="del-go";return}
@@ -3013,7 +3532,7 @@ if(introWanted())showIntro();
     const cfg=window.FIREBASE_CONFIG;
     if(!(window.firebase&&cfg&&cfg.apiKey&&!/YOUR_/.test(cfg.apiKey))){S.authChecked=true;render();return}
     try{firebase.initializeApp(cfg);S.db=firebase.firestore();S.fbReady=true}catch(e){S.authChecked=true;render();return}
-    subscribePublic();subscribeMedia();subscribeShows();
+    subscribePublic();subscribeMedia();subscribeShows();musicSubscribe();
     let started=false;
     firebase.auth().onAuthStateChanged(async u=>{
       if(started&&!u){location.hash="#home";location.reload();return}
@@ -3024,7 +3543,7 @@ if(introWanted())showIntro();
       let first=true;
       S.db.doc("access/"+u.uid).onSnapshot(d=>{
         const f=d.exists&&["founder","hnic"].includes(String(d.data().role||"").toLowerCase().replace(/["'\s]/g,""));
-        if(f&&!S.isAdmin){S.isAdmin=true;subscribeFounder();if(!first||S.route==="signin"||S.route.startsWith("portal")||S.route==="join")location.hash="#team";toast("Founder access on")}
+        if(f&&!S.isAdmin){S.isAdmin=true;subscribeFounder();musicSubscribe();if(!first||S.route==="signin"||S.route.startsWith("portal")||S.route==="join")location.hash="#team";toast("Founder access on")}
         if(first){first=false;S.authChecked=true;if(!S.isAdmin){subscribeMember();if(S.route==="signin"||S.route==="groove")location.hash="#portal"}}
         render();
       },()=>{if(first){first=false;S.authChecked=true;subscribeMember();if(S.route==="signin"||S.route==="groove")location.hash="#portal";render()}});
