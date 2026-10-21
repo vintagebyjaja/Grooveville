@@ -1530,7 +1530,7 @@ function rulesModal(){
 
 /* ---------- the Shadow Crown portal (purple vortex transition) ---------- */
 function portalCanvas(ov){
-  const cv=ov.querySelector("canvas"),ctx=cv.getContext("2d"),dpr=Math.min(2,window.devicePixelRatio||1);
+  const cv=ov.querySelector("canvas"),ctx=cv.getContext("2d"),dpr=1;
   const W=cv.width=innerWidth*dpr,H=cv.height=innerHeight*dpr;cv.style.width=innerWidth+"px";cv.style.height=innerHeight+"px";
   return {ctx,W,H,cx:W/2,cy:H/2,R:Math.hypot(W,H)/2,dpr};
 }
@@ -1541,8 +1541,10 @@ function playPortal(onDone){
   document.body.appendChild(ov);
   if(reduce){ov.classList.add("calm");setTimeout(onDone,500);return ov}
   const {ctx,W,H,cx,cy,R,dpr}=portalCanvas(ov);const D=1900,t0=performance.now();
-  const parts=Array.from({length:340},()=>({a:Math.random()*Math.PI*2,r:(0.15+Math.random()*0.95)*R,w:(1+Math.random()*2.6)*dpr,h:262+Math.random()*48,l:55+Math.random()*25}));
-  const frame=now=>{
+  let finished=false;const finish=()=>{if(finished)return;finished=true;onDone()};
+  setTimeout(finish,D+1200);
+  const parts=Array.from({length:240},()=>({a:Math.random()*Math.PI*2,r:(0.15+Math.random()*0.95)*R,w:(1+Math.random()*2.6)*dpr,h:262+Math.random()*48,l:55+Math.random()*25}));
+  const frame=now=>{if(finished)return;try{
     const p=Math.min(1,(now-t0)/D),e=p*p;
     ctx.globalCompositeOperation="source-over";
     ctx.fillStyle="rgba(10,3,20,"+(0.18+p*0.5)+")";ctx.fillRect(0,0,W,H);
@@ -1556,8 +1558,8 @@ function playPortal(onDone){
       if(q.r<disc*0.35){q.r=(0.7+Math.random()*0.5)*R;q.a=Math.random()*Math.PI*2}
       ctx.strokeStyle="hsla("+q.h+",95%,"+q.l+"%,"+(0.35+p*0.5)+")";ctx.lineWidth=q.w;ctx.beginPath();ctx.arc(cx,cy,q.r,a0,q.a);ctx.stroke()});
     if(p>0.78){ctx.globalCompositeOperation="source-over";ctx.fillStyle="rgba(246,232,255,"+Math.min(1,(p-0.78)/0.22)+")";ctx.fillRect(0,0,W,H)}
-    if(p<1)requestAnimationFrame(frame);else onDone();
-  };
+    if(p<1)requestAnimationFrame(frame);else finish();
+  }catch(err){finish()}};
   requestAnimationFrame(frame);
   return ov;
 }
