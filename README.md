@@ -11,14 +11,16 @@ It's a single static page (`index.html`) with:
   - **Founder:** full back office with the dashboard (hours, money spent and money in for every company), timesheet, private/public calendar, reminders, collabs, team access, private notes and site settings.
   - **Team members:** a private timesheet for only the companies you assign them.
 
-Logins and private data use **Firebase** (free Spark plan). Hosting is **Netlify** with your **grooveville.org** domain.
+Logins and private data use **Firebase** (free Spark plan). Hosting is **Cloudflare Pages** with your **grooveville.org** domain. The **Shadow Crown Universe** site lives in `/shadowcrown/` (grooveville.org/shadowcrown/).
 
 ---
 
 ## 1. Put it on GitHub
 
-1. Create a new repository on GitHub (for example `grooveville-site`). Make it **private** if you like. The site works either way.
-2. Upload every file in this folder: `index.html`, `logo.webp`, `firebase-config.js`, `firestore.rules`, `firebase.json`, `netlify.toml`, `README.md`, `.gitignore`.
+1. Your repository (for example `Grooveville`) should contain **only** these files and folders:
+   - `index.html`, `logo.webp`, `firebase-config.js`, `firestore.rules`, `firebase.json`, `_headers`, `README.md`, `.gitignore`
+   - the `shadowcrown/` folder (`index.html`, `styles.css`, `app.js`, `assets/`, notes)
+2. Older working files from earlier versions (`part1.html` to `part5.js`, `t*.js`, `build.py`, `grooveville.html`, `netlify.toml`, the `github/` folder, `download` and so on) aren't needed and are public if left in the repo. Delete them.
 
 ## 2. Set up Firebase (logins + database)
 
@@ -30,14 +32,21 @@ Logins and private data use **Firebase** (free Spark plan). Hosting is **Netlify
 
 The values in `firebase-config.js` are meant to be public. Your data is protected by the rules from step 4.
 
-## 3. Put it on Netlify
+## 3. Host it on Cloudflare Pages
 
-1. Go to https://app.netlify.com > **Add new site** > **Import an existing project** > GitHub > pick the repository.
-2. Leave the build command empty. The publish directory is `.` (already set in `netlify.toml`). Click **Deploy**.
-3. **Domain management** > **Add a domain** > `grooveville.org`. Follow Netlify's DNS steps at the place you bought the domain. Netlify adds free HTTPS on its own.
-4. Back in Firebase: **Authentication** > **Settings** > **Authorized domains** > add `grooveville.org`, `www.grooveville.org` and your `*.netlify.app` address.
+1. In Cloudflare go to **Workers & Pages** > **Create** > **Pages** > **Connect to Git** and pick the repository.
+2. Framework preset: **None**. Build command: leave **empty**. Build output directory: `/` (the repository root). Click **Save and Deploy**.
+3. In the Pages project open **Custom domains** > **Set up a custom domain** > `grooveville.org`, then add `www.grooveville.org` too. If the domain's DNS is on Cloudflare, the records are created for you; otherwise follow the steps shown. HTTPS is automatic.
+4. Back in Firebase: **Authentication** > **Settings** > **Authorized domains** > add `grooveville.org`, `www.grooveville.org` and your `*.pages.dev` address (for example `grooveville.pages.dev`).
+5. `_headers` sets the site's security headers on Cloudflare. (`netlify.toml` isn't used anymore.)
 
-Every time you change a file on GitHub, Netlify republishes the site automatically.
+Every time you change a file on GitHub, Cloudflare republishes the site automatically.
+
+## Shadow Crown Universe
+
+- The **Shadow Crown Universe** company page on Grooveville is the landing page. It has an **Overview** tab and an **✦ Enter the Universe** tab plus a portal card. Both play the purple portal and open grooveville.org/shadowcrown/.
+- On the Shadow Crown site, the **Grooveville logo** (top left) goes back to the Grooveville home page, **‹ Back** goes back a step (or to the Shadow Crown Universe page), and the footer has **Back to Grooveville**. Leaving plays the portal closing.
+- Put the Shadow Crown art in `shadowcrown/assets/` (`showcase.webp`, `daydream-cover.webp`). Until then a purple placeholder shows.
 
 ## 4. Make yourself the founder
 
