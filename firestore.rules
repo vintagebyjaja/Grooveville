@@ -33,6 +33,23 @@ service cloud.firestore {
       allow write: if isFounder();
     }
 
+    // Website images and links (Back office › Website): everyone can see them, only the founder or HNIC changes them
+    match /media/{id} {
+      allow read: if true;
+      allow write: if isFounder();
+    }
+
+    // Shadow Crown: Living World saves. Each player reads and writes only their own save.
+    match /scsave/{uid} {
+      allow read, write: if signedIn() && request.auth.uid == uid;
+    }
+    // Shadow Crown player cards (name, level, location, friend code). Signed-in players can look them up by code.
+    match /scplayers/{uid} {
+      allow read: if signedIn();
+      allow write: if signedIn() && request.auth.uid == uid
+        && request.resource.data.keys().hasOnly(["code", "name", "level", "loc", "mission", "updatedAt"]);
+    }
+
     // Calendar: public events are visible to everyone, private events only to the founder
     match /events/{id} {
       allow read: if resource.data.visibility == "public" || isFounder();
