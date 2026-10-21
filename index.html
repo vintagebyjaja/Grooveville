@@ -5,6 +5,21 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="description" content="Grooveville LLC, The Creative House: nine companies, one Groove, rooted in Charlotte, NC.">
 <meta name="theme-color" content="#101112">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Grooveville LLC">
+<meta property="og:title" content="Grooveville | The Creative House">
+<meta property="og:description" content="Different worlds. One Groove. Nine companies, Grooveville LIVE and The Unc &amp; Neph Show, from Charlotte, NC.">
+<meta property="og:url" content="https://grooveville.org/">
+<meta property="og:image" content="https://grooveville.org/media/og-share.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Grooveville LLC logo over friends dressed in white raising a toast">
+<meta property="og:image" content="https://grooveville.org/media/og-square.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Grooveville | The Creative House">
+<meta name="twitter:description" content="Different worlds. One Groove.">
+<meta name="twitter:image" content="https://grooveville.org/media/og-share.jpg">
+<link rel="apple-touch-icon" href="logo.webp">
 <link rel="icon" href="logo.webp">
 <style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style>
 <title>Grooveville LLC</title>
@@ -2340,7 +2355,7 @@ function viewLive(){
 function lvEpsHTML(cfg){
   return '<div class="sechead" style="margin-bottom:14px"><h2 class="lvh" style="margin:0">Previous episodes</h2>'+(LV.epsTotal?'<span class="muted" style="font-size:13px">'+LV.epsTotal+' episodes</span>':'')+'</div>'+
     (LV.eps.length?'<div class="epgrid">'+LV.eps.map(e=>'<a class="ep" href="'+esc(e.url)+'" target="_blank" rel="noopener noreferrer"><span class="th"><img src="'+esc(e.thumb)+'" alt="" loading="lazy">'+(e.duration?'<span class="dur">'+fmtDur(e.duration)+'</span>':'')+'</span><b>'+esc(e.title)+'</b><small>'+esc(fmtWhen(e.start))+' · <span class="yt">Watch on YouTube ↗</span></small></a>').join("")+'</div>'+(LV.epsNext!=null?'<div style="text-align:center;margin-top:20px"><button class="btn ghost" data-act="eps-more">Load more</button></div>':'')
-      :'<div class="empty">'+(LV.state==="loading"?"Loading episodes…":LV.state==="error"?'Episodes can\'t load right now. <a href="'+esc(cfg.socials.youtube||cfg.youtube)+'" target="_blank" rel="noopener">See them on YouTube ↗</a>':"Past shows appear here automatically after each livestream ends.")+'</div>');
+      :'<div class="empty">'+(LV.state==="loading"?"Loading episodes…":LV.state==="error"?'Episodes can\'t load right now. <a href="'+esc(cfg.socials.youtube||cfg.youtube)+'" target="_blank" rel="noopener">See them on YouTube ↗</a>':"Episodes appear here automatically once YouTube is connected.")+'</div>'+(LV.state!=="loading"&&(cfg.socials.youtube||cfg.youtube)?'<div style="text-align:center;margin-top:16px"><a class="btn peach" href="'+esc(String(cfg.socials.youtube||cfg.youtube).split("?")[0].replace(/\/+$/,""))+'/streams" target="_blank" rel="noopener">Watch every episode on YouTube ↗</a></div>':''));
 }
 /* YouTube IFrame player + Grooveville Radio hand-off */
 function liveMount(){

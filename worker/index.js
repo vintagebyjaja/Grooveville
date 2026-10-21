@@ -96,7 +96,7 @@ export async function syncShow(env, show, fetcher, cfgIn) {
   if (st.source !== srcKey) st = { show, source: srcKey, episodes: [], backfillDone: false };   // channel changed in Show Settings: start fresh
   st.errors = [];
   if (!src) { st.errors.push("No YouTube channel set in Show Settings"); st.live = null; st.upcoming = null; st.checkedAt = new Date().toISOString(); await saveState(env, show, st); return st; }
-  if (!env.YOUTUBE_API_KEY) { st.errors.push("YOUTUBE_API_KEY is not set"); st.checkedAt = new Date().toISOString(); await saveState(env, show, st); return st; }
+  if (!env.YOUTUBE_API_KEY) { st.errors.push("YOUTUBE_API_KEY is not set"); st.reason = "missing_api_key"; await keylessFallback(st, src, fetcher); st.checkedAt = new Date().toISOString(); await saveState(env, show, st); return st; }
   try {
     if (!st.channelId || !st.uploads) {
       const c = await yt(env, "channels", Object.assign({ part: "id,contentDetails,snippet" }, src.id ? { id: src.id } : { forHandle: "@" + src.handle }), fetcher);
@@ -116,17 +116,60 @@ export async function syncShow(env, show, fetcher, cfgIn) {
     const now = new Date().toISOString();
     const upcoming = vids.filter(v => v.kind === "upcoming" && v.scheduled && v.scheduled > now).sort((a, b) => (a.scheduled > b.scheduled ? 1 : -1))[0] || null;
     const byId = new Map((st.episodes || []).map(e => [e.id, e]));
-    vids.filter(v => v.ended).forEach(v => byId.set(v.id, v));            // completed livestreams only
+    vids.filter(v => v.kind === "none" && (v.ended || v.duration >= 120)).forEach(v => byId.set(v.id, v));   // finished livestreams + full-length uploads (no Shorts)
     st.episodes = [...byId.values()].sort((a, b) => (b.start > a.start ? 1 : -1));
     if (st.live && !live) st.lastEnded = { id: st.live.id, at: now };    // post-show hook for the Studio
     st.live = live; st.upcoming = upcoming;
-  } catch (e) { st.errors.push(String(e.message || e)); if (e.reason === "quotaExceeded") st.quotaHitAt = new Date().toISOString(); }
+    st.reason = ""; st.via = "api";
+  } catch (e) {
+    st.errors.push(String(e.message || e)); if (e.reason === "quotaExceeded") st.quotaHitAt = new Date().toISOString();
+    st.reason = e.reason || "channel_not_found";
+    await keylessFallback(st, src, fetcher);
+  }
   if (env.TWITCH_CLIENT_ID && env.TWITCH_CLIENT_SECRET && cfg.twitch) {
     try { st.twitchLive = await twitchLive(env, cfg.twitch, st, fetcher); } catch (e) { st.errors.push("Twitch: " + (e.message || e)); }
   } else st.twitchLive = null;
   st.checkedAt = new Date().toISOString();
   await saveState(env, show, st);
   return st;
+}
+/* Backup when the YouTube API key is missing or refused: YouTube's public channel page + RSS feed (latest 15 videos).
+   It can't tell livestreams from uploads, so it lists recent videos; live detection uses the channel's /live page. */
+const UA = { "user-agent": "Mozilla/5.0 (compatible; GroovevilleBot/1.0; +https://grooveville.org)", "accept-language": "en-US,en;q=0.9" };
+const unx = s => String(s || "").replace(/&amp;/g, "&").replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&lt;/g, "<").replace(/&gt;/g, ">");
+export async function keylessFallback(st, src, fetcher) {
+  const f = fetcher || fetch;
+  try {
+    if (!st.channelId) {
+      if (src.id) st.channelId = src.id;
+      else {
+        const html = await (await f("https://www.youtube.com/@" + src.handle, { headers: UA })).text();
+        const m = /<link rel="canonical" href="https:\/\/www\.youtube\.com\/channel\/(UC[A-Za-z0-9_-]{22})"/.exec(html) || /"(?:externalId|channelId)":"(UC[A-Za-z0-9_-]{22})"/.exec(html);
+        if (!m) return;
+        st.channelId = m[1]; st.handle = "@" + src.handle;
+        const t = /<meta property="og:title" content="([^"]+)"/.exec(html); if (t) st.channelTitle = unx(t[1]);
+      }
+    }
+    const xml = await (await f("https://www.youtube.com/feeds/videos.xml?channel_id=" + st.channelId, { headers: UA })).text();
+    const items = [...xml.matchAll(/<entry>([\s\S]*?)<\/entry>/g)].map(m => {
+      const e = m[1], g = re => (re.exec(e) || [])[1] || "";
+      const id = g(/<yt:videoId>([^<]+)<\/yt:videoId>/);
+      return { id, title: unx(g(/<title>([^<]*)<\/title>/)), kind: "none", thumb: g(/<media:thumbnail url="([^"]+)"/) || ("https://i.ytimg.com/vi/" + id + "/hqdefault.jpg"),
+        publishedAt: g(/<published>([^<]+)<\/published>/), start: g(/<published>([^<]+)<\/published>/), scheduled: "", ended: "", duration: 0,
+        views: Number(g(/<media:statistics views="(\d+)"/) || 0), url: "https://www.youtube.com/watch?v=" + id };
+    }).filter(v => v.id && !/#shorts/i.test(v.title));
+    if (items.length) {
+      const byId = new Map((st.episodes || []).map(e => [e.id, e]));
+      items.forEach(v => { if (!byId.has(v.id)) byId.set(v.id, v) });
+      st.episodes = [...byId.values()].sort((a, b) => (b.start > a.start ? 1 : -1));
+      st.via = "rss";
+    }
+    try {
+      const live = await (await f("https://www.youtube.com/channel/" + st.channelId + "/live", { headers: UA })).text();
+      const lv = /"isLiveNow":true/.test(live) && /<link rel="canonical" href="https:\/\/www\.youtube\.com\/watch\?v=([A-Za-z0-9_-]{11})"/.exec(live);
+      st.live = lv ? { id: lv[1], title: unx((/<meta name="title" content="([^"]+)"/.exec(live) || [])[1] || "Live now"), start: new Date().toISOString(), url: "https://www.youtube.com/watch?v=" + lv[1], kind: "live" } : null;
+    } catch (e) { }
+  } catch (e) { st.errors.push("Backup feed: " + (e.message || e)) }
 }
 async function twitchLive(env, login, st, fetcher) {
   const f = fetcher || fetch;
@@ -139,7 +182,8 @@ async function twitchLive(env, login, st, fetcher) {
   const b = await r.json(); return !!(b.data && b.data.length);
 }
 function publicLive(st) {
-  return { ok: !!st.channelId, channelId: st.channelId || "", channelTitle: st.channelTitle || "", handle: st.handle || "", live: st.live || null, upcoming: st.upcoming || null, twitchLive: st.twitchLive, checkedAt: st.checkedAt || "", stale: !st.checkedAt || (Date.now() - Date.parse(st.checkedAt) > 10 * 60000), error: (st.errors || []).length ? "sync" : "" };
+  return { reason: st.reason || "", via: st.via || "", ok: !!st.channelId, channelId: st.channelId || "", channelTitle: st.channelTitle || "", handle: st.handle || "", live: st.live || null, upcoming: st.upcoming || null, twitchLive: st.twitchLive, checkedAt: st.checkedAt || "", stale: !st.checkedAt || (Date.now() - Date.parse(st.checkedAt) > 10 * 60000), error: (st.errors || []).length ? "sync" : "",
+    help: ({ missing_api_key: "Add the YOUTUBE_API_KEY secret to the grooveville Worker", keyInvalid: "The YouTube API key is wrong: re-copy it into YOUTUBE_API_KEY", badRequest: "The YouTube API key is wrong or restricted to another API", accessNotConfigured: "Turn on YouTube Data API v3 in the Google Cloud project that owns the key", forbidden: "The key is restricted: allow YouTube Data API v3 and remove website/IP restrictions", quotaExceeded: "Daily YouTube quota used up; it resets at midnight Pacific", channel_not_found: "Check the YouTube channel in Studio › Show Settings", ipRefererBlocked: "Remove the key's website/IP restriction (only the Worker uses it)" })[st.reason] || "" };
 }
 
 /* ---------------- Firebase sign-in check ---------------- */
