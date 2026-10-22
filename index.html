@@ -3182,7 +3182,11 @@ function mpAudio(){if(MP.audio)return MP.audio;const a=MP.audio=new Audio();try{
   a.addEventListener("waiting",()=>{MP.loading=true;mpTick()});a.addEventListener("playing",()=>{MP.loading=false;mpTick()});
   a.addEventListener("timeupdate",mpTick);a.addEventListener("loadedmetadata",mpTick);
   a.addEventListener("ended",()=>mpNext(true));
-  a.addEventListener("error",()=>{if(!a.src)return;toast("Couldn't play that song. Skipping.");MP.playing=false;setTimeout(()=>mpNext(true),600)});
+  a.addEventListener("error",()=>{if(!a.src)return;MP.playing=false;MP.loading=false;MP.errs=(MP.errs||0)+1;
+    /* stop after a few failures in a row so a broken file or an outage can't loop requests forever */
+    if(MP.errs>=Math.min(3,MP.q.length)){toast("Music can't play right now. Try again later.");mpRender();return}
+    toast("Couldn't play that song. Skipping.");setTimeout(()=>mpNext(true),1500)});
+  a.addEventListener("playing",()=>{MP.errs=0});
   return a}
 function soundtrackIds(){const st=muSet("soundtrack"),songs=MU().songs;return (st.trackIds||[]).filter(id=>songs[id]&&songs[id].published&&songs[id].soundOn)}
 const soundtrackOn=()=>muSet("soundtrack").enabled!==false&&soundtrackIds().length>0;
@@ -3194,7 +3198,7 @@ async function mpLoad(i,auto){
   try{a.src=await mpSrc(s)}catch(e){toast("That song isn't published yet");MP.loading=false;return}
   mpSession(s);if(auto){mpStopOthers();MP.userPaused=false;a.play().catch(()=>{MP.loading=false;mpRender();toast("Press play to start the music")})}
 }
-function mpPlay(ids,start,ctx){ids=(ids||[]).filter(id=>MU().songs[id]);if(!ids.length){toast("Nothing to play yet");return}
+function mpPlay(ids,start,ctx){MP.errs=0;ids=(ids||[]).filter(id=>MU().songs[id]);if(!ids.length){toast("Nothing to play yet");return}
   let q=ids.slice(),i=Math.max(0,Math.min(start||0,q.length-1));
   if(MP.shuffle){const first=q[i];q.splice(i,1);q.sort(()=>Math.random()-.5);q.unshift(first);i=0}
   MP.q=q;MP.ctx=ctx||"user";mpLoad(i,true)}

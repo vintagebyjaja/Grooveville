@@ -188,6 +188,7 @@ const CF_STEPS='In Cloudflare open <b>Workers &amp; Pages › grooveville › Se
 const KEY_PAGE='Google Cloud › APIs &amp; Services › Credentials › “Groove Guide – Website”';
 function diagText(code){return ({
   nokey:["Map setup needed","Groove Guide didn’t receive a browser map key.",CF_STEPS],
+  limit:["Groove Guide is resting until tomorrow","Grooveville’s server reached today’s Cloudflare request limit, so the map can’t load right now. It resets at 8 PM Eastern (midnight UTC)."],
   cfgfail:["Couldn’t reach Groove Guide settings","The page couldn’t load its settings from the server. Check your connection and try again."],
   MissingKeyMapError:["Map setup needed","Google says no key was sent with the map request.",CF_STEPS],
   InvalidKeyMapError:["The map key isn’t valid","Google doesn’t recognize the key Groove Guide is using.","Copy the key again from "+KEY_PAGE+" into <code>GOOGLE_MAPS_BROWSER_KEY</code> in Cloudflare."],
@@ -214,7 +215,7 @@ const MAP={map:null,failed:"",loading:false,lines:[],marks:[],veh:null,dest:null
     const pre=window.google&&google.maps&&google.maps.importLibrary;
     if(!pre){
       await runtimeCfg();
-      if(!CFG.googleMapsKey){MAPERR.code=RCFG.err?"cfgfail":"nokey";throw new Error(MAPERR.code)}
+      if(!CFG.googleMapsKey){MAPERR.code=/429/.test(RCFG.err)?"limit":RCFG.err?"cfgfail":"nokey";throw new Error(MAPERR.code)}
       if(RCFG.sameAsServer)console.warn("[Groove Guide] GOOGLE_MAPS_BROWSER_KEY is the same as the server key. Use the separate “Groove Guide – Website” browser key.");
       (g=>{var h,a,k,p="The Google Maps JavaScript API",c="google",l="importLibrary",q="__ib__",m=document,b=window;b=b[c]||(b[c]={});var d=b.maps||(b.maps={}),r=new Set,e=new URLSearchParams,u=()=>h||(h=new Promise(async(f,n)=>{await (a=m.createElement("script"));e.set("libraries",[...r]+"");for(k in g)e.set(k.replace(/[A-Z]/g,t=>"_"+t[0].toLowerCase()),g[k]);e.set("callback",c+".maps."+q);a.src="https://maps."+c+"apis.com/maps/api/js?"+e;d[q]=f;a.onerror=()=>h=n(Error("load"));a.nonce=m.querySelector("script[nonce]")?.nonce||"";m.head.append(a)}));d[l]?console.warn(p+" only loads once. Ignoring:",g):d[l]=(f,...n)=>r.add(f)&&u().then(()=>d[l](f,...n))})({key:CFG.googleMapsKey,v:CFG.mapsVersion||"weekly"});
     }
