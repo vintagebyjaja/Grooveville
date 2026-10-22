@@ -19,8 +19,16 @@
 <meta name="twitter:title" content="Grooveville | The Creative House">
 <meta name="twitter:description" content="Different worlds. One Groove.">
 <meta name="twitter:image" content="https://grooveville.org/media/og-share.jpg">
-<link rel="apple-touch-icon" href="logo.webp">
-<link rel="icon" href="logo.webp">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="manifest" href="/manifest.webmanifest">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Grooveville">
+<meta name="application-name" content="Grooveville">
 <style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style>
 <title>Grooveville LLC</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -675,6 +683,56 @@ body.mp-on .toast{bottom:92px}
   .cta{padding:24px}
   .hqband .btn{margin-left:0}
 }
+
+/* ===== Phone app layout (≤760px only) ===== */
+#tabbar,#appmenu,.mlaunch{display:none}
+@media (max-width:760px){
+  :root{--tabh:62px}
+  body{padding-bottom:calc(var(--tabh) + env(safe-area-inset-bottom,0px))}
+  .nav .links{display:none!important}
+  .nav .wrap{min-height:56px;flex-wrap:nowrap}
+  #tabbar{display:grid;grid-template-columns:repeat(5,1fr);position:fixed;left:0;right:0;bottom:0;z-index:45;height:calc(var(--tabh) + env(safe-area-inset-bottom,0px));padding:0 max(6px,env(safe-area-inset-left)) env(safe-area-inset-bottom,0px) max(6px,env(safe-area-inset-right));background:#0b0c0df2;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-top:1px solid #ffffff17}
+  #tabbar>a,#tabbar>button{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;color:#9a958d;text-decoration:none;font:600 11px/1 var(--f-body);background:none;border:0;padding:0;cursor:pointer;-webkit-tap-highlight-color:transparent;min-height:44px}
+  #tabbar>.on,#tabbar>button[aria-expanded=true]{color:var(--peach)}
+  #tabbar>.on::before{content:"";position:absolute;top:0;width:28px;height:3px;border-radius:0 0 3px 3px;background:var(--peach)}
+  #tabbar>*:active{transform:scale(.94)}
+  #tabbar .ldot{position:absolute;top:9px;left:calc(50% + 8px);width:8px;height:8px;border-radius:50%;background:var(--peach);box-shadow:0 0 0 2px #0b0c0d}
+  #appmenu{display:block;position:fixed;inset:0;z-index:48;background:#0009;opacity:0;transition:opacity .2s}
+  #appmenu[hidden]{display:none}
+  #appmenu.open{opacity:1}
+  .msheet{position:absolute;left:0;right:0;bottom:0;max-height:86vh;overflow-y:auto;background:#141517;border-radius:22px 22px 0 0;border-top:1px solid #ffffff1c;padding:10px 16px calc(var(--tabh) + 16px + env(safe-area-inset-bottom,0px));transform:translateY(30px);transition:transform .22s ease}
+  #appmenu.open .msheet{transform:none}
+  .mgrab{width:40px;height:4px;border-radius:4px;background:#ffffff30;margin:0 auto 10px}
+  .mhead{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+  .mhead b{font:700 20px/1 var(--f-disp,inherit);color:#fff}
+  .mx{width:40px;height:40px;border-radius:50%;border:1px solid #ffffff22;background:#ffffff0d;color:#fff;font-size:16px;cursor:pointer}
+  .mgrid,.mlaunch{grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+  .mgrid{display:grid}
+  .mlaunch{display:grid;margin-top:26px}
+  .mtile{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;min-height:88px;padding:12px 6px;border-radius:16px;background:#ffffff0c;border:1px solid #ffffff14;color:#f3eee6;text-decoration:none;font:600 12.5px/1.2 var(--f-body);text-align:center;-webkit-tap-highlight-color:transparent;cursor:pointer}
+  .mtile:active{transform:scale(.96);background:#ffffff18}
+  .mtile .mi{display:grid;place-items:center;width:42px;height:42px;border-radius:13px;background:color-mix(in srgb,var(--peach) 18%,transparent);color:var(--peach)}
+  .mtile.wide{width:100%;flex-direction:row;min-height:56px;margin-top:10px;font-size:14px}
+  .mtile.wide .mi{width:34px;height:34px}
+  .mlaunch .mtile{background:#0d0e10b3;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+  .hh .ctas{margin-top:22px}
+  /* sub-tabs become swipeable chips instead of wrapping rows */
+  .tabs,.subtabs,.entnav,.seg,.brandtabs{flex-wrap:nowrap!important;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;scroll-snap-type:x proximity}
+  .tabs::-webkit-scrollbar,.subtabs::-webkit-scrollbar,.entnav::-webkit-scrollbar,.seg::-webkit-scrollbar{display:none}
+  .seg{max-width:100%}
+  .tabs>*,.subtabs>*,.entnav>*,.seg>*{flex:0 0 auto;white-space:nowrap;scroll-snap-align:start}
+  /* player, radio and toasts sit above the tab bar */
+  #mp{bottom:calc(var(--tabh) + env(safe-area-inset-bottom,0px))}
+  #mp .mpbar{padding-bottom:10px}
+  body.mp-on{padding-bottom:calc(var(--tabh) + 112px + env(safe-area-inset-bottom,0px))}
+  #radio{bottom:calc(var(--tabh) + 12px + env(safe-area-inset-bottom,0px))}
+  .toast,body.mp-on .toast{bottom:calc(var(--tabh) + 16px + env(safe-area-inset-bottom,0px))}
+  body.mp-on .toast{bottom:calc(var(--tabh) + 120px + env(safe-area-inset-bottom,0px))}
+  body.m-menu{overflow:hidden}
+  body.sc-mode #tabbar{display:none}
+  footer.ft{font-size:12.5px}
+}
+@media (max-width:760px) and (display-mode:standalone){.nav{padding-top:env(safe-area-inset-top,0px)}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style>
 
@@ -1007,6 +1065,7 @@ function navLinks(){
     '<a href="#groove"'+(["groove","signin","join"].includes(r)||r.startsWith("portal")?' class="on"':'')+'>Groove Team</a>'+
     (!S.isAdmin&&SR().checked&&studioAccess()?'<a href="#studio" class="team'+(r.startsWith("studio")?' on':'')+'">Studio</a>':'')+
     (S.isAdmin?'<a href="#team" class="team'+(team||r.startsWith("studio")?' on':'')+'">Back Office</a>':'');
+  mobileNav();
 }
 
 function treeSVG(){
@@ -1064,7 +1123,7 @@ function viewHome(){
   const H=siteCfg("home");
   return '<section class="hh"><div class="bgimg">'+imgTag("home-hero","",'')+'</div><span class="glow" style="background:#68d4d0;left:-160px;top:-120px" aria-hidden="true"></span><span class="glow" style="background:#f4a987;right:10%;bottom:-260px" aria-hidden="true"></span>'+
     '<div class="wrap"><div class="kicker">'+esc(H.heroEyebrow)+'</div><h1 class="disp" style="margin-top:22px">'+esc(H.heroA)+' <em>'+esc(H.heroB)+'</em></h1><p>'+esc(H.heroP)+'</p>'+
-    '<div class="ctas"><a class="btn peach" href="#vine" style="padding:15px 28px">Explore the Groove</a><button class="playlink" data-act="intro-replay"><span aria-hidden="true">▶</span>Watch the story</button></div></div>'+
+    '<div class="ctas"><a class="btn peach" href="#vine" style="padding:15px 28px">Explore the Groove</a><button class="playlink" data-act="intro-replay"><span aria-hidden="true">▶</span>Watch the story</button></div>'+mLaunch()+'</div>'+
     '<div class="loc">Charlotte, NC<br><b>People. Ideas. Places.</b></div></section>';
 }
 function viewVine(){
@@ -3124,6 +3183,79 @@ document.addEventListener("submit",async e=>{const f=e.target;if(!S.isAdmin)retu
 },true);
 document.addEventListener("change",e=>{const t=e.target;if(!S.isAdmin||!t.dataset||!t.dataset.so)return;soSave({[t.dataset.so]:t.checked}).then(ok=>ok&&toast("Saved"))});
 
+/* ===== Phone app layout: bottom tab bar + menu sheet (phones only; desktop untouched) ===== */
+const MI={
+  home:'<path d="M4 11.5 12 5l8 6.5V20a1 1 0 0 1-1 1h-4.5v-6h-5v6H5a1 1 0 0 1-1-1z"/>',
+  vine:'<circle cx="7" cy="7" r="2.6"/><circle cx="17" cy="7" r="2.6"/><circle cx="12" cy="16.5" r="2.6"/><path d="M8.8 9 11 14M15.2 9 13 14"/>',
+  live:'<rect x="3" y="6" width="13" height="12" rx="2.5"/><path d="m16 10.5 5-3v9l-5-3"/>',
+  music:'<path d="M9 18V6l11-2v12"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="17.5" cy="16" r="2.5"/>',
+  menu:'<rect x="4" y="4" width="6.5" height="6.5" rx="1.6"/><rect x="13.5" y="4" width="6.5" height="6.5" rx="1.6"/><rect x="4" y="13.5" width="6.5" height="6.5" rx="1.6"/><rect x="13.5" y="13.5" width="6.5" height="6.5" rx="1.6"/>',
+  tv:'<rect x="3" y="5" width="18" height="12" rx="2"/><path d="M8 21h8M12 17v4"/>',
+  radio:'<circle cx="12" cy="12" r="2"/><path d="M7.8 7.8a6 6 0 0 0 0 8.4M16.2 7.8a6 6 0 0 1 0 8.4M5 5a10 10 0 0 0 0 14M19 5a10 10 0 0 1 0 14"/>',
+  cal:'<rect x="3.5" y="5" width="17" height="15.5" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4"/>',
+  collab:'<path d="M8 12.5 11 15.5a1.6 1.6 0 0 0 2.3 0l5.2-5.2a2 2 0 0 0 0-2.8L16.6 5.6a2 2 0 0 0-2.8 0L12 7.4"/><path d="M16 11.5 13 8.5a1.6 1.6 0 0 0-2.3 0L5.5 13.7a2 2 0 0 0 0 2.8l1.9 1.9a2 2 0 0 0 2.8 0L12 16.6"/>',
+  story:'<path d="M5 4.5h10.5a3 3 0 0 1 3 3V20H8a3 3 0 0 1-3-3z"/><path d="M5 17a3 3 0 0 1 3-3h10.5M9 8.5h6"/>',
+  team:'<circle cx="9" cy="8.5" r="3"/><path d="M3.5 19.5a5.5 5.5 0 0 1 11 0"/><circle cx="17" cy="9.5" r="2.4"/><path d="M15.5 14.4a4.5 4.5 0 0 1 5.5 4.6"/>',
+  crown:'<path d="M4 18h16l1-10-5 4-4-6-4 6-5-4z"/><path d="M4 21h16"/>',
+  brands:'<rect x="3.5" y="6" width="17" height="13" rx="2.5"/><path d="M8.5 6V4.5h7V6"/>',
+  aelio:'<path d="M12 3.5 14.2 9.8 20.5 12l-6.3 2.2L12 20.5l-2.2-6.3L3.5 12l6.3-2.2z"/>',
+  studio:'<circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="3"/><path d="M12 3.5v5.5"/>',
+  office:'<rect x="3.5" y="7" width="17" height="12.5" rx="2.5"/><path d="M9 7V5h6v2M3.5 12.5h17"/>',
+  sound:'<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/><path d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11"/>'
+};
+const mIco=k=>'<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+(MI[k]||"")+'</svg>';
+function mTabOn(k){
+  const r=S.route;
+  if(k==="home")return r==="home"||r==="";
+  if(k==="vine")return r==="vine"||r==="brands"||r.startsWith("b-")&&!r.startsWith("b-ent");
+  if(k==="live")return r==="live";
+  if(k==="music")return /^(music|artist|album|playlist|tv|charts|songrate)/.test(r)||r.startsWith("b-ent");
+  return false;
+}
+function mTiles(){
+  const T=[["#home","home","Home"],["#vine","vine","Companies"],["#brands","brands","Brands"],["#live","live","Watch Live"],["#music","music","Music"],["#tv","tv","Grooveville TV"],["#b-ent/radio","radio","Radio"],["#calendar","cal","Calendar"],["#collab","collab","Collaborate"],["#story","story","Our Story"],["#b-aelio","aelio","AELIO"],["#shadowcrown","crown","Shadow Crown"],["#groove","team","Groove Team"]];
+  if(!S.isAdmin&&SR().checked&&studioAccess())T.push(["#studio","studio","Studio"]);
+  if(S.isAdmin)T.push(["#team","office","Back Office"],["#studio","studio","Ent. Studio"]);
+  return T;
+}
+function mTile(t){return '<a class="mtile" href="'+t[0]+'" data-act="m-close">'+'<span class="mi">'+mIco(t[1])+'</span><span>'+t[2]+'</span></a>'}
+function mobileNav(){
+  let bar=$("#tabbar");
+  if(!bar){
+    bar=document.createElement("nav");bar.id="tabbar";bar.setAttribute("aria-label","App navigation");document.body.appendChild(bar);
+    const sh=document.createElement("div");sh.id="appmenu";sh.setAttribute("role","dialog");sh.setAttribute("aria-modal","true");sh.setAttribute("aria-label","Menu");sh.hidden=true;document.body.appendChild(sh);
+  }
+  const live=typeof LV!=="undefined"&&LV.live&&LV.live.live;
+  const tab=(h,k,l)=>'<a href="'+h+'"'+(mTabOn(k)?' class="on" aria-current="page"':'')+'>'+mIco(k)+(k==="live"&&live?'<i class="ldot" aria-hidden="true"></i>':'')+'<span>'+l+'</span></a>';
+  bar.innerHTML=tab("#home","home","Home")+tab("#vine","vine","Companies")+tab("#live","live","Live")+tab("#music","music","Music")+
+    '<button data-act="m-menu" aria-expanded="'+(!$("#appmenu").hidden)+'" aria-controls="appmenu">'+mIco("menu")+'<span>Menu</span></button>';
+  if(!$("#appmenu").hidden)mMenuFill();
+}
+function mMenuFill(){
+  $("#appmenu").innerHTML='<div class="msheet"><div class="mgrab" aria-hidden="true"></div><div class="mhead"><b>Grooveville</b><button class="mx" data-act="m-close" aria-label="Close menu">✕</button></div>'+
+    '<div class="mgrid">'+mTiles().map(mTile).join("")+'</div>'+
+    '<button class="mtile wide" data-act="sound">'+'<span class="mi">'+mIco("sound")+'</span><span>'+(S.sound?"Sound on · tap to mute":"Turn sound on")+'</span></button></div>';
+}
+function mMenu(open){
+  const m=$("#appmenu");if(!m)return;
+  if(open){mMenuFill();m.hidden=false;document.body.classList.add("m-menu");requestAnimationFrame(()=>m.classList.add("open"));const x=m.querySelector(".mx");if(x)x.focus()}
+  else{m.classList.remove("open");document.body.classList.remove("m-menu");setTimeout(()=>{m.hidden=true},200)}
+  const b=$('#tabbar [data-act="m-menu"]');if(b)b.setAttribute("aria-expanded",open?"true":"false");
+}
+function mobileAct(a,t){
+  if(a==="m-menu"){mMenu($("#appmenu").hidden);return true}
+  if(a==="m-close"){mMenu(false);return true}   // the link still navigates
+  if(a==="sound"&&t.closest("#appmenu"))setTimeout(mMenuFill,0);
+  return false;
+}
+document.addEventListener("click",e=>{const m=$("#appmenu");if(m&&!m.hidden&&e.target===m)mMenu(false)});
+document.addEventListener("keydown",e=>{if(e.key==="Escape"){const m=$("#appmenu");if(m&&!m.hidden)mMenu(false)}});
+window.addEventListener("hashchange",()=>{const m=$("#appmenu");if(m&&!m.hidden)mMenu(false)});
+function mLaunch(){
+  const T=[["#live","live","Watch Live"],["#music","music","Music"],["#vine","vine","Companies"],["#calendar","cal","Events"],["#collab","collab","Collaborate"],["#groove","team","Groove Team"]];
+  return '<nav class="mlaunch" aria-label="Quick links">'+T.map(mTile).join("")+'</nav>';
+}
+
 /* ---------- modals ---------- */
 const brandOpts=(sel,only)=>BRANDS.filter(b=>!only||only.includes(b.id)).map(b=>'<option value="'+b.id+'"'+(b.id===sel?" selected":"")+'>'+esc(brandInfo(b.id).name)+'</option>').join("");
 const delBtn=has=>has?'<button type="button" class="btn danger left" data-act="del-arm">Delete</button>':'';
@@ -3398,6 +3530,7 @@ document.addEventListener("click",async e=>{
   const t=e.target.closest("[data-act]");if(!t)return;
   const a=t.dataset.act, id=t.dataset.id;
   if(a==="scrim"){if(e.target===t)closeModal();return}
+  if(mobileAct(a,t))return;
   if(webAct(a,t))return;
   if(studioAct(a,t))return;
   if(mpAct(a,t))return;
