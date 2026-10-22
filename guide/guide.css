@@ -226,14 +226,14 @@ a{color:inherit}
   .laysw{display:none}
   .tripcard{left:10px;right:10px;top:10px;width:auto;padding:14px}
   .dash.navving .tripcard{display:none}
-  .mtools{top:auto;bottom:calc(var(--sheet,96px) + 14px);right:10px}
-  .mzoom{display:none}.mcomp{top:auto;right:10px;bottom:calc(var(--sheet,96px) + 72px)}
-  .modesw{top:auto;bottom:calc(var(--sheet,96px) + 72px);left:10px;transform:none}
+  .mtools{top:auto;bottom:calc(var(--bot,96px) + 12px);right:10px;flex-direction:column;gap:8px}
+  .mzoom{display:none}.mcomp{top:auto;right:10px;bottom:calc(var(--bot,96px) + 176px)}
+  .modesw{top:auto;bottom:calc(var(--bot,96px) + 12px);left:10px;transform:none}
   .dash.hasroute .modesw{display:none}
   .nextturn{left:10px;right:10px;top:10px;bottom:auto;min-width:0;padding:12px 14px}
   .nextturn b{font-size:26px}
   .dash:not(.navving) .nextturn{display:none}
-  .mrecenter{bottom:calc(var(--sheet,96px) + 14px)}
+  .mrecenter{bottom:calc(var(--bot,96px) + 12px)}
   .drivecol{position:absolute;left:10px;right:10px;top:96px;height:min(56%,430px);z-index:7;transform:translateY(-12px);opacity:0;pointer-events:none;transition:opacity .25s,transform .25s}
   .dash.drive-open .drivecol{opacity:1;pointer-events:auto;transform:none}
   .dash.lay-map .drivecol{opacity:0}
@@ -293,3 +293,39 @@ a{color:inherit}
 .linkb{color:var(--acc);font-weight:600;font-size:13.5px;text-decoration:underline}
 .gsignin{display:flex;align-items:center;gap:14px;padding:14px 16px;margin:-8px 0 18px}.gsignin>.ic{color:var(--acc)}.gsignin span{flex:1}.gsignin b{display:block}.gsignin small{color:var(--muted);font-size:13px}
 @media (max-width:760px){.gav.gin span{display:none}.gav.gin{padding:0;width:40px;justify-content:center}}
+
+/* ---------- v9: map-first phone layout ---------- */
+.vtog{font:800 14px/1 var(--fd);letter-spacing:.02em;color:var(--muted)}
+.vtog.on{background:var(--acc);color:var(--acc-ink);border-color:transparent}
+.tcdet,.tbend,.mspd{display:none}
+@media (max-width:760px){
+  .rb{width:44px;height:44px}
+  .gg:not(.v3d) .mcomp{display:none}
+  /* route picked: drop the quick-place chips and tagline */
+  .gg.rt .gchips,.gg.rt .gbrand small{display:none}
+  .gg.rt .ghd{padding-bottom:6px}
+  /* route card becomes a compact bottom sheet */
+  .gg.rt:not(.nv) .tripcard:not(.hero){top:auto;bottom:calc(8px + env(safe-area-inset-bottom));left:8px;right:8px;padding:12px 14px;border-radius:20px}
+  .gg.rt .tct b:first-child{display:none}
+  .gg.rt .tct .to{font-size:17px}
+  .gg.rt .tct small{font-size:13px;margin-top:2px}
+  .gg.rt .alts{margin-top:10px}.gg.rt .alts button{padding:6px 10px;min-width:88px}
+  .gg.rt .tcb{margin-top:10px;flex-wrap:nowrap}.gg.rt .tcb .gbtn:first-child{flex:1}
+  .gg.rt .tcdet{display:inline-flex}
+  .gg.rt:not(.nv) .dash:not(.sheet-open) .tbar{display:none}
+  /* navigating: full-screen map, turn banner on top, slim trip bar below */
+  .gg.nv .ghd,.gg.nv .gtabs{display:none}
+  .gg.nv .nextturn{top:calc(8px + env(safe-area-inset-top));left:8px;right:8px;padding:10px 12px;gap:12px}
+  .gg.nv .nextturn b{font-size:24px}.gg.nv .nextturn .nti svg{width:38px;height:38px}
+  .gg.nv .tbar{padding-bottom:env(safe-area-inset-bottom)}
+  .gg.nv .dash:not(.sheet-open) .tbi.eta,.gg.nv .dash:not(.sheet-open) .tbtools,.gg.nv .dash:not(.sheet-open) .tbi.wx,.gg.nv .dash:not(.sheet-open) .tbi.dtz{display:none}
+  .gg.nv .tbend{display:inline-flex;align-self:center;margin:0 12px 10px auto;height:40px}
+  .gg.nv .mspd:not([hidden]){display:flex;flex-direction:column;align-items:center;justify-content:center;position:absolute;left:10px;bottom:calc(var(--bot,96px) + 12px);z-index:6;width:64px;height:64px;border-radius:50%}
+  .mspd b{font:700 22px/1 var(--fd)}.mspd small{font-size:10.5px;color:var(--muted)}
+  /* driving view: only the drawn road, under the turn banner, no repeated text */
+  .gg.nv .drivecol{top:calc(100px + env(safe-area-inset-top));height:min(38%,300px)}
+  .gg.nv .dhead{display:none}
+  .drivecol .dfoot,.gg.nv .dspd{display:none}
+  .dnote{top:auto;bottom:6px}
+}
+@media (max-width:760px){.tbi>div{min-width:0;max-width:100%}.tbi span{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}}

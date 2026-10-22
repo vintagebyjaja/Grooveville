@@ -151,7 +151,7 @@ function closeModal(){$("#gmodal").innerHTML=""}
 function route(){
   G.page=pageFromPath();
   $$("[data-go]").forEach(a=>{const on=a.dataset.go===G.page||(a.dataset.go==="navigate"&&G.page==="");a.classList.toggle("on",on);if(on)a.setAttribute("aria-current","page");else a.removeAttribute("aria-current")});
-  const dashPage=G.page===""||G.page==="navigate";
+  const dashPage=G.page===""||G.page==="navigate";paintRoot();
   $("#dash").hidden=!dashPage;$("#gpage").hidden=dashPage;
   document.title=(G.page?{navigate:"Navigate",explore:"Explore",immersive:"Immersive",trips:"Trips",saved:"Saved",settings:"Settings"}[G.page]+" · ":"")+"Groove Guide";
   if(dashPage){if(!$("#gmap"))dashShell();MAP.ensure();paintAll();if(G.page==="navigate"&&!G.route)setTimeout(()=>{const q=$("#gq");if(q&&innerWidth>760)q.focus()},50)}
@@ -229,6 +229,7 @@ const MAP={map:null,failed:"",loading:false,lines:[],marks:[],veh:null,dest:null
   create(c,z){const el=$("#gmap");if(!el)return;const dark=THEME.cur==="dark",M=MAP.libs.maps;
     const o={center:c||G.pos||CFG.defaultCenter,zoom:z||(G.pos?15.5:13),mapId:dark?CFG.mapIdDark:CFG.mapIdLight,disableDefaultUI:true,gestureHandling:"greedy",clickableIcons:false,tilt:MAP.view==="aerial"?62:0,heading:0,isFractionalZoomEnabled:true,keyboardShortcuts:true};
     if(google.maps.ColorScheme)o.colorScheme=dark?google.maps.ColorScheme.DARK:google.maps.ColorScheme.LIGHT;
+    if(google.maps.RenderingType)o.renderingType=google.maps.RenderingType.VECTOR;
     MAP.map=new M.Map(el,o);if(!MAPERR.code){MAP.failed="";paintMapFallback()}else{MAP.failed=MAPERR.code;paintMapFallback()}
     MAP.map.addListener("dragstart",()=>{if(G.nav){MAP.follow=false;paintRecenter()}});
     MAP.map.addListener("heading_changed",()=>MAP.rotateVeh());
@@ -254,10 +255,19 @@ const MAP={map:null,failed:"",loading:false,lines:[],marks:[],veh:null,dest:null
     if(!MAP.veh||MAP.veh._v!==MAP.view+D.vehicle.color+D.vehicle.type){if(MAP.veh)MAP.veh.map=null;MAP.veh=new MAP.libs.marker.AdvancedMarkerElement({map:MAP.map,position:p,content:MAP.vehEl(),zIndex:20,title:D.vehicle.nick||"You"});MAP.veh._v=MAP.view+D.vehicle.color+D.vehicle.type}
     else MAP.veh.position=p;MAP.rotateVeh()},
   rotateVeh(){if(!MAP.veh||!MAP.map)return;const h=(curHeading()||0)-(MAP.map.getHeading()||0);const s=MAP.veh.content.querySelector("svg");if(s)s.style.transform="rotate("+h+"deg)"},
-  setView(v){MAP.view=v;D.settings.view=v;save();if(MAP.map){MAP.map.moveCamera({tilt:v==="aerial"?62:0,heading:v==="aerial"&&G.nav?curHeading()||0:0});MAP.vehicle()}paintMapTools()},
+  setView(v){if(v==="toggle")v=MAP.view==="aerial"?"flat":"aerial";MAP.view=v;D.settings.view=v;save();
+    if(MAP.map){if(G.nav){MAP.follow=true;paintRecenter();MAP.recenter()}
+      else if(v==="aerial"){const r=G.route,p=r&&r.path&&r.path.length?r.path[0]:(G.pos||MAP.map.getCenter()),hd=r&&r.path&&r.path.length>1?bearing(r.path[0],r.path[Math.min(6,r.path.length-1)]):(MAP.map.getHeading()||0);
+        MAP.map.moveCamera({center:p,zoom:Math.max(17,MAP.map.getZoom()||0),tilt:67,heading:hd})}
+      else{MAP.map.moveCamera({tilt:0,heading:0});if(G.route)MAP.fit()}
+      MAP.vehicle();if(v==="aerial")MAP.check3d()}
+    paintMapTools()},
+  check3d(){try{const rt=MAP.map.getRenderingType&&MAP.map.getRenderingType();if(rt&&String(rt).toUpperCase()==="RASTER")toast("This device is showing the flat map, so 3D tilt isn’t available here.",5000)}catch(e){}},
   zoom(d){if(MAP.map)MAP.map.moveCamera({zoom:(MAP.map.getZoom()||14)+d})},
   north(){if(MAP.map)MAP.map.moveCamera({heading:0})},
-  fit(){if(!MAP.map||!G.route||!G.route.path)return;const b=new google.maps.LatLngBounds();G.route.path.forEach(p=>b.extend(p));MAP.map.moveCamera({tilt:MAP.view==="aerial"?45:0,heading:0});MAP.map.fitBounds(b,{top:120,bottom:90,left:60,right:60})},
+  fit(){if(!MAP.map||!G.route||!G.route.path)return;const b=new google.maps.LatLngBounds();G.route.path.forEach(p=>b.extend(p));MAP.map.moveCamera({tilt:0,heading:0});
+    let pad={top:120,bottom:90,left:60,right:60};if(innerWidth<=760){const tc=$("#tripcard"),tb=$("#tbar");const bot=G.nav?(tb?tb.offsetHeight:100):(tc&&tc.offsetParent?tc.offsetHeight:220);pad={top:G.nav?130:40,bottom:bot+30,left:36,right:70}}
+    MAP.map.fitBounds(b,pad);if(MAP.view==="aerial"){const t=()=>MAP.map&&MAP.map.moveCamera({tilt:45});if(google.maps.event&&google.maps.event.addListenerOnce)google.maps.event.addListenerOnce(MAP.map,"idle",t);else setTimeout(t,400)}},
   recenter(){MAP.follow=true;paintRecenter();const p=(G.nav&&G.nav.snapPos)||G.pos;if(MAP.map&&p)MAP.map.moveCamera({center:p,zoom:G.nav?17.5:15.5,tilt:MAP.view==="aerial"?(G.nav?65:55):0,heading:G.nav&&MAP.view==="aerial"?curHeading()||0:0})},
   followTick(){if(!MAP.map||!G.nav||!MAP.follow)return;const p=G.nav.snapPos||G.pos;if(p)MAP.map.moveCamera({center:p,zoom:G.mode==="WALK"?18:17.5,tilt:MAP.view==="aerial"?65:0,heading:MAP.view==="aerial"?curHeading()||0:0})}
 };
@@ -270,11 +280,11 @@ function curHeading(){if(G.nav&&G.nav.heading!=null)return G.nav.heading;return 
 function dashShell(){
   $("#dash").innerHTML='<div class="mapcol"><div class="mapbox"><div id="gmap" role="application" aria-label="Map"></div><div class="mapfb" id="mapfb" hidden></div>'+
     '<div class="tripcard gl" id="tripcard"></div>'+
-    '<div class="mtools"><div class="seg" id="vseg" role="group" aria-label="Map view"><button data-a="view" data-v="aerial">3D</button><button data-a="view" data-v="flat">2D</button></div><button class="rb" data-a="fit" aria-label="Show the whole route" title="Whole route">'+ico("layers",20)+'</button><button class="rb dvbtn" data-a="drivetoggle" aria-label="Driving view" title="Driving view">'+ico("car",20)+'</button></div>'+
+    '<div class="mtools"><button class="rb vtog" id="vtog" data-a="view" data-v="toggle">3D</button><button class="rb" data-a="fit" aria-label="Show the whole route" title="Whole route">'+ico("layers",20)+'</button><button class="rb dvbtn" data-a="drivetoggle" aria-label="Driving view" title="Driving view">'+ico("car",20)+'</button></div>'+
     '<div class="mzoom gl"><button data-a="zoom" data-d="1" aria-label="Zoom in">'+ico("plus",20)+'</button><button data-a="zoom" data-d="-1" aria-label="Zoom out">'+ico("minus",20)+'</button></div>'+
     '<button class="mcomp gl" data-a="north" aria-label="Face north">'+'<svg viewBox="0 0 24 24" width="22" height="22"><path d="M12 3 16.5 19 12 15.5 7.5 19z" fill="currentColor"/></svg></button>'+
     '<button class="mrecenter" data-a="recenter" id="mrec" hidden>'+ico("locate",18)+' Re-center</button>'+
-    '<div class="nextturn gl" id="nextturn" hidden></div>'+
+    '<div class="nextturn gl" id="nextturn" hidden></div><div class="mspd gl" id="mspd" hidden></div>'+
     '<div class="laysw gl" role="group" aria-label="Screen layout"><button data-a="layout" data-v="70">70/30</button><button data-a="layout" data-v="80">80/20</button><button data-a="layout" data-v="map">Map</button></div>'+
     '<div class="modesw gl" role="group" aria-label="Travel mode"><button data-a="mode" data-v="DRIVE">'+ico("car",18)+'<span>Drive</span></button><button data-a="mode" data-v="WALK">'+ico("walk",18)+'<span>Walk</span></button></div>'+
     '</div></div>'+
@@ -286,9 +296,14 @@ function setLayout(v,quiet){G.layout=v;const d=$("#dash");if(d){d.classList.remo
 function paintMapFallback(){const f=$("#mapfb");if(!f)return;
   if(!MAP.failed){f.hidden=true;return}f.hidden=false;const d=diagText(MAP.failed);
   f.innerHTML='<div><span class="fbk">'+ico("info",20)+'</span><b>'+esc(d[0])+'</b><p>'+d[1]+'</p>'+(d[2]?'<p class="fbfix">'+d[2]+'</p>':'')+'<div class="fbb"><button class="gbtn" data-a="retry-map">Try again</button></div><small>Error code: '+esc(MAP.failed)+'</small></div>'}
-function paintMapTools(){$$("#vseg button").forEach(b=>b.classList.toggle("on",b.dataset.v===MAP.view));$$(".modesw button").forEach(b=>b.classList.toggle("on",b.dataset.v===G.mode))}
+function paintMapTools(){const vt=$("#vtog"),a3=MAP.view==="aerial";if(vt){vt.textContent=a3?"3D":"2D";vt.classList.toggle("on",a3);vt.setAttribute("aria-label",a3?"3D view on. Switch to flat 2D map":"Flat 2D map. Switch to 3D view");vt.title=a3?"Switch to 2D":"Switch to 3D"}const gg=$("#gg");if(gg)gg.classList.toggle("v3d",a3);$$(".modesw button").forEach(b=>b.classList.toggle("on",b.dataset.v===G.mode))}
 function paintRecenter(){const b=$("#mrec");if(b)b.hidden=!(G.nav&&!MAP.follow)}
-function paintAll(){const d=$("#dash");if(d){d.classList.toggle("navving",!!G.nav);d.classList.toggle("hasroute",!!G.route)}paintTrip();paintNext();paintDrive();paintTbar();paintMapTools();paintRecenter();paintChips()}
+function paintAll(){const d=$("#dash");if(d){d.classList.toggle("navving",!!G.nav);d.classList.toggle("hasroute",!!G.route);if(G.nav)d.classList.remove("sheet-open")}paintRoot();paintTrip();paintNext();paintDrive();paintTbar();paintMapTools();paintRecenter();paintChips();requestAnimationFrame(sizeBottom)}
+/* phone: hide the header chips while a route is up, and the whole header + tab bar while navigating, so the map has room */
+function paintRoot(){const gg=$("#gg");if(!gg)return;const dp=G.page===""||G.page==="navigate";gg.classList.toggle("rt",dp&&!!G.dest);gg.classList.toggle("nv",dp&&!!G.nav)}
+function sizeBottom(){const d=$("#dash");if(!d)return;const gg=$("#gg"),tc=$("#tripcard"),tb=$("#tbar");let h=96;
+  if(innerWidth<=760){if(gg&&gg.classList.contains("rt")&&!G.nav&&tc&&tc.offsetParent)h=tc.offsetHeight+10;else if(tb&&tb.offsetParent)h=Math.min(tb.offsetHeight,160)}
+  d.style.setProperty("--bot",h+"px")}
 function paintChips(){$$(".gchip").forEach(b=>{const k=b.dataset.k;if(k==="home"||k==="work"||k==="school"){const s=savedOf(k);b.classList.toggle("set",!!s);b.title=s?s.name+" · "+(s.addr||""):"Set your "+k}})}
 function originLabel(){return G.pos?(G.posSrc==="map"?"Map center":"Your location"):"Location off"}
 function paintTrip(){const c=$("#tripcard");if(!c)return;const r=G.route;
@@ -297,9 +312,9 @@ function paintTrip(){const c=$("#tripcard");if(!c)return;const r=G.route;
     '<div class="gfeat"><button data-a="focus-search">'+ico("navigate",22)+'<b>Real-time navigation</b><small>Smarter routes. Less stress.</small></button><button data-a="feat-weather">'+ico("cloud",22)+'<b>Weather &amp; time</b><small>Know what to expect.</small></button><a href="'+href("settings")+'" data-go="settings">'+ico("car",22)+'<b>Personalized drive</b><small>Your vehicle. Your style.</small></a><a href="'+href("explore")+'" data-go="explore">'+ico("pin",22)+'<b>Discover more</b><small>Great places. Your next move.</small></a></div>'+
     '<div class="gstat">'+ico("locate",16)+'<span>'+(G.geoErr?esc(G.geoErr):G.pos?"Starting from your location":"Allow location to start from where you are")+'</span>'+(!G.pos?'<button class="gbtn sm" data-a="locate">Use my location</button>':'')+'</div></div>';return}
   c.innerHTML='<div class="tc">'+ico("pin",22)+'<div class="tct"><b>'+esc(originLabel())+'</b><b class="to">→ '+esc(G.dest.name)+'</b>'+(G.stops.length?'<small>'+G.stops.length+' stop'+(G.stops.length>1?'s':'')+' added</small>':'')+
-    (G.busy?'<small>Finding the best route…</small>':G.err?'<small class="warn">'+esc(G.err)+'</small>':r?'<small>'+fmtDur(r.durationSec)+' · '+fmtDist(r.distanceM)+(r.trafficLevel?' · '+r.trafficLevel:'')+'</small>':'')+'</div><button class="tcx" data-a="clear" aria-label="Clear destination">'+ico("x",18)+'</button></div>'+
+    (G.busy?'<small>Finding the best route…</small>':G.err?'<small class="warn">'+esc(G.err)+'</small>':r?'<small>'+fmtDur(r.durationSec)+' · '+fmtDist(r.distanceM)+' · arrive '+fmtTime(arrival())+(r.trafficLevel?' · '+r.trafficLevel:'')+'</small>':'')+'</div><button class="tcx" data-a="clear" aria-label="Clear destination">'+ico("x",18)+'</button></div>'+
     (G.routes.length>1&&!G.nav?'<div class="alts">'+G.routes.map((x,i)=>'<button class="'+(i===G.sel?"on":"")+'" data-a="alt" data-i="'+i+'"><b>'+fmtDur(x.durationSec)+'</b><small>'+(i===0?"Best":x.description?"via "+esc(x.description):"Option "+(i+1))+(x.toll?" · tolls":"")+'</small></button>').join("")+'</div>':'')+
-    (r&&!G.busy?'<div class="tcb">'+(G.nav?'<button class="gbtn ghost" data-a="end">'+ico("stop",16)+' End</button>':'<button class="gbtn" data-a="start">'+ico("navigate",16)+' Start</button><button class="gbtn ghost" data-a="sim" title="Watch the trip play out (simulation, no GPS)">'+ico("play",16)+' Preview drive</button>')+'<button class="gbtn ghost icon" data-a="savedest" aria-label="Save this place">'+ico("star",16)+'</button></div>':'')+
+    (r&&!G.busy?'<div class="tcb">'+(G.nav?'<button class="gbtn ghost" data-a="end">'+ico("stop",16)+' End</button>':'<button class="gbtn" data-a="start">'+ico("navigate",16)+' Start</button>')+'<button class="gbtn ghost icon" data-a="savedest" aria-label="Save this place">'+ico("star",16)+'</button><button class="gbtn ghost icon tcdet" data-a="sheet" aria-label="Trip details: weather, time, stops">'+ico("info",16)+'</button></div>':'')+
     (G.sim?'<div class="simtag">Simulation · not your real position</div>':'');
 }
 function nextInfo(){const n=G.nav;if(!n||!G.route)return null;const st=G.route.steps;const k=n.step;const nx=st[k+1];
@@ -315,6 +330,7 @@ function paintDrive(){const h=$("#dhead"),f=$("#dfoot"),n=$("#dnote");if(!h)retu
   else if(G.route){h.innerHTML=manIco("STRAIGHT",44)+'<div><b>Ready when you are</b><small>'+esc(fmtDur(G.route.durationSec))+' to '+esc(G.dest?G.dest.name:"destination")+'</small></div>'}
   else h.innerHTML=manIco("STRAIGHT",44)+'<div><b>No active route</b><small>Pick a destination to see the road ahead</small></div>';
   const sp=speedFmt(G.speed);
+  const ms=$("#mspd");if(ms){ms.hidden=!G.nav||G.mode==="WALK";ms.innerHTML='<b>'+(sp==null?"—":sp)+'</b><small>'+speedUnit()+'</small>'}
   const ds=$("#dspd");if(ds)ds.innerHTML='<span class="whl">'+'<svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="2.2"/><path d="M3.5 10.5h6.3M14.2 10.5h6.3M12 14.2V21"/></svg></span><div class="spd"><b>'+(sp==null?"—":sp)+'</b><small>'+speedUnit()+'</small></div><div class="lim" title="Speed limit data isn’t available from the route service yet"><small>SPEED<br>LIMIT</small><b>—</b></div>';
   f.innerHTML='<div class="lanes">'+laneHtml(ni)+'</div>';
   n.textContent=G.route?(G.sim?"Simulated drive along your real route":"Route ahead, drawn from your real route. Not a camera view."):"";
@@ -332,9 +348,9 @@ function paintTbar(){const t=$("#tbin");if(!t)return;const r=G.route,di=G.intel.
   const diff=tz&&oi&&oi.tz&&!oi.tz.error?Math.round((di.tz.offsetSec-oi.tz.offsetSec)/3600):null;
   t.innerHTML='<div class="tbi">'+ico("flag",26)+'<div><small>Arrival</small><b>'+fmtTime(arr,tz||undefined)+'</b><span>'+(tz?esc(tzAbbr(arr,tz))+' · ':'')+esc(G.dest.city||G.dest.name)+'</span></div></div>'+
     '<div class="tbi">'+ico("clock",26)+'<div><small>Remaining</small><b>'+fmtDur(left)+'</b><span>'+fmtDist(leftM)+'</span></div></div>'+
-    '<div class="tbi">'+ico(G.mode==="WALK"?"walk":"car",26)+'<div><small>'+(G.mode==="WALK"?"Walking":"ETA details")+'</small><b>'+(G.mode==="WALK"?(G.walkStats||"On foot"):r.delaySec>120?"+"+fmtDur(r.delaySec)+" delay":"On time")+'</b><span>'+(G.mode==="WALK"?"Pace shown while you walk":r.trafficLevel||"Live traffic")+'</span></div></div>'+
+    (G.nav?'<button class="gbtn tbend" data-a="end">'+ico("stop",16)+' End</button>':'')+'<div class="tbi eta">'+ico(G.mode==="WALK"?"walk":"car",26)+'<div><small>'+(G.mode==="WALK"?"Walking":"ETA details")+'</small><b>'+(G.mode==="WALK"?(G.walkStats||"On foot"):r.delaySec>120?"+"+fmtDur(r.delaySec)+" delay":"On time")+'</b><span>'+(G.mode==="WALK"?"Pace shown while you walk":r.trafficLevel||"Live traffic")+'</span></div></div>'+
     '<button class="tbi wx" data-a="weather">'+(wAt&&wAt.icon?'<img src="'+esc(wAt.icon+(THEME.cur==="dark"?"_dark":"")+".svg")+'" alt="" width="34" height="34">':ico("cloud",26))+'<div><small>Weather at destination</small><b>'+(wAt&&wAt.temp!=null?wAt.temp+"°":"—")+'</b><span>'+(wAt?esc(wAt.text||""):di&&di.weather&&di.weather.error?"Unavailable":di?"…":"Loading…")+'</span></div>'+ico("back",16).replace('class="ic"','class="ic chev"')+'</button>'+
-    '<div class="tbi">'+ico("clock",26)+'<div><small>Destination time</small><b>'+(tz?fmtTime(Date.now(),tz):"—")+'</b><span>'+(tz?esc(tzAbbr(Date.now(),tz))+(diff?" ("+(diff>0?"+":"")+diff+" hr)":diff===0?" · same time":""):di&&di.tz&&di.tz.error?"Unavailable":"…")+'</span></div></div>'+tools(true);
+    '<div class="tbi dtz">'+ico("clock",26)+'<div><small>Destination time</small><b>'+(tz?fmtTime(Date.now(),tz):"—")+'</b><span>'+(tz?esc(tzAbbr(Date.now(),tz))+(diff?" ("+(diff>0?"+":"")+diff+" hr)":diff===0?" · same time":""):di&&di.tz&&di.tz.error?"Unavailable":"…")+'</span></div></div>'+tools(true);
 }
 function tools(on){return '<div class="tbtools"><small>Trip tools</small><div><button class="gbtn ghost sm" data-a="addstop"'+(on?'':' disabled')+'>'+ico("pin",16)+' Add Stop</button><button class="gbtn ghost sm" data-a="share"'+(on?'':' disabled')+'>'+ico("share",16)+' Share ETA</button><button class="gbtn ghost sm" data-a="options">'+ico("sliders",16)+' Route Options</button></div></div>'}
 function weatherAt(w,t){if(!w)return null;if(!t||t-Date.now()<45*60000||!w.hours||!w.hours.length)return w.now;let b=null,bd=1e15;w.hours.forEach(h=>{const d=Math.abs(Date.parse(h.t)-t);if(d<bd){bd=d;b=h}});return bd<3*3600000?b:w.now}
@@ -409,7 +425,7 @@ async function planRoute(keep){if(!G.dest)return;
     avoid:{tolls:D.settings.avoidTolls,highways:D.settings.avoidHighways,ferries:D.settings.avoidFerries},alternatives:!keep};
   try{const j=await api("/route",{method:"POST",body});G.routes=j.routes.map(prepRoute);G.sel=0;G.route=G.routes[0];G.routeAt=Date.now();if(G.nav){G.nav.i=0;G.nav.s=0;G.nav.step=0;G.nav.off=0}}
   catch(e){G.err=e.message;if(!keep){G.routes=[];G.route=null}}
-  G.busy=false;MAP.draw();if(!keep)MAP.fit();paintAll();if(G.route)loadIntel();
+  G.busy=false;MAP.draw();paintAll();if(!keep)requestAnimationFrame(()=>MAP.fit());if(G.route)loadIntel();
 }
 function pickRoute(i){if(G.nav||!G.routes[i])return;G.sel=i;G.route=G.routes[i];MAP.draw();paintAll();loadIntel()}
 async function loadIntel(){const r=G.route;if(!r)return;const end=(r.legs[r.legs.length-1]||{}).end||G.dest;const arr=arrival();
@@ -433,7 +449,7 @@ function beginNav(sim){G.nav={s:0,i:0,step:0,off:0,leftSec:G.route.durationSec,h
   if(!sim)try{navigator.wakeLock&&navigator.wakeLock.request("screen").then(w=>WAKE=w).catch(()=>{})}catch(e){}
   speak((G.mode==="WALK"?"Starting walk to ":"Starting route to ")+(G.dest?G.dest.name:"your destination")+". "+fmtDur(G.route.durationSec).replace("hr","hour").replace("min","minutes")+".");
   paintAll()}
-function endNav(quiet){stopSim();G.nav=null;G.walkStats="";if(WAKE){try{WAKE.release()}catch(e){}WAKE=null}MAP.follow=true;if(MAP.map&&!quiet)MAP.fit();if(!quiet)paintAll()}
+function endNav(quiet){stopSim();G.nav=null;G.walkStats="";if(WAKE){try{WAKE.release()}catch(e){}WAKE=null}MAP.follow=true;if(!quiet)paintAll();if(MAP.map&&!quiet)requestAnimationFrame(()=>MAP.fit())}
 function navUpdate(p){const n=G.nav,r=G.route;if(!n||!r)return;
   const sn=snap(r.path,r.cum,p,n.i);n.i=sn.i;n.s=sn.s;
   const a=r.path[sn.i],b=r.path[Math.min(sn.i+1,r.path.length-1)];n.snapPos=sn.d<40?{lat:a.lat+(b.lat-a.lat)*sn.t,lng:a.lng+(b.lng-a.lng)*sn.t}:p;
@@ -734,7 +750,7 @@ document.addEventListener("click",e=>{
   if(a==="rmstop"){G.stops.splice(i,1);optionsModal();return}
   if(a==="optapply"){$$("[data-opt]").forEach(c=>D.settings[c.dataset.opt]=c.checked);save();closeModal();paintMapTools();if(G.dest)planRoute(!!G.nav);return}
   if(a==="drivetoggle"){$("#dash").classList.toggle("drive-open");DRIVE.resize();return}
-  if(a==="sheet"){$("#dash").classList.toggle("sheet-open");return}
+  if(a==="sheet"){$("#dash").classList.toggle("sheet-open");requestAnimationFrame(sizeBottom);return}
   if(a==="more")return moreSheet();
   if(a==="acct")return modal('<h3>Your account</h3><p class="muted">Signed in as <b>'+esc(STORE.email)+'</b>.</p><p class="muted small">'+(STORE.cloud==="blocked"?"Account sync is waiting for the latest Firestore rules. Your data is safe on this device.":"Your saved places, trips, walks and car sync to this account on every device.")+'</p><div class="row"><button class="gbtn ghost" data-a="signout">Sign out</button><button class="gbtn" data-a="close">Close</button></div>');
   /* explore */
