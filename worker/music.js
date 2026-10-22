@@ -30,7 +30,7 @@ export function parseRange(h, size) {
   if (start > end || start >= size) return { invalid: true };
   return { offset: start, length: end - start + 1 };
 }
-async function serveR2(env, key, req, type, cache) {
+export async function serveR2(env, key, req, type, cache) {
   const head = await env.STUDIO_BUCKET.head(key); if (!head) return new Response("Not found", { status: 404 });
   const size = head.size, rg = parseRange(req.headers.get("range"), size);
   const base = { "content-type": type || (head.httpMetadata || {}).contentType || "application/octet-stream", "accept-ranges": "bytes", "cache-control": cache, etag: head.httpEtag };

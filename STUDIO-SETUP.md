@@ -71,3 +71,21 @@ Uses the same Worker, R2 bucket and keys as above. Nothing new to create in Clou
 5. **Artist share links:** `grooveville.org/artist/<id>` gives social apps a proper preview, then opens the artist page.
 
 **Switches (both off until you turn them on in Back office › Entertainment):** Song Rate public submissions, and public Charts. You can preview both as founder before launch.
+
+## Website Studio and Media Library (update v3)
+
+Back office › **Website Studio** edits the public site as a **draft**. Back office › **Media Library** holds your photos and videos.
+
+**One-time setup**
+1. **Firestore rules:** paste the new `firestore.rules` into Firebase › Firestore › Rules and click **Publish**. It adds three founder-only collections: `sitedraft`, `siteversions` (read-only history) and `mediaLib`. Everything you had before is unchanged.
+2. **R2:** nothing new. Website files use the same `STUDIO_BUCKET` binding as music, under `site/media/`.
+3. **Optional secret:** `SITE_PREVIEW_SECRET`, any long random string. It signs Preview links. Without it, the Worker creates one and keeps it in R2.
+
+**How it works**
+- Edits autosave to the draft. Visitors don't see them.
+- **Preview Changes** opens the real site showing your draft. Only the founder can see it.
+- **Publish to Live Site** checks the draft, lists what changed, asks you to confirm, then switches the live site to a new numbered version in one step.
+- **History** lists every published version. You can load any version into your draft, or restore it to the live site with a confirmation.
+- Uploaded files stay private until a published page uses them. The Worker serves a file to the public only if it's part of the live version.
+- Uploads, deletes, publishing and restoring are founder or HNIC only. This is enforced by the Firestore rules and the Worker, not by hiding buttons.
+- Size limits: images (JPG, PNG, WebP, AVIF) up to 30 MB; videos (MP4, WebM, MOV) up to 95 MB. For longer films, add a YouTube or Vimeo link.

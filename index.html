@@ -10,15 +10,17 @@
 <meta property="og:title" content="Grooveville | The Creative House">
 <meta property="og:description" content="Different worlds. One Groove. Nine companies, Grooveville LIVE and The Unc &amp; Neph Show, from Charlotte, NC.">
 <meta property="og:url" content="https://grooveville.org/">
-<meta property="og:image" content="https://grooveville.org/media/og-share.jpg">
+<meta property="og:image" content="https://grooveville.org/media/og-share-v2.jpg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="Grooveville LLC logo over friends dressed in white raising a toast">
-<meta property="og:image" content="https://grooveville.org/media/og-square.jpg">
+<meta property="og:image:alt" content="Grooveville LLC: Different worlds. One Groove. The Grooveville app on a phone with Music, Live, Food, Ecosystem, Shadow Crown and TV, at grooveville.org">
+<meta property="og:image" content="https://grooveville.org/media/og-square-v2.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="1200">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Grooveville | The Creative House">
 <meta name="twitter:description" content="Different worlds. One Groove.">
-<meta name="twitter:image" content="https://grooveville.org/media/og-share.jpg">
+<meta name="twitter:image" content="https://grooveville.org/media/og-share-v2.jpg">
 <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32.png">
 <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png">
@@ -685,7 +687,7 @@ body.mp-on .toast{bottom:92px}
 }
 
 /* ===== Phone app layout (≤760px only) ===== */
-#tabbar,#appmenu,.mlaunch{display:none}
+#tabbar,#appmenu{display:none}
 @media (max-width:760px){
   :root{--tabh:62px}
   body{padding-bottom:calc(var(--tabh) + env(safe-area-inset-bottom,0px))}
@@ -700,22 +702,6 @@ body.mp-on .toast{bottom:92px}
   #appmenu{display:block;position:fixed;inset:0;z-index:48;background:#0009;opacity:0;transition:opacity .2s}
   #appmenu[hidden]{display:none}
   #appmenu.open{opacity:1}
-  .msheet{position:absolute;left:0;right:0;bottom:0;max-height:86vh;overflow-y:auto;background:#141517;border-radius:22px 22px 0 0;border-top:1px solid #ffffff1c;padding:10px 16px calc(var(--tabh) + 16px + env(safe-area-inset-bottom,0px));transform:translateY(30px);transition:transform .22s ease}
-  #appmenu.open .msheet{transform:none}
-  .mgrab{width:40px;height:4px;border-radius:4px;background:#ffffff30;margin:0 auto 10px}
-  .mhead{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
-  .mhead b{font:700 20px/1 var(--f-disp,inherit);color:#fff}
-  .mx{width:40px;height:40px;border-radius:50%;border:1px solid #ffffff22;background:#ffffff0d;color:#fff;font-size:16px;cursor:pointer}
-  .mgrid,.mlaunch{grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
-  .mgrid{display:grid}
-  .mlaunch{display:grid;margin-top:26px}
-  .mtile{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;min-height:88px;padding:12px 6px;border-radius:16px;background:#ffffff0c;border:1px solid #ffffff14;color:#f3eee6;text-decoration:none;font:600 12.5px/1.2 var(--f-body);text-align:center;-webkit-tap-highlight-color:transparent;cursor:pointer}
-  .mtile:active{transform:scale(.96);background:#ffffff18}
-  .mtile .mi{display:grid;place-items:center;width:42px;height:42px;border-radius:13px;background:color-mix(in srgb,var(--peach) 18%,transparent);color:var(--peach)}
-  .mtile.wide{width:100%;flex-direction:row;min-height:56px;margin-top:10px;font-size:14px}
-  .mtile.wide .mi{width:34px;height:34px}
-  .mlaunch .mtile{background:#0d0e10b3;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
-  .hh .ctas{margin-top:22px}
   /* sub-tabs become swipeable chips instead of wrapping rows */
   .tabs,.subtabs,.entnav,.seg,.brandtabs{flex-wrap:nowrap!important;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;scroll-snap-type:x proximity}
   .tabs::-webkit-scrollbar,.subtabs::-webkit-scrollbar,.entnav::-webkit-scrollbar,.seg::-webkit-scrollbar{display:none}
@@ -733,6 +719,311 @@ body.mp-on .toast{bottom:92px}
   footer.ft{font-size:12.5px}
 }
 @media (max-width:760px) and (display-mode:standalone){.nav{padding-top:env(safe-area-inset-top,0px)}}
+/* ===================== Grooveville design system v2 ===================== */
+:root{--gold:#e8c27a;--glass-b:#ffffff1c;--r-l:22px;--r-m:16px;--ease:cubic-bezier(.2,.7,.2,1)}
+.gvpic{display:contents}
+.sculpt{width:100%;height:100%;display:block}
+.sr{position:absolute!important;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+/* glass tiles with light that follows the pointer */
+.gtile{position:relative;isolation:isolate;overflow:hidden;border-radius:var(--r-m);background:linear-gradient(160deg,#ffffff14,#ffffff06 55%,#ffffff03);border:1px solid var(--glass-b);box-shadow:inset 0 1px 0 #ffffff1a,0 18px 40px -22px #000c;transition:transform .25s var(--ease),border-color .25s,box-shadow .25s}
+.gtile::before{content:"";position:absolute;z-index:-1;inset:-30%;background:radial-gradient(40% 40% at var(--lx,75%) var(--ly,90%),color-mix(in srgb,var(--glow,var(--peach)) 46%,transparent),transparent 70%);opacity:.7;transition:opacity .3s;pointer-events:none}
+@media (hover:hover){.gtile:hover{border-color:#ffffff33;transform:translateY(-2px);box-shadow:inset 0 1px 0 #ffffff22,0 24px 50px -24px #000}.gtile:hover::before{opacity:1}}
+.gtile:active{transform:scale(.97)}
+.btn{transition:transform .15s var(--ease),box-shadow .2s,background .2s,color .2s}
+.btn:active{transform:scale(.97)}
+.btn.peach{box-shadow:0 12px 30px -14px #f4a987cc}
+@media (hover:hover){.btn.peach:hover{transform:translateY(-1px);box-shadow:0 16px 36px -12px #f4a987}}
+.btn.arr{padding:15px 26px;font-size:15px}
+.btn.arr i{font-style:normal;transition:transform .2s var(--ease)}
+.btn.arr:hover i{transform:translateX(4px)}
+.nav{transition:background .3s,border-color .3s}
+.nav.scrolled{background:#0b0c0def;border-bottom-color:#ffffff1f}
+.rv{opacity:0;translate:0 18px}
+.rv.in{opacity:1;translate:0 0;transition:opacity .7s var(--ease) var(--rd,0ms),translate .7s var(--ease) var(--rd,0ms)}
+@media (max-width:760px){.gvimg{object-position:var(--mfp,var(--fp,50% 50%))!important}}
+/* header buttons */
+.hacts{display:flex;align-items:center;gap:4px;flex:none}
+.hbtn{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;background:none;border:0;color:#f3eee6;cursor:pointer;text-decoration:none;flex:none;transition:background .2s}
+.hbtn:hover{background:#ffffff12}
+.hav{border:1.5px solid #ffffff38;overflow:hidden}
+.hav b{font:700 15px var(--f-display);color:var(--peach)}
+.mback,.hav{display:none}
+/* ---------- Home ---------- */
+.hh2{min-height:calc(100svh - 62px);align-items:stretch}
+.hh2 .glow.g1{background:var(--acc);left:-160px;top:-120px}
+.hh2 .glow.g2{background:#b7a1e5;right:8%;bottom:-280px;opacity:.18}
+.hh2 .bgimg img,.hh2 .bgimg video{width:100%;height:100%;object-fit:cover}
+.hh2 .hhin{display:flex;flex-direction:column;gap:28px;min-height:calc(100svh - 62px);padding-block:clamp(36px,7vh,80px) 34px}
+.hh2 .hhtx{flex:1;display:flex;flex-direction:column;justify-content:center}
+.hh2 h1{max-width:none;font-size:clamp(44px,min(6.4vw,9.4vh),100px)}
+.hh2 .caps{font:600 12px/1.7 var(--f-body);letter-spacing:.32em;text-transform:uppercase;color:#f3eee6;margin-top:22px}
+@media (max-width:1500px){.nav .soundbtn .lbl{display:none}}
+.hh2 p{margin-top:16px}
+.hh2.al-center .hhtx{align-items:center;text-align:center}
+.hh2.al-center h1{max-width:none}
+.hh2.al-center p,.hh2.al-center .caps{margin-inline:auto}
+.hh2.al-center .ctas{justify-content:center}
+.hhbot{display:grid;gap:22px;align-items:end;grid-template-columns:minmax(0,1fr)}
+.hhbot.n2{grid-template-columns:minmax(0,1.55fr) minmax(280px,1fr)}
+.hh2 .loc{display:none}
+.story{display:block;width:100%;aspect-ratio:16/9;max-height:226px;padding:0;color:#fff;text-align:left;cursor:pointer;border-radius:var(--r-l);font:inherit}
+.story .sbg{position:absolute;inset:0;z-index:-3}
+.story .sbg img,.story .sbg video{width:100%;height:100%;object-fit:cover;transition:transform .9s var(--ease)}
+.story::after{content:"";position:absolute;inset:0;z-index:-2;background:linear-gradient(180deg,#000a,#0000 42%,#000b)}
+@media (hover:hover){.story:hover .sbg img{transform:scale(1.05)}}
+.story .sk{position:absolute;left:20px;top:18px;font:600 11px var(--f-body);letter-spacing:.3em;text-transform:uppercase}
+.story .pbtn{position:absolute;left:20px;bottom:18px;width:54px;height:54px;border-radius:50%;background:var(--peach);color:#1b120c;display:grid;place-items:center;box-shadow:0 0 0 9px #f4a98730;transition:transform .25s var(--ease),box-shadow .25s}
+.story .pbtn svg{margin-left:3px}
+.story:hover .pbtn{transform:scale(1.08);box-shadow:0 0 0 12px #f4a98738}
+.story .st{position:absolute;left:88px;right:70px;bottom:32px;font:700 16px/1.2 var(--f-display)}
+.story .dur{position:absolute;right:16px;bottom:20px;font:600 12px var(--f-body);background:#0009;backdrop-filter:blur(6px);padding:4px 8px;border-radius:8px}
+.quick .qh{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.quick .qh h2{font:700 18px/1 var(--f-display);color:#fff;letter-spacing:-.01em}
+.qnext{width:34px;height:34px;border-radius:50%;border:1px solid #ffffff33;background:#ffffff0d;color:#fff;cursor:pointer;font-size:15px;transition:background .2s,transform .2s;flex:none}
+.qnext:hover{background:var(--peach);color:#1b120c;border-color:var(--peach)}
+.qrow{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(112px,1fr);gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;padding:2px}
+.qrow::-webkit-scrollbar,.trow::-webkit-scrollbar{display:none}
+.qcard{position:relative;display:block;aspect-ratio:3/4;max-height:196px;border-radius:var(--r-m);overflow:hidden;border:1px solid #ffffff1f;scroll-snap-align:start;text-decoration:none;color:#fff;box-shadow:0 16px 30px -18px #000;transition:transform .25s var(--ease),border-color .25s}
+.qcard .qi{position:absolute;inset:0}
+.qcard .qi img,.qcard .qi svg,.qcard .qi video{width:100%;height:100%;object-fit:cover;transition:transform .7s var(--ease)}
+.qcard::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,#0000 45%,#000c)}
+.qcard b{position:absolute;left:8px;right:8px;bottom:12px;text-align:center;z-index:1;font:700 14px var(--f-body);text-shadow:0 2px 10px #000}
+@media (hover:hover){.qcard:hover{transform:translateY(-3px);border-color:#ffffff40}.qcard:hover .qi img{transform:scale(1.07)}}
+.qcard:active{transform:scale(.97)}
+/* ---------- Companies ---------- */
+.co2{position:relative;overflow:hidden;background:radial-gradient(50% 60% at 90% 10%,#f4a98714,transparent 70%),radial-gradient(40% 50% at 0% 100%,#b7a1e512,transparent 70%),#0f1011;padding-block:clamp(36px,6vh,70px)}
+.co2 .wrap{display:grid;grid-template-columns:minmax(0,.85fr) minmax(0,1.4fr);gap:clamp(24px,4vw,56px);align-items:center}
+.cohead{position:relative;z-index:1}
+.coart{position:absolute;z-index:-1;right:-30%;top:-60px;width:110%;height:260px;opacity:.85;-webkit-mask-image:radial-gradient(60% 60% at 60% 45%,#000 30%,transparent 75%);mask-image:radial-gradient(60% 60% at 60% 45%,#000 30%,transparent 75%);pointer-events:none}
+.coart img{width:100%;height:100%;object-fit:cover}
+.cohead h1{font-size:clamp(40px,5.4vw,74px);color:#fff;margin-top:16px}
+.cohead p{color:#cfc9bf;font-size:17px;max-width:40ch;margin-top:16px}
+.cohead .btnrow0{margin-top:24px}
+.coseg{margin-top:26px}
+.cogrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.cocard{display:block;aspect-ratio:1/1.02;text-decoration:none;color:#fff;border-radius:var(--r-m)}
+.cocard .ci{position:absolute;inset:0;z-index:-3}
+.cocard .ci img{width:100%;height:100%;object-fit:cover;transition:transform .8s var(--ease)}
+.cocard::after{content:"";position:absolute;inset:0;z-index:-2;background:linear-gradient(180deg,#0000 35%,#000d)}
+.cocard .cx{position:absolute;left:12px;right:12px;bottom:11px;display:flex;flex-direction:column;gap:2px}
+.cocard .cx b{font:700 15px/1.15 var(--f-display);letter-spacing:-.01em}
+.cocard .cx small{font-size:11.5px;color:#d8d2c9;line-height:1.3}
+.cocard .cmore{display:flex;flex-direction:column;gap:6px;max-height:0;opacity:0;overflow:hidden;font-size:12.5px;color:#e9e3da;transition:max-height .35s var(--ease),opacity .3s}
+.cocard .cmore .go{color:var(--peach);font-weight:700}
+.cocard .tag{position:absolute;left:10px;top:10px;font:600 10px var(--f-body);letter-spacing:.14em;text-transform:uppercase;background:#000a;padding:4px 8px;border-radius:999px}
+.cocard .cext{position:absolute;right:10px;top:10px;font:600 11px var(--f-body);background:#ffffffe6;color:#1b120c;padding:5px 9px;border-radius:999px;cursor:pointer}
+@media (hover:hover){.cocard:hover .ci img{transform:scale(1.06)}.cocard:hover .cmore,.cocard:focus-visible .cmore{max-height:90px;opacity:1;margin-top:6px}}
+.vinebox{min-width:0}
+.vinebox .vinelist{display:flex}
+/* ---------- Music: radio feature + trending ---------- */
+.rfeat{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:20px;align-items:center;padding:clamp(22px,3.4vw,40px);border-radius:var(--r-l);--glow:#e8a06f;--lx:85%;--ly:40%;background:radial-gradient(70% 90% at 0% 0%,#f4a98722,transparent 60%),#141416;margin-bottom:8px}
+.rftx{position:relative;z-index:1}
+.rftx h2{font-size:clamp(28px,3.8vw,48px);color:#fff;margin-top:12px}
+.rftx p{color:#cfc9bf;margin-top:12px;max-width:44ch}
+.rfctl{display:flex;align-items:center;gap:16px;margin-top:22px;flex-wrap:wrap}
+.rfplay .ic{display:inline-grid;place-items:center}
+.viz{width:190px;height:38px;max-width:100%}
+.rfnow{font-size:13px;color:#b9b2a8;margin-top:12px}
+.rfnow b{color:#f3eee6}
+.vinyl{position:relative;aspect-ratio:1;width:min(100%,360px);justify-self:end}
+.disc{position:absolute;inset:0;border-radius:50%;background:repeating-radial-gradient(circle at 50% 50%,#121214 0 1.5px,#1d1d20 1.5px 3px);box-shadow:0 40px 70px -30px #000,inset 0 0 0 1px #ffffff14,0 0 80px -20px #f4a98766}
+.disc::after{content:"";position:absolute;inset:0;border-radius:50%;background:conic-gradient(from 20deg,#fff0,#ffffff26 8%,#fff0 18%,#fff0 50%,#f4a98738 58%,#fff0 68%)}
+.disc .lab{position:absolute;inset:32%;border-radius:50%;background:#2a1a12 center/cover no-repeat;box-shadow:0 0 0 4px #0009}
+.disc .lab::after{content:"";position:absolute;left:50%;top:50%;width:9px;height:9px;margin:-4.5px 0 0 -4.5px;border-radius:50%;background:#0d0d0e;box-shadow:0 0 0 2px #ffffff33}
+.rfeat.playing .disc{animation:spin 7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.vinyl .arm{position:absolute;right:0;top:2%;width:7px;height:52%;border-radius:4px;background:linear-gradient(#f3eee6,#9a958d);transform-origin:50% 6px;transform:rotate(14deg);transition:transform .8s var(--ease);box-shadow:0 8px 20px #0008}
+.vinyl .arm::after{content:"";position:absolute;left:-5px;bottom:-6px;width:17px;height:24px;border-radius:4px;background:#d9d3ca}
+.rfeat.playing .arm{transform:rotate(24deg)}
+.trendrow{margin-top:34px}
+.trow{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(150px,200px);gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;padding-bottom:6px}
+.tcard{text-align:left;background:none;border:0;color:inherit;cursor:pointer;padding:0;scroll-snap-align:start;font:inherit}
+.tcard .tart{position:relative;display:block;aspect-ratio:1;border-radius:14px;overflow:hidden;border:1px solid #ffffff17;box-shadow:0 16px 30px -20px #000}
+.tcard .tart img{width:100%;height:100%;object-fit:cover;transition:transform .6s var(--ease)}
+.tcard .tp{position:absolute;right:10px;bottom:10px;width:36px;height:36px;border-radius:50%;background:#0009;border:1.5px solid #fff;display:grid;place-items:center;color:#fff;backdrop-filter:blur(4px);transition:background .2s,transform .2s}
+.tcard .tp svg{margin-left:2px}
+.tcard b{display:block;margin-top:9px;font:600 14px var(--f-body);color:#f3eee6}
+.tcard small{color:#a9a49b;font-size:12.5px}
+@media (hover:hover){.tcard:hover .tart img{transform:scale(1.06)}.tcard:hover .tp{background:var(--peach);color:#1b120c;border-color:var(--peach);transform:scale(1.08)}}
+.tcard:active .tart{transform:scale(.97)}
+/* ---------- Search ---------- */
+#srch{position:fixed;inset:0;z-index:85;background:#000b;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);opacity:0;transition:opacity .18s;padding:max(16px,env(safe-area-inset-top)) 16px 16px}
+#srch[hidden]{display:none}
+#srch.open{opacity:1}
+.srbox{max-width:640px;margin:6vh auto 0;background:#141517;border:1px solid #ffffff1f;border-radius:20px;overflow:hidden;box-shadow:0 40px 80px -30px #000}
+.srin{display:flex;align-items:center;gap:10px;padding:10px 10px 10px 16px;border-bottom:1px solid #ffffff14;color:#a9a49b}
+#srQ::-webkit-search-cancel-button{display:none}
+.srin input{flex:1;min-width:0;background:none;border:0;outline:0;color:#f3eee6;font:500 17px var(--f-body);padding:8px 0}
+.srr{max-height:60vh;overflow:auto;padding:6px}
+.srh{font:600 11px var(--f-body);letter-spacing:.2em;text-transform:uppercase;color:#8d877e;padding:10px 10px 4px}
+.sri{display:flex;align-items:center;gap:12px;padding:10px;border-radius:12px;text-decoration:none;color:#f3eee6}
+.sri:hover,.sri:focus-visible{background:#ffffff0f}
+.sri .mi{color:var(--peach);flex:none}
+.sri b{display:block;font-weight:600;font-size:15px}
+.sri small{color:#a9a49b;font-size:12.5px}
+.mx{width:40px;height:40px;border-radius:50%;border:1px solid #ffffff26;background:#ffffff0d;color:#fff;font-size:15px;cursor:pointer;flex:none}
+/* ---------- Video lightbox ---------- */
+#lbx{position:fixed;inset:0;z-index:90;background:#000e;display:grid;place-items:center;padding:16px}
+#lbx .lbin{width:min(94vw,1100px,calc((100vh - 120px)*16/9));aspect-ratio:16/9;border-radius:16px;overflow:hidden;background:#000;box-shadow:0 40px 90px -30px #000}
+#lbx video,#lbx iframe{width:100%;height:100%;border:0;display:block;background:#000}
+#lbx .mx{position:absolute;top:max(16px,env(safe-area-inset-top));right:16px}
+/* ---------- Preview mode ---------- */
+#pvbar{position:fixed;left:50%;bottom:calc(var(--tabh,0px) + 14px + env(safe-area-inset-bottom));transform:translateX(-50%);z-index:120;display:flex;gap:10px;align-items:center;background:#f4a987;color:#1b120c;border-radius:999px;padding:6px 8px 6px 14px;font:600 12.5px var(--f-body);box-shadow:0 12px 30px -10px #000;max-width:calc(100% - 24px);white-space:nowrap;overflow:hidden}
+#pvbar b{letter-spacing:.16em;text-transform:uppercase;font-size:11px}
+#pvbar span{overflow:hidden;text-overflow:ellipsis}
+#pvbar a{color:#1b120c;background:#ffffff70;border-radius:999px;padding:4px 10px;text-decoration:none;flex:none}
+html.pv-sel [data-edit]{cursor:pointer}
+html.pv-sel [data-edit]:hover{outline:2px dashed #f4a987;outline-offset:-3px}
+html.pv [data-edit].pv-on{outline:2.5px solid #f4a987;outline-offset:-3px}
+/* ---------- Phones ---------- */
+@media (max-width:760px){
+  .nav .soundbtn{position:static!important;margin-left:auto;padding:8px}
+  .nav .soundbtn .lbl{display:none}
+  .mback{display:none}
+  body.subpage .mback{display:grid;margin-left:-8px}
+  .hav{display:grid}
+  .logo{font-size:19px}
+  #tabbar>a,#tabbar>button{transition:color .25s}
+  #tabbar>.on::before{animation:tabOn .35s var(--ease)}
+  @keyframes tabOn{from{width:0;opacity:0}}
+  .hh2,.hh2 .hhin{min-height:0}
+  .hh2 .bgimg{inset:0 0 auto 22%;height:min(80vh,620px)}
+  .hh2 .bgimg::after{background:linear-gradient(90deg,#0d0d0e 0,#0d0d0eaa 30%,#0d0d0e22 70%),linear-gradient(0deg,#0d0d0e 0,#0d0d0e00 45%)}
+  .hh2 .hhin{padding-block:34px 28px;gap:26px}
+  .hh2 h1{font-size:clamp(42px,12vw,56px);max-width:7.5ch}
+  .hh2 .caps{font-size:11px;letter-spacing:.28em;margin-top:20px}
+  .hh2 p{font-size:15.5px;max-width:30ch}
+  .hh2 .ctas{margin-top:22px}
+  .hhbot,.hhbot.n2{grid-template-columns:minmax(0,1fr);gap:24px}
+  .story{max-height:none}
+  .qrow{grid-auto-columns:calc((100% - 36px)/3.4);margin-inline:-16px;padding-inline:16px;scroll-padding-inline:16px}
+  .qcard{max-height:none}
+  .co2 .wrap{display:block}
+  .coart{right:-38%;top:-30px;width:120%;height:220px}
+  .cohead h1{font-size:clamp(40px,11.5vw,54px)}
+  .cohead p{font-size:15.5px}
+  .cogrid{gap:8px;margin-top:24px}
+  .cocard{border-radius:14px}
+  .cocard .cx{left:8px;right:8px;bottom:8px}
+  .cocard .cx b{font-size:12.5px}
+  .cocard .cx small{font-size:10px}
+  .cocard .cext{font-size:9.5px;padding:3px 6px;right:6px;top:6px}
+  .cocard .tag{font-size:8.5px;left:6px;top:6px;padding:3px 6px}
+  .rfeat{grid-template-columns:minmax(0,1fr) 34%;gap:0;overflow:hidden;padding:22px 0 22px 20px}
+  .rftx h2{font-size:clamp(25px,7.4vw,32px)}
+  .rftx p{font-size:14px}
+  .vinyl{width:180%;justify-self:start;margin-left:6%}
+  .viz{width:120px}
+  .trow{grid-auto-columns:40%;margin-inline:-16px;padding-inline:16px}
+  /* menu sheet */
+  .msheet{position:absolute;left:0;right:0;bottom:0;max-height:90vh;overflow-y:auto;background:radial-gradient(80% 40% at 100% 0%,#f4a98718,transparent 70%),#111214;border-radius:24px 24px 0 0;border-top:1px solid #ffffff1c;padding:10px 16px calc(var(--tabh) + 16px + env(safe-area-inset-bottom,0px));transform:translateY(40px);transition:transform .28s var(--ease)}
+  #appmenu.open .msheet{transform:none}
+  .mgrab{width:40px;height:4px;border-radius:4px;background:#ffffff30;margin:0 auto 6px}
+  .mhead{position:relative;display:flex;align-items:flex-end;min-height:128px;padding:10px 2px 18px}
+  .mhead .mart{position:absolute;right:-16px;top:-6px;width:68%;height:150px;opacity:.95;-webkit-mask-image:radial-gradient(60% 60% at 60% 45%,#000 35%,transparent 78%);mask-image:radial-gradient(60% 60% at 60% 45%,#000 35%,transparent 78%);pointer-events:none}
+  .mhead h2{position:relative;font:700 32px/1 var(--f-display);letter-spacing:-.03em;color:#fff;max-width:8ch}
+  .mhead p{position:relative;color:#cfc9bf;font-size:14px;margin-top:8px}
+  .mhead .mx{position:absolute;top:0;right:0}
+  .mgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+  .mtile{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:9px;min-height:106px;padding:14px 6px;color:#f3eee6;text-decoration:none;text-align:center;-webkit-tap-highlight-color:transparent;cursor:pointer;font:inherit}
+  .mtile .mi{color:color-mix(in srgb,var(--glow) 65%,#fff);display:grid;place-items:center}
+  .mtile .mi svg{width:28px;height:28px;stroke-width:1.5}
+  .mtile .ml{display:flex;flex-direction:column;gap:3px}
+  .mtile .ml b{font:600 13px/1.15 var(--f-body)}
+  .mtile .ml small{font-size:10.5px;color:#b3aca2;line-height:1.2}
+  .mtile.wide{grid-column:span 2;flex-direction:row;justify-content:flex-start;gap:14px;padding-inline:18px;min-height:76px;text-align:left}
+  .mtile.snd{width:100%;margin-top:10px;grid-column:auto}
+  .mtile.hasimg .mbg{position:absolute;inset:0;z-index:-3}
+  .mtile.hasimg .mbg img{width:100%;height:100%;object-fit:cover}
+  .mtile.hasimg::after{content:"";position:absolute;inset:0;z-index:-2;background:linear-gradient(180deg,#0005,#000c)}
+}
+@media (max-width:1100px){.co2 .wrap{grid-template-columns:minmax(0,1fr)}.cogrid{max-width:820px}}
+/* ---------- Website Studio & Media Library (back office) ---------- */
+.wshead{display:flex;flex-wrap:wrap;gap:12px 18px;align-items:center;justify-content:space-between;margin:4px 0 14px}
+.wslive{font-size:14px}
+.lvdot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--lime);margin-right:8px;box-shadow:0 0 0 4px #c9e27a26}
+.wsbn{display:flex;gap:8px;align-items:center;font-size:13.5px;color:var(--muted)}
+.wsbn .dot{width:8px;height:8px;border-radius:50%;background:#ffffff40}
+.wsbn.on{color:var(--ink);font-weight:600}
+.wsbn.on .dot{background:var(--peach);box-shadow:0 0 0 4px #f4a98733}
+.wsbn #wsStat{font-weight:400}
+.wstabs{margin-bottom:16px}
+.wsbar{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:10px}
+.wspg{display:flex;gap:8px;align-items:center;font-size:13px;color:var(--muted)}
+.wspg select{width:auto;padding:6px 10px}
+.wsmain{display:grid;grid-template-columns:minmax(0,1fr) 390px;gap:16px;align-items:start}
+.wsstage{background:repeating-conic-gradient(#ffffff07 0 25%,transparent 0 50%) 0 0/22px 22px,#0b0b0c;border:1px solid var(--line);border-radius:16px;padding:16px 4px;display:flex;flex-direction:column;align-items:center;min-height:520px;min-width:0}
+.wsdev{position:relative;overflow:hidden;border-radius:12px;box-shadow:0 0 0 1px #ffffff26,0 30px 60px -30px #000;background:#101112;flex:none}
+.wsdev.d-mobile{border-radius:26px;box-shadow:0 0 0 7px #1c1d20,0 0 0 8px #ffffff26,0 30px 60px -30px #000}
+.wsdev.d-tablet{border-radius:20px;box-shadow:0 0 0 7px #1c1d20,0 0 0 8px #ffffff26}
+.wsdev iframe{border:0;transform-origin:0 0;display:block;background:#101112}
+.wstip{font-size:12.5px;margin-top:12px;text-align:center;padding-inline:12px}
+.wspanel{position:sticky;top:76px;max-height:calc(100vh - 96px);overflow:auto;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:16px}
+.wspf{display:flex;flex-direction:column;gap:14px;margin-top:14px}
+.wsauto{font-size:12px;margin-top:14px}
+.wsck{display:flex;gap:8px;align-items:center;font-size:14px;cursor:pointer}
+.i.bad{border-color:#e0a95c;box-shadow:0 0 0 3px #e0a95c22}
+.wsslot{border:1px solid var(--line);border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:10px;background:#ffffff05;min-width:0}
+.wsl{font-weight:600;font-size:14px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.wsfr{display:grid;grid-template-columns:1.6fr 1fr;gap:10px;align-items:end}
+.wsfr figure,.wscrop figure{margin:0;min-width:0}
+.wsfr .fr{position:relative;border-radius:8px;overflow:hidden;background:#0c0d0e;max-height:190px}
+.wsfr .fr img{width:100%;height:100%;object-fit:cover;display:block}
+.wsfr .fr .none{display:grid;place-items:center;height:100%;font-size:11.5px;color:var(--muted);text-align:center;padding:6px}
+.wsfr figcaption,.wscrop figcaption{font-size:11.5px;color:var(--muted);margin-top:4px}
+.vk{position:absolute;left:6px;bottom:6px;background:#000b;color:#fff;font-size:11px;padding:2px 7px;border-radius:6px}
+.mini{border:1px solid var(--line);background:var(--surface-2);color:var(--ink);border-radius:8px;padding:5px 9px;font-size:12.5px;cursor:pointer;font-family:inherit}
+.mini:disabled{opacity:.35;cursor:default}
+.wsq{display:flex;flex-direction:column;gap:12px}
+.wsqi{border:1px dashed var(--line);border-radius:12px;padding:10px;display:flex;flex-direction:column;gap:10px}
+.wsqh{display:flex;justify-content:space-between;align-items:center}
+.wstile{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:10px;align-items:center;padding:8px 0;border-top:1px solid var(--line)}
+.wstile .mi{color:var(--peach)}
+.wstile b{font-size:13px;display:block;margin-bottom:4px}
+.wstile .i{padding:6px 8px;font-size:13px}
+.wstile .th{width:36px;height:28px;object-fit:cover;border-radius:5px}
+.wssongs{display:flex;flex-direction:column;gap:6px;max-height:300px;overflow:auto}
+.wsimgs{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:14px}
+.vrow{grid-template-columns:auto minmax(0,1fr) auto!important}
+.vn{font:700 15px var(--f-display);width:56px;height:40px;display:grid;place-items:center;border-radius:10px;background:var(--surface-2)}
+.vn.live{background:var(--peach);color:#1b120c}
+.wscrop{display:grid;grid-template-columns:1.6fr 1fr;gap:12px;align-items:end}
+.modal.wide{max-width:980px}
+.mltool{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.mltool input[type=search]{flex:1;min-width:200px}
+.mltool select{width:auto}
+.mldz{margin-top:10px;border:1.5px dashed var(--line);border-radius:14px;padding:16px;text-align:center;color:var(--muted);font-weight:600;font-size:14px;transition:border-color .2s,background .2s}
+.mldz small{display:block;font-weight:400;font-size:12px;margin-top:4px}
+.mldz.over{border-color:var(--peach);background:#f4a98712;color:var(--ink)}
+.mlgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:12px;margin-top:12px}
+.pkgrid{max-height:50vh;overflow:auto;padding:2px}
+.mlcard{display:flex;flex-direction:column;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:12px;overflow:hidden;padding:0;cursor:pointer;color:inherit;font:inherit;transition:border-color .2s,transform .2s}
+.mlcard:hover{border-color:var(--peach);transform:translateY(-2px)}
+.mlcard.busy{opacity:.55}
+.mlth{position:relative;aspect-ratio:4/3;background:#0c0d0e;display:grid;place-items:center;color:var(--muted)}
+.mlth img{width:100%;height:100%;object-fit:cover}
+.mlmeta{padding:8px 10px 10px;display:flex;flex-direction:column;gap:2px;min-width:0}
+.mlmeta b{font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mlmeta small{font-size:11.5px;color:var(--muted)}
+.mlb{display:flex;gap:4px;flex-wrap:wrap;margin-top:4px}
+.mlb i{font-style:normal;font-size:10.5px}
+.ldv{position:relative;width:100%;max-height:52vh;border-radius:12px;overflow:hidden;background:#0c0d0e;display:block}
+.ldv img{width:100%;max-height:52vh;object-fit:contain;display:block}
+#ldFocal{cursor:crosshair;aspect-ratio:16/10}
+#ldFocal img{height:100%;object-fit:cover}
+.cpbox{position:relative;display:inline-block;max-width:100%;user-select:none;touch-action:none}
+.cpbox img{display:block;max-width:100%;max-height:48vh}
+.crop{position:absolute;border:2px solid var(--peach);box-shadow:0 0 0 9999px #000a;cursor:move;touch-action:none}
+.crop .h{position:absolute;right:-9px;bottom:-9px;width:18px;height:18px;border-radius:50%;background:var(--peach);cursor:nwse-resize}
+#upq{position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom));z-index:95;width:min(320px,calc(100% - 32px));background:#141517;border:1px solid #ffffff22;border-radius:14px;padding:10px;box-shadow:0 20px 50px -20px #000;color:#f3eee6}
+.uqh{display:flex;justify-content:space-between;align-items:center}
+.uqi{position:relative;padding:7px 9px;border-radius:8px;background:#ffffff08;margin-top:6px;display:flex;justify-content:space-between;gap:8px;font-size:12.5px;overflow:hidden}
+.uqi span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.uqi i{position:absolute;left:0;bottom:0;height:2px;background:var(--peach);transition:width .3s}
+.uqi.err small{color:#f0b37a}
+.uqi.ok small{color:var(--lime)}
+.linkbtn{background:none;border:0;color:var(--peach);text-decoration:underline;cursor:pointer;font:inherit;padding:0}
+@media (max-width:1100px){.wsmain{grid-template-columns:1fr}.wspanel{position:static;max-height:none}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style>
 
@@ -855,20 +1146,23 @@ const S = {
 };
 
 /* public content: admins preview live data, everyone else sees the published snapshot */
+let LPC={k:null,v:null};
 function livePublic(){
-  const site=S.site||{};
-  return {
+  const key=[S.site,S.draft,S.events,S.lib,S.isAdmin,S.media];
+  if(LPC.k&&key.every((x,i)=>x===LPC.k[i]))return LPC.v;
+  const site=activeSite();
+  return (LPC={k:key,v:{
     contactEmail:site.contactEmail||"", signer:site.signer||"", phone:site.phone||"",
-    brands:site.brands||{}, music:site.music||{}, aelio:site.aelio||{}, home:site.home||{},
+    brands:site.brands||{}, music:site.music||{}, aelio:site.aelio||{}, home:site.home||{}, studio:BACKEND==="firebase"?(site.studio||{}):undefined, assets:BACKEND==="firebase"?activeAssets():undefined,
     media:BACKEND==="claude"?pubMedia():undefined,
     events:sortBy(S.events.filter(e=>e.visibility==="public"),e=>e.date+(e.start||"")).map(e=>({
       id:e.id,brand:e.brand,title:e.title,date:e.date,start:e.start||"",end:e.end||"",location:e.location||"",description:e.description||"",link:e.link||"",repeat:e.repeat||"",days:e.repeat?(e.days||[]):[],until:e.until||"",count:e.count||"",exdates:e.repeat?(e.exdates||[]):[]}))
-  };
+  }}).v;
 }
 const pub = ()=>BACKEND==="firebase"?((S.loaded.site&&S.loaded.events)?livePublic():SNAP):((S.isAdmin&&S.loaded.site&&S.loaded.events)?livePublic():SNAP);
 function brandInfo(id){const b=BR[id]||BR.hq;const o=(pub().brands||{})[b.id]||{};return Object.assign({},b,Object.fromEntries(Object.entries(o).filter(([k,v])=>v)))}
 function isDirty(){
-  if(BACKEND==="firebase")return false;
+  if(BACKEND==="firebase")return wsDirty();
   if(!(S.isAdmin&&S.loaded.site&&S.loaded.events))return false;
   const a=Object.assign({},SNAP);delete a.publishedAt;
   return stable(livePublic())!==stable(a);
@@ -918,6 +1212,7 @@ function ledgerAll(){
 const rows=(snap,col)=>snap.docs.map(d=>Object.assign({id:d.id,_col:col},d.data()));
 const memberSubs={};
 function subscribeFounder(){
+  if(BACKEND==="firebase")setTimeout(wsSubscribe,0);
   ["ledger","events","reminders","outreach"].forEach(c=>{
     S.db.collection(c).onSnapshot(snap=>{S[c]=rows(snap,c);S.loaded[c]=true;scheduleRender(true)},()=>{});
   });
@@ -1120,16 +1415,45 @@ function upcomingPublic(brand,n){
 
 const pnext=(h,l)=>'<div class="pnext"><a href="'+h+'">'+l+' <span class="arrowbtn" aria-hidden="true">→</span></a></div>';
 function viewHome(){
-  const H=siteCfg("home");
-  return '<section class="hh"><div class="bgimg">'+imgTag("home-hero","",'')+'</div><span class="glow" style="background:#68d4d0;left:-160px;top:-120px" aria-hidden="true"></span><span class="glow" style="background:#f4a987;right:10%;bottom:-260px" aria-hidden="true"></span>'+
-    '<div class="wrap"><div class="kicker">'+esc(H.heroEyebrow)+'</div><h1 class="disp" style="margin-top:22px">'+esc(H.heroA)+' <em>'+esc(H.heroB)+'</em></h1><p>'+esc(H.heroP)+'</p>'+
-    '<div class="ctas"><a class="btn peach" href="#vine" style="padding:15px 28px">Explore the Groove</a><button class="playlink" data-act="intro-replay"><span aria-hidden="true">▶</span>Watch the story</button></div>'+mLaunch()+'</div>'+
-    '<div class="loc">Charlotte, NC<br><b>People. Ideas. Places.</b></div></section>';
+  const H=siteCfg("home"),SH=stv("home"),acc=ACCENTS[SH.accent]||ACCENTS.peach;
+  const parts={quick:homeQuick(SH.quick),story:homeStory(SH.story)},order=(Array.isArray(SH.order)?SH.order:["quick","story"]).filter(k=>parts[k]!==undefined);
+  Object.keys(parts).forEach(k=>{if(!order.includes(k))order.push(k)});
+  const bot=order.map(k=>parts[k]).filter(Boolean).join("");
+  return '<section class="hh hh2 al-'+(SH.align==="center"?"center":"left")+'" data-edit="home.hero" style="--acc:'+acc+'"><div class="bgimg" data-par="1">'+imgTag("home-hero","",'')+'</div><span class="glow g1" aria-hidden="true"></span><span class="glow g2" aria-hidden="true"></span>'+
+    '<div class="wrap hhin"><div class="hhtx"><div class="kicker">'+esc(H.heroEyebrow)+'</div><h1 class="disp">'+esc(H.heroA)+' <em>'+esc(H.heroB)+'</em></h1>'+(SH.kicker2?'<div class="caps">'+esc(SH.kicker2)+'</div>':'')+'<p>'+esc(H.heroP)+'</p>'+
+    '<div class="ctas"><a class="btn peach arr" href="'+esc(SH.heroLink||"#vine")+'">'+esc(SH.heroBtn||"Explore the Groove")+' <i aria-hidden="true">→</i></a></div></div>'+
+    (bot?'<div class="hhbot n'+order.filter(k=>parts[k]).length+'">'+bot+'</div>':'')+'</div><div class="loc">Charlotte, NC<br><b>People. Ideas. Places.</b></div></section>';
+}
+function homeStory(st){if(!st||st.on===false)return "";
+  return '<button class="story gtile" data-act="story-play" data-edit="home.story" style="--glow:var(--acc)"><span class="sbg">'+imgTag("home-storycard","",'')+'</span><span class="sk">'+esc(st.kicker||"Watch the story")+'</span>'+(st.title?'<b class="st">'+esc(st.title)+'</b>':'')+'<span class="pbtn" aria-hidden="true"><svg viewBox="0 0 24 24" width="22" height="22"><path d="M8 5.5v13l11-6.5z" fill="currentColor"/></svg></span>'+(st.dur?'<span class="dur">'+esc(st.dur)+'</span>':'')+'<span class="sr">Play the Grooveville story</span></button>';
+}
+function quickThumb(it){
+  if(media(it.slot))return imgTag(it.slot,"","");
+  try{
+    if(it.link==="#live"){const e=(LV.live&&LV.live.live&&LV.live)||(LV.eps||[])[0];const th=e&&(e.thumb||e.thumbnail);if(th)return '<img src="'+esc(th)+'" alt="" loading="lazy">'}
+    if(/^#tv/.test(it.link)){const v=pubList(MU().tvVideos)[0];if(v&&v.thumb)return '<img src="'+esc(v.thumb)+'" alt="" loading="lazy">'}
+  }catch(e){}
+  const dflt={"#music":"card-ent","#live":"gv-ent","#vine":"gv-intro","#brands":"gv-box","#story":"gv-story","#collab":"gv-collab"}[it.link];
+  if(dflt&&ASSETS[dflt])return '<img src="'+esc(ASSETS[dflt])+'" alt="" loading="lazy">';
+  const c=["#F4A987","#b7a1e5","#68d4d0","#e8c27a"];const n=String(it.label||"x").length;return sculpt(n+3,c[n%4],c[(n+1)%4],"#2a1d26");
+}
+function homeQuick(q){if(!q||q.on===false)return "";const items=(q.items||[]).filter(it=>it&&it.label);if(!items.length)return "";
+  return '<div class="quick" data-edit="home.quick"><div class="qh"><h2>'+esc(q.title||"Quick Access")+'</h2><button class="qnext" data-act="q-next" aria-label="Show more quick links">→</button></div><div class="qrow" id="qrow">'+
+    items.map(it=>'<a class="qcard" href="'+esc(it.link||"#home")+'"'+(/^https:/.test(it.link||"")?' target="_blank" rel="noopener"':'')+'><span class="qi">'+quickThumb(it)+'</span><b>'+esc(it.label)+'</b></a>').join("")+'</div></div>';
+}
+function coCard(b0,i){const b=brandInfo(b0.id),sub=(stv("companies").subs||{})[b.id]||b.cat||b.role||"",hasImg=!!slotSrc("card-"+b.id);
+  const ext=b.id==="aelio"?(b.website||"https://aelio.live/"):"";
+  return '<a class="cocard gtile" href="#b-'+b.id+'" data-edit="company:'+b.id+'" style="'+cvar(b.id)+';--glow:var(--c-'+b.id+');--d:'+(i*40)+'ms"><span class="ci">'+(hasImg?imgTag("card-"+b.id,b.name,""):brandArt(b.id))+'</span>'+(b.developing?'<span class="tag">Ripening</span>':'')+
+    '<span class="cx"><b>'+esc(b.name)+'</b><small>'+esc(sub)+'</small><span class="cmore"><span>'+esc(b.tagline||"")+'</span><span class="go">Explore <i aria-hidden="true">→</i></span></span></span>'+
+    (ext?'<span class="cext" role="link" tabindex="0" data-act="ext" data-url="'+esc(ext)+'">'+esc(ext.replace(/^https?:\/\//,"").replace(/\/$/,""))+' ↗</span>':'')+'</a>';
 }
 function viewVine(){
-  const V=VENTURES().filter(b=>!brandInfo(b.id).hidden);
-  return '<section class="vinesec page" id="vine"><div class="wrap"><div><div class="kicker">The Groove Vine</div><h1 class="disp secT" style="margin-top:18px">One root.<br>Nine companies.</h1><p>Different paths. Same purpose. Explore each branch and see what we\'re building together.</p><a class="textlink" href="#brands"><span class="arrowbtn" aria-hidden="true">→</span>Explore our companies</a>'+
-    '<div class="vinelist" aria-label="Companies on the Groove Vine">'+V.map(b=>'<a href="#b-'+b.id+'">'+chip(b.id)+'</a>').join("")+'</div></div><div>'+treeSVG()+'</div></div></section>';
+  const C=stv("companies"),V=VENTURES().filter(b=>!brandInfo(b.id).hidden),view=S.coView||C.view||"gallery";
+  return '<section class="co2 page" id="vine"><div class="wrap"><div class="cohead" data-edit="companies.head"><div class="coart" aria-hidden="true">'+(media("companies-art")?imgTag("companies-art","",""):sculpt(11,"#F4A987","#e8c27a","#4a2a1c"))+'</div>'+
+    '<div class="kicker">'+esc(C.kicker)+'</div><h1 class="disp">'+esc(C.a)+'<br>'+esc(C.b)+'</h1><p>'+esc(C.p)+'</p><div class="btnrow0"><a class="btn peach arr" href="#brands">'+esc(C.btn)+' <i aria-hidden="true">→</i></a></div>'+
+    '<div class="seg coseg" role="tablist" aria-label="View"><button role="tab" aria-selected="'+(view!=="vine")+'" class="'+(view!=="vine"?"on":"")+'" data-act="co-view" data-v="gallery">Gallery</button><button role="tab" aria-selected="'+(view==="vine")+'" class="'+(view==="vine"?"on":"")+'" data-act="co-view" data-v="vine">Groove Vine</button></div></div>'+
+    (view==="vine"?'<div class="vinebox">'+treeSVG()+'<div class="vinelist" aria-label="Companies on the Groove Vine">'+V.map(b=>'<a href="#b-'+b.id+'">'+chip(b.id)+'</a>').join("")+'</div></div>':
+      '<div class="cogrid" aria-label="Grooveville companies">'+V.map(coCard).join("")+'</div>')+'</div></section>';
 }
 function viewBrands(){
   const feat=VENTURES().filter(b=>!brandInfo(b.id).hidden&&!brandInfo(b.id).unfeatured);
@@ -1266,7 +1590,7 @@ function collabSubmit(form){
 }
 
 /* ---------- team (back office) ---------- */
-const TEAM_TABS=[["team","Dashboard"],["team-time","Timesheet"],["team-cal","Calendar"],["team-rem","Reminders"],["team-out","Collabs"],["team-people","Teams"],["team-docs","Documents"],["team-conv","Converter"],["team-reports","Reports"],["team-vault","Private notes"],["team-web","Website"],["ent","Entertainment"],["studio","Ent. Studio"],["team-site","Site settings"]];
+const TEAM_TABS=[["team","Dashboard"],["team-time","Timesheet"],["team-cal","Calendar"],["team-rem","Reminders"],["team-out","Collabs"],["team-people","Teams"],["team-docs","Documents"],["team-conv","Converter"],["team-reports","Reports"],["team-vault","Private notes"],["team-web","Website Studio"],["team-media","Media Library"],["ent","Entertainment"],["studio","Ent. Studio"],["team-site","Site settings"]];
 function teamGate(){
   if(!S.authChecked)return '<div class="wrap gate"><h1>Checking access…</h1><p class="muted">One moment while we confirm who is signed in.</p></div>';
   return '<div class="wrap gate"><div class="eyebrow">Grooveville team</div><h1>Back office sign in</h1><p class="muted">The timesheet, private calendar, reminders and collab tracker are only for the Grooveville team. Open this page while signed in to Claude with the account Grooveville invited as an Editor.</p><p class="muted" style="font-size:13.5px">If you just got access, reload this page.</p><a class="btn" href="#home">Back to the public site</a></div>';
@@ -1275,7 +1599,7 @@ function teamShell(tab,body){
   const dirty=isDirty();
   const ready=["ledger","events","reminders","outreach","site"].every(k=>S.loaded[k]);
   return '<section class="teamhead"><div class="wrap"><div class="eyebrow">Grooveville LLC · Back office</div><h1>'+esc((TEAM_TABS.find(t=>t[0]===tab)||[])[1]||"Dashboard")+'</h1>'+
-    (dirty?'<div class="banner warn">You have changes to public events or company pages that visitors can\'t see yet.<button class="btn peach sm" data-act="publish">Publish to public site</button></div>':'')+
+    (dirty&&tab!=="team-web"?'<div class="banner warn">You have changes visitors can\'t see yet.'+(BACKEND==="firebase"?'<a class="btn ghost sm" href="/?preview=1#home" target="_blank" rel="noopener">Preview changes ↗</a><a class="btn ghost sm" href="#team-web">Website Studio</a>':'')+'<button class="btn peach sm" data-act="publish">'+(BACKEND==="firebase"?"Publish to Live Site":"Publish to public site")+'</button></div>':'')+
     '<nav class="tabs">'+TEAM_TABS.map(([h,l])=>'<a href="#'+h+'"'+(h===tab?' class="on"':'')+'>'+l+'</a>').join("")+'</nav></div></section>'+
     '<section class="tsec"><div class="wrap">'+(ready?body:'<div class="empty">Loading your records…</div>')+'</div></section>';
 }
@@ -2063,7 +2387,7 @@ function goBack(){if(S.navCount>0){S.navCount-=2;history.back()}else location.ha
 const ASSETS={"gv-intro": "/media/gv-intro.webp", "gv-hero": "/media/gv-hero.webp", "gv-collab": "/media/gv-collab.webp", "gv-story": "/media/gv-story.webp", "gv-ent": "/media/gv-ent.webp", "gv-box": "/media/gv-box.webp", "card-aec": "/media/card-aec.webp", "card-vybr8": "/media/card-vybr8.webp", "card-pathd": "/media/card-pathd.webp", "card-aelio": "/media/card-aelio.webp", "card-ent": "/media/card-ent.webp", "sc-cover": "/media/sc-cover.webp", "aelio-p1": "/media/aelio-p1.webp", "aelio-p2": "/media/aelio-p2.webp", "aelio-p3": "/media/aelio-p3.webp", "aelio-p4": "/media/aelio-p4.webp", "aelio-p5": "/media/aelio-p5.webp", "aelio-p6": "/media/aelio-p6.webp"};
 const ENT_TABS=[["","Overview"],["live","Watch Live"],["music","Music"],["radio","Grooveville Radio"],["artists","Artists"],["tv","Grooveville TV"],["events","Events"]];
 S.media={};S.web={sec:"media"};S.sound=false;
-const DEFIMG={"intro-poster":"gv-intro","home-hero":"gv-hero","home-collab":"gv-collab","home-story":"gv-story","hero-ent":"gv-ent","card-aec":"card-aec","card-vybr8":"card-vybr8","card-pathd":"card-pathd","card-aelio":"card-aelio","card-ent":"card-ent","card-scu":"sc-cover","card-hq":"gv-box",
+const DEFIMG={"intro-poster":"gv-intro","home-storycard":"gv-story","home-hero":"gv-hero","home-collab":"gv-collab","home-story":"gv-story","hero-ent":"gv-ent","card-aec":"card-aec","card-vybr8":"card-vybr8","card-pathd":"card-pathd","card-aelio":"card-aelio","card-ent":"card-ent","card-scu":"sc-cover","card-hq":"gv-box",
   "aelio-p1":"aelio-p1","aelio-p2":"aelio-p2","aelio-p3":"aelio-p3","aelio-p4":"aelio-p4","aelio-p5":"aelio-p5","aelio-p6":"aelio-p6"};
 const DEF={
   home:{heroEyebrow:"Grooveville LLC · The Creative House",heroA:"Different worlds.",heroB:"One Groove.",heroP:"Nine companies. Endless possibilities. A home for creators, innovators, and community."},
@@ -2079,12 +2403,17 @@ const DEF={
 const MLISTS=[["featured","Featured Music"],["trending","Trending Songs"],["artists","Featured Artists"],["playlists","Curated Playlists"],["releases","Latest Releases"]];
 function siteCfg(k){const o=(pub()[k])||{};const d=DEF[k];const r=Object.assign({},d);Object.keys(o).forEach(x=>{if(o[x]!==""&&o[x]!=null)r[x]=o[x]});if(k==="aelio")r.pers=d.pers.map((p,i)=>Object.assign({},p,((o.pers||[])[i])||{}));return r}
 const mediaMap=()=>BACKEND==="claude"&&!S.isAdmin?(SNAP.media||{}):S.media;
-function media(id){const m=mediaMap()[id];return m&&(m.data||m.url||m.def)&&!m.hidden?m:null}
+function media(id){const n=mediaManaged(id);if(n)return n;const m=mediaMap()[id];return m&&(m.data||m.url||m.def)&&!m.hidden?m:null}
 function pubMedia(){const o={};Object.entries(S.media||{}).forEach(([k,m])=>{if(m&&!m.hidden){const c=Object.assign({},m);delete c.prev;o[k]=c}});return o}
 function slotSrc(id){const m=media(id);return (m&&m.data)||ASSETS[DEFIMG[id]]||""}
 const DEFPOS={"home-story":"50% 12%","home-collab":"50% 30%","home-hero":"62% 35%","card-scu":"50% 30%"};
-function imgTag(id,alt,cls){const src=slotSrc(id);if(!src)return "";const m=media(id)||{};const f=m.focal||DEFPOS[id]||"50% 50%",z=Number(m.zoom)||1;
-  return '<img'+(cls?' class="'+cls+'"':'')+' src="'+esc(src)+'" alt="'+esc(m.alt||alt||"")+'" loading="lazy" decoding="async" style="object-position:'+esc(f)+(z>1?';transform:scale('+z+');transform-origin:'+esc(f):'')+'">'}
+function imgTag(id,alt,cls){const m=media(id)||{};
+  const f=m.focal||DEFPOS[id]||"50% 50%",mf=m.mfocal||f,z=Number(m.zoom)||1,st='style="object-position:'+esc(f)+';--fp:'+esc(f)+';--mfp:'+esc(mf)+(z>1?';transform:scale('+z+');transform-origin:'+esc(f):'')+'"';
+  if(m.managed&&m.kind==="video"&&m.url){const still=matchMedia("(prefers-reduced-motion: reduce)").matches;
+    return '<video class="gvimg'+(cls?" "+cls:"")+'" src="'+esc(m.url)+'"'+(m.data?' poster="'+esc(m.data)+'"':'')+(still?'':' autoplay')+' muted loop playsinline preload="metadata" aria-hidden="true" '+st+'></video>'}
+  const src=m.data||ASSETS[DEFIMG[id]]||"";if(!src)return "";
+  const img='<img class="gvimg'+(cls?" "+cls:"")+'" src="'+esc(src)+'" alt="'+esc(m.alt||alt||"")+'" loading="lazy" decoding="async" '+st+'>';
+  return m.mdata&&m.mdata!==src?'<picture class="gvpic"><source media="(max-width:760px)" srcset="'+esc(m.mdata)+'">'+img+'</picture>':img}
 let mediaSub=false;
 function subscribeMedia(){if(mediaSub||!S.db)return;mediaSub=true;S.db.collection("media").onSnapshot(snap=>{const o={};snap.docs.forEach(d=>{o[d.id]=d.data()});S.media=o;S.loaded.media=true;scheduleRender(true);renderRadio()},()=>{S.loaded.media=true})}
 
@@ -2118,7 +2447,7 @@ function setSound(on){
 }
 
 /* ---------- cinematic entry ---------- */
-function introWanted(){try{if(sessionStorage.getItem("gvIntro"))return false}catch(e){}return S.route==="home"}
+function introWanted(){if(PREVIEW.on)return false;try{if(sessionStorage.getItem("gvIntro"))return false}catch(e){}return S.route==="home"}
 let INTRO_RAF=0,INTRO_T=[];
 const SHOT_R=2.73;
 function introLayout(el){const W=innerWidth,H=innerHeight;let sh,st;
@@ -2203,10 +2532,7 @@ function radioPause(){mpPause(false)}
 function radioToggle(){mpToggle()}
 function renderRadio(){mpRender()}
 function syncRadio(){mpRender()}
-function radioCard(big){const on=soundtrackOn(),ids=soundtrackIds(),art=slotSrc("radio-art"),now=MP.ctx==="soundtrack"?mpSong():null;
-  return '<div class="radiocard"><div><div class="kicker">Grooveville Radio · Sound On</div><h2 class="disp" style="margin-top:10px">Exclusive Grooveville songs.</h2><p class="muted" style="margin-top:10px;max-width:46ch">'+(on?'Grooveville Originals, nonstop. Keep it playing in the player while you explore the site.':'The station is getting tuned. Check back soon.')+'</p>'+
-    (on?'<button class="btn peach" style="margin-top:20px" data-act="mu-radio">'+(MP.ctx==="soundtrack"&&MP.playing?"❚❚ Pause Grooveville Radio":"▶ Play Grooveville Radio")+'</button>'+(now?'<p class="muted" style="font-size:13px;margin-top:10px">Now playing: <b style="color:var(--ink)">'+esc(now.title)+'</b> · '+esc(artistName(now))+'</p>':''):'')+'</div>'+
-    '<div class="rcart">'+(ids.length?ids.slice(0,4).map(id=>{const s=MU().songs[id],im=muImg(s.art||((MU().albums[s.albumId]||{}).art)||"");return im?'<img src="'+esc(im)+'" alt="">':'<span>♪</span>'}).join(""):(art?'<img src="'+esc(art)+'" alt="Grooveville Radio">':'<img src="'+LOGO+'" alt="" style="border-radius:50%">'))+'</div></div>'}
+function radioCard(big){return radioFeature()}
 /* ---------- Entertainment tabs ---------- */
 function entSub(sub){
   musicSubscribe();
@@ -2267,7 +2593,7 @@ function slotList(){
   L.push({id:"vine-art",g:"Protected brand assets",label:"The Groove Vine",r:"1/1",prot:true,note:"The original illustrated vine is drawn in code and stays interactive. Only replace it on purpose."});
   return L;
 }
-function viewWebsite(){
+function viewWebsiteLegacy(){
   const sec=S.web.sec;
   return '<div class="seg" role="tablist" style="margin-bottom:20px">'+WEB_SECS.map(([k,l])=>'<button role="tab" aria-selected="'+(sec===k)+'" class="'+(sec===k?"on":"")+'" data-act="web-sec" data-v="'+k+'">'+l+'</button>').join("")+'</div>'+
     ({media:webMedia,companies:webCompanies,aelio:webAelio,music:webMusic}[sec]||webMedia)();
@@ -2286,24 +2612,32 @@ function webMedia(){
 }
 function webCompanies(){
   return '<p class="muted" style="max-width:72ch;margin-bottom:12px">Order sets where each company appears in the featured gallery, directory and footer. The Groove Vine keeps its original positions.</p><div class="mbox">'+
-    VENTURES().map(b0=>{const b=brandInfo(b0.id);return '<div class="lrow"><img class="th" src="'+esc(slotSrc("card-"+b.id)||b.logo||LOGO)+'" alt=""><div style="min-width:0">'+chip(b.id)+'<div class="muted" style="font-size:12.5px;margin-top:4px">'+esc(b.website||b.social||"No website")+'</div>'+
+    VENTURES().map(b0=>{const b=edBrand(b0.id);return '<div class="lrow"><img class="th" src="'+esc(slotSrc("card-"+b.id)||b.logo||LOGO)+'" alt=""><div style="min-width:0">'+chip(b.id)+'<div class="muted" style="font-size:12.5px;margin-top:4px">'+esc(b.website||b.social||"No website")+'</div>'+
       '<div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:8px;font-size:13px;align-items:center"><label>Order <input class="i" type="number" min="1" max="99" style="width:70px;padding:4px 6px" id="ord-'+b.id+'" value="'+esc(b.order||"")+'"></label><label><input type="checkbox" id="feat-'+b.id+'"'+(b.unfeatured?'':' checked')+'> Featured</label><label><input type="checkbox" id="pubv-'+b.id+'"'+(b.hidden?'':' checked')+'> Published</label></div></div>'+
-      '<div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end"><button class="btn ghost sm" data-act="co-save" data-id="'+b.id+'">Save</button><button class="btn ghost sm" data-act="edit-brand" data-id="'+b.id+'">Edit text</button><button class="btn ghost sm" data-act="media-edit" data-id="card-'+b.id+'">Image</button><a class="rowbtn" href="#b-'+b.id+'">View</a></div></div>'}).join("")+'</div>'+
+      '<div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end"><button class="btn ghost sm" data-act="co-save" data-id="'+b.id+'">Save</button><button class="btn ghost sm" data-act="edit-brand" data-id="'+b.id+'">Edit text</button><button class="btn ghost sm" data-act="'+(BACKEND==="firebase"?"ws-pick":"media-edit")+'" data-slot="card-'+b.id+'" data-id="card-'+b.id+'">Image</button><a class="rowbtn" href="#b-'+b.id+'">View</a></div></div>'}).join("")+'</div>'+
     '<div class="mbox"><b>Grooveville Music</b><p class="muted" style="font-size:13.5px;margin-top:4px">Music is a division of Grooveville Entertainment now. Its timesheet slot and data are unchanged; the public page lives at Entertainment › Music, and old Music links forward there.</p></div>';
 }
 function webAelio(){
-  const A=siteCfg("aelio"),b=brandInfo("aelio"),f=(k,l,ta)=>'<label class="f">'+l+(ta?'<textarea class="i" name="'+k+'">'+esc(A[k])+'</textarea>':'<input class="i" name="'+k+'" value="'+esc(A[k])+'">')+'</label>';
+  const A=edCfg("aelio"),b=edBrand("aelio"),f=(k,l,ta)=>'<label class="f">'+l+(ta?'<textarea class="i" name="'+k+'">'+esc(A[k])+'</textarea>':'<input class="i" name="'+k+'" value="'+esc(A[k])+'">')+'</label>';
   return '<form class="mbox" id="aeForm" style="display:flex;flex-direction:column;gap:12px"><div class="sechead" style="margin:0"><h3 style="font-size:20px">AELIO page</h3><a class="rowbtn" href="#b-aelio">View page</a></div>'+
     '<div class="grid2"><label class="f">Company name<input class="i" name="name" value="'+esc(b.name)+'"></label><label class="f">Official website<input class="i" type="url" name="website" value="'+esc(b.website||"https://aelio.live/")+'"></label></div>'+
     '<div class="grid2">'+f("eyebrow","Eyebrow")+f("headline","Headline")+'</div>'+f("tagline","Tagline")+f("desc","Description",1)+
     '<div class="grid2">'+f("ecoEyebrow","Ecosystem eyebrow")+f("ecoHead","Ecosystem headline")+'</div>'+f("ecoDesc","Ecosystem description",1)+
     '<div class="grid2">'+f("persTitle","Personalities title")+f("persSub","Personalities subtitle")+'</div>'+f("closing","Closing statement")+
-    '<h4 style="margin-top:8px">Personalities</h4>'+A.pers.map((p,i)=>'<div class="lrow" style="grid-template-columns:auto minmax(0,1fr) minmax(0,1.3fr) auto"><img class="th" src="'+esc(slotSrc("aelio-p"+(i+1)))+'" alt=""><input class="i" name="pn'+i+'" value="'+esc(p.n)+'" aria-label="Personality '+(i+1)+' name"><input class="i" name="pd'+i+'" value="'+esc(p.d)+'" aria-label="Personality '+(i+1)+' description"><button type="button" class="btn ghost sm" data-act="media-edit" data-id="aelio-p'+(i+1)+'">Image</button></div>').join("")+
+    '<h4 style="margin-top:8px">Personalities</h4>'+A.pers.map((p,i)=>'<div class="lrow" style="grid-template-columns:auto minmax(0,1fr) minmax(0,1.3fr) auto"><img class="th" src="'+esc(slotSrc("aelio-p"+(i+1)))+'" alt=""><input class="i" name="pn'+i+'" value="'+esc(p.n)+'" aria-label="Personality '+(i+1)+' name"><input class="i" name="pd'+i+'" value="'+esc(p.d)+'" aria-label="Personality '+(i+1)+' description"><button type="button" class="btn ghost sm" data-act="'+(BACKEND==="firebase"?"ws-pick":"media-edit")+'" data-slot="aelio-p'+(i+1)+'" data-id="aelio-p'+(i+1)+'">Image</button></div>').join("")+
     '<div><button class="btn olive" type="submit">Save AELIO</button></div></form>';
 }
-function webMusic(){return '<div class="mbox"><h3 style="font-size:20px">Grooveville Radio now plays exclusive Grooveville songs</h3><p class="muted" style="margin-top:6px">Upload Grooveville Originals and choose the station rotation in <b>Back office › Entertainment</b>. Sound On and Grooveville Radio both play that rotation.</p><div class="btnrow0" style="margin-top:12px"><a class="btn olive" href="#ent-upload">Upload a song</a><a class="btn ghost" href="#ent-soundon">Sound On / Radio rotation</a><button type="button" class="btn ghost" data-act="media-edit" data-id="radio-art">Radio artwork</button></div></div>'}
-async function saveSite(patch){return save("settings","site",Object.assign({brands:{}},S.site,patch))}
-async function saveMusic(m){const cur=Object.assign({},(S.site||{}).music||{});return saveSite({music:Object.assign(cur,m)})}
+function webMusic(){return '<div class="mbox"><h3 style="font-size:20px">Grooveville Radio now plays exclusive Grooveville songs</h3><p class="muted" style="margin-top:6px">Upload Grooveville Originals and choose the station rotation in <b>Back office › Entertainment</b>. Sound On and Grooveville Radio both play that rotation.</p><div class="btnrow0" style="margin-top:12px"><a class="btn olive" href="#ent-upload">Upload a song</a><a class="btn ghost" href="#ent-soundon">Sound On / Radio rotation</a><button type="button" class="btn ghost" data-act="'+(BACKEND==="firebase"?"ws-pick":"media-edit")+'" data-slot="radio-art" data-id="radio-art">Radio artwork</button></div></div>'}
+async function saveSite(patch){
+  if(BACKEND!=="firebase")return save("settings","site",Object.assign({brands:{}},S.site,patch));
+  const live={},dr={};Object.keys(patch).forEach(k=>{(PK.includes(k)?dr:live)[k]=patch[k]});
+  if(Object.keys(live).length&&!await save("settings","site",Object.assign({brands:{}},S.site,live)))return false;
+  return Object.keys(dr).length?draftSave(dr):true;
+}
+function edCfg(k){const o=(edSite()[k])||{};const d=DEF[k];const r=Object.assign({},d);Object.keys(o).forEach(x=>{if(o[x]!==""&&o[x]!=null)r[x]=o[x]});if(k==="aelio")r.pers=d.pers.map((p,i)=>Object.assign({},p,((o.pers||[])[i])||{}));return r}
+function edBrand(id){const o=(edSite().brands||{})[id]||{};return Object.assign({},BR[id]||BR.hq,Object.fromEntries(Object.entries(o).filter(([k,v])=>v)))}
+function edSite(){return BACKEND==="firebase"?wsDraft():(S.site||{})}
+async function saveMusic(m){const cur=Object.assign({},edSite().music||{});return saveSite({music:Object.assign(cur,m)})}
 function shrinkImage(file,maxW,maxChars){return new Promise(res=>{const fr=new FileReader();fr.onload=()=>{const im=new Image();im.onload=()=>{let w=im.width,h=im.height;const k=Math.min(1,maxW/w);w=Math.round(w*k);h=Math.round(h*k);const c=document.createElement("canvas");c.width=w;c.height=h;c.getContext("2d").drawImage(im,0,0,w,h);
   let q=.86,out=c.toDataURL("image/webp",q);if(!/^data:image\/webp/.test(out))out=c.toDataURL("image/jpeg",q);while(out.length>maxChars&&q>.4){q-=.08;out=c.toDataURL(/webp/.test(out)?"image/webp":"image/jpeg",q)}
   if(out.length>maxChars){const c2=document.createElement("canvas");c2.width=Math.round(w*.7);c2.height=Math.round(h*.7);c2.getContext("2d").drawImage(c,0,0,c2.width,c2.height);out=c2.toDataURL("image/jpeg",.72)}
@@ -2377,7 +2711,7 @@ function webAct(a,t){
   if(a==="media-reset"){const id=t.dataset.id;openModal('<h3>'+(DEFIMG[id]?"Go back to the default image?":"Remove this?")+'</h3><p class="muted">The custom '+(id.startsWith("intro-v")||id.startsWith("intro-a")?"link":"image")+' is removed from the site.</p><div class="row"><button class="btn ghost" data-act="close-modal">Cancel</button><button class="btn danger" data-act="media-reset-go" data-id="'+esc(id)+'">Remove</button></div>');return true}
   if(a==="media-reset-go"){remove("media",t.dataset.id).then(ok=>{if(ok){closeModal();toast("Removed")}});return true}
   if(a==="media-restore"){const id=t.dataset.id,m=S.media[id];if(m&&m.prev){const rec=Object.assign({},m,m.prev,{prev:{data:m.data,alt:m.alt||"",focal:m.focal||"",zoom:m.zoom||1},updatedAt:new Date().toISOString()});save("media",id,rec).then(ok=>ok&&toast("Previous image restored"))}return true}
-  if(a==="co-save"){const id=t.dataset.id;const brands=Object.assign({},(S.site||{}).brands);const cur=Object.assign({},brands[id]);
+  if(a==="co-save"){const id=t.dataset.id;const brands=Object.assign({},edSite().brands);const cur=Object.assign({},brands[id]);
     cur.order=$("#ord-"+id).value;cur.unfeatured=$("#feat-"+id).checked?"":true;cur.hidden=$("#pubv-"+id).checked?"":true;brands[id]=cur;saveSite({brands}).then(ok=>ok&&toast("Saved"));return true}
   if(a==="mus-new"){musModal(t.dataset.k);return true}
   if(a==="mus-edit"){const it=(siteCfg("music")[t.dataset.k]||[]).find(x=>x.id===t.dataset.id);if(it)musModal(t.dataset.k,it);return true}
@@ -2387,7 +2721,7 @@ function webAct(a,t){
 document.addEventListener("submit",async e=>{
   const f=e.target;if(!S.isAdmin)return;
   if(f.id==="aeForm"){e.preventDefault();const o=formObj(f),D=DEF.aelio,ae={};Object.keys(D).forEach(k=>{if(typeof D[k]==="string")ae[k]=o[k]||D[k]});ae.pers=D.pers.map((p,i)=>({n:o["pn"+i]||p.n,d:o["pd"+i]||p.d}));
-    const brands=Object.assign({},(S.site||{}).brands);brands.aelio=Object.assign({},brands.aelio,{name:o.name,website:o.website});
+    const brands=Object.assign({},edSite().brands);brands.aelio=Object.assign({},brands.aelio,{name:o.name,website:o.website});
     if(o.website&&!/^https:\/\//.test(o.website)){toast("The website needs to start with https://");return}
     if(await saveSite({aelio:ae,brands}))toast("AELIO saved")}
   if(f.id==="radioForm"){e.preventDefault();const o=formObj(f);if(o.spotify&&!spotifyUri(o.spotify)){toast("That isn't a Spotify playlist, album or track link");return}if(o.stream&&!/^https:\/\//.test(o.stream)){toast("Stream links need to start with https://");return}
@@ -2799,6 +3133,8 @@ function mpTick(){const a=MP.audio;if(!a)return;const t=$("#mpT"),d=$("#mpD"),sk
   const pp=$("#mp .mpp");if(pp)pp.innerHTML=MP.loading&&!MP.playing?'<span class="spin" aria-hidden="true"></span>':MP.playing?"❚❚":"▶";
   document.querySelectorAll("[data-playing]").forEach(b=>{const on=MP.playing&&b.dataset.playing===MP.q[MP.i];b.classList.toggle("on",on)})}
 function mpAct(a,t){
+  if(a==="mu-radio"||a==="mu-play"){try{mpAudio();vizHook()}catch(e){}}
+  if(a==="t-next"){const r=$("#trow");if(r){const w=(r.firstElementChild||{}).offsetWidth||150;r.scrollBy({left:(r.scrollLeft+r.clientWidth>=r.scrollWidth-4?-r.scrollWidth:w*2),behavior:"smooth"})}return true}
   if(!a.startsWith("mp-")&&!a.startsWith("mu-"))return false;
   if(a==="mp-toggle")mpToggle();else if(a==="mp-next")mpNext();else if(a==="mp-prev")mpPrev();
   else if(a==="mp-shuffle"){MP.shuffle=!MP.shuffle;mpRender()}else if(a==="mp-repeat"){MP.repeat={off:"all",all:"one",one:"off"}[MP.repeat];mpRender()}
@@ -2835,7 +3171,7 @@ function viewMusic(){musicSubscribe();
   const mv=pubList(MU().tvVideos).filter(v=>v.categoryId==="music-videos").slice(0,6),entries=Object.values(MU().entries).filter(e=>e.published).sort((a,b)=>(a.position||99)-(b.position||99)).slice(0,5);
   return muHead("Grooveville Entertainment","Grooveville Music","Originals, artists and the Grooveville sound. Everything here plays right on Grooveville.","music")+
   '<section style="padding-top:26px"><div class="wrap">'+
-    '<div class="radiocard"><div><div class="kicker">Grooveville Radio · Sound On</div><h2 class="disp" style="margin-top:10px">Exclusive Grooveville songs, nonstop.</h2><p class="muted" style="margin-top:10px;max-width:46ch">Turn Sound On and the Grooveville Originals rotation plays as you move around the site.</p>'+(soundtrackOn()?'<button class="btn peach" style="margin-top:18px" data-act="mu-radio">'+(MP.ctx==="soundtrack"&&MP.playing?"❚❚ Pause Grooveville Radio":"▶ Play Grooveville Radio")+'</button>':'<p class="muted" style="margin-top:14px">The station is getting tuned. Check back soon.</p>')+'</div><div class="rcart">'+soundtrackIds().slice(0,4).map(id=>{const s=MU().songs[id],im=muImg(s.art||((MU().albums[s.albumId]||{}).art)||"");return im?'<img src="'+esc(im)+'" alt="">':'<span>♪</span>'}).join("")+'</div></div>'+
+    radioFeature()+trendRow()+
     muSec("Featured Grooveville Originals",feat.length?songList(feat,"featured"):muEmpty("Featured songs appear here once they're released.","upload"))+
     muSec("New releases",newr.length?songList(newr,"new"):muEmpty("New music is on the way.","upload"))+
     muSec("Official Grooveville Artists",artists.length?'<div class="agrid">'+artists.slice(0,8).map(artistCard).join("")+'</div>':muEmpty("Artist profiles are coming soon.","artists"),artists.length>8?'<a class="btn ghost sm" href="#music/artists">All artists</a>':'')+
@@ -2928,6 +3264,33 @@ function viewSongRate(){musicSubscribe();const on=!!muSet("flags").songRate;
 document.addEventListener("submit",async e=>{const f=e.target;if(f.id!=="srForm")return;e.preventDefault();const m=$("#srMsg"),b=f.querySelector("button");b.disabled=true;
   try{const r=await fetch("/api/songrate/submit",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify(formObj(f))});const j=await r.json().catch(()=>({}));if(!r.ok)throw new Error(j.error||"Couldn't submit");f.reset();m.textContent="Thanks! Your song is in the review queue.";m.style.color="var(--ok)"}
   catch(err){m.textContent=err.message;m.style.color="var(--warn)"}b.disabled=false},true);
+
+/* ---------- Grooveville Radio feature (vinyl, live visualizer) and Trending row ---------- */
+function radioFeature(){const M=stv("music"),on=soundtrackOn(),playing=MP.ctx==="soundtrack"&&MP.playing,now=MP.ctx==="soundtrack"?mpSong():null;
+  const lbl=(now&&muImg(now.art||((MU().albums[now.albumId]||{}).art)||""))||slotSrc("radio-art")||LOGO;
+  return '<div class="rfeat gtile'+(playing?" playing":"")+'" data-edit="music.radio"><div class="rftx"><div class="kicker">'+esc(M.kicker)+'</div><h2 class="disp">'+esc(M.head)+'</h2><p>'+esc(on?M.p:"The station is getting tuned. Check back soon.")+'</p>'+
+    (on?'<div class="rfctl"><button class="btn peach rfplay" data-act="mu-radio" aria-pressed="'+playing+'"><span class="ic" aria-hidden="true">'+(playing?'<svg viewBox="0 0 24 24" width="18" height="18"><path d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z" fill="currentColor"/></svg>':'<svg viewBox="0 0 24 24" width="18" height="18"><path d="M8 5.5v13l11-6.5z" fill="currentColor"/></svg>')+'</span>'+(playing?"Pause":esc(M.btn||"Play Now"))+'</button><canvas class="viz" id="viz" width="220" height="44" aria-hidden="true"></canvas></div>'+
+      (now?'<p class="rfnow">Now playing <b>'+esc(now.title)+'</b> · '+esc(artistName(now))+'</p>':''):'')+'</div>'+
+    '<div class="vinyl" aria-hidden="true"><div class="disc"><span class="lab" style="background-image:url(\''+esc(lbl).replace(/'/g,"%27")+'\')"></span></div><span class="arm"></span></div></div>';
+}
+function trendSongs(){const M=stv("music"),songs=pubList(MU().songs),pick=(M.trendIds||[]).map(id=>songs.find(s=>s.id===id)).filter(Boolean);
+  return pick.length?pick:songs.slice().sort((a,b)=>String(b.releaseDate||b.createdAt||"").localeCompare(String(a.releaseDate||a.createdAt||""))).slice(0,10)}
+function trendRow(){const M=stv("music");if(M.trendOn===false)return "";const L=trendSongs(),ids=L.map(s=>s.id);
+  return '<div class="msec trendrow" data-edit="music.trend"><div class="sechead" style="margin-bottom:14px"><h2 style="font:700 clamp(22px,2.8vw,32px) var(--f-display);letter-spacing:-.02em">'+esc(M.trendTitle||"Trending in the Groove")+'</h2>'+(L.length>2?'<button class="qnext" data-act="t-next" aria-label="Show more songs">→</button>':'')+'</div>'+
+    (L.length?'<div class="trow" id="trow">'+L.map((s,i)=>{const im=muImg(s.art||((MU().albums[s.albumId]||{}).art)||"");return '<button class="tcard" data-act="mu-play" data-ids="'+esc(ids.join(","))+'" data-i="'+i+'" data-ctx="trend" data-playing="'+esc(s.id)+'" aria-label="Play '+esc(s.title)+'"><span class="tart">'+(im?'<img src="'+esc(im)+'" alt="" loading="lazy">':sculpt(i+2,"#F4A987","#b7a1e5","#2a1d26"))+'<span class="tp" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16"><path d="M8 5.5v13l11-6.5z" fill="currentColor"/></svg></span></span><b>'+esc(s.title)+'</b><small>'+esc(artistName(s))+'</small></button>'}).join("")+'</div>':muEmpty("New Grooveville Originals show up here as soon as they're released.","upload"))+'</div>';
+}
+/* visualizer: real audio levels where the browser allows it, a gentle idle wave otherwise */
+const VZ={ctx:null,an:null,src:null,data:null,raf:0,tried:false};
+function vizHook(){if(VZ.tried||!MP.audio)return;VZ.tried=true;
+  const iOS=/iP(hone|ad|od)/.test(navigator.userAgent)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);if(iOS)return;   // keeps background playback reliable on iPhone
+  try{const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return;VZ.ctx=new AC();VZ.src=VZ.ctx.createMediaElementSource(MP.audio);VZ.an=VZ.ctx.createAnalyser();VZ.an.fftSize=64;VZ.src.connect(VZ.an);VZ.an.connect(VZ.ctx.destination);VZ.data=new Uint8Array(VZ.an.frequencyBinCount);if(VZ.ctx.state!=="running")VZ.ctx.resume().catch(()=>{})}catch(e){VZ.an=null}}
+function vizLoop(){cancelAnimationFrame(VZ.raf);const c=$("#viz");if(!c)return;const g=c.getContext("2d"),W=c.width,H=c.height,n=28,bw=W/n;const reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const draw=t=>{if(!c.isConnected)return;g.clearRect(0,0,W,H);const on=MP.playing;const fe=c.closest(".rfeat");if(fe)fe.classList.toggle("playing",MP.ctx==="soundtrack"&&MP.playing);
+    if(VZ.ctx&&VZ.ctx.state==="suspended"&&on)VZ.ctx.resume().catch(()=>{});
+    if(VZ.an&&on)VZ.an.getByteFrequencyData(VZ.data);
+    for(let i=0;i<n;i++){let v;if(VZ.an&&on)v=VZ.data[Math.floor(i*VZ.data.length/n)]/255;else v=on&&!reduce?(.35+.3*Math.sin(t/260+i*.7)*Math.sin(t/410+i*.31)):.12+.06*Math.sin(i*.9);
+      const h=Math.max(3,v*H);g.fillStyle=i/n<.55?"#F4A987":"rgba(244,169,135,.45)";g.beginPath();g.roundRect?g.roundRect(i*bw+1,(H-h)/2,bw-3,h,2):g.rect(i*bw+1,(H-h)/2,bw-3,h);g.fill()}
+    VZ.raf=requestAnimationFrame(draw)};VZ.raf=requestAnimationFrame(draw)}
 
 /* ---------- Back office › Entertainment (founder / HNIC only) ----------
    Music library + MP3 uploads (R2), artists, albums, playlists, Sound On / Grooveville Radio, Grooveville TV,
@@ -3201,9 +3564,15 @@ const MI={
   aelio:'<path d="M12 3.5 14.2 9.8 20.5 12l-6.3 2.2L12 20.5l-2.2-6.3L3.5 12l6.3-2.2z"/>',
   studio:'<circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="3"/><path d="M12 3.5v5.5"/>',
   office:'<rect x="3.5" y="7" width="17" height="12.5" rx="2.5"/><path d="M9 7V5h6v2M3.5 12.5h17"/>',
+  search:'<circle cx="11" cy="11" r="6.5"/><path d="m20 20-4.3-4.3"/>',
+  user:'<circle cx="12" cy="8.5" r="3.8"/><path d="M4.5 20.5a7.5 7.5 0 0 1 15 0"/>',
+  back:'<path d="M15 5 8 12l7 7"/>',
   sound:'<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/><path d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11"/>'
 };
 const mIco=k=>'<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+(MI[k]||"")+'</svg>';
+const MENU_DEST=[["home","#home","home","Home","Start here"],["vine","#vine","vine","Companies","Our ecosystem"],["brands","#brands","brands","Brands","Products & IP"],["live","#live","live","Watch Live","Shows & events"],["music","#music","music","Music","Originals"],["tv","#tv","tv","Grooveville TV","Videos & playlists"],["radio","#b-ent/radio","radio","Radio","Exclusive sound"],["cal","#calendar","cal","Calendar","Events"],["collab","#collab","collab","Collaborate","Opportunities"],["story","#story","story","Our Story","Who we are"],["aelio","#b-aelio","aelio","AELIO","Our AI"],["crown","#shadowcrown","crown","Shadow Crown","Book · Game"],["team","#groove","team","Groove Team","The people"]];
+const GLOWS={mixed:["#F4A987","#b7a1e5","#68d4d0","#e8c27a"],warm:["#F4A987","#e8c27a","#e59a72","#f2c48f"],cool:["#b7a1e5","#68d4d0","#8fb3ff","#a28be0"]};
+const TOP_ROUTES=["home","","vine","live","music"];
 function mTabOn(k){
   const r=S.route;
   if(k==="home")return r==="home"||r==="";
@@ -3213,48 +3582,665 @@ function mTabOn(k){
   return false;
 }
 function mTiles(){
-  const T=[["#home","home","Home"],["#vine","vine","Companies"],["#brands","brands","Brands"],["#live","live","Watch Live"],["#music","music","Music"],["#tv","tv","Grooveville TV"],["#b-ent/radio","radio","Radio"],["#calendar","cal","Calendar"],["#collab","collab","Collaborate"],["#story","story","Our Story"],["#b-aelio","aelio","AELIO"],["#shadowcrown","crown","Shadow Crown"],["#groove","team","Groove Team"]];
-  if(!S.isAdmin&&SR().checked&&studioAccess())T.push(["#studio","studio","Studio"]);
-  if(S.isAdmin)T.push(["#team","office","Back Office"],["#studio","studio","Ent. Studio"]);
+  const M=stv("menu"),tiles=M.tiles||{};
+  const T=MENU_DEST.map(([k,h,ic,l,sub])=>({k,h,ic,l,sub:(tiles[k]&&tiles[k].sub)||sub}));
+  if(!S.isAdmin&&SR().checked&&studioAccess())T.push({k:"studio",h:"#studio",ic:"studio",l:"Studio",sub:"Your shows"});
+  if(S.isAdmin)T.push({k:"office",h:"#team",ic:"office",l:"Back Office",sub:"Founder"},{k:"ent-studio",h:"#studio",ic:"studio",l:"Ent. Studio",sub:"Shows & clips"});
   return T;
 }
-function mTile(t){return '<a class="mtile" href="'+t[0]+'" data-act="m-close">'+'<span class="mi">'+mIco(t[1])+'</span><span>'+t[2]+'</span></a>'}
+function mTile(t,i,glows){const g=glows[i%glows.length],img=media("menu-"+t.k);
+  return '<a class="mtile gtile'+(t.k==="team"?" wide":"")+(img?" hasimg":"")+'" href="'+t.h+'" data-act="m-close" data-edit="menu" style="--glow:'+g+';--lx:'+(i%3===2?"85%":i%3?"50%":"15%")+'">'+(img?'<span class="mbg">'+imgTag("menu-"+t.k,"","")+'</span>':'')+'<span class="mi">'+mIco(t.ic)+'</span><span class="ml"><b>'+esc(t.l)+'</b><small>'+esc(t.sub)+'</small></span></a>'}
+function mHeader(){
+  const w=$(".nav .wrap");if(!w)return;
+  if(!$("#mBack")){const b=document.createElement("button");b.id="mBack";b.className="hbtn mback";b.setAttribute("data-act","go-back");b.setAttribute("aria-label","Back");b.innerHTML=mIco("back");w.insertBefore(b,w.firstChild);
+    const x=document.createElement("div");x.className="hacts";x.innerHTML='<button class="hbtn" data-act="srch" aria-label="Search Grooveville">'+mIco("search")+'</button><a class="hbtn hav" id="mAv" href="#groove" aria-label="Groove Team sign in">'+mIco("user")+'</a>';w.appendChild(x)}
+  document.body.classList.toggle("subpage",!TOP_ROUTES.includes(S.route)&&!S.route.startsWith("team")&&!S.route.startsWith("studio"));
+  const av=$("#mAv");if(av){if(S.signedIn){const L=(S.email||"?").slice(0,1).toUpperCase();av.innerHTML='<b>'+esc(L)+'</b>';av.href=S.isAdmin?"#team":"#portal";av.setAttribute("aria-label",S.isAdmin?"Back office":"Your Groove Team portal")}else{av.innerHTML=mIco("user");av.href="#groove";av.setAttribute("aria-label","Groove Team sign in")}}
+}
 function mobileNav(){
   let bar=$("#tabbar");
   if(!bar){
     bar=document.createElement("nav");bar.id="tabbar";bar.setAttribute("aria-label","App navigation");document.body.appendChild(bar);
     const sh=document.createElement("div");sh.id="appmenu";sh.setAttribute("role","dialog");sh.setAttribute("aria-modal","true");sh.setAttribute("aria-label","Menu");sh.hidden=true;document.body.appendChild(sh);
   }
+  mHeader();
   const live=typeof LV!=="undefined"&&LV.live&&LV.live.live;
   const tab=(h,k,l)=>'<a href="'+h+'"'+(mTabOn(k)?' class="on" aria-current="page"':'')+'>'+mIco(k)+(k==="live"&&live?'<i class="ldot" aria-hidden="true"></i>':'')+'<span>'+l+'</span></a>';
   bar.innerHTML=tab("#home","home","Home")+tab("#vine","vine","Companies")+tab("#live","live","Live")+tab("#music","music","Music")+
-    '<button data-act="m-menu" aria-expanded="'+(!$("#appmenu").hidden)+'" aria-controls="appmenu">'+mIco("menu")+'<span>Menu</span></button>';
-  if(!$("#appmenu").hidden)mMenuFill();
+    '<button data-act="m-menu" aria-expanded="'+$("#appmenu").classList.contains("open")+'" aria-controls="appmenu">'+mIco("menu")+'<span>Menu</span></button>';
+  if($("#appmenu").classList.contains("open"))mMenuFill();
 }
 function mMenuFill(){
-  $("#appmenu").innerHTML='<div class="msheet"><div class="mgrab" aria-hidden="true"></div><div class="mhead"><b>Grooveville</b><button class="mx" data-act="m-close" aria-label="Close menu">✕</button></div>'+
-    '<div class="mgrid">'+mTiles().map(mTile).join("")+'</div>'+
-    '<button class="mtile wide" data-act="sound">'+'<span class="mi">'+mIco("sound")+'</span><span>'+(S.sound?"Sound on · tap to mute":"Turn sound on")+'</span></button></div>';
+  const M=stv("menu"),gl=GLOWS[M.glow]||GLOWS.mixed;
+  $("#appmenu").innerHTML='<div class="msheet"><div class="mgrab" aria-hidden="true"></div><div class="mhead" data-edit="menu"><div class="mart">'+sculpt(7,"#F4A987","#b7a1e5","#3a2430")+'</div><div><h2>'+esc(M.title)+'</h2><p>'+esc(M.sub)+'</p></div><button class="mx" data-act="m-close" aria-label="Close menu">✕</button></div>'+
+    '<div class="mgrid">'+mTiles().map((t,i)=>mTile(t,i,gl)).join("")+'</div>'+
+    '<button class="mtile gtile wide snd" data-act="sound" style="--glow:'+gl[0]+'"><span class="mi">'+mIco("sound")+'</span><span class="ml"><b>'+(S.sound?"Sound on":"Sound off")+'</b><small>'+(S.sound?"Tap to mute Grooveville Radio":"Tap to play Grooveville Radio")+'</small></span></button></div>';
 }
 function mMenu(open){
   const m=$("#appmenu");if(!m)return;
-  if(open){mMenuFill();m.hidden=false;document.body.classList.add("m-menu");requestAnimationFrame(()=>m.classList.add("open"));const x=m.querySelector(".mx");if(x)x.focus()}
-  else{m.classList.remove("open");document.body.classList.remove("m-menu");setTimeout(()=>{m.hidden=true},200)}
+  if(open){mMenuFill();m.hidden=false;document.body.classList.add("m-menu");requestAnimationFrame(()=>m.classList.add("open"));const x=m.querySelector(".mx");if(x)x.focus({preventScroll:true})}
+  else{m.classList.remove("open");document.body.classList.remove("m-menu");setTimeout(()=>{if(!m.classList.contains("open"))m.hidden=true},220)}
   const b=$('#tabbar [data-act="m-menu"]');if(b)b.setAttribute("aria-expanded",open?"true":"false");
 }
+/* ---------- search ---------- */
+function srchIndex(){
+  const out=MENU_DEST.map(([k,h,ic,l,sub])=>({t:l,s:sub,h,k:"Page",ic}));
+  VENTURES().forEach(b0=>{const b=brandInfo(b0.id);if(!b.hidden)out.push({t:b.name,s:b.cat||b.tagline||"",h:"#b-"+b.id,k:"Company",ic:"vine"})});
+  try{pubList(MU().songs).forEach(s=>out.push({t:s.title,s:artistName(s),h:"#music",k:"Song",ic:"music",play:s.id}));pubList(MU().artists).forEach(a=>out.push({t:a.name,s:"Artist",h:"#artist/"+a.id,k:"Artist",ic:"team"}));pubList(MU().tvVideos).slice(0,60).forEach(v=>out.push({t:v.title,s:"Grooveville TV",h:"#tv",k:"Video",ic:"tv"}))}catch(e){}
+  try{upcomingPublic(null,30).forEach(e=>out.push({t:e.title,s:fmtDate(e.date),h:"#calendar",k:"Event",ic:"cal"}))}catch(e){}
+  return out;
+}
+function srchOpen(){musicSubscribe();let o=$("#srch");if(!o){o=document.createElement("div");o.id="srch";o.setAttribute("role","dialog");o.setAttribute("aria-modal","true");o.setAttribute("aria-label","Search");document.body.appendChild(o)}
+  o.innerHTML='<div class="srbox"><div class="srin">'+mIco("search")+'<input id="srQ" type="search" placeholder="Search pages, companies, music, events" autocomplete="off" aria-label="Search"><button class="mx" data-act="srch-close" aria-label="Close search">✕</button></div><div id="srR" class="srr"></div></div>';
+  o.hidden=false;requestAnimationFrame(()=>o.classList.add("open"));const q=$("#srQ");q.focus();srchRun("");q.addEventListener("input",()=>srchRun(q.value))}
+function srchRun(q){const r=$("#srR");if(!r)return;q=q.trim().toLowerCase();const I=srchIndex();
+  const L=q?I.filter(x=>(x.t+" "+x.s+" "+x.k).toLowerCase().includes(q)).slice(0,30):I.filter(x=>x.k==="Page").slice(0,8);
+  r.innerHTML=(q?'':'<div class="srh">Jump to</div>')+(L.length?L.map(x=>'<a class="sri" href="'+esc(x.h)+'" data-act="srch-go"'+(x.play?' data-play="'+esc(x.play)+'"':'')+'><span class="mi">'+mIco(x.ic)+'</span><span><b>'+esc(x.t)+'</b><small>'+esc(x.k)+(x.s?' · '+esc(x.s):'')+'</small></span></a>').join(""):'<div class="empty">Nothing found for “'+esc(q)+'”.</div>')}
+function srchClose(){const o=$("#srch");if(o){o.classList.remove("open");setTimeout(()=>{o.hidden=true},180)}}
 function mobileAct(a,t){
-  if(a==="m-menu"){mMenu($("#appmenu").hidden);return true}
+  if(a==="m-menu"){mMenu(!$("#appmenu").classList.contains("open"));return true}
   if(a==="m-close"){mMenu(false);return true}   // the link still navigates
+  if(a==="srch"){srchOpen();return true}
+  if(a==="srch-close"){srchClose();return true}
+  if(a==="srch-go"){srchClose();if(t.dataset.play){const s=MU().songs[t.dataset.play];if(s)setTimeout(()=>{try{mpPlay([s.id],0,"search")}catch(e){}},50)}return true}
+  if(a==="q-next"){const r=$("#qrow");if(r){const w=(r.firstElementChild||{}).offsetWidth||160;r.scrollBy({left:(r.scrollLeft+r.clientWidth>=r.scrollWidth-4?-r.scrollWidth:w+12),behavior:"smooth"})}return true}
   if(a==="sound"&&t.closest("#appmenu"))setTimeout(mMenuFill,0);
   return false;
 }
-document.addEventListener("click",e=>{const m=$("#appmenu");if(m&&!m.hidden&&e.target===m)mMenu(false)});
-document.addEventListener("keydown",e=>{if(e.key==="Escape"){const m=$("#appmenu");if(m&&!m.hidden)mMenu(false)}});
+document.addEventListener("click",e=>{const m=$("#appmenu");if(m&&!m.hidden&&e.target===m)mMenu(false);const o=$("#srch");if(o&&!o.hidden&&e.target===o)srchClose()});
+document.addEventListener("keydown",e=>{if(e.key==="Escape"){const m=$("#appmenu");if(m&&!m.hidden)mMenu(false);const o=$("#srch");if(o&&!o.hidden)srchClose()}});
 window.addEventListener("hashchange",()=>{const m=$("#appmenu");if(m&&!m.hidden)mMenu(false)});
-function mLaunch(){
-  const T=[["#live","live","Watch Live"],["#music","music","Music"],["#vine","vine","Companies"],["#calendar","cal","Events"],["#collab","collab","Collaborate"],["#groove","team","Groove Team"]];
-  return '<nav class="mlaunch" aria-label="Quick links">'+T.map(mTile).join("")+'</nav>';
+
+/* =====================================================================
+   Website Studio: draft → preview → publish, version history, Media Library
+   - Draft:     sitedraft/main   (founder only)
+   - Live:      settings/site    (public read, founder write)  + .assets registry + .version
+   - History:   siteversions/vNNNN (founder only, never edited)
+   - Media:     mediaLib/{id} records (founder only) + files in R2 behind the Worker
+   ===================================================================== */
+const PK=["home","brands","aelio","music","studio"];
+const PREVIEW=(()=>{try{const q=new URLSearchParams(location.search);return {on:q.get("preview")==="1",edit:q.get("edit")==="1",frame:window.parent!==window}}catch(e){return {on:false,edit:false,frame:false}}})();
+Object.assign(S,{draft:null,draftLoaded:false,lib:{},libLoaded:false,versions:[],wsMeta:{folders:[]},coView:""});
+S.ws={tab:"visual",dev:"mobile",sel:"home.hero",mode:"select",page:"#home",lf:"",lq:"",lt:"all",up:[],stat:""};
+let PT={t:"",exp:0};
+const clone=o=>o==null?o:JSON.parse(JSON.stringify(o));
+const getPath=(o,p)=>String(p).split(".").reduce((a,k)=>a==null?undefined:a[k],o);
+function setPath(o,p,v){const ks=String(p).split(".");let c=o;ks.slice(0,-1).forEach((k,i)=>{if(c[k]==null||typeof c[k]!=="object")c[k]=/^\d+$/.test(ks[i+1])?[]:{};c=c[k]});c[ks[ks.length-1]]=v;return o}
+const nowIso=()=>new Date().toISOString();
+const hhmm=()=>new Date().toLocaleTimeString("en-US",{hour:"numeric",minute:"2-digit"});
+
+/* ---------- studio defaults (what the site shows until the founder changes it) ---------- */
+const ACCENTS={peach:"#F4A987",teal:"#68d4d0",lavender:"#b7a1e5",lime:"#c9e27a",gold:"#e8c27a"};
+const ACC_OPTS=[["peach","Peach"],["teal","Teal"],["lavender","Lavender"],["lime","Lime"],["gold","Gold"]];
+const ST_DEF={
+  home:{kicker2:"Nine companies. Endless possibilities.",heroBtn:"Explore the Groove",heroLink:"#vine",align:"left",accent:"peach",order:["quick","story"],
+    story:{on:true,kicker:"Watch the story",title:"",dur:"",video:""},
+    quick:{on:true,title:"Quick Access",items:[{label:"Music",link:"#music",slot:"quick-1"},{label:"Live",link:"#live",slot:"quick-2"},{label:"Companies",link:"#vine",slot:"quick-3"},{label:"TV",link:"#tv",slot:"quick-4"}]}},
+  menu:{title:"Explore the Groove",sub:"Nine companies. One ecosystem.",glow:"mixed",tiles:{}},
+  companies:{kicker:"The Groove Vine",a:"One root.",b:"Nine companies.",p:"Different paths. Same purpose. Explore each branch and see what we're building together.",btn:"Explore Our Companies",view:"gallery",subs:{}},
+  music:{kicker:"Grooveville Radio · Sound On",head:"Exclusive Grooveville songs, nonstop.",p:"Turn Sound On and the Grooveville Originals rotation plays as you move around the site.",btn:"Play Now",trendOn:true,trendTitle:"Trending in the Groove",trendIds:[]},
+  slots:{}
+};
+const DEF_ALL=()=>({home:DEF.home,studio:ST_DEF});
+/* value from the site being shown (published, or the draft in Preview), falling back to defaults */
+function stv(path){
+  const v=getPath(pub().studio||{},path),d=getPath(ST_DEF,path);
+  if(v===undefined||v===null||v==="")return clone(d);
+  if(d&&typeof d==="object"&&!Array.isArray(d)&&v&&typeof v==="object"&&!Array.isArray(v)){const o=clone(d);Object.keys(v).forEach(k=>{if(v[k]!==""&&v[k]!=null)o[k]=(o[k]&&typeof o[k]==="object"&&!Array.isArray(o[k])&&typeof v[k]==="object")?Object.assign(o[k],v[k]):v[k]});return o}
+  return v;
 }
+/* the site object the visitor should see: the draft in founder Preview, otherwise what's published */
+function activeSite(){return (PREVIEW.on&&S.isAdmin&&S.draft)?Object.assign({},S.site||{},S.draft):(S.site||{})}
+function activeAssets(){return (PREVIEW.on&&S.isAdmin&&S.draft)?libRegistry(S.draft):((S.site||{}).assets||{})}
+
+/* ---------- assets ---------- */
+const ASSET_RE=/as_[a-z0-9]{6,24}/g;
+function refIds(o){return [...new Set((JSON.stringify(o||{}).match(ASSET_RE))||[])]}
+function regEntry(A){const o={id:A.id,rev:Number(A.rev)||1,orev:Number(A.orev||A.rev)||1,kind:A.kind,ext:A.ext||"",ve:A.ve||"webp",alt:A.alt||"",w:A.w||0,h:A.h||0,focal:A.focal||"",poster:!!A.poster,dur:A.dur||0,url:A.url||""};return o}
+function libRegistry(D){const o={};refIds(D).forEach(id=>{const A=S.lib[id];if(A&&(A.kind==="link"||A.ready))o[id]=regEntry(A)});return o}
+function assetMeta(id){if(!id)return null;if(S.isAdmin&&S.lib[id]&&(PREVIEW.on||wsBackOffice()))return S.lib[id];return (pub().assets||{})[id]||null}
+function wsBackOffice(){const r=S.route||"";return r.startsWith("team")}
+function isLiveRev(A,v){const P=((S.site||{}).assets||{})[A.id];return !!P&&(v==="o"?P.orev===Number(A.orev||A.rev):P.rev===Number(A.rev))}
+function assetUrl(id,v){const A=typeof id==="object"?id:assetMeta(id);if(!A)return "";if(A.kind==="link")return v==="t"?(A.thumb||ytThumb(A.url)||""):A.url||"";
+  const rev=v==="o"?(A.orev||A.rev):A.rev,ext=v==="o"?A.ext:(A.ve||"webp");
+  return "/api/site/m/"+A.id+"/"+rev+"-"+v+"."+ext+(S.isAdmin&&!isLiveRev(A,v)?(PT.t?"?pt="+PT.t:"?pt=pending"):"")}
+function ytId(u){const m=/(?:youtube\.com\/(?:watch\?v=|shorts\/|live\/|embed\/)|youtu\.be\/)([\w-]{11})/.exec(u||"");return m?m[1]:""}
+function ytThumb(u){const i=ytId(u);return i?"https://i.ytimg.com/vi/"+i+"/hqdefault.jpg":""}
+function vimeoId(u){const m=/vimeo\.com\/(?:video\/)?(\d{5,})/.exec(u||"");return m?m[1]:""}
+let PT_TRY=0;
+async function ensureToken(force){
+  if(BACKEND!=="firebase"||!S.isAdmin)return "";
+  if(!force&&PT.t&&PT.exp-120>Date.now()/1000)return PT.t;
+  if(!force&&Date.now()-PT_TRY<60000)return PT.t;PT_TRY=Date.now();
+  try{const r=await fetch("/api/site/token",{headers:{authorization:"Bearer "+await idToken()}});const j=r.ok?await r.json():null;
+    if(j&&j.token&&j.exp){const first=!PT.t;PT={t:j.token,exp:j.exp};if(first)scheduleRender(true);setTimeout(()=>ensureToken(true),Math.max(60,(j.exp-Date.now()/1000-300))*1000)}}catch(e){}
+  return PT.t;
+}
+/* which slot config is in force (published, or draft in Preview) */
+function slotCfg(id){const s=(pub().studio||{}).slots||{};return s[id]&&s[id].a?s[id]:null}
+function mediaManaged(id){const s=slotCfg(id);if(!s)return null;const A=assetMeta(s.a);if(!A)return null;
+  const img=A.kind==="image";
+  return {managed:true,kind:A.kind,data:img?assetUrl(A,"d"):(A.kind==="video"&&A.poster?assetUrl(A,"t"):A.kind==="link"?assetUrl(A,"t"):""),mdata:img?assetUrl(A,"m"):"",
+    url:A.kind==="video"?assetUrl(A,"o"):A.kind==="link"?A.url:"",alt:s.alt||A.alt||"",focal:s.focal||A.focal||"",mfocal:s.mfocal||"",zoom:Number(s.zoom)||1,audio:!!s.audio}}
+
+/* ---------- original abstract art (used when a spot has no photo) ---------- */
+function sculpt(seed,c1,c2,c3,cls){
+  let s=seed*9301+49297;const r=()=>{s=(s*9301+49297)%233280;return s/233280};
+  const g="sg"+seed+Math.floor(r()*1e5);
+  const band=(i)=>{const y=40+r()*120,a=r()*80-40,w=26+r()*30;const x0=-20,x3=420;const p=`M${x0} ${y} C ${120+r()*60} ${y-90+a} ${220+r()*60} ${y+90-a} ${x3} ${y-20+r()*40}`;
+    return `<path d="${p}" stroke="url(#${g}b${i})" stroke-width="${w}" fill="none" stroke-linecap="round" opacity=".95"/><path d="${p}" stroke="#fff" stroke-opacity=".28" stroke-width="1.4" fill="none" transform="translate(0 ${-w/2+3})"/>`};
+  return `<svg class="sculpt ${cls||""}" viewBox="0 0 400 260" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><defs>`+
+    [0,1,2].map(i=>`<linearGradient id="${g}b${i}" x1="0" x2="1" y1="${i%2}" y2="${1-i%2}"><stop offset="0" stop-color="${[c1,c2,c3][i%3]}" stop-opacity="0"/><stop offset=".45" stop-color="${[c1,c2,c3][i%3]}"/><stop offset=".7" stop-color="${[c2,c3,c1][i%3]}"/><stop offset="1" stop-color="${c3}" stop-opacity=".15"/></linearGradient>`).join("")+
+    `<radialGradient id="${g}o" cx=".7" cy=".3" r=".6"><stop offset="0" stop-color="${c1}" stop-opacity=".55"/><stop offset="1" stop-color="${c1}" stop-opacity="0"/></radialGradient><filter id="${g}f"><feGaussianBlur stdDeviation="6"/></filter></defs>`+
+    `<rect width="400" height="260" fill="url(#${g}o)"/><g filter="url(#${g}f)" opacity=".55">${band(9)}</g>${band(0)}${band(1)}${band(2)}</svg>`;
+}
+const BRAND_HEX={aec:["#9fd3c7","#4f8f86","#1d3b38"],vybr8:["#f4a987","#d9785a","#4a2418"],pathd:["#c9e27a","#86a34a","#26341a"],aelio:["#b7a1e5","#7d6bc4","#241d42"],ent:["#f4a987","#e8c27a","#3d2516"],scu:["#b7a1e5","#e8c27a","#2a1f45"],wit:["#68d4d0","#b7a1e5","#16303a"],rentals:["#e8c27a","#c9a35a","#3a2c14"],w4w:["#c9e27a","#68d4d0","#1d3324"],hq:["#f4a987","#b7a1e5","#2b1f1a"]};
+function brandArt(id,seed){const c=BRAND_HEX[id]||BRAND_HEX.hq;return sculpt(seed||(id.charCodeAt(0)+id.length*7),c[0],c[1],c[2])}
+
+/* ---------- subscriptions (founder) ---------- */
+function wsSubscribe(){
+  if(BACKEND!=="firebase"||!S.db||wsSubscribe.on)return;wsSubscribe.on=1;
+  S.db.doc("sitedraft/main").onSnapshot(d=>{if(!wsSaving)S.draft=d.exists?d.data():null;S.draftLoaded=true;wsData()},()=>{S.draftLoaded=true});
+  S.db.doc("sitedraft/meta").onSnapshot(d=>{S.wsMeta=Object.assign({folders:[]},d.exists?d.data():{});wsData()},()=>{});
+  S.db.collection("mediaLib").onSnapshot(s=>{const o={};s.docs.forEach(d=>{o[d.id]=Object.assign({},d.data(),{id:d.id})});S.lib=o;S.libLoaded=true;wsData()},()=>{S.libLoaded=true});
+  S.db.collection("siteversions").orderBy("version","desc").limit(60).onSnapshot(s=>{S.versions=s.docs.map(d=>Object.assign({},d.data(),{id:d.id}));wsData()},()=>{});
+  ensureToken();
+}
+function wsLive(){return S.route==="team-web"&&S.ws.tab==="visual"&&!!$("#wsFrame")}
+function wsData(){if(wsLive()){wsRefresh();return}if(S.route==="team-media"&&$("#modal .lib-detail"))return;if(S.ws.pickRefresh)S.ws.pickRefresh();scheduleRender(true)}
+
+/* ---------- draft editing ---------- */
+let wsT=0,wsSaving=false;
+function wsDraft(){if(S.draft)return S.draft;const o={};PK.forEach(k=>{if(S.site&&S.site[k]!=null)o[k]=clone(S.site[k])});return o}
+function wsVal(path){const v=getPath(wsDraft(),path),d=getPath(DEF_ALL(),path);return v===undefined||v===null?clone(d):v}
+function wsStatus(t){S.ws.stat=t;const e=$("#wsStat");if(e)e.textContent=t;wsBanner()}
+function draftWrite(){wsSaving=true;return S.db.doc("sitedraft/main").set(clone(S.draft)).then(()=>{wsSaving=false;wsStatus("Draft saved "+hhmm());return true}).catch(e=>{wsSaving=false;wsStatus("Couldn't save the draft");toast(/permission/.test(String(e&&e.code))?"Firebase blocked the draft. Publish the latest firestore.rules.":"Couldn't save the draft. Check your connection.");return false})}
+function draftSet(path,val,now){
+  const d=clone(wsDraft());
+  /* materialize default arrays/objects before writing inside them (e.g. quick access items) */
+  const ks=String(path).split(".");for(let i=1;i<ks.length;i++){const pre=ks.slice(0,i).join(".");if(getPath(d,pre)===undefined){const dv=getPath(DEF_ALL(),pre);if(Array.isArray(dv))setPath(d,pre,clone(dv))}}
+  setPath(d,path,val);d.updatedAt=nowIso();d.by=S.uid||"";S.draft=d;wsStatus("Saving…");clearTimeout(wsT);
+  if(now)return draftWrite();wsT=setTimeout(draftWrite,450);return Promise.resolve(true);
+}
+async function draftSave(patch){const d=Object.assign(clone(wsDraft()),clone(patch),{updatedAt:nowIso(),by:S.uid||""});S.draft=d;return draftWrite()}
+
+/* ---------- changes, validation, publish ---------- */
+function slotLabel(k){const s=(typeof slotList==="function"?slotList():[]).find(x=>x.id===k);if(s)return s.label;const m=/^quick-(\d+)$/.exec(k);if(m)return "Quick Access card "+m[1];if(k.startsWith("menu-"))return "Menu tile · "+k.slice(5);return k}
+function wsChanges(D,P){
+  const prune=v=>{if(Array.isArray(v))return v.length?v.map(prune):null;if(v&&typeof v==="object"){const o={};Object.keys(v).forEach(k=>{const x=prune(v[k]);if(x!==null&&x!==undefined&&x!=="")o[k]=x});return Object.keys(o).length?o:null}return v===undefined||v===""?null:v};
+  const out=[],eq=(a,b)=>stable(prune(a))===stable(prune(b)),ds=D.studio||{},ps=P.studio||{};
+  if(!eq(D.home,P.home))out.push("Homepage text");
+  [["home","Homepage layout & cards"],["menu","Menu"],["companies","Companies page"],["music","Music page"]].forEach(([k,l])=>{if(!eq(ds[k],ps[k]))out.push(l)});
+  const sl=Object.assign({},ds.slots,ps.slots);Object.keys(sl).forEach(k=>{if(!eq((ds.slots||{})[k],(ps.slots||{})[k]))out.push("Image · "+slotLabel(k))});
+  const b=Object.assign({},D.brands,P.brands);Object.keys(b).forEach(k=>{if(!eq((D.brands||{})[k],(P.brands||{})[k]))out.push("Company · "+(BR[k]?BR[k].name:k))});
+  if(!eq(D.aelio,P.aelio))out.push("AELIO page");if(!eq(D.music,P.music))out.push("Music & Radio settings");
+  const ra=libRegistry(D),pa=P.assets||{};Object.keys(ra).forEach(id=>{const x=pa[id];if(x&&(x.rev!==ra[id].rev||x.orev!==ra[id].orev||x.alt!==ra[id].alt))out.push("Updated file · "+((S.lib[id]||{}).name||id))});
+  return [...new Set(out)];
+}
+function wsDirty(){if(BACKEND!=="firebase"||!S.isAdmin||!S.draft||!S.loaded.site)return false;return wsChanges(S.draft,S.site||{}).length>0}
+const okLink=u=>!u||/^#[A-Za-z0-9\-\/_]*$/.test(u)||/^https:\/\/[^\s"<>]+$/.test(u)||/^\/[A-Za-z0-9\-\/_]*$/.test(u);
+function wsValidate(D){
+  const err=[],warn=[],H=Object.assign({},DEF.home,D.home||{}),st=D.studio||{};
+  if(!String(H.heroA||"").trim())err.push("The homepage headline is empty.");
+  const links=[["Homepage button",getPath(st,"home.heroLink")]];
+  (getPath(st,"home.quick.items")||[]).forEach((it,i)=>{links.push(["Quick Access card "+(i+1),it&&it.link]);if(it&&it.link&&!String(it.label||"").trim())err.push("Quick Access card "+(i+1)+" needs a label.")});
+  Object.entries(D.brands||{}).forEach(([k,b])=>{if(b&&b.website)links.push([(BR[k]||{}).name+" website",b.website])});
+  links.forEach(([l,u])=>{if(!okLink(u))err.push(l+": the link must start with https:// or be a page on the site (like #music).")});
+  refIds(D).forEach(id=>{const A=S.lib[id];if(!A)err.push("A file used on the site isn't in the Media Library anymore ("+id+"). Choose another one.");else if(A.kind!=="link"&&!A.ready)err.push("“"+A.name+"” hasn't finished uploading.");else if(A.kind==="image"&&!A.alt){const sl=Object.values(st.slots||{}).filter(x=>x&&x.a===id);if(!sl.length||sl.some(x=>!x.alt))warn.push("“"+A.name+"” has no alt text (screen readers).")}});
+  return {err:[...new Set(err)],warn:[...new Set(warn)]};
+}
+function wsPublishFlow(note){
+  if(BACKEND!=="firebase"){publishSite();return}
+  const D=wsDraft(),ch=wsChanges(D,S.site||{}),v=wsValidate(D),n=(Number((S.site||{}).version)||0)+1;
+  if(!ch.length&&!note){openModal('<h3>Nothing new to publish</h3><p class="muted">The live site already matches your draft.</p><div class="row"><button class="btn olive" data-act="close-modal">OK</button></div>');return}
+  openModal('<h3>Publish to the live site?</h3>'+
+    (v.err.length?'<div class="banner warn" style="margin:0;display:block"><b>Fix these first</b><ul style="margin:6px 0 0 18px">'+v.err.map(e=>'<li>'+esc(e)+'</li>').join("")+'</ul></div>':'')+
+    '<p class="muted" style="margin:0">This becomes <b>version '+n+'</b>. Visitors see it right away.</p>'+
+    '<div class="mbox" style="margin:0"><b>'+(note?esc(note):ch.length+' change'+(ch.length===1?'':'s'))+'</b><ul style="margin:8px 0 0 18px;font-size:14px">'+ch.map(c=>'<li>'+esc(c)+'</li>').join("")+'</ul></div>'+
+    (v.warn.length?'<div class="muted" style="font-size:13px"><b>Heads up:</b> '+v.warn.map(esc).join(" ")+'</div>':'')+
+    '<label class="f">Note for the history (optional)<input class="i" id="pubNote" maxlength="140" value="'+esc(note||"")+'" placeholder="e.g. New summer hero photo"></label>'+
+    '<div class="row"><button class="btn ghost" data-act="close-modal">Cancel</button><a class="btn ghost" href="/?preview=1#home" target="_blank" rel="noopener">Preview first ↗</a><button class="btn peach" id="pubGo"'+(v.err.length?' disabled':'')+'>Publish to Live Site</button></div>',
+  el=>{const b=el.querySelector("#pubGo");if(b)b.addEventListener("click",async()=>{b.disabled=true;b.textContent="Publishing…";const ok=await wsDoPublish(ch,el.querySelector("#pubNote").value.trim());if(!ok){b.disabled=false;b.textContent="Publish to Live Site"}})});
+}
+async function wsDoPublish(changed,note){
+  try{
+    clearTimeout(wsT);if(S.draft)await draftWrite();
+    const D=wsDraft(),P=S.site||{},n=(Number(P.version)||0)+1,at=nowIso();
+    const content={};PK.forEach(k=>{if(D[k]!==undefined)content[k]=clone(D[k])});content.assets=libRegistry(D);
+    const batch=S.db.batch();
+    if(!P.version){const base={};PK.forEach(k=>{if(P[k]!==undefined)base[k]=clone(P[k])});base.assets=clone(P.assets||{});
+      batch.set(S.db.doc("siteversions/v0000"),{version:0,at,by:"",byEmail:"",note:"The site before Website Studio",changed:[],content:base})}
+    const base0=clone(P);PK.concat(["assets"]).forEach(k=>delete base0[k]);const live=Object.assign(base0,content,{version:n,publishedAt:at,publishedBy:S.uid||"",publishedByEmail:S.email||""});
+    batch.set(S.db.doc("settings/site"),live);
+    batch.set(S.db.doc("siteversions/v"+String(n).padStart(4,"0")),{version:n,at,by:S.uid||"",byEmail:S.email||"",note:note||"",changed:changed||[],content});
+    await batch.commit();
+    try{await fetch("/api/site/purge",{method:"POST",headers:{authorization:"Bearer "+await idToken()}})}catch(e){}
+    openModal('<h3>Version '+n+' is live</h3><p class="muted">Published '+esc(new Date(at).toLocaleString("en-US",{dateStyle:"medium",timeStyle:"short"}))+'. Visitors see the new content now; phones that have the site open pick it up automatically.</p><div class="row"><a class="btn ghost" href="/#home" target="_blank" rel="noopener">View live site ↗</a><button class="btn olive" data-act="close-modal">Done</button></div>');
+    return true;
+  }catch(e){toast(/permission/.test(String(e&&e.code))?"Firebase blocked publishing. Publish the latest firestore.rules first.":"Couldn't publish. Check your connection and try again.");return false}
+}
+function wsRestore(id,andPublish){const v=S.versions.find(x=>x.id===id);if(!v)return;
+  openModal('<h3>'+(andPublish?'Restore version '+v.version+' to the live site?':'Load version '+v.version+' into your draft?')+'</h3><p class="muted">'+(andPublish?'Your draft is replaced with version '+v.version+', then you confirm the publish. Nothing is deleted: the current live version stays in History.':'Your current draft is replaced with version '+v.version+'. The live site doesn\'t change until you publish.')+'</p><div class="row"><button class="btn ghost" data-act="close-modal">Cancel</button><button class="btn peach" id="rsGo">'+(andPublish?'Continue':'Load into draft')+'</button></div>',
+  el=>el.querySelector("#rsGo").addEventListener("click",async()=>{const c=clone(v.content||{});delete c.assets;PK.forEach(k=>{if(c[k]===undefined)c[k]=null});
+    S.draft=Object.assign({},c,{updatedAt:nowIso(),by:S.uid||"",restoredFrom:v.version});PK.forEach(k=>{if(S.draft[k]===null)delete S.draft[k]});
+    const ok=await draftWrite();if(!ok)return;closeModal();if(andPublish)wsPublishFlow("Restored version "+v.version);else toast("Version "+v.version+" loaded into your draft")}))}
+function wsDiscard(){openModal('<h3>Discard your unpublished changes?</h3><p class="muted">Your draft goes back to match the live site.</p><div class="row"><button class="btn ghost" data-act="close-modal">Keep editing</button><button class="btn danger" id="dsGo">Discard changes</button></div>',
+  el=>el.querySelector("#dsGo").addEventListener("click",async()=>{const o={};PK.forEach(k=>{if(S.site&&S.site[k]!=null)o[k]=clone(S.site[k])});S.draft=Object.assign(o,{updatedAt:nowIso(),by:S.uid||""});if(await draftWrite()){closeModal();toast("Draft matches the live site again")}}))}
+function wsBanner(){const b=$("#wsBanner");if(!b)return;const n=S.draft?wsChanges(S.draft,S.site||{}).length:0;b.classList.toggle("on",n>0);const t=b.querySelector(".t");if(t)t.textContent=n?n+" unpublished change"+(n===1?"":"s"):"Everything is published"}
+
+/* ---------- Preview mode (the real site, showing the draft) ---------- */
+function pvPost(o){try{if(PREVIEW.frame)parent.postMessage(Object.assign({gv:1},o),location.origin)}catch(e){}}
+function pvInit(){
+  if(!PREVIEW.on)return;document.documentElement.classList.add("pv");
+  const b=document.createElement("div");b.id="pvbar";b.setAttribute("role","status");document.body.appendChild(b);pvBar();
+  addEventListener("hashchange",()=>pvPost({t:"route",hash:location.hash||"#home"}));
+  if(PREVIEW.edit){
+    S.pvSel=true;document.documentElement.classList.add("pv-sel");
+    addEventListener("message",e=>{if(e.origin!==location.origin||!e.data||!e.data.gv)return;const m=e.data;
+      if(m.t==="mode"){S.pvSel=!!m.select;document.documentElement.classList.toggle("pv-sel",S.pvSel)}
+      if(m.t==="go"){if(m.menu){if(location.hash!=="#home")location.hash="#home";setTimeout(()=>mMenu(true),350)}else{mMenu(false);if(location.hash!==m.hash)location.hash=m.hash}}
+      if(m.t==="mark")pvMark(m.key)});
+    addEventListener("click",e=>{if(!S.pvSel)return;const t=e.target.closest("[data-edit]");if(!t){if(e.target.closest("a,button")){e.preventDefault();e.stopPropagation()}return}
+      e.preventDefault();e.stopPropagation();pvMark(t.dataset.edit);pvPost({t:"pick",key:t.dataset.edit})},true);
+  }
+}
+function pvMark(k){S.pvKey=k;document.querySelectorAll(".pv-on").forEach(x=>x.classList.remove("pv-on"));if(k)document.querySelectorAll('[data-edit="'+CSS.escape(k)+'"]').forEach(x=>x.classList.add("pv-on"))}
+function pvBar(){const b=$("#pvbar");if(!b)return;
+  const ok=S.isAdmin&&S.draftLoaded;
+  b.innerHTML=ok?'<b>Preview</b><span>Draft · not live yet</span>'+(PREVIEW.frame?'':'<a href="/#team-web">Website Studio</a><a href="/#home">Exit</a>'):
+    S.authChecked&&!S.isAdmin?'<b>Preview</b><span>Only the founder can preview drafts. You\'re seeing the live site.</span><a href="/#groove">Sign in</a>':'<b>Preview</b><span>Loading your draft…</span>';
+}
+
+/* ===== Website Studio UI (Back office › Website Studio) and Media Library (Back office › Media Library) ===== */
+const WS_TABS=[["visual","Visual editor"],["images","All images"],["companies","Companies"],["aelio","AELIO"],["music","Music & Radio"],["history","History"]];
+const WS_DEV={desktop:[1366,860],tablet:[834,1112],mobile:[390,844]};
+const WS_PAGES=[["#home","Home"],["menu","Menu (phones)"],["#vine","Companies"],["#music","Music"],["#live","Watch Live"],["#story","Our Story"],["#collab","Collaborate"],["#b-ent","Entertainment"],["#b-aelio","AELIO"],["#calendar","Calendar"]];
+const WS_LINKS=["#home","#vine","#brands","#live","#music","#music/artists","#music/albums","#music/playlists","#tv","#b-ent/radio","#calendar","#collab","#story","#groove","#b-aelio","#shadowcrown","https://aelio.live/"];
+const SLOT_EXTRA={"home-storycard":{label:"Story card",r:"16/9",mr:"16/9",g:"Homepage"},"companies-art":{label:"Companies header art",r:"16/9",mr:"16/10",g:"Companies"}};
+function slotDef(id){const s=(typeof slotList==="function"?slotList():[]).find(x=>x.id===id)||SLOT_EXTRA[id]||{};const q=/^quick-(\d+)$/.exec(id);
+  const d=Object.assign({id,label:q?"Quick Access card "+q[1]:id.startsWith("menu-")?"Menu tile image":slotLabel(id),r:q?"3/4":id.startsWith("menu-")?"4/3":"16/9"},s);
+  d.mr=d.mr||({"home-hero":"9/16","intro-poster":"9/16"}[id])||d.r;return d}
+
+/* ---------- top of every Website Studio tab ---------- */
+function wsHead(){const P=S.site||{},n=S.draft?wsChanges(S.draft,P).length:0;
+  return '<div class="wshead"><div class="wslive"><span class="lvdot" aria-hidden="true"></span><b>Live: '+(P.version?'version '+P.version:'original site')+'</b>'+(P.publishedAt?'<span class="muted"> · '+esc(new Date(P.publishedAt).toLocaleString("en-US",{dateStyle:"medium",timeStyle:"short"}))+(P.publishedByEmail?' · '+esc(P.publishedByEmail):'')+'</span>':'')+'</div>'+
+    '<div id="wsBanner" class="wsbn'+(n?" on":"")+'"><span class="dot" aria-hidden="true"></span><span class="t">'+(n?n+' unpublished change'+(n===1?'':'s'):'Everything is published')+'</span><span id="wsStat" class="muted">'+esc(S.ws.stat||"")+'</span></div>'+
+    '<div class="btnrow0"><a class="btn ghost sm" href="/?preview=1'+(S.ws.page.startsWith("#")?S.ws.page:"#home")+'" target="_blank" rel="noopener">Preview Changes ↗</a><button class="btn ghost sm" data-act="ws-discard">Discard draft</button><button class="btn peach sm" data-act="publish">Publish to Live Site</button></div></div>'+
+    '<div class="seg wstabs" role="tablist">'+WS_TABS.map(([k,l])=>'<button role="tab" aria-selected="'+(S.ws.tab===k)+'" class="'+(S.ws.tab===k?"on":"")+'" data-act="ws-tab" data-v="'+k+'">'+l+'</button>').join("")+'</div>'+
+    '<datalist id="wsLinks">'+WS_LINKS.map(l=>'<option value="'+l+'">').join("")+'</datalist>';
+}
+function viewWebsite(){
+  if(BACKEND!=="firebase")return viewWebsiteLegacy();
+  wsSubscribe();
+  if(!S.draftLoaded||!S.libLoaded)return '<div class="empty">Loading Website Studio…</div>';
+  const t=S.ws.tab;
+  const body=t==="visual"?wsVisual():t==="images"?wsImages():t==="companies"?webCompanies():t==="aelio"?webAelio():t==="music"?webMusic():wsHistory();
+  return wsHead()+body;
+}
+
+/* ---------- Visual editor ---------- */
+function wsVisual(){const pg=S.ws.page,src="/?preview=1&edit=1"+(pg.startsWith("#")?pg:"#home");
+  return '<div class="wsx"><div class="wsbar">'+
+    '<div class="seg" id="wsDev">'+[["desktop","Desktop"],["tablet","Tablet"],["mobile","Phone"]].map(([k,l])=>'<button data-act="ws-dev" data-v="'+k+'" class="'+(S.ws.dev===k?"on":"")+'">'+l+'</button>').join("")+'</div>'+
+    '<label class="wspg">Page <select class="i" id="wsPage">'+WS_PAGES.map(([k,l])=>'<option value="'+k+'"'+(pg===k?" selected":"")+'>'+l+'</option>').join("")+'</select></label>'+
+    '<div class="seg" id="wsMode"><button data-act="ws-mode" data-v="select" class="'+(S.ws.mode==="select"?"on":"")+'" title="Click parts of the page to edit them">Select</button><button data-act="ws-mode" data-v="browse" class="'+(S.ws.mode==="browse"?"on":"")+'" title="Use the page normally">Browse</button></div>'+
+    '<span class="muted" id="wsScale" style="font-size:12px"></span></div>'+
+    '<div class="wsmain"><div class="wsstage" id="wsStage"><div class="wsdev d-'+S.ws.dev+'" id="wsDevBox"><iframe id="wsFrame" src="'+esc(src)+'" title="Draft preview of the Grooveville site"></iframe></div>'+
+    '<p class="muted wstip">'+(S.ws.mode==="select"?'Click any outlined part of the page to edit it. Switch to <b>Browse</b> to click links and move around.':'Browse mode: links work like the real site. Switch to <b>Select</b> to pick something to edit.')+'</p></div>'+
+    '<aside class="wspanel" id="wsPanel">'+wsPanelHTML()+'</aside></div></div>';
+}
+function wsMount(){
+  const st=$("#wsStage"),fr=$("#wsFrame");if(!st||!fr||st._m)return;st._m=1;
+  const fit=()=>{const box=$("#wsDevBox");if(!box)return;const [w,h]=WS_DEV[S.ws.dev];const W=Math.max(200,st.clientWidth-8),H=Math.max(460,innerHeight-st.getBoundingClientRect().top-70);const k=Math.min(1,W/w,H/h);
+    box.style.width=Math.round(w*k)+"px";box.style.height=Math.round(h*k)+"px";fr.style.width=w+"px";fr.style.height=h+"px";fr.style.transform="scale("+k+")";const sc=$("#wsScale");if(sc)sc.textContent=w+"×"+h+" at "+Math.round(k*100)+"%"};
+  fit();try{new ResizeObserver(fit).observe(st)}catch(e){addEventListener("resize",fit)}S.ws.fit=fit;
+  fr.addEventListener("load",()=>{wsTell({t:"mode",select:S.ws.mode==="select"});wsTell({t:"mark",key:S.ws.sel});if(S.ws.page==="menu")wsTell({t:"go",menu:true})});
+  const ps=$("#wsPage");if(ps)ps.addEventListener("change",()=>{S.ws.page=ps.value;wsTell(ps.value==="menu"?{t:"go",menu:true}:{t:"go",hash:ps.value})});
+}
+function wsTell(o){const fr=$("#wsFrame");try{if(fr&&fr.contentWindow)fr.contentWindow.postMessage(Object.assign({gv:1},o),location.origin)}catch(e){}}
+addEventListener("message",e=>{const fr=$("#wsFrame");if(!fr||e.source!==fr.contentWindow||e.origin!==location.origin||!e.data||!e.data.gv)return;const m=e.data;
+  if(m.t==="pick"){S.ws.sel=m.key;wsPanelRender(true)}
+  if(m.t==="route"){S.ws.page=m.hash;const ps=$("#wsPage");if(ps&&[...ps.options].some(o=>o.value===m.hash))ps.value=m.hash}});
+function wsPanelRender(force){const p=$("#wsPanel");if(!p)return;if(!force&&p.contains(document.activeElement)&&/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName))return;const y=p.scrollTop;p.innerHTML=wsPanelHTML();p.scrollTop=force?0:y}
+function wsRefresh(){wsPanelRender(false);wsBanner();if(S.ws.pickRefresh)S.ws.pickRefresh()}
+
+/* ---------- editable groups ---------- */
+let wsFid=0;
+function wsGroups(){
+  const T=(p,l,ph)=>({t:"text",p,l,ph}),A=(p,l)=>({t:"area",p,l});
+  const G=[
+    {key:"home.hero",page:"#home",label:"Home · Hero",fields:[T("home.heroEyebrow","Eyebrow"),T("home.heroA","Headline"),T("home.heroB","Headline accent (peach)"),T("studio.home.kicker2","Small caps line"),A("home.heroP","Description"),
+      T("studio.home.heroBtn","Button label"),{t:"link",p:"studio.home.heroLink",l:"Button goes to"},{t:"select",p:"studio.home.align",l:"Text alignment",o:[["left","Left"],["center","Center"]]},
+      {t:"select",p:"studio.home.accent",l:"Accent lighting",o:ACC_OPTS},{t:"slot",s:"home-hero",l:"Hero image or video",accept:"image,video"}]},
+    {key:"home.story",page:"#home",label:"Home · Story card",fields:[{t:"toggle",p:"studio.home.story.on",l:"Show the story card"},T("studio.home.story.kicker","Label"),T("studio.home.story.title","Title (optional)"),T("studio.home.story.dur","Duration (optional, e.g. 01:24)"),
+      {t:"slot",s:"home-storycard",l:"Card image"},{t:"asset",p:"studio.home.story.video",l:"Video that plays",accept:"video,link",empty:"No video chosen: the play button replays the cinematic entry."}]},
+    {key:"home.quick",page:"#home",label:"Home · Quick Access",fields:[{t:"toggle",p:"studio.home.quick.on",l:"Show Quick Access"},T("studio.home.quick.title","Title"),{t:"quick"}]},
+    {key:"home.layout",page:"#home",label:"Home · Section order",fields:[{t:"order",p:"studio.home.order",o:{quick:"Quick Access",story:"Story card"}}]},
+    {key:"menu",page:"menu",label:"Menu (phones)",fields:[T("studio.menu.title","Title"),T("studio.menu.sub","Subtitle"),{t:"select",p:"studio.menu.glow",l:"Tile lighting",o:[["mixed","Mixed (peach, lavender, teal, gold)"],["warm","Warm (peach and gold)"],["cool","Cool (lavender and teal)"]]},{t:"tiles"}]},
+    {key:"companies.head",page:"#vine",label:"Companies · Header",fields:[T("studio.companies.kicker","Eyebrow"),T("studio.companies.a","Headline line 1"),T("studio.companies.b","Headline line 2"),A("studio.companies.p","Description"),T("studio.companies.btn","Button label"),
+      {t:"select",p:"studio.companies.view",l:"Shows first",o:[["gallery","Company gallery"],["vine","The Groove Vine"]]},{t:"slot",s:"companies-art",l:"Header art (optional)",fallback:"Grooveville sculpture art"}]}];
+  VENTURES().forEach(b=>{const id=b.id,nm=BR[id].name;G.push({key:"company:"+id,page:"#vine",label:"Company · "+nm,fields:[T("brands."+id+".name","Name",nm),T("studio.companies.subs."+id,"Card subtitle",BR[id].cat||""),A("brands."+id+".tagline","Tagline"),{t:"link",p:"brands."+id+".website",l:"Website"},{t:"slot",s:"card-"+id,l:"Card image",fallback:"Brand art"}]})});
+  G.push({key:"music.radio",page:"#music",label:"Music · Radio feature",fields:[T("studio.music.kicker","Eyebrow"),T("studio.music.head","Headline"),A("studio.music.p","Description"),T("studio.music.btn","Button label"),{t:"slot",s:"radio-art",l:"Record label artwork"}],hint:"The button plays the Sound On rotation you set in Back office › Entertainment."},
+    {key:"music.trend",page:"#music",label:"Music · Trending row",fields:[{t:"toggle",p:"studio.music.trendOn",l:"Show this row"},T("studio.music.trendTitle","Title"),{t:"songs",p:"studio.music.trendIds"}]},
+    {key:"page.story",page:"#story",label:"Our Story · Photo",fields:[{t:"slot",s:"home-story"}]},
+    {key:"page.collab",page:"#collab",label:"Collaborate · Photo",fields:[{t:"slot",s:"home-collab"}]},
+    {key:"page.ent",page:"#b-ent",label:"Entertainment · Hero",fields:[{t:"slot",s:"hero-ent"}]},
+    {key:"page.intro",page:"#home",label:"Cinematic entry",fields:[{t:"slot",s:"intro-poster",l:"Entry picture"},{t:"slot",s:"intro-video",l:"Entry film (optional)",accept:"video"}],hint:"Visitors see the entry once per visit. Preview skips it; open the live site in a private window to watch it."});
+  return G;
+}
+function wsGroup(k){const G=wsGroups();let g=G.find(x=>x.key===k);if(!g&&/^slot:/.test(k)){const s=k.slice(5),d=slotDef(s);g={key:k,label:"Image · "+d.label,fields:[{t:"slot",s}]}}return g||G[0]}
+function wsPanelHTML(){const G=wsGroups(),g=wsGroup(S.ws.sel);
+  return '<div class="wsph"><label class="f">Editing<select class="i" id="wsSel">'+(G.some(x=>x.key===g.key)?'':'<option selected>'+esc(g.label)+'</option>')+G.map(x=>'<option value="'+x.key+'"'+(x.key===g.key?" selected":"")+'>'+esc(x.label)+'</option>').join("")+'</select></label>'+(g.hint?'<p class="muted" style="font-size:12.5px;margin-top:6px">'+esc(g.hint)+'</p>':'')+'</div>'+
+    '<div class="wspf">'+g.fields.map(wsField).join("")+'</div><p class="muted wsauto">Changes save to your draft automatically. Visitors don\'t see them until you publish.</p>';
+}
+function wsField(f){
+  if(f.t==="slot")return wsSlotField(f);if(f.t==="asset")return wsAssetField(f);if(f.t==="quick")return wsQuickField();if(f.t==="order")return wsOrderField(f);if(f.t==="songs")return wsSongsField(f);if(f.t==="tiles")return wsTilesField();
+  const v=wsVal(f.p);
+  if(f.t==="toggle")return '<label class="wsck"><input type="checkbox" data-wp="'+f.p+'"'+(v!==false?" checked":"")+'> '+esc(f.l)+'</label>';
+  if(f.t==="select")return '<label class="f">'+esc(f.l)+'<select class="i" data-wp="'+f.p+'">'+f.o.map(([k,l])=>'<option value="'+k+'"'+(v===k?" selected":"")+'>'+esc(l)+'</option>').join("")+'</select></label>';
+  if(f.t==="area")return '<label class="f">'+esc(f.l)+'<textarea class="i" rows="3" data-wp="'+f.p+'">'+esc(v||"")+'</textarea></label>';
+  return '<label class="f">'+esc(f.l)+'<input class="i'+(f.t==="link"&&!okLink(v)?" bad":"")+'" data-wp="'+f.p+'"'+(f.t==="link"?' data-link="1" list="wsLinks" placeholder="#music or https://…"':f.ph?' placeholder="'+esc(f.ph)+'"':'')+' value="'+esc(v==null?"":v)+'"></label>';
+}
+function dslot(id){const s=getPath(wsDraft(),"studio.slots."+id)||{};return {s,A:s.a?S.lib[s.a]:null}}
+function wsThumb(id,v){const {A}=dslot(id);if(A)return A.kind==="image"?assetUrl(A,v==="m"?"m":"d"):assetUrl(A,"t");const L=S.media[id];if(L&&L.data&&!L.hidden)return L.data;return ASSETS[DEFIMG[id]]||""}
+function wsSlotField(f){
+  const d=slotDef(f.s),{s,A}=dslot(f.s),fp=s.focal||(A&&A.focal)||DEFPOS[f.s]||"50% 50%",mfp=s.mfocal||fp,z=Number(s.zoom)||1;
+  const im=(u,p)=>u?'<img src="'+esc(u)+'" alt="" style="object-position:'+esc(p)+(z>1?';transform:scale('+z+');transform-origin:'+esc(p):'')+'">':'<span class="none">'+esc(f.fallback||"Default")+'</span>';
+  const cur=A?'<span class="pill pub">'+esc(A.name)+'</span>':'<span class="pill priv">'+(S.media[f.s]&&!S.media[f.s].hidden?"Earlier upload":DEFIMG[f.s]?"Default":"Automatic")+'</span>';
+  return '<div class="wsslot"><div class="wsl">'+esc(f.l||d.label)+' '+cur+'</div>'+
+    '<div class="wsfr"><figure><div class="fr" style="aspect-ratio:'+d.r+'">'+im(wsThumb(f.s,"d"),fp)+(A&&A.kind!=="image"?'<span class="vk">'+(A.kind==="video"?"▶ Video":"Link")+'</span>':'')+'</div><figcaption>Desktop</figcaption></figure><figure><div class="fr" style="aspect-ratio:'+d.mr+'">'+im(wsThumb(f.s,"m"),mfp)+'</div><figcaption>Phone</figcaption></figure></div>'+
+    '<div class="btnrow0"><button class="btn olive sm" data-act="ws-pick" data-slot="'+f.s+'" data-accept="'+(f.accept||"image")+'">'+(A?"Change":"Choose")+'</button>'+(A&&A.kind==="image"?'<button class="btn ghost sm" data-act="ws-crop" data-slot="'+f.s+'">Crop &amp; focus</button>':'')+(s.a?'<button class="btn ghost sm" data-act="ws-slot-clear" data-slot="'+f.s+'">Use default</button>':'')+'</div>'+
+    (A&&A.kind==="image"?'<label class="f">Alt text for this spot<input class="i" data-wp="studio.slots.'+f.s+'.alt" value="'+esc(s.alt||"")+'" placeholder="'+esc(A.alt||"Describe the picture for screen readers")+'"></label>':'')+'</div>';
+}
+function wsAssetField(f){const id=wsVal(f.p),A=id?S.lib[id]:null;
+  return '<div class="wsslot"><div class="wsl">'+esc(f.l)+'</div>'+(A?'<div class="lrow"><img class="th" src="'+esc(assetUrl(A,"t"))+'" alt=""><div><b>'+esc(A.name)+'</b><div class="muted" style="font-size:12.5px">'+(A.kind==="link"?esc(A.url):"Uploaded video"+(A.dur?" · "+fmtSec(A.dur):""))+'</div></div><span></span></div>':'<p class="muted" style="font-size:13px">'+esc(f.empty||"Nothing chosen.")+'</p>')+
+    '<div class="btnrow0"><button class="btn olive sm" data-act="ws-pick" data-path="'+f.p+'" data-accept="'+f.accept+'">'+(A?"Change":"Choose video")+'</button>'+(A?'<button class="btn ghost sm" data-act="ws-asset-clear" data-path="'+f.p+'">Remove</button>':'')+'</div></div>'}
+function wsQuickField(){const items=wsVal("studio.home.quick.items")||[];
+  return '<div class="wsq">'+items.map((it,i)=>'<div class="wsqi"><div class="wsqh"><b>Card '+(i+1)+'</b><span class="btnrow0"><button class="mini" data-act="ws-q-move" data-i="'+i+'" data-d="-1" aria-label="Move up"'+(i?'':' disabled')+'>↑</button><button class="mini" data-act="ws-q-move" data-i="'+i+'" data-d="1" aria-label="Move down"'+(i<items.length-1?'':' disabled')+'>↓</button><button class="mini" data-act="ws-q-del" data-i="'+i+'" aria-label="Remove card">✕</button></span></div>'+
+    '<div class="grid2"><label class="f">Label<input class="i" data-wp="studio.home.quick.items.'+i+'.label" value="'+esc(it.label||"")+'"></label><label class="f">Goes to<input class="i'+(okLink(it.link)?"":" bad")+'" data-link="1" list="wsLinks" data-wp="studio.home.quick.items.'+i+'.link" value="'+esc(it.link||"")+'"></label></div>'+
+    wsSlotField({s:it.slot,l:"Card image",fallback:"Automatic: latest video or Grooveville art"})+'</div>').join("")+(items.length<6?'<button class="btn ghost sm" data-act="ws-q-add">+ Add a card</button>':'')+'</div>'}
+function wsOrderField(f){const o=(wsVal(f.p)||[]).filter(k=>f.o[k]);Object.keys(f.o).forEach(k=>{if(!o.includes(k))o.push(k)});
+  return '<div class="wsord"><p class="muted" style="font-size:13px">The hero always comes first. On desktop these sit side by side in this order; on phones they stack.</p>'+o.map((k,i)=>'<div class="lrow" style="grid-template-columns:minmax(0,1fr) auto"><b>'+(i+1)+'. '+esc(f.o[k])+'</b><span class="btnrow0"><button class="mini" data-act="ws-ord" data-p="'+f.p+'" data-i="'+i+'" data-d="-1"'+(i?'':' disabled')+'>↑</button><button class="mini" data-act="ws-ord" data-p="'+f.p+'" data-i="'+i+'" data-d="1"'+(i<o.length-1?'':' disabled')+'>↓</button></span></div>').join("")+'</div>'}
+function wsSongsField(f){musicSubscribe();const sel=wsVal(f.p)||[],songs=pubList(MU().songs);
+  return '<div class="wsslot"><div class="wsl">Songs in the row</div><p class="muted" style="font-size:13px">Pick up to 12 published songs. With none picked, the newest releases show automatically.</p>'+(songs.length?'<div class="wssongs">'+songs.map(s=>'<label class="wsck"><input type="checkbox" data-act="ws-trend" data-id="'+esc(s.id)+'"'+(sel.includes(s.id)?" checked":"")+'> '+esc(s.title)+' <span class="muted">· '+esc(artistName(s))+'</span></label>').join("")+'</div>':'<div class="empty">No published songs yet. <a href="#ent-upload">Upload one</a>.</div>')+'</div>'}
+function wsTilesField(){
+  return '<div class="wsslot"><div class="wsl">Tiles</div><p class="muted" style="font-size:13px">Every destination stays in the menu. Change the small line under each name, or give a tile its own picture.</p>'+
+    MENU_DEST.map(([k,h,ic,l,sub])=>{const {A}=dslot("menu-"+k);return '<div class="wstile"><span class="mi">'+mIco(ic)+'</span><div style="min-width:0"><b>'+esc(l)+'</b><input class="i" data-wp="studio.menu.tiles.'+k+'.sub" value="'+esc(wsVal("studio.menu.tiles."+k+".sub")||"")+'" placeholder="'+esc(sub)+'" aria-label="'+esc(l)+' subtitle"></div>'+
+      '<span class="btnrow0">'+(A?'<img class="th" src="'+esc(assetUrl(A,"t"))+'" alt="">':'')+'<button class="mini" data-act="ws-pick" data-slot="menu-'+k+'" data-accept="image" title="Tile picture">'+(A?"Change":"Picture")+'</button>'+(A?'<button class="mini" data-act="ws-slot-clear" data-slot="menu-'+k+'" aria-label="Remove picture">✕</button>':'')+'</span></div>'}).join("")+'</div>'}
+
+/* ---------- All images tab ---------- */
+function wsImages(){const L=slotList().concat([{id:"home-storycard",g:"Homepage"},{id:"companies-art",g:"Companies"}]).filter(s=>s.kind!=="audio");
+  (wsVal("studio.home.quick.items")||[]).forEach(it=>L.push({id:it.slot,g:"Homepage",label:"Quick Access · "+(it.label||"")}));
+  const groups=[...new Set(L.map(s=>s.g))];
+  return '<p class="muted" style="max-width:76ch;margin:4px 0 14px">Every picture on the site has a spot. Choose a file from the Media Library, set the crop for desktop and phones, and publish. The entry sound link stays under <button class="linkbtn" data-act="media-edit" data-id="intro-audio">Entry sound</button>.</p>'+
+    groups.map(g=>'<h3 style="font-size:19px;margin:24px 0 12px">'+esc(g)+'</h3><div class="wsimgs">'+L.filter(s=>s.g===g).map(s=>wsSlotField({s:s.id,l:s.label,accept:s.kind==="video"?"video":s.id==="home-hero"?"image,video":"image"})).join("")+'</div>').join("");
+}
+/* ---------- History ---------- */
+function wsHistory(){const V=S.versions,live=Number((S.site||{}).version)||0;
+  if(!V.length)return '<div class="empty">No versions yet. Your first publish from Website Studio becomes version 1, and the site as it was before is saved as version 0 so you can always go back.</div>';
+  return '<div class="mbox" style="padding:6px 18px">'+V.map(v=>'<div class="lrow vrow"><div class="vn'+(v.version===live?" live":"")+'">v'+v.version+'</div><div style="min-width:0"><b>'+(v.version===live?'Live now · ':'')+esc(v.at?new Date(v.at).toLocaleString("en-US",{dateStyle:"medium",timeStyle:"short"}):"")+'</b><div class="muted" style="font-size:13px">'+esc(v.byEmail||(v.version?"":"Before Website Studio"))+(v.note?' · '+esc(v.note):'')+'</div>'+
+    ((v.changed||[]).length?'<div class="muted" style="font-size:12.5px;margin-top:4px">'+esc(v.changed.slice(0,5).join(" · "))+(v.changed.length>5?' · +'+(v.changed.length-5)+' more':'')+'</div>':'')+'</div>'+
+    '<div class="btnrow0"><button class="btn ghost sm" data-act="ws-load" data-id="'+esc(v.id)+'">Load into draft</button>'+(v.version!==live?'<button class="btn ghost sm" data-act="ws-restore" data-id="'+esc(v.id)+'">Restore to live</button>':'')+'</div></div>').join("")+'</div>';
+}
+
+/* ---------- Media Library ---------- */
+const IMG_T=/^image\/(jpeg|png|webp|avif)$/,VID_T=/^video\/(mp4|webm|quicktime)$/;
+const EXT_OF={"image/jpeg":"jpg","image/png":"png","image/webp":"webp","image/avif":"avif","video/mp4":"mp4","video/webm":"webm","video/quicktime":"mov"};
+const fmtBytes=n=>n>1048576?(n/1048576).toFixed(1)+" MB":Math.max(1,Math.round(n/1024))+" KB";
+function libFolders(){return [...new Set((S.wsMeta.folders||[]).concat(Object.values(S.lib).map(a=>a.folder).filter(Boolean)))].sort()}
+function usageOf(id){const out=[],scan=(o,where)=>{const st=(o||{}).studio||{};Object.entries(st.slots||{}).forEach(([k,v])=>{if(v&&v.a===id)out.push(slotLabel(k)+" · "+where)});if(getPath(st,"home.story.video")===id)out.push("Story card video · "+where)};
+  scan(wsDraft(),"draft");scan(S.site,"live");const old=S.versions.filter(v=>JSON.stringify(v.content||{}).includes(id)).length;return {list:out,live:out.some(x=>/live$/.test(x)),draft:out.some(x=>/draft$/.test(x)),old}}
+function libFiltered(accept){const q=(S.ws.lq||"").toLowerCase(),t=S.ws.lt,f=S.ws.lf;
+  return Object.values(S.lib).filter(a=>(!accept||accept.split(",").includes(a.kind))&&(t==="all"||a.kind===t)&&(!f||a.folder===f)&&(!q||[a.name,a.alt,a.folder,(a.tags||[]).join(" ")].join(" ").toLowerCase().includes(q))).sort((a,b)=>String(b.updatedAt||b.createdAt||"").localeCompare(String(a.updatedAt||a.createdAt||"")))}
+function libCard(a,pick){const u=usageOf(a.id);
+  return '<button class="mlcard'+(a.ready||a.kind==="link"?"":" busy")+'" data-act="'+(pick?"pk-pick":"ml-open")+'" data-id="'+esc(a.id)+'"><span class="mlth">'+(a.kind==="image"||a.poster||a.kind==="link"?'<img src="'+esc(assetUrl(a,"t"))+'" alt="" loading="lazy" onerror="this.style.visibility=\'hidden\'">':'<b>▶</b>')+(a.kind!=="image"?'<span class="vk">'+(a.kind==="video"?"▶ "+(a.dur?fmtSec(a.dur):"Video"):"Link")+'</span>':'')+'</span>'+
+    '<span class="mlmeta"><b>'+esc(a.name||"Untitled")+'</b><small>'+(a.folder?esc(a.folder)+' · ':'')+(a.kind==="link"?"Video link":a.ext.toUpperCase()+(a.size?' · '+fmtBytes(a.size):''))+'</small><span class="mlb">'+(u.live?'<i class="pill pub">Live</i>':'')+(u.draft&&!u.live?'<i class="pill priv">In draft</i>':'')+(!a.alt&&a.kind==="image"?'<i class="pill priv">No alt text</i>':'')+'</span></span></button>'}
+function libToolbar(pick){const fs=libFolders();
+  return '<div class="mltool"><input class="i" id="'+(pick?"pkQ":"mlQ")+'" type="search" placeholder="Search names, alt text, folders, tags" value="'+esc(S.ws.lq||"")+'" aria-label="Search the Media Library">'+
+    '<select class="i" id="'+(pick?"pkT":"mlT")+'" aria-label="Type">'+[["all","All types"],["image","Images"],["video","Videos"],["link","Video links"]].map(([k,l])=>'<option value="'+k+'"'+(S.ws.lt===k?" selected":"")+'>'+l+'</option>').join("")+'</select>'+
+    '<select class="i" id="'+(pick?"pkF":"mlF")+'" aria-label="Folder"><option value="">All folders</option>'+fs.map(f=>'<option'+(S.ws.lf===f?" selected":"")+'>'+esc(f)+'</option>').join("")+'</select>'+
+    (pick?'':'<button class="btn ghost sm" data-act="ml-folder">+ Folder</button>')+'<button class="btn ghost sm" data-act="ml-link">+ Video link</button>'+
+    '<label class="btn peach sm" style="cursor:pointer">Upload<input type="file" multiple hidden class="mlfile" accept="image/jpeg,image/png,image/webp,image/avif,.avif,video/mp4,video/webm,video/quicktime,.mov"></label></div>'+
+    '<div class="dz mldz" data-folder="'+esc(S.ws.lf||"")+'">Drop photos or videos here<small>JPG, PNG, WebP or AVIF up to 30 MB · MP4, WebM or MOV up to 95 MB'+(S.ws.lf?' · goes into “'+esc(S.ws.lf)+'”':'')+'</small></div>'}
+function viewMediaLib(){
+  if(BACKEND!=="firebase")return '<div class="empty">The Media Library runs on grooveville.org (it stores files in Cloudflare R2). Open the back office there.</div>';
+  wsSubscribe();if(!S.libLoaded)return '<div class="empty">Loading the Media Library…</div>';
+  const L=libFiltered();
+  return '<div class="mlx">'+libToolbar(false)+'<p class="muted" style="font-size:13px;margin:10px 0">'+Object.keys(S.lib).length+' files. Files you upload stay private until a published page uses them.</p><div class="mlgrid" id="mlGrid">'+(L.length?L.map(a=>libCard(a)).join(""):'<div class="empty" style="grid-column:1/-1">'+(Object.keys(S.lib).length?"Nothing matches.":"No files yet. Upload photos or videos to get started.")+'</div>')+'</div></div>';
+}
+function mlGridRefresh(){const g=$("#mlGrid");if(g){const L=libFiltered();g.innerHTML=L.length?L.map(a=>libCard(a)).join(""):'<div class="empty" style="grid-column:1/-1">Nothing matches.</div>'}const p=$("#pkGrid");if(p)p.innerHTML=pkGridHTML()}
+document.addEventListener("input",e=>{const t=e.target;
+  if(t.id==="mlQ"||t.id==="pkQ"){S.ws.lq=t.value;mlGridRefresh()}
+  if(t.dataset&&t.dataset.wp&&t.closest("#wsPanel,.wsimgs,.wsq")&&t.type!=="checkbox"){if(t.dataset.link)t.classList.toggle("bad",!okLink(t.value.trim()));draftSet(t.dataset.wp,t.value)}});
+document.addEventListener("change",e=>{const t=e.target;
+  if(t.id==="mlT"||t.id==="pkT"){S.ws.lt=t.value;mlGridRefresh()}
+  if(t.id==="mlF"||t.id==="pkF"){S.ws.lf=t.value;if(t.id==="mlF")render();else mlGridRefresh()}
+  if(t.id==="wsSel"){S.ws.sel=t.value;wsPanelRender(true);const g=wsGroup(t.value);wsTell({t:"mark",key:t.value});if(g.page&&g.page!==S.ws.page){S.ws.page=g.page;const ps=$("#wsPage");if(ps)ps.value=g.page;wsTell(g.page==="menu"?{t:"go",menu:true}:{t:"go",hash:g.page})}}
+  if(t.classList&&t.classList.contains("mlfile")&&t.files.length){const fs=[...t.files];t.value="";libUpload(fs,S.ws.lf,t.closest(".pk")?pkAfterUpload(fs.length):null)}
+  if(t.dataset&&t.dataset.wp&&t.closest("#wsPanel,.wsimgs,.wsq")){if(t.type==="checkbox")draftSet(t.dataset.wp,t.checked,true);else if(t.tagName==="SELECT")draftSet(t.dataset.wp,t.value,true)}});
+/* drag and drop onto the drop zones */
+document.addEventListener("dragover",e=>{const z=e.target.closest&&e.target.closest(".mldz");if(z){e.preventDefault();z.classList.add("over")}});
+document.addEventListener("dragleave",e=>{const z=e.target.closest&&e.target.closest(".mldz");if(z)z.classList.remove("over")});
+document.addEventListener("drop",e=>{const z=e.target.closest&&e.target.closest(".mldz");if(!z)return;e.preventDefault();z.classList.remove("over");const fs=[...(e.dataTransfer.files||[])];if(fs.length)libUpload(fs,z.dataset.folder||"",z.closest(".pk")?pkAfterUpload(fs.length):null)});
+
+/* ---------- uploads ---------- */
+const newAssetId=()=>"as_"+Date.now().toString(36)+Math.random().toString(36).slice(2,7);
+const sitePut=(id,rev,v,blob,type,onp)=>xhrPut("/api/site/put?id="+id+"&rev="+rev+"&v="+v,blob,type,onp);
+function loadImg(src){return new Promise((res,rej)=>{const i=new Image();i.decoding="async";i.onload=()=>res(i);i.onerror=()=>rej(new Error("This browser couldn't open that image"));i.src=src})}
+async function encodeVar(img,maxW,crop,q){const cw=img.naturalWidth,ch=img.naturalHeight,c=crop||{x:0,y:0,w:1,h:1};const sx=c.x*cw,sy=c.y*ch,sw=Math.max(1,c.w*cw),sh=Math.max(1,c.h*ch),k=Math.min(1,maxW/sw);
+  const w=Math.max(1,Math.round(sw*k)),h=Math.max(1,Math.round(sh*k)),cv=document.createElement("canvas");cv.width=w;cv.height=h;cv.getContext("2d").drawImage(img,sx,sy,sw,sh,0,0,w,h);
+  let b=await new Promise(r=>cv.toBlob(r,"image/webp",q||.84));if(!b||b.type!=="image/webp")b=await new Promise(r=>cv.toBlob(r,"image/jpeg",q||.86));if(!b)throw new Error("Couldn't process that image");return {blob:b,w,h}}
+function videoFrame(src,at){return new Promise((res,rej)=>{const v=document.createElement("video");v.muted=true;v.playsInline=true;v.preload="auto";v.src=src;const to=setTimeout(()=>rej(new Error("timeout")),20000);
+  v.onloadedmetadata=()=>{v.currentTime=at!=null?Math.min(at,Math.max(0,v.duration-.1)):Math.min(1,(v.duration||0)/3)};
+  v.onseeked=async()=>{try{clearTimeout(to);const k=Math.min(1,1280/(v.videoWidth||1280)),cv=document.createElement("canvas");cv.width=Math.round((v.videoWidth||1280)*k);cv.height=Math.round((v.videoHeight||720)*k);cv.getContext("2d").drawImage(v,0,0,cv.width,cv.height);
+    let b=await new Promise(r=>cv.toBlob(r,"image/webp",.82));if(!b||b.type!=="image/webp")b=await new Promise(r=>cv.toBlob(r,"image/jpeg",.85));res({blob:b,dur:v.duration,w:v.videoWidth,h:v.videoHeight})}catch(e){rej(e)}};
+  v.onerror=()=>{clearTimeout(to);rej(new Error("This browser can't read that video"))}})}
+async function buildImageVariants(id,rev,img,crop,mobileImg,onp){const d=await encodeVar(img,2000,crop),m=mobileImg?await encodeVar(mobileImg,900):await encodeVar(img,900,crop),t=await encodeVar(img,480,crop,.8);
+  await sitePut(id,rev,"d",d.blob,d.blob.type);if(onp)onp(.4);await sitePut(id,rev,"m",m.blob,m.blob.type);if(onp)onp(.7);await sitePut(id,rev,"t",t.blob,t.blob.type);if(onp)onp(1);
+  return {ve:d.blob.type==="image/webp"?"webp":"jpg"}}
+function upqRender(){let q=$("#upq");const L=S.ws.up.filter(x=>!x.hide);if(!L.length){if(q)q.remove();return}
+  if(!q){q=document.createElement("div");q.id="upq";q.setAttribute("aria-live","polite");document.body.appendChild(q)}
+  q.innerHTML='<div class="uqh"><b>Uploads</b><button class="mini" data-act="upq-clear" aria-label="Close">✕</button></div>'+L.map(x=>'<div class="uqi'+(x.err?" err":x.done?" ok":"")+'"><span>'+esc(x.name)+'</span><small>'+(x.err?esc(x.err):x.done?"Done":Math.round(x.pct*100)+"%")+'</small><i style="width:'+Math.round((x.done?1:x.pct)*100)+'%"></i></div>').join("")}
+async function libUpload(files,folder,cb){const made=[];
+  for(const f of files){
+    const type=f.type||(/\.avif$/i.test(f.name)?"image/avif":/\.mov$/i.test(f.name)?"video/quicktime":/\.mp4$/i.test(f.name)?"video/mp4":"");
+    const q={name:f.name,pct:0,err:"",done:false};S.ws.up.push(q);upqRender();
+    try{
+      if(!IMG_T.test(type)&&!VID_T.test(type))throw new Error("Use JPG, PNG, WebP, AVIF, MP4, WebM or MOV");
+      const isV=VID_T.test(type);if(f.size>(isV?95:30)*1048576)throw new Error(isV?"Over 95 MB. Add it as a YouTube or Vimeo link instead.":"Images can be up to 30 MB");
+      const id=newAssetId(),rec={id,name:f.name.replace(/\.[^.]+$/,"").slice(0,80),kind:isV?"video":"image",type,ext:EXT_OF[type],size:f.size,folder:folder||"",tags:[],alt:"",focal:"50% 50%",rev:1,orev:1,ready:false,createdAt:nowIso(),by:S.uid||"",byEmail:S.email||""};
+      const url=URL.createObjectURL(f);
+      if(isV){let info=null;try{info=await videoFrame(url)}catch(e){}
+        await sitePut(id,1,"o",f,type,p=>{q.pct=p*.95;upqRender()});
+        if(info&&info.blob){await sitePut(id,1,"t",info.blob,info.blob.type);rec.poster=true;rec.ve=info.blob.type==="image/webp"?"webp":"jpg"}
+        Object.assign(rec,{dur:info?Math.round(info.dur||0):0,w:info?info.w:0,h:info?info.h:0});
+      }else{const img=await loadImg(url);rec.w=img.naturalWidth;rec.h=img.naturalHeight;
+        await sitePut(id,1,"o",f,type,p=>{q.pct=p*.6;upqRender()});
+        Object.assign(rec,await buildImageVariants(id,1,img,null,null,p=>{q.pct=.6+p*.4;upqRender()}))}
+      URL.revokeObjectURL(url);
+      rec.ready=true;rec.updatedAt=nowIso();await S.db.doc("mediaLib/"+id).set(rec);S.lib[id]=rec;q.done=true;made.push(id);upqRender();
+    }catch(e){q.err=(e&&e.message)||"Upload failed";upqRender()}
+  }
+  setTimeout(()=>{S.ws.up=S.ws.up.filter(x=>!x.done);upqRender()},6000);
+  if(cb&&made.length)cb(made);
+}
+function libLinkModal(after){openModal('<h3>Add a video link</h3><p class="muted">YouTube, Vimeo, or a direct https link to an MP4 you host. The video stays on that platform.</p><form id="lkf" style="display:flex;flex-direction:column;gap:12px"><label class="f">Link<input class="i" name="url" type="url" required placeholder="https://www.youtube.com/watch?v=…"></label><label class="f">Name<input class="i" name="name" required maxlength="80"></label><label class="f">Folder<input class="i" name="folder" list="mlFolders" value="'+esc(S.ws.lf||"")+'"></label><datalist id="mlFolders">'+libFolders().map(f=>'<option value="'+esc(f)+'">').join("")+'</datalist><div class="row"><button type="button" class="btn ghost" data-act="close-modal">Cancel</button><button class="btn olive">Add link</button></div></form>',
+  el=>el.querySelector("#lkf").addEventListener("submit",async ev=>{ev.preventDefault();const o=formObj(ev.target);if(!/^https:\/\//.test(o.url)){toast("The link needs to start with https://");return}
+    const id=newAssetId(),rec={id,name:o.name,kind:"link",url:o.url,thumb:ytThumb(o.url),folder:o.folder||"",tags:[],alt:"",rev:1,orev:1,ready:true,createdAt:nowIso(),updatedAt:nowIso(),by:S.uid||"",byEmail:S.email||""};
+    if(await save("mediaLib",id,rec)){S.lib[id]=rec;closeModal();toast("Link added");if(after)after([id])}}))}
+
+/* ---------- file details: alt text, folder, crop, phone version, video thumbnail, replace, delete ---------- */
+async function varBlob(A,v){const r=await fetch(assetUrl(A,v));if(!r.ok)throw new Error("Couldn't load the file");return r.blob()}
+async function libRebuild(A,opts,msg){
+  toast(msg||"Updating…");const rev=(Number(A.rev)||1)+1,upd={rev,updatedAt:nowIso()};
+  try{
+    if(A.kind==="image"){const ob=await varBlob(A,"o"),ou=URL.createObjectURL(ob),img=await loadImg(ou);
+      const crop=opts.crop!==undefined?opts.crop:(A.crop||null);let mImg=null;
+      if(opts.mobileFile){mImg=await loadImg(URL.createObjectURL(opts.mobileFile));upd.mcustom=true}
+      else if(A.mcustom&&!opts.mobileAuto){mImg=await loadImg(URL.createObjectURL(await varBlob(A,"m")))}
+      else upd.mcustom=false;
+      Object.assign(upd,await buildImageVariants(A.id,rev,img,crop,mImg));upd.crop=crop;URL.revokeObjectURL(ou);
+    }else if(A.kind==="video"){const fr=opts.frame;await sitePut(A.id,rev,"t",fr,fr.type);upd.poster=true;upd.ve=fr.type==="image/webp"?"webp":"jpg"}
+    await S.db.doc("mediaLib/"+A.id).update(upd);toast("Saved. Publish to use it on the live site.");return true;
+  }catch(e){toast((e&&e.message)||"Couldn't update the file");return false}
+}
+async function libReplace(A,f){
+  const type=f.type||"";const isV=VID_T.test(type);if((A.kind==="video")!==isV||(!isV&&!IMG_T.test(type))){toast(A.kind==="video"?"Choose a video file":"Choose a JPG, PNG, WebP or AVIF image");return}
+  if(f.size>(isV?95:30)*1048576){toast("That file is too large");return}
+  const rev=Math.max(Number(A.rev)||1,Number(A.orev)||1)+1,q={name:f.name,pct:0,done:false};S.ws.up.push(q);upqRender();
+  try{const url=URL.createObjectURL(f),upd={rev,orev:rev,type,ext:EXT_OF[type],size:f.size,updatedAt:nowIso(),crop:null,mcustom:false};
+    await sitePut(A.id,rev,"o",f,type,p=>{q.pct=p*.7;upqRender()});
+    if(isV){let info=null;try{info=await videoFrame(url)}catch(e){}if(info&&info.blob){await sitePut(A.id,rev,"t",info.blob,info.blob.type);upd.poster=true;upd.ve=info.blob.type==="image/webp"?"webp":"jpg";upd.dur=Math.round(info.dur||0);upd.w=info.w;upd.h=info.h}else upd.poster=false}
+    else{const img=await loadImg(url);upd.w=img.naturalWidth;upd.h=img.naturalHeight;Object.assign(upd,await buildImageVariants(A.id,rev,img,null,null))}
+    await S.db.doc("mediaLib/"+A.id).update(upd);q.done=true;upqRender();toast("File replaced. Every spot using it updates when you publish.");return true}
+  catch(e){q.err=(e&&e.message)||"Upload failed";upqRender();return false}
+}
+function libDetail(id){const A=S.lib[id];if(!A)return;const u=usageOf(id),fs=libFolders();let focal=A.focal||"50% 50%";
+  const big=A.kind==="image"?'<div class="ldv" id="ldFocal"><img src="'+esc(assetUrl(A,"d"))+'" alt="" id="ldImg" style="object-position:'+esc(focal)+'"><span class="focus-dot" id="ldDot"></span></div><p class="muted" style="font-size:12.5px;margin-top:6px">Click the subject to set the default focal point.</p>':
+    A.kind==="video"?'<video id="ldVid" class="ldv" src="'+esc(assetUrl(A,"o"))+'" controls playsinline preload="metadata"'+(A.poster?' poster="'+esc(assetUrl(A,"t"))+'"':'')+'></video><div class="btnrow0" style="margin-top:8px"><button class="btn ghost sm" id="ldFrame">Use this frame as the thumbnail</button></div>':
+    '<div class="ldv">'+(A.thumb?'<img src="'+esc(A.thumb)+'" alt="">':'')+'</div><p style="margin-top:6px"><a href="'+esc(A.url)+'" target="_blank" rel="noopener">'+esc(A.url)+' ↗</a></p>';
+  openModal('<div class="lib-detail"><h3>'+esc(A.name||"File")+'</h3>'+big+
+    '<form id="ldf" style="display:flex;flex-direction:column;gap:12px;margin-top:12px"><div class="grid2"><label class="f">Name<input class="i" name="name" value="'+esc(A.name||"")+'" maxlength="80"></label><label class="f">Folder<input class="i" name="folder" list="ldFolders" value="'+esc(A.folder||"")+'"></label></div><datalist id="ldFolders">'+fs.map(f=>'<option value="'+esc(f)+'">').join("")+'</datalist>'+
+    (A.kind!=="link"?'<label class="f">Alt text (what the picture shows, for screen readers)<input class="i" name="alt" value="'+esc(A.alt||"")+'" maxlength="200"></label>':'')+
+    '<label class="f">Tags (comma separated)<input class="i" name="tags" value="'+esc((A.tags||[]).join(", "))+'"></label><div class="row" style="justify-content:flex-start"><button class="btn olive">Save details</button></div></form>'+
+    (A.kind==="image"?'<div class="mbox" style="margin:14px 0 0"><b>Crop</b><p class="muted" style="font-size:13px">Trims the file itself for every spot that uses it. The original is kept.</p><div class="seg" id="cpA" style="margin:8px 0">'+[["0","Original"],["1.7778","16:9"],["0.8","4:5"],["1","1:1"],["0.5625","9:16"],["free","Free"]].map(([k,l])=>'<button type="button" data-a="'+k+'">'+l+'</button>').join("")+'</div><div class="cpbox" id="cpBox" hidden><img src="'+esc(assetUrl(A,"o"))+'" alt="" draggable="false"><div class="crop"><i class="h"></i></div></div><div class="btnrow0" style="margin-top:8px"><button class="btn ghost sm" id="cpGo" disabled>Apply crop</button>'+(A.crop?'<button class="btn ghost sm" id="cpReset">Remove crop</button>':'')+'</div></div>'+
+      '<div class="mbox" style="margin:14px 0 0"><b>Phone version</b><p class="muted" style="font-size:13px">'+(A.mcustom?'Phones get a different picture you uploaded.':'Phones get this picture, sized down for faster loading.')+'</p><div class="btnrow0"><label class="btn ghost sm" style="cursor:pointer">Use a different picture on phones<input type="file" hidden id="ldMob" accept="image/jpeg,image/png,image/webp,image/avif"></label>'+(A.mcustom?'<button class="btn ghost sm" id="ldMobAuto">Use the same picture</button>':'')+'</div></div>':'')+
+    '<div class="mbox" style="margin:14px 0 0"><b>Where it\'s used</b>'+(u.list.length?'<ul style="margin:6px 0 0 18px;font-size:14px">'+u.list.map(x=>'<li>'+esc(x)+'</li>').join("")+'</ul>':'<p class="muted" style="font-size:13px">Not used on the site'+(u.old?' (it appears in '+u.old+' older version'+(u.old===1?'':'s')+')':'')+'.</p>')+'</div>'+
+    '<p class="muted" style="font-size:12.5px;margin-top:10px">'+(A.kind==="link"?"Video link":esc(String(A.ext||"").toUpperCase())+(A.size?' · '+fmtBytes(A.size):'')+(A.w?' · '+A.w+'×'+A.h:'')+(A.dur?' · '+fmtSec(A.dur):''))+' · added '+esc(A.createdAt?new Date(A.createdAt).toLocaleDateString("en-US",{dateStyle:"medium"}):"")+(A.byEmail?' by '+esc(A.byEmail):'')+'</p>'+
+    '<div class="row">'+(A.kind!=="link"?'<label class="btn ghost" style="cursor:pointer;margin-right:auto">Replace file<input type="file" hidden id="ldRep" accept="'+(A.kind==="video"?"video/mp4,video/webm,video/quicktime,.mov":"image/jpeg,image/png,image/webp,image/avif")+'"></label>':'')+'<button class="btn danger" data-act="ml-del" data-id="'+esc(id)+'"'+(u.live||u.draft?' disabled title="Remove it from the site first"':'')+'>Delete</button><button class="btn olive" data-act="close-modal">Done</button></div></div>',
+  el=>{
+    el.querySelector("#ldf").addEventListener("submit",async ev=>{ev.preventDefault();const o=formObj(ev.target);const upd={name:o.name||A.name,folder:o.folder||"",tags:(o.tags||"").split(",").map(x=>x.trim()).filter(Boolean).slice(0,20),focal,updatedAt:nowIso()};if(A.kind!=="link")upd.alt=o.alt||"";
+      try{await S.db.doc("mediaLib/"+id).update(upd);toast("Saved")}catch(e){toast("Couldn't save")}});
+    const ff=el.querySelector("#ldFocal");if(ff)ff.addEventListener("click",e=>{const r=ff.getBoundingClientRect();focal=Math.round((e.clientX-r.left)/r.width*100)+"% "+Math.round((e.clientY-r.top)/r.height*100)+"%";paintF()});
+    const paintF=()=>{const d=el.querySelector("#ldDot"),im=el.querySelector("#ldImg");if(!d)return;const [x,y]=focal.split(" ");d.style.left=x;d.style.top=y;im.style.objectPosition=focal};paintF();
+    const fb=el.querySelector("#ldFrame");if(fb)fb.addEventListener("click",async()=>{const v=el.querySelector("#ldVid");try{fb.disabled=true;const fr=await videoFrame(v.currentSrc||v.src,v.currentTime);if(await libRebuild(A,{frame:fr.blob},"Saving thumbnail…"))closeModal()}catch(e){toast("Couldn't grab that frame");fb.disabled=false}});
+    const rep=el.querySelector("#ldRep");if(rep)rep.addEventListener("change",async()=>{const f=rep.files[0];if(f){closeModal();await libReplace(A,f)}});
+    const mob=el.querySelector("#ldMob");if(mob)mob.addEventListener("change",async()=>{const f=mob.files[0];if(!f)return;if(!IMG_T.test(f.type)){toast("Use a JPG, PNG, WebP or AVIF image");return}closeModal();await libRebuild(A,{mobileFile:f},"Making the phone version…")});
+    const ma=el.querySelector("#ldMobAuto");if(ma)ma.addEventListener("click",async()=>{closeModal();await libRebuild(A,{mobileAuto:true})});
+    const cr=el.querySelector("#cpReset");if(cr)cr.addEventListener("click",async()=>{closeModal();await libRebuild(A,{crop:null},"Removing crop…")});
+    const box=el.querySelector("#cpBox");if(box){let ui=null;el.querySelectorAll("#cpA button").forEach(b=>b.addEventListener("click",()=>{el.querySelectorAll("#cpA button").forEach(x=>x.classList.toggle("on",x===b));box.hidden=false;const a=b.dataset.a;
+      const go=()=>{if(!ui)ui=cropUI(box,A.crop||{x:0,y:0,w:1,h:1});ui.aspect(a==="free"||a==="0"?(a==="0"?(A.w&&A.h?A.w/A.h:0):0):Number(a));if(a==="0")ui.reset();el.querySelector("#cpGo").disabled=false};
+      const im=box.querySelector("img");if(im.complete&&im.naturalWidth)go();else im.onload=go}));
+      el.querySelector("#cpGo").addEventListener("click",async()=>{const c=ui&&ui.get();if(!c)return;const crop={x:+c.x.toFixed(4),y:+c.y.toFixed(4),w:+c.w.toFixed(4),h:+c.h.toFixed(4)};closeModal();await libRebuild(A,{crop:crop.w>.995&&crop.h>.995?null:crop},"Cropping…")})}
+  });
+}
+function cropUI(box,init){let c=Object.assign({x:0,y:0,w:1,h:1},init),ar=0;const el=box.querySelector(".crop"),R=()=>box.getBoundingClientRect();
+  const paint=()=>{el.style.left=c.x*100+"%";el.style.top=c.y*100+"%";el.style.width=c.w*100+"%";el.style.height=c.h*100+"%"};
+  const fit=()=>{if(ar){const r=R(),k=r.width/r.height;let w=c.w,h=w*k/ar;if(h>1){h=1;w=h*ar/k}if(w>1){w=1;h=w*k/ar}c.w=w;c.h=h;c.x=Math.min(c.x,1-w);c.y=Math.min(c.y,1-h)}paint()};
+  el.addEventListener("pointerdown",e=>{e.preventDefault();const size=e.target.classList.contains("h"),r=R(),sx=e.clientX,sy=e.clientY,o=Object.assign({},c);el.setPointerCapture(e.pointerId);
+    const mv=ev=>{const dx=(ev.clientX-sx)/r.width,dy=(ev.clientY-sy)/r.height;
+      if(!size){c.x=Math.min(1-c.w,Math.max(0,o.x+dx));c.y=Math.min(1-c.h,Math.max(0,o.y+dy))}
+      else{c.w=Math.min(1-c.x,Math.max(.06,o.w+dx));c.h=ar?c.w*(r.width/r.height)/ar:Math.min(1-c.y,Math.max(.06,o.h+dy));if(c.y+c.h>1){c.h=1-c.y;if(ar)c.w=c.h*ar/(r.width/r.height)}}paint()};
+    el.addEventListener("pointermove",mv);el.addEventListener("pointerup",()=>el.removeEventListener("pointermove",mv),{once:true})});
+  paint();return {aspect(a){ar=a;if(a){c={x:0,y:0,w:1,h:1};}fit()},reset(){c={x:0,y:0,w:1,h:1};paint()},get:()=>c};
+}
+
+/* ---------- picker (choose a file for a spot) ---------- */
+function pkGridHTML(){const L=libFiltered(S.ws.pickAccept);return L.length?L.map(a=>libCard(a,true)).join(""):'<div class="empty" style="grid-column:1/-1">No matching files yet. Upload one above.</div>'}
+function pkAfterUpload(n){return ids=>{if(n===1&&ids.length===1&&S.ws.pickCb){const cb=S.ws.pickCb;S.ws.pickCb=null;S.ws.pickAccept=null;S.ws.pickRefresh=null;closeModal();cb(ids[0])}else mlGridRefresh()}}
+function wsPicker(accept,cb){S.ws.pickAccept=accept;S.ws.pickCb=cb;S.ws.lt="all";
+  openModal('<div class="pk"><h3>Choose from the Media Library</h3>'+libToolbar(true)+'<div class="mlgrid pkgrid" id="pkGrid">'+pkGridHTML()+'</div><div class="row"><a class="btn ghost" href="#team-media" data-act="close-modal">Open Media Library</a><button class="btn ghost" data-act="close-modal">Cancel</button></div></div>',
+    el=>{el.closest(".modal").classList.add("wide");S.ws.pickRefresh=()=>{const g=$("#pkGrid");if(g)g.innerHTML=pkGridHTML()}});
+}
+function wsCropSlot(slot){const d=slotDef(slot),{s,A}=dslot(slot);if(!A)return;let fp=s.focal||A.focal||"50% 50%",mfp=s.mfocal||fp,z=Number(s.zoom)||1;
+  openModal('<h3>Crop &amp; focus · '+esc(d.label)+'</h3><p class="muted">Click where the subject is in each frame. The frames show exactly how this spot is cropped.</p><div class="wscrop"><figure><div class="focus-frame" id="cfD" style="aspect-ratio:'+d.r+'"><img src="'+esc(assetUrl(A,"d"))+'" alt=""><span class="focus-dot"></span></div><figcaption>Desktop</figcaption></figure><figure><div class="focus-frame" id="cfM" style="aspect-ratio:'+d.mr+'"><img src="'+esc(assetUrl(A,"m"))+'" alt=""><span class="focus-dot"></span></div><figcaption>Phone</figcaption></figure></div>'+
+    '<label class="f">Zoom<input type="range" min="1" max="2" step=".05" id="cfZ" value="'+z+'"></label><p class="muted" style="font-size:12.5px">To trim the file itself or give phones a different picture, open it in the <a href="#team-media" data-act="close-modal">Media Library</a>.</p><div class="row"><button class="btn ghost" data-act="close-modal">Cancel</button><button class="btn olive" id="cfGo">Save to draft</button></div>',
+  el=>{const paint=()=>{[["#cfD",fp],["#cfM",mfp]].forEach(([q,p])=>{const f=el.querySelector(q),im=f.querySelector("img"),dt=f.querySelector(".focus-dot");const [x,y]=p.split(" ");dt.style.left=x;dt.style.top=y;im.style.objectPosition=p;im.style.transform=z>1?"scale("+z+")":"";im.style.transformOrigin=p})};paint();
+    const set=(q,cb)=>{const f=el.querySelector(q);f.addEventListener("click",e=>{const r=f.getBoundingClientRect();cb(Math.round((e.clientX-r.left)/r.width*100)+"% "+Math.round((e.clientY-r.top)/r.height*100)+"%");paint()})};
+    set("#cfD",v=>{if(mfp===fp)mfp=v;fp=v});set("#cfM",v=>{mfp=v});el.querySelector("#cfZ").addEventListener("input",e=>{z=Number(e.target.value);paint()});
+    el.querySelector("#cfGo").addEventListener("click",()=>{const cur=Object.assign({},getPath(wsDraft(),"studio.slots."+slot)||{});draftSet("studio.slots."+slot,Object.assign(cur,{focal:fp,mfocal:mfp===fp?"":mfp,zoom:z}),true);closeModal();wsRefreshAll()})});
+}
+function wsRefreshAll(){if(wsLive())wsPanelRender(true);else render()}
+
+/* ---------- actions ---------- */
+function wsAct(a,t){
+  if(!a.startsWith("ws-")&&!a.startsWith("ml-")&&!a.startsWith("pk-")&&a!=="upq-clear")return false;
+  if(a==="upq-clear"){S.ws.up=S.ws.up.filter(x=>!x.done&&!x.err&&x.pct<1);S.ws.up.forEach(x=>x.hide=true);upqRender();return true}
+  if(!S.isAdmin)return true;
+  if(a==="ws-tab"){S.ws.tab=t.dataset.v;render();return true}
+  if(a==="ws-dev"){S.ws.dev=t.dataset.v;document.querySelectorAll("#wsDev button").forEach(b=>b.classList.toggle("on",b===t));const box=$("#wsDevBox");if(box)box.className="wsdev d-"+S.ws.dev;if(S.ws.fit)S.ws.fit();return true}
+  if(a==="ws-mode"){S.ws.mode=t.dataset.v;document.querySelectorAll("#wsMode button").forEach(b=>b.classList.toggle("on",b===t));wsTell({t:"mode",select:S.ws.mode==="select"});const tip=$(".wstip");if(tip)tip.innerHTML=S.ws.mode==="select"?'Click any outlined part of the page to edit it. Switch to <b>Browse</b> to click links and move around.':'Browse mode: links work like the real site. Switch to <b>Select</b> to pick something to edit.';return true}
+  if(a==="ws-discard"){wsDiscard();return true}
+  if(a==="ws-pick"){const slot=t.dataset.slot,path=t.dataset.path,acc=t.dataset.accept||"image";
+    wsPicker(acc,id=>{const A=S.lib[id];if(!A||!acc.split(",").includes(A.kind)){toast("That file type doesn't fit here");return}
+      if(slot)draftSet("studio.slots."+slot,{a:id,focal:A.focal||"",mfocal:"",zoom:1,alt:""},true);else draftSet(path,id,true);
+      S.ws.pickAccept=null;S.ws.pickRefresh=null;closeModal();wsRefreshAll();toast("Added to your draft")});return true}
+  if(a==="pk-pick"){const cb=S.ws.pickCb;if(cb)cb(t.dataset.id);return true}
+  if(a==="ws-crop"){wsCropSlot(t.dataset.slot);return true}
+  if(a==="ws-slot-clear"){draftSet("studio.slots."+t.dataset.slot,null,true);wsRefreshAll();return true}
+  if(a==="ws-asset-clear"){draftSet(t.dataset.path,"",true);wsRefreshAll();return true}
+  if(a==="ws-q-move"||a==="ws-q-del"||a==="ws-q-add"){const L=clone(wsVal("studio.home.quick.items")||[]),i=Number(t.dataset.i);
+    if(a==="ws-q-move"){const j=i+Number(t.dataset.d);if(j<0||j>=L.length)return true;[L[i],L[j]]=[L[j],L[i]]}
+    if(a==="ws-q-del")L.splice(i,1);
+    if(a==="ws-q-add"){let n=1;while(L.some(x=>x.slot==="quick-"+n)||n<5&&getPath(wsDraft(),"studio.slots.quick-"+n))n++;L.push({label:"New card",link:"#home",slot:"quick-"+n})}
+    draftSet("studio.home.quick.items",L,true);wsRefreshAll();return true}
+  if(a==="ws-ord"){const L=clone(wsVal(t.dataset.p)||[]),i=Number(t.dataset.i),j=i+Number(t.dataset.d);["quick","story"].forEach(k=>{if(!L.includes(k))L.push(k)});if(j<0||j>=L.length)return true;[L[i],L[j]]=[L[j],L[i]];draftSet(t.dataset.p,L,true);wsRefreshAll();return true}
+  if(a==="ws-trend"){let L=clone(wsVal("studio.music.trendIds")||[]);const id=t.dataset.id;if(t.checked){if(L.length>=12){t.checked=false;toast("Pick up to 12 songs");return true}L.push(id)}else L=L.filter(x=>x!==id);draftSet("studio.music.trendIds",L,true);return true}
+  if(a==="ws-load"){wsRestore(t.dataset.id,false);return true}
+  if(a==="ws-restore"){wsRestore(t.dataset.id,true);return true}
+  if(a==="ml-open"){libDetail(t.dataset.id);return true}
+  if(a==="ml-link"){const inPk=!!t.closest(".pk"),cb=S.ws.pickCb;libLinkModal(inPk&&cb?ids=>{S.ws.pickCb=null;cb(ids[0])}:null);return true}
+  if(a==="ml-folder"){openModal('<h3>New folder</h3><form id="nff" style="display:flex;flex-direction:column;gap:12px"><label class="f">Folder name<input class="i" name="n" required maxlength="40"></label><div class="row"><button type="button" class="btn ghost" data-act="close-modal">Cancel</button><button class="btn olive">Create</button></div></form>',
+    el=>el.querySelector("#nff").addEventListener("submit",async ev=>{ev.preventDefault();const n=formObj(ev.target).n;if(!n)return;const fs=[...new Set((S.wsMeta.folders||[]).concat(n))].sort();if(await save("sitedraft","meta",Object.assign({},S.wsMeta,{folders:fs}))){S.ws.lf=n;closeModal();render()}}));return true}
+  if(a==="ml-del"){const id=t.dataset.id,A=S.lib[id];if(!A)return true;const u=usageOf(id);if(u.live||u.draft){toast("Remove it from the site first");return true}
+    openModal('<h3>Delete “'+esc(A.name)+'”?</h3><p class="muted">The file is removed from storage for good.'+(u.old?' '+u.old+' older version'+(u.old===1?' uses':'s use')+' it; restoring '+(u.old===1?'that version':'those')+' would show the default picture there.':'')+'</p><div class="row"><button class="btn ghost" data-act="close-modal">Cancel</button><button class="btn danger" id="mdGo">Delete</button></div>',
+      el=>el.querySelector("#mdGo").addEventListener("click",async()=>{try{if(A.kind!=="link"){const r=await fetch("/api/site/delete",{method:"POST",headers:{authorization:"Bearer "+await idToken(),"content-type":"application/json"},body:JSON.stringify({id})});const j=await r.json().catch(()=>({}));if(!r.ok)throw new Error(j.error||"Couldn't delete")}
+        await S.db.doc("mediaLib/"+id).delete();closeModal();toast("Deleted")}catch(e){toast(e.message||"Couldn't delete")}}));return true}
+  return false;
+}
+
+/* ===== Interaction layer: story video, company views, reveals, parallax, lighting ===== */
+function storyPlay(){const st=stv("home").story||{},A=st.video?assetMeta(st.video):null;
+  if(!A){try{sessionStorage.removeItem("gvIntro")}catch(e){}showIntro();return}
+  lightbox(A);
+}
+function lightbox(A){
+  let inner=null;
+  if(A.kind==="video")inner='<video src="'+esc(assetUrl(A,"o"))+'" controls autoplay playsinline'+(A.poster?' poster="'+esc(assetUrl(A,"t"))+'"':'')+'></video>';
+  else{const y=ytId(A.url),v=vimeoId(A.url);
+    inner=y?'<iframe src="https://www.youtube-nocookie.com/embed/'+y+'?autoplay=1&rel=0&playsinline=1" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen title="Grooveville video"></iframe>':
+      v?'<iframe src="https://player.vimeo.com/video/'+v+'?autoplay=1" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen title="Grooveville video"></iframe>':
+      /^https:\/\/.+\.(mp4|webm)(\?.*)?$/i.test(A.url)?'<video src="'+esc(A.url)+'" controls autoplay playsinline></video>':null}
+  if(!inner){window.open(A.url,"_blank","noopener");return}
+  const was=MP.playing;if(was)mpPause(false);try{if(window.__liveStop)window.__liveStop()}catch(e){}
+  const o=document.createElement("div");o.id="lbx";o.setAttribute("role","dialog");o.setAttribute("aria-modal","true");o.setAttribute("aria-label","Video");
+  o.innerHTML='<div class="lbin">'+inner+'</div><button class="mx" data-act="lbx-close" aria-label="Close video">✕</button>';o._was=was;document.body.appendChild(o);o.querySelector(".mx").focus();
+}
+function lbxClose(){const o=$("#lbx");if(!o)return;const was=o._was;o.remove();if(was)mpResume()}
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&$("#lbx"))lbxClose()});
+function uiAct(a,t){
+  if(a==="story-play"){storyPlay();return true}
+  if(a==="lbx-close"){lbxClose();return true}
+  if(a==="co-view"){S.coView=t.dataset.v;render();return true}
+  if(a==="ext"){const u=t.dataset.url;if(/^https:\/\//.test(u||""))window.open(u,"_blank","noopener");return true}
+  return false;
+}
+document.addEventListener("keydown",e=>{if((e.key==="Enter"||e.key===" ")&&e.target.matches&&e.target.matches('.cext[data-act="ext"]')){e.preventDefault();e.stopPropagation();uiAct("ext",e.target)}},true);
+document.addEventListener("click",e=>{const x=e.target.closest&&e.target.closest('.cext[data-act="ext"]');if(x)e.preventDefault()},true);
+
+/* reveal on scroll (only when arriving on a page, never on data refreshes) */
+const RV_SEL=".cocard,.qcard,.story,.rfeat,.tcard,.msec,.mtile,.cohead,.hhtx";
+let RVO=null;
+function rvRun(fresh){
+  const els=document.querySelectorAll("#app "+RV_SEL.split(",").join(",#app "));
+  if(!fresh||matchMedia("(prefers-reduced-motion: reduce)").matches||!("IntersectionObserver" in window)){els.forEach(e=>e.classList.remove("rv"));return}
+  if(!RVO)RVO=new IntersectionObserver(es=>es.forEach(en=>{if(en.isIntersecting){en.target.classList.add("in");RVO.unobserve(en.target)}}),{rootMargin:"0px 0px -6% 0px"});
+  els.forEach((e,i)=>{e.classList.add("rv");e.style.setProperty("--rd",Math.min(i,8)*45+"ms");RVO.observe(e)});
+  setTimeout(()=>els.forEach(e=>e.classList.add("in")),1600);   // never leave anything hidden
+}
+function uiAfter(r){
+  if(r==="team-web"&&S.ws.tab==="visual")setTimeout(wsMount,0);
+  if($("#viz"))vizLoop();
+  rvRun(S._lastR!==r);
+  if(PREVIEW.on){pvBar();if(S.pvKey)pvMark(S.pvKey)}
+  if(S.isAdmin&&BACKEND==="firebase"&&!PT.t&&(PREVIEW.on||r.startsWith("team")))ensureToken();
+}
+/* sticky header tint, hero parallax */
+let UIR=0;
+addEventListener("scroll",()=>{if(UIR)return;UIR=requestAnimationFrame(()=>{UIR=0;const y=scrollY;const n=$(".nav");if(n)n.classList.toggle("scrolled",y>8);
+  if(!matchMedia("(prefers-reduced-motion: reduce)").matches){const p=$('#app [data-par]');if(p&&y<innerHeight*1.2)p.style.transform="translate3d(0,"+(y*.18).toFixed(1)+"px,0)"}})},{passive:true});
+/* light follows the finger or cursor on glass tiles */
+document.addEventListener("pointermove",e=>{const t=e.target.closest&&e.target.closest(".gtile");if(!t)return;const r=t.getBoundingClientRect();t.style.setProperty("--lx",((e.clientX-r.left)/r.width*100).toFixed(0)+"%");t.style.setProperty("--ly",((e.clientY-r.top)/r.height*100).toFixed(0)+"%")},{passive:true});
 
 /* ---------- modals ---------- */
 const brandOpts=(sel,only)=>BRANDS.filter(b=>!only||only.includes(b.id)).map(b=>'<option value="'+b.id+'"'+(b.id===sel?" selected":"")+'>'+esc(brandInfo(b.id).name)+'</option>').join("");
@@ -3392,7 +4378,7 @@ function contactModal(){
     if(await save("settings","site",Object.assign({},S.site,{contactEmail:o.contactEmail,signer:o.signer}))){closeModal();toast("Saved")}}));
 }
 function brandModal(id){
-  const b=brandInfo(id), cur=((S.site||{}).brands||{})[id]||{};
+  const SB=BACKEND==="firebase"?wsDraft():(S.site||{}), b=brandInfo(id), cur=(SB.brands||{})[id]||{};
   openModal('<form id="mf"><h3 style="margin-bottom:4px">'+esc(b.name)+' page</h3><p class="muted" style="margin-bottom:12px;font-size:14px">Leave a field blank to keep the default text.</p><div style="display:flex;flex-direction:column;gap:12px">'+
     '<label class="f">Company name<input class="i" id="b-name" name="name" value="'+esc(cur.name||"")+'" placeholder="'+esc(BR[id].name)+'"></label>'+
     '<label class="f">Tagline<input class="i" id="b-tag" name="tagline" value="'+esc(cur.tagline)+'" placeholder="'+esc(BR[id].tagline)+'"></label>'+
@@ -3402,11 +4388,11 @@ function brandModal(id){
     '<div class="f" style="font-size:13px;font-weight:600;color:var(--muted)">Logo<div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:5px">'+(b.logo?'<img class="blogo big" style="margin:0" id="b-prev" src="'+esc(b.logo)+'" alt="">':'')+'<input class="i" type="file" accept="image/*" id="b-logo" style="flex:1;min-width:0">'+(cur.logo?'<label style="display:flex;gap:6px;align-items:center;font-weight:500"><input type="checkbox" id="b-rmlogo"> Remove logo</label>':'')+'</div><span style="font-weight:400">PNG with a transparent background looks best. It is resized to fit.</span></div></div>'+
     '<div class="row"><button type="button" class="btn ghost" data-act="close-modal">Cancel</button><button class="btn olive" type="submit">Save</button></div></form>',
   el=>el.querySelector("#mf").addEventListener("submit",async ev=>{ev.preventDefault();const o=formObj(ev.target);
-    const brands=Object.assign({},(S.site||{}).brands);let logo=cur.logo||"";
+    const brands=Object.assign({},SB.brands);let logo=cur.logo||"";
     const lf=el.querySelector("#b-logo").files[0];if(lf){logo=await shrinkLogo(lf);if(!logo)return}
     const rm=el.querySelector("#b-rmlogo");if(rm&&rm.checked&&!lf)logo="";
     brands[id]=Object.assign({},brands[id],{name:o.name||"",tagline:o.tagline,about:o.about,website:o.website,social:o.social,logo});
-    if(await save("settings","site",Object.assign({},S.site,{brands}))){closeModal();toast("Saved. Publish to update the public page.")}}));
+    if(await saveSite({brands})){closeModal();toast(BACKEND==="firebase"?"Saved to your draft. Publish in Website Studio to go live.":"Saved. Publish to update the public page.")}}));
 }
 function dayModal(ds){
   const team=S.isAdmin&&S.route==="team-cal";
@@ -3435,6 +4421,7 @@ async function exportCSV(){
 function b64utf8(s){const b=new TextEncoder().encode(s);let o="";for(let i=0;i<b.length;i+=8192)o+=String.fromCharCode.apply(null,b.subarray(i,i+8192));return btoa(o)}
 function fromb64(s){const bin=atob(s);const u=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)u[i]=bin.charCodeAt(i);return new TextDecoder().decode(u)}
 async function publishSite(btn){
+  if(BACKEND==="firebase"){wsPublishFlow();return}
   const art=await cu("artifact");
   if(!art){toast("Publishing isn't available in this view");return}
   if(btn)btn.disabled=true;
@@ -3455,6 +4442,7 @@ async function publishSite(btn){
 /* ---------- router & render ---------- */
 let rq=0;
 function scheduleRender(fromData){
+  if(fromData&&typeof wsLive==="function"&&wsLive()){wsRefresh();return}
   if(fromData&&S.route==="ent-upload"&&$("#songForm"))return;
   if(fromData&&S.route.startsWith("studio")&&$("#stClipForm")&&$("#stClipForm").contains(document.activeElement))return;
   if(fromData&&(S.route==="shadowcrown"||S.route.startsWith("collab")||(S.route==="signin"&&$("#authForm"))))return;
@@ -3483,7 +4471,7 @@ function render(){
   else if(r.startsWith("team")){
     if(!S.isAdmin)h=viewSignin();
     else if(!S.db)h='<div class="wrap gate"><h1>Back office unavailable</h1><p class="muted">Saved records can\'t be reached in this view. Open the page from claude.ai while signed in.</p></div>';
-    else{const v={"team":viewDash,"team-time":viewTimesheet,"team-cal":()=>viewCalendar(true),"team-rem":viewReminders,"team-out":viewOutreach,"team-people":viewTeams,"team-vault":viewVault,"team-docs":viewDocs,"team-conv":viewConverter,"team-reports":viewReports,"team-site":viewSite,"team-web":viewWebsite}[r]||viewDash;h=teamShell(TEAM_TABS.some(t=>t[0]===r)?r:"team",v())}
+    else{const v={"team":viewDash,"team-time":viewTimesheet,"team-cal":()=>viewCalendar(true),"team-rem":viewReminders,"team-out":viewOutreach,"team-people":viewTeams,"team-vault":viewVault,"team-docs":viewDocs,"team-conv":viewConverter,"team-reports":viewReports,"team-site":viewSite,"team-web":viewWebsite,"team-media":viewMediaLib}[r]||viewDash;h=teamShell(TEAM_TABS.some(t=>t[0]===r)?r:"team",v())}
   }
   else if(r==="live")h=viewLive();
   else if(r==="studio"||r.startsWith("studio-"))h=viewStudio();
@@ -3508,6 +4496,7 @@ function render(){
   if(r==="tv"||r.startsWith("tv/"))tvMount();else if(TV.player){try{TV.player.destroy()}catch(e){}TV.player=null}
   if(r.startsWith("ent"))entMount();
   mpTick();
+  uiAfter(r);
   if(S._lastR!==r){S._lastR=r;app.classList.remove("pagein");void app.offsetWidth;app.classList.add("pagein")}
   const cf=$("#collabForm");if(cf)cf.addEventListener("submit",e=>{e.preventDefault();collabSubmit(cf)});
   const af=$("#authForm");if(af)af.addEventListener("submit",e=>{e.preventDefault();fbAuth(af,(e.submitter&&e.submitter.dataset.mode)||"in")});
@@ -3531,6 +4520,8 @@ document.addEventListener("click",async e=>{
   const a=t.dataset.act, id=t.dataset.id;
   if(a==="scrim"){if(e.target===t)closeModal();return}
   if(mobileAct(a,t))return;
+  if(wsAct(a,t))return;
+  if(uiAct(a,t))return;
   if(webAct(a,t))return;
   if(studioAct(a,t))return;
   if(mpAct(a,t))return;
@@ -3660,6 +4651,7 @@ $("#logoNav").src=LOGO;
 $("#yr").textContent=new Date().getFullYear();
 try{S.sound=sessionStorage.getItem("gvSound")==="1"}catch(e){}
 route();render();syncSoundBtns();
+pvInit();
 if(introWanted())showIntro();
 (async()=>{
   if(BACKEND==="firebase"){
@@ -3677,7 +4669,7 @@ if(introWanted())showIntro();
       let first=true;
       S.db.doc("access/"+u.uid).onSnapshot(d=>{
         const f=d.exists&&["founder","hnic"].includes(String(d.data().role||"").toLowerCase().replace(/["'\s]/g,""));
-        if(f&&!S.isAdmin){S.isAdmin=true;subscribeFounder();musicSubscribe();if(!first||S.route==="signin"||S.route.startsWith("portal")||S.route==="join")location.hash="#team";toast("Founder access on")}
+        if(f&&!S.isAdmin){S.isAdmin=true;subscribeFounder();musicSubscribe();if(!first||S.route==="signin"||S.route.startsWith("portal")||S.route==="join")location.hash="#team";if(!PREVIEW.on)toast("Founder access on")}
         if(first){first=false;S.authChecked=true;if(!S.isAdmin){subscribeMember();if(S.route==="signin"||S.route==="groove")location.hash="#portal"}}
         render();
       },()=>{if(first){first=false;S.authChecked=true;subscribeMember();if(S.route==="signin"||S.route==="groove")location.hash="#portal";render()}});

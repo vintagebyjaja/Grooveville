@@ -158,6 +158,22 @@ service cloud.firestore {
       allow read, write: if isFounder();
     }
 
+    // ---------- Website Studio ----------
+    // Draft site (unpublished text, layout and image choices): founder or HNIC only. The public reads settings/site.
+    match /sitedraft/{doc} {
+      allow read, write: if isFounder();
+    }
+    // Published versions: founder reads and adds; history can never be edited or deleted (audit trail).
+    match /siteversions/{v} {
+      allow read, create: if isFounder();
+      allow update, delete: if false;
+    }
+    // Media Library records (file names, folders, alt text). The files themselves sit in R2 behind the Worker,
+    // which only serves files that belong to the published site.
+    match /mediaLib/{id} {
+      allow read, write: if isFounder();
+    }
+
     // Website images and links (Back office › Website): everyone can see them, only the founder or HNIC changes them
     match /media/{id} {
       allow read: if true;
