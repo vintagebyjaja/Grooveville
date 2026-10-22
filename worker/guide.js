@@ -85,6 +85,13 @@ async function weatherLookup(key, p, fetcher) {
 export async function guideApi(req, env, ctx, h) {
   const { p, url } = h, fetcher = h.fetcher || fetch;
   if (!allowedCaller(req)) return J({ error: "Groove Guide data is only available on grooveville.org" }, 403);
+  /* Browser settings delivered at runtime, so the public map key lives in Cloudflare (GOOGLE_MAPS_BROWSER_KEY), not in a file.
+     The browser key is public by design and must be restricted to grooveville.org in Google Cloud. The server key is never sent. */
+  if (p === "/api/guide/config" && req.method === "GET") {
+    const k = String(env.GOOGLE_MAPS_BROWSER_KEY || "").trim();
+    return J({ googleMapsKey: k, mapIdDark: String(env.GUIDE_MAP_ID_DARK || "").trim(), mapIdLight: String(env.GUIDE_MAP_ID_LIGHT || "").trim(),
+      serverRoutes: !!env.GOOGLE_ROUTES_API_KEY, browserKeySet: !!k, sameAsServerKey: !!k && k === env.GOOGLE_ROUTES_API_KEY }, 200, { "cache-control": "private, max-age=60" });
+  }
   const key = env.GOOGLE_ROUTES_API_KEY;
   if (!key) return J({ error: "The Cloudflare secret GOOGLE_ROUTES_API_KEY isn't set yet", setup: true }, 503);
   const ip = req.headers.get("cf-connecting-ip") || "0";

@@ -2,20 +2,29 @@
 
 Groove Guide is added on top of the existing site. Nothing in the main Grooveville site, DNS, wrangler.jsonc or existing secrets changes.
 
-## 1. Browser key (needed for the map, search and Explore)
-Open `guide/guide-config.js` in GitHub and paste the **"Groove Guide – Website"** key between the quotes in `googleMapsKey: ""`. Commit.
-In Google Cloud › Credentials, keep that key restricted to websites `https://grooveville.org/*`.
-It needs: Maps JavaScript API and Places API (New). Immersive 3D also uses Map Tiles API (photorealistic 3D); without it Immersive falls back to 3D buildings.
+## 1. Browser key (the map, search and Explore)
+Groove Guide now reads the browser key from Cloudflare at runtime, so you don't edit any file.
+1. Cloudflare › **Workers & Pages › grooveville › Settings › Variables and Secrets › Add**
+2. Type: **Secret** (or Text) · Name: **`GOOGLE_MAPS_BROWSER_KEY`** · Value: the **"Groove Guide – Website"** key → Save and deploy.
+3. In Google Cloud › APIs & Services › Credentials › "Groove Guide – Website":
+   - **Website restrictions:** `https://grooveville.org/*` (add your preview address too if you use one, e.g. `https://*.workers.dev/*`).
+   - **API restrictions:** Maps JavaScript API, Places API (New). Map Tiles API is optional (photorealistic 3D in Immersive).
+4. Check it: `https://grooveville.org/api/guide/config` should show `"browserKeySet": true`.
+If anything is still wrong, the map shows the exact reason (invalid key, website not allowed, API not enabled, billing, quota, network) and the browser console logs a diagnostics line.
 
 ## 2. Server key (already done)
 The Worker reads the Cloudflare secret **GOOGLE_ROUTES_API_KEY** (Routes API, Weather API, Time Zone API). It never reaches the browser.
 Check: open `https://grooveville.org/api/guide/tz?lat=35.22&lng=-80.84`. If the secret is missing, it says so.
 
 ## 3. Optional: your own map style
-`mapIdDark` / `mapIdLight` in `guide-config.js` default to `DEMO_MAP_ID`. For the custom dark-peach / light-purple building look, create vector Map IDs in Google Cloud › Map Management and paste them in.
+Add Cloudflare variables `GUIDE_MAP_ID_DARK` / `GUIDE_MAP_ID_LIGHT` (or edit `guide-config.js`). They default to `DEMO_MAP_ID`. For the custom dark-peach / light-purple building look, create vector Map IDs in Google Cloud › Map Management and paste them in.
 
 ## 4. Firestore rules (for syncing to a Grooveville account)
 Paste the new `firestore.rules` into Firebase › Firestore › Rules › Publish. It only adds `guide/{uid}` (each person's own Groove Guide data). Without it, Groove Guide still works and keeps data on the device.
+
+## 5. Public sign-in (people keep their places, trips and walks)
+Groove Guide has its own Sign in button for the public. In Firebase › Authentication › Sign-in method, turn on **Email/Password** (already on) and **Google** (optional, for "Continue with Google"). Under Authentication › Settings › Authorized domains, make sure `grooveville.org` is listed.
+A Groove Guide account is a plain public account: it does not create a Groove Team record and cannot open the Back Office. Groove Team logins also work on Groove Guide.
 
 ## Links other Grooveville products can use
 - `https://grooveville.org/guide/navigate/?to=35.2356,-80.8270&name=Optimist%20Hall`

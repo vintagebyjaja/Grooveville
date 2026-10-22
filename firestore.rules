@@ -158,6 +158,38 @@ service cloud.firestore {
       allow read, write: if isFounder();
     }
 
+    // ---------- Content Studio ----------
+    // Founder/HNIC plus accounts the founder lists in contentRoles. Only the founder approves, schedules or publishes,
+    // edits brand kits, and manages who has access.
+    function contentMember() {
+      return signedIn() && exists(/databases/$(database)/documents/contentRoles/$(request.auth.uid))
+        && get(/databases/$(database)/documents/contentRoles/$(request.auth.uid)).data.role in ["editor", "manager"];
+    }
+    function contentAccess() { return isFounder() || contentMember(); }
+    match /contentRoles/{uid} {
+      allow read: if isFounder() || (signedIn() && request.auth.uid == uid);
+      allow write: if isFounder();
+    }
+    match /contentBrands/{id} {
+      allow read: if contentAccess();
+      allow write: if isFounder();
+    }
+    match /contentPosts/{id} {
+      allow read: if contentAccess();
+      allow create, update: if isFounder() || (contentMember() && request.resource.data.status in ["generated", "draft", "pending", "rejected"]);
+      allow delete: if isFounder();
+    }
+    match /contentCampaigns/{id} {
+      allow read, write: if contentAccess();
+    }
+    match /contentTrends/{id} {
+      allow read, write: if contentAccess();
+    }
+    match /contentLog/{id} {
+      allow read, create: if contentAccess();
+      allow update, delete: if isFounder();
+    }
+
     // ---------- Groove Guide ----------
     // Each signed-in person's saved places, vehicle, trips and walks. Only that person can read or change them.
     match /guide/{uid} {

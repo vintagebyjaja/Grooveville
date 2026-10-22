@@ -24,13 +24,21 @@ function merge(o){const d=JSON.parse(JSON.stringify(DEF_DATA));Object.assign(d,o
 function save(){D.updatedAt=Date.now();try{localStorage.setItem("gg:data",JSON.stringify(D))}catch(e){}
   clearTimeout(STORE.t);STORE.t=setTimeout(cloudSave,900)}
 async function cloudSave(){if(!STORE.db||!STORE.uid)return;try{await STORE.db.doc("guide/"+STORE.uid).set(JSON.parse(JSON.stringify(D)));STORE.cloud="on"}catch(e){STORE.cloud="blocked"}paintAccount()}
+/* merge this device's data with the account's, so nothing saved while signed out is lost */
+function unionBy(a,b,key){const m=new Map();(b||[]).concat(a||[]).forEach(x=>{const k=key(x);if(!m.has(k))m.set(k,x)});return [...m.values()]}
+function mergeData(local,cloud){const newer=(cloud.updatedAt||0)>(local.updatedAt||0)?cloud:local,o=merge(newer);
+  o.saved=unionBy(newer.saved,newer===cloud?local.saved:cloud.saved,s=>s.kind&&["home","work","school"].includes(s.kind)?"k:"+s.kind:(Math.round(s.lat*1e5)+","+Math.round(s.lng*1e5)));
+  o.trips=unionBy(newer.trips,newer===cloud?local.trips:cloud.trips,x=>x.id);o.history=unionBy(newer.history,newer===cloud?local.history:cloud.history,x=>x.id).sort((a,b)=>b.endedAt-a.endedAt).slice(0,200);
+  o.walks=unionBy(newer.walks,newer===cloud?local.walks:cloud.walks,x=>x.id).sort((a,b)=>b.start-a.start).slice(0,500);o.recent=unionBy(newer.recent,newer===cloud?local.recent:cloud.recent,x=>Math.round(x.lat*1e5)+","+Math.round(x.lng*1e5)).slice(0,20);
+  o.updatedAt=Date.now();return o}
 async function cloudLoad(){if(!STORE.db||!STORE.uid)return;
   try{const s=await STORE.db.doc("guide/"+STORE.uid).get();STORE.cloud="on";
-    if(s.exists){const c=merge(s.data());if((c.updatedAt||0)>(D.updatedAt||0)){D=c;try{localStorage.setItem("gg:data",JSON.stringify(D))}catch(e){}applyTheme();rerender()}else cloudSave()}else cloudSave()}
+    if(s.exists){D=mergeData(D,merge(s.data()));try{localStorage.setItem("gg:data",JSON.stringify(D))}catch(e){}applyTheme();if(MAP.map)MAP.draw();rerender()}
+    cloudSave()}
   catch(e){STORE.cloud="blocked"}paintAccount()}
 function initAuth(){
   try{if(!window.firebase||!window.FIREBASE_CONFIG)return;if(!firebase.apps.length)firebase.initializeApp(window.FIREBASE_CONFIG);STORE.db=firebase.firestore();
-    firebase.auth().onAuthStateChanged(u=>{STORE.uid=u?u.uid:"";STORE.email=u?(u.email||""):"";paintAccount();if(u)cloudLoad()})}catch(e){}
+    firebase.auth().onAuthStateChanged(u=>{const was=STORE.uid;STORE.uid=u?u.uid:"";STORE.email=u?(u.email||""):"";STORE.name=u?(u.displayName||""):"";paintAccount();if(u)cloudLoad();else if(was){toast("Signed out. Your data stays on this device.")}if(G.page==="settings"||G.page==="saved"||G.page==="trips")renderPage()})}catch(e){}
 }
 
 /* ---------- units & formatting ---------- */
@@ -106,7 +114,7 @@ function go(pg,replace){if(pg===G.page&&!replace){route();return}const u=href(pg
 addEventListener("popstate",route);
 function shell(){
   const root=$("#gg");root.className="gg "+THEME.cur;
-  root.innerHTML='<header class="ghd"><a class="gbrand" href="'+href("")+'" data-go="" aria-label="Groove Guide home"><b>groove guide<i>.</i></b><small>GROOVEVILLE</small></a>'+
+  root.innerHTML='<header class="ghd"><a class="gbrand" href="'+href("")+'" data-go="" aria-label="Groove Guide home"><span class="gpinlogo" aria-hidden="true"><svg viewBox="0 0 32 40" width="30" height="38"><defs><linearGradient id="gpl" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffc3a1"/><stop offset="1" stop-color="#e98457"/></linearGradient></defs><path d="M16 1C7.7 1 1 7.6 1 15.8 1 26.6 16 39 16 39s15-12.4 15-23.2C31 7.6 24.3 1 16 1z" fill="url(#gpl)"/><circle cx="16" cy="15.5" r="5.6" fill="#0b0b0d"/></svg></span><span class="gbt"><b><em>groove</em> guide<i>.</i></b><small>BY GROOVEVILLE</small></span></a>'+
     '<div class="gsearch" role="search"><span class="gsi">'+ico("explore",20)+'</span><input id="gq" type="search" placeholder="Where we headed?" autocomplete="off" spellcheck="false" aria-label="Search for a place" aria-autocomplete="list" aria-controls="gsug"><button class="gmic" data-a="voice" aria-label="Search by voice" hidden>'+ico("mic",20)+'</button><div class="gsug" id="gsug" role="listbox" hidden></div></div>'+
     '<nav class="gchips" aria-label="Quick places">'+[["home","Home"],["work","Work"],["school","School"],["fav","Favorites"],["recent","Recent"]].map(([k,l])=>'<button class="gchip c-'+k+'" data-a="chip" data-k="'+k+'">'+ico({home:"home",work:"work",school:"school",fav:"heart",recent:"clock"}[k],19)+'<span>'+l+'</span></button>').join("")+'</nav>'+
     '<div class="gthm" role="group" aria-label="Appearance"><button data-a="theme" data-v="light" aria-label="Light mode">'+ico("sun",19)+'</button><button data-a="theme" data-v="dark" aria-label="Dark mode">'+ico("moon",19)+'</button></div>'+
@@ -121,7 +129,22 @@ function shell(){
 function paintThemeBtn(){$$(".gthm button").forEach(b=>{b.classList.toggle("on",b.dataset.v===THEME.cur);b.setAttribute("aria-pressed",b.dataset.v===THEME.cur)})}
 function paintAccount(){const a=$("#gacct");if(!a)return;
   if(STORE.uid){a.innerHTML='<button class="gav" data-a="acct" aria-label="Your account" title="'+esc(STORE.email)+'"><b>'+esc((STORE.email||"G").slice(0,1).toUpperCase())+'</b></button>'}
-  else a.innerHTML='<a class="gav" href="'+esc(CFG.signInUrl)+'" data-a="signin" aria-label="Sign in with your Grooveville account">'+ico("user",20)+'</a>'}
+  else a.innerHTML='<button class="gav gin" data-a="signin" aria-label="Sign in or create a free account">'+ico("user",20)+'<span>Sign in</span></button>'}
+/* public sign-in: a free Grooveville account keeps saved places, trips and walks on every device */
+function authModal(mode,msg){mode=mode||"in";
+  modal('<div class="gauth"><h3>'+(mode==="up"?"Create your free account":mode==="reset"?"Reset your password":"Sign in")+'</h3><p class="muted small">'+(mode==="reset"?"We’ll email you a link to set a new password.":"One Grooveville account keeps your saved places, trips, walks and car on every device.")+'</p>'+
+    (mode!=="reset"&&window.firebase&&firebase.auth&&firebase.auth.GoogleAuthProvider?'<button class="gbtn ghost wide gg-google" data-a="g-google"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="#4285F4" d="M22.5 12.3c0-.8-.1-1.5-.2-2.3H12v4.3h5.9a5 5 0 0 1-2.2 3.3v2.8h3.5c2.1-1.9 3.3-4.8 3.3-8.1z"/><path fill="#34A853" d="M12 23c3 0 5.5-1 7.3-2.7l-3.5-2.8c-1 .7-2.3 1.1-3.8 1.1-2.9 0-5.4-2-6.3-4.7H2.1v2.9A11 11 0 0 0 12 23z"/><path fill="#FBBC05" d="M5.7 13.9a6.6 6.6 0 0 1 0-4.2V6.8H2.1a11 11 0 0 0 0 9.9z"/><path fill="#EA4335" d="M12 5.4c1.6 0 3.1.6 4.2 1.7l3.1-3.1A11 11 0 0 0 2.1 6.8l3.6 2.9C6.6 7.4 9.1 5.4 12 5.4z"/></svg> Continue with Google</button><div class="gor"><span>or</span></div>':'')+
+    '<form id="gaf" class="frm"><label class="f">Email<input type="email" name="email" autocomplete="email" required></label>'+(mode!=="reset"?'<label class="f">Password<input type="password" name="password" autocomplete="'+(mode==="up"?"new-password":"current-password")+'" minlength="'+(mode==="up"?8:1)+'" required></label>':'')+
+    '<p class="gamsg warn" id="gamsg">'+esc(msg||"")+'</p><button class="gbtn wide">'+(mode==="up"?"Create account":mode==="reset"?"Send reset link":"Sign in")+'</button></form>'+
+    '<div class="gauthl">'+(mode==="in"?'<button class="linkb" data-a="g-mode" data-v="up">New here? Create a free account</button><button class="linkb" data-a="g-mode" data-v="reset">Forgot password?</button>':'<button class="linkb" data-a="g-mode" data-v="in">Have an account? Sign in</button>')+'</div>'+
+    '<p class="muted small">By creating an account you can save places and trips. Groove Team staff sign in on the <a href="'+esc(CFG.signInUrl)+'">Grooveville site</a>.</p></div>',
+  el=>el.querySelector("#gaf").addEventListener("submit",async ev=>{ev.preventDefault();const o=Object.fromEntries(new FormData(ev.target)),m=el.querySelector("#gamsg"),btn=ev.target.querySelector("button");btn.disabled=true;m.textContent="";
+    try{if(!window.firebase||!firebase.auth)throw {code:"unavailable"};const A=firebase.auth();
+      if(mode==="up")await A.createUserWithEmailAndPassword(o.email,o.password);else if(mode==="reset"){await A.sendPasswordResetEmail(o.email);m.classList.remove("warn");m.textContent="Check your email for the reset link.";btn.disabled=false;return}else await A.signInWithEmailAndPassword(o.email,o.password);
+      closeModal();toast(mode==="up"?"Account created. Your places will sync.":"Signed in. Syncing your places…")}
+    catch(e){btn.disabled=false;m.textContent=authErr(e)}}))}
+function authErr(e){const c=String(e&&e.code||"");return /wrong-password|invalid-credential|user-not-found|invalid-login/.test(c)?"That email and password don’t match.":/email-already/.test(c)?"An account with that email already exists. Sign in instead.":/weak-password/.test(c)?"Use at least 8 characters for the password.":/invalid-email/.test(c)?"Check the email address.":/too-many/.test(c)?"Too many tries. Wait a minute and try again.":/popup-closed|cancelled-popup/.test(c)?"Sign-in window closed before finishing.":/operation-not-allowed/.test(c)?"That sign-in method isn’t turned on yet.":/unavailable|network/.test(c)?"Sign-in isn’t available right now. Check your connection.":"Couldn’t sign in. Try again."}
+async function googleSignIn(){try{const A=firebase.auth(),P=new firebase.auth.GoogleAuthProvider();try{await A.signInWithPopup(P)}catch(e){if(/popup-blocked|operation-not-supported/.test(String(e.code)))return A.signInWithRedirect(P);throw e}closeModal();toast("Signed in. Syncing your places…")}catch(e){const m=$("#gamsg");if(m)m.textContent=authErr(e)}}
 function toast(t,ms){const e=$("#gtoast");if(!e)return;e.textContent=t;e.classList.add("on");clearTimeout(toast.t);toast.t=setTimeout(()=>e.classList.remove("on"),ms||3200)}
 function modal(html,mount){const m=$("#gmodal");m.innerHTML='<div class="gscrim" data-a="scrim"><div class="gmod" role="dialog" aria-modal="true">'+html+'</div></div>';const el=m.querySelector(".gmod");if(mount)mount(el);const f=el.querySelector("input,select,button");if(f)f.focus({preventScroll:true});return el}
 function closeModal(){$("#gmodal").innerHTML=""}
@@ -150,23 +173,63 @@ function prepRoute(r){r.path=decodePoly(r.polyline);r.cum=[0];for(let i=1;i<r.pa
   let from=0;r.steps.forEach(s=>{if(s.end){const sn=snap(r.path,r.cum,s.end,from);s.endD=sn.s;from=sn.i}else s.endD=r.len});
   const d=(r.durationSec||0)-(r.staticSec||r.durationSec||0),f=r.staticSec?d/r.staticSec:0;r.trafficLevel=G.mode==="WALK"?"":f<.05?"Light traffic":f<.15?"Moderate traffic":"Heavy traffic";r.delaySec=Math.max(0,d);return r}
 
-/* ---------- Google Maps ---------- */
+/* ---------- Google Maps: key from Cloudflare at runtime, with clear diagnostics ---------- */
+const RCFG={done:false,err:"",src:"",sameAsServer:false};
+async function runtimeCfg(){
+  if(RCFG.done)return;RCFG.done=true;
+  if(CFG.googleMapsKey){RCFG.src="guide-config.js";return}
+  try{const r=await fetch(CFG.apiBase+"/config",{credentials:"same-origin"});if(!r.ok)throw new Error("HTTP "+r.status);const j=await r.json();
+    if(j.googleMapsKey){CFG.googleMapsKey=j.googleMapsKey;RCFG.src="Cloudflare variable GOOGLE_MAPS_BROWSER_KEY"}
+    if(j.mapIdDark)CFG.mapIdDark=j.mapIdDark;if(j.mapIdLight)CFG.mapIdLight=j.mapIdLight;RCFG.sameAsServer=!!j.sameAsServerKey}
+  catch(e){RCFG.err=String(e.message||e)}
+}
+const MAPERR={code:"",detail:""};
+const CF_STEPS='In Cloudflare open <b>Workers &amp; Pages › grooveville › Settings › Variables and Secrets</b>, click <b>Add</b>, name it <code>GOOGLE_MAPS_BROWSER_KEY</code>, paste the “Groove Guide – Website” key, and deploy.';
+const KEY_PAGE='Google Cloud › APIs &amp; Services › Credentials › “Groove Guide – Website”';
+function diagText(code){return ({
+  nokey:["Map setup needed","Groove Guide didn’t receive a browser map key.",CF_STEPS],
+  cfgfail:["Couldn’t reach Groove Guide settings","The page couldn’t load its settings from the server. Check your connection and try again."],
+  MissingKeyMapError:["Map setup needed","Google says no key was sent with the map request.",CF_STEPS],
+  InvalidKeyMapError:["The map key isn’t valid","Google doesn’t recognize the key Groove Guide is using.","Copy the key again from "+KEY_PAGE+" into <code>GOOGLE_MAPS_BROWSER_KEY</code> in Cloudflare."],
+  ExpiredKeyMapError:["The map key has expired","Google reports the key as expired or deleted.","Copy the current key from "+KEY_PAGE+" into <code>GOOGLE_MAPS_BROWSER_KEY</code> in Cloudflare."],
+  RefererNotAllowedMapError:["This site isn’t allowed to use the map key","The key’s website restrictions don’t include this address ("+esc(location.origin)+").","In "+KEY_PAGE+", under Website restrictions add <code>https://grooveville.org/*</code> (and any preview address you use, for example <code>https://*.workers.dev/*</code>)."],
+  ApiNotActivatedMapError:["Maps JavaScript API isn’t turned on","The Google Cloud project hasn’t enabled the Maps JavaScript API.","In Google Cloud › APIs &amp; Services › Library, enable <b>Maps JavaScript API</b> (and <b>Places API (New)</b> for search)."],
+  ApiTargetBlockedMapError:["The key doesn’t allow the Maps JavaScript API","The key’s API restrictions leave out the Maps JavaScript API.","In "+KEY_PAGE+" › API restrictions, include <b>Maps JavaScript API</b> and <b>Places API (New)</b>."],
+  BillingNotEnabledMapError:["Billing isn’t active for the map project","Google needs billing enabled on the project that owns the key.","Turn on billing in Google Cloud › Billing for that project."],
+  OverQuotaMapError:["Map usage limit reached","The project hit its Maps quota for now.","Check Google Cloud › APIs &amp; Services › Maps JavaScript API › Quotas."],
+  OverMapQuota:["Map usage limit reached","The project hit its Maps quota for now.","Check Google Cloud › APIs &amp; Services › Maps JavaScript API › Quotas."],
+  DeletedApiProjectMapError:["The map project was removed","The Google Cloud project that owns the key no longer exists."],
+  auth:["The map key was refused","Google rejected the key. Check its website and API restrictions.","Open "+KEY_PAGE+" and confirm Website restrictions include <code>https://grooveville.org/*</code> and API restrictions include Maps JavaScript API and Places API (New)."],
+  load:["The map couldn’t download","The Google Maps script didn’t load. This is usually the network, an ad or privacy blocker, or a firewall."],
+  init:["The map couldn’t start","The map loaded but failed to start."+(MAPERR.detail?" ("+esc(MAPERR.detail.slice(0,120))+")":"")]
+}[code])||["The map couldn’t load","Something went wrong loading the map ("+esc(code)+")."]}
+function mapDiag(){try{console.info("[Groove Guide] map diagnostics",{code:MAPERR.code||"ok",keySource:RCFG.src||"none",keyPresent:!!CFG.googleMapsKey,keyHint:CFG.googleMapsKey?CFG.googleMapsKey.slice(0,6)+"…":"",origin:location.origin,mapIdDark:CFG.mapIdDark,mapIdLight:CFG.mapIdLight,version:CFG.mapsVersion,configError:RCFG.err||""})}catch(e){}}
+function mapFail(code){MAPERR.code=code;MAP.failed=code;mapDiag();paintMapFallback();if(G.page==="explore"&&EXP.cat){EXP.err=diagText(code)[0];const r=$("#exr");if(r)r.innerHTML=exploreBody()}}
+window.gm_authFailure=()=>mapFail(MAPERR.code&&MAPERR.code!=="load"?MAPERR.code:"auth");
+["error","warn"].forEach(k=>{const o=console[k];console[k]=function(){try{const t=[...arguments].join(" "),m=/Google Maps JavaScript API (?:error|warning): (\w+)/.exec(t);if(m&&/MapError$|^OverMapQuota$/.test(m[1])){MAPERR.code=m[1];if(MAP.failed||k==="error")mapFail(m[1])}}catch(e){}return o.apply(console,arguments)}});
+
 const MAP={map:null,failed:"",loading:false,lines:[],marks:[],veh:null,dest:null,follow:true,view:"aerial",
   async load(){
-    if(window.google&&google.maps&&google.maps.importLibrary&&MAP.libs)return;
-    if(!CFG.googleMapsKey&&!(window.google&&google.maps&&google.maps.importLibrary))throw new Error("nokey");
-    if(!(window.google&&google.maps&&google.maps.importLibrary)){
-      (g=>{var h,a,k,p="The Google Maps JavaScript API",c="google",l="importLibrary",q="__ib__",m=document,b=window;b=b[c]||(b[c]={});var d=b.maps||(b.maps={}),r=new Set,e=new URLSearchParams,u=()=>h||(h=new Promise(async(f,n)=>{await (a=m.createElement("script"));e.set("libraries",[...r]+"");for(k in g)e.set(k.replace(/[A-Z]/g,t=>"_"+t[0].toLowerCase()),g[k]);e.set("callback",c+".maps."+q);a.src="https://maps."+c+"apis.com/maps/api/js?"+e;d[q]=f;a.onerror=()=>h=n(Error(p+" could not load."));a.nonce=m.querySelector("script[nonce]")?.nonce||"";m.head.append(a)}));d[l]?console.warn(p+" only loads once. Ignoring:",g):d[l]=(f,...n)=>r.add(f)&&u().then(()=>d[l](f,...n))})({key:CFG.googleMapsKey,v:CFG.mapsVersion||"weekly"});
+    if(MAP.libs)return;
+    const pre=window.google&&google.maps&&google.maps.importLibrary;
+    if(!pre){
+      await runtimeCfg();
+      if(!CFG.googleMapsKey){MAPERR.code=RCFG.err?"cfgfail":"nokey";throw new Error(MAPERR.code)}
+      if(RCFG.sameAsServer)console.warn("[Groove Guide] GOOGLE_MAPS_BROWSER_KEY is the same as the server key. Use the separate “Groove Guide – Website” browser key.");
+      (g=>{var h,a,k,p="The Google Maps JavaScript API",c="google",l="importLibrary",q="__ib__",m=document,b=window;b=b[c]||(b[c]={});var d=b.maps||(b.maps={}),r=new Set,e=new URLSearchParams,u=()=>h||(h=new Promise(async(f,n)=>{await (a=m.createElement("script"));e.set("libraries",[...r]+"");for(k in g)e.set(k.replace(/[A-Z]/g,t=>"_"+t[0].toLowerCase()),g[k]);e.set("callback",c+".maps."+q);a.src="https://maps."+c+"apis.com/maps/api/js?"+e;d[q]=f;a.onerror=()=>h=n(Error("load"));a.nonce=m.querySelector("script[nonce]")?.nonce||"";m.head.append(a)}));d[l]?console.warn(p+" only loads once. Ignoring:",g):d[l]=(f,...n)=>r.add(f)&&u().then(()=>d[l](f,...n))})({key:CFG.googleMapsKey,v:CFG.mapsVersion||"weekly"});
     }
-    const [maps,marker,places]=await Promise.all([google.maps.importLibrary("maps"),google.maps.importLibrary("marker"),google.maps.importLibrary("places")]);
+    let maps,marker,places;
+    try{[maps,marker,places]=await Promise.all([google.maps.importLibrary("maps"),google.maps.importLibrary("marker"),google.maps.importLibrary("places")])}
+    catch(e){MAPERR.code=MAPERR.code||"load";throw new Error(MAPERR.code)}
     MAP.libs={maps,marker,places};
   },
   async ensure(){if(MAP.map||MAP.loading)return;MAP.loading=true;MAP.view=D.settings.view==="flat"?"flat":"aerial";
-    try{await MAP.load();MAP.create()}catch(e){MAP.failed=e.message==="nokey"?"nokey":"load";paintMapFallback()}MAP.loading=false},
+    try{await MAP.load();try{MAP.create()}catch(e){MAPERR.code=MAPERR.code||"init";MAPERR.detail=String(e&&e.message||e);throw e}}
+    catch(e){MAP.map=null;MAP.failed=MAPERR.code||"load";mapDiag();paintMapFallback()}MAP.loading=false},
   create(c,z){const el=$("#gmap");if(!el)return;const dark=THEME.cur==="dark",M=MAP.libs.maps;
     const o={center:c||G.pos||CFG.defaultCenter,zoom:z||(G.pos?15.5:13),mapId:dark?CFG.mapIdDark:CFG.mapIdLight,disableDefaultUI:true,gestureHandling:"greedy",clickableIcons:false,tilt:MAP.view==="aerial"?62:0,heading:0,isFractionalZoomEnabled:true,keyboardShortcuts:true};
     if(google.maps.ColorScheme)o.colorScheme=dark?google.maps.ColorScheme.DARK:google.maps.ColorScheme.LIGHT;
-    MAP.map=new M.Map(el,o);MAP.failed="";paintMapFallback();
+    MAP.map=new M.Map(el,o);if(!MAPERR.code){MAP.failed="";paintMapFallback()}else{MAP.failed=MAPERR.code;paintMapFallback()}
     MAP.map.addListener("dragstart",()=>{if(G.nav){MAP.follow=false;paintRecenter()}});
     MAP.map.addListener("heading_changed",()=>MAP.rotateVeh());
     MAP.draw();
@@ -177,7 +240,8 @@ const MAP={map:null,failed:"",loading:false,lines:[],marks:[],veh:null,dest:null
   draw(){if(!MAP.map)return;MAP.clear(true);const Mk=MAP.libs.marker.AdvancedMarkerElement,P=MAP.libs.maps.Polyline,dark=THEME.cur==="dark";
     G.routes.forEach((r,i)=>{if(i===G.sel||!r.path)return;const l=new P({path:r.path,strokeColor:dark?"#8a8580":"#a79fc2",strokeOpacity:.75,strokeWeight:7,zIndex:1,clickable:true,map:MAP.map});l.addListener("click",()=>pickRoute(i));MAP.lines.push(l)});
     const r=G.route;
-    if(r&&r.path){MAP.lines.push(new P({path:r.path,strokeColor:dark?"#2a1408":"#ffffff",strokeOpacity:dark?.85:1,strokeWeight:15,zIndex:5,clickable:false,map:MAP.map}));
+    if(r&&r.path){MAP.lines.push(new P({path:r.path,strokeColor:ROUTE_COLOR(),strokeOpacity:dark?.22:.18,strokeWeight:26,zIndex:4,clickable:false,map:MAP.map}));
+      MAP.lines.push(new P({path:r.path,strokeColor:dark?"#2a1408":"#ffffff",strokeOpacity:dark?.85:1,strokeWeight:15,zIndex:5,clickable:false,map:MAP.map}));
       MAP.lines.push(new P({path:r.path,strokeColor:ROUTE_COLOR(),strokeOpacity:1,strokeWeight:9,zIndex:6,clickable:false,map:MAP.map}));
       if(G.mode==="DRIVE")r.traffic.forEach(t=>{if(t.speed==="NORMAL")return;const seg=r.path.slice(t.s,t.e+1);if(seg.length>1)MAP.lines.push(new P({path:seg,strokeColor:t.speed==="TRAFFIC_JAM"?"#d9572b":"#f2b13c",strokeWeight:5,zIndex:7,clickable:false,map:MAP.map}))})}
     D.saved.forEach(s=>{if(!s.lat)return;const m=new Mk({map:MAP.map,position:{lat:s.lat,lng:s.lng},content:MAP.pinEl(placeColor(s),kindIcon(s.kind),"",false),title:s.name,zIndex:3});m.addListener("click",()=>chooseDest(s));MAP.marks.push(m)});
@@ -214,22 +278,24 @@ function dashShell(){
     '<div class="laysw gl" role="group" aria-label="Screen layout"><button data-a="layout" data-v="70">70/30</button><button data-a="layout" data-v="80">80/20</button><button data-a="layout" data-v="map">Map</button></div>'+
     '<div class="modesw gl" role="group" aria-label="Travel mode"><button data-a="mode" data-v="DRIVE">'+ico("car",18)+'<span>Drive</span></button><button data-a="mode" data-v="WALK">'+ico("walk",18)+'<span>Walk</span></button></div>'+
     '</div></div>'+
-    '<aside class="drivecol gl" id="drivecol" aria-label="Driving view"><button class="dexp" data-a="drivetoggle" aria-label="Show or hide the driving view"></button><div class="dhead" id="dhead"></div><div class="dstage"><canvas id="dcv"></canvas><div class="dnote" id="dnote"></div></div><div class="dfoot" id="dfoot"></div></aside>'+
+    '<aside class="drivecol gl" id="drivecol" aria-label="Driving view"><button class="dexp" data-a="drivetoggle" aria-label="Show or hide the driving view"></button><div class="dhead" id="dhead"></div><div class="dstage"><canvas id="dcv"></canvas><div class="dnote" id="dnote"></div><div class="dspd" id="dspd"></div></div><div class="dfoot" id="dfoot"></div></aside>'+
     '<footer class="tbar gl" id="tbar"><button class="tgrab" data-a="sheet" aria-label="Show trip details"></button><div class="tbin" id="tbin"></div></footer>';
   DRIVE.init($("#dcv"));setLayout(D.settings.layout||"70",true);
 }
 function setLayout(v,quiet){G.layout=v;const d=$("#dash");if(d){d.classList.remove("lay-70","lay-80","lay-map");d.classList.add("lay-"+v)}$$(".laysw button").forEach(b=>b.classList.toggle("on",b.dataset.v===v));if(!quiet){D.settings.layout=v;save()}DRIVE.resize()}
 function paintMapFallback(){const f=$("#mapfb");if(!f)return;
-  if(MAP.map||!MAP.failed){f.hidden=true;return}f.hidden=false;
-  f.innerHTML=MAP.failed==="nokey"?'<div><b>Map key needed</b><p>Paste the “Groove Guide – Website” browser key into <code>guide/guide-config.js</code> (googleMapsKey). Routes, weather and time zones already run on the server key.</p></div>':
-    '<div><b>The map couldn’t load</b><p>Check your connection, and that the browser key allows grooveville.org and the Maps JavaScript API.</p><button class="gbtn" data-a="retry-map">Try again</button></div>'}
+  if(!MAP.failed){f.hidden=true;return}f.hidden=false;const d=diagText(MAP.failed);
+  f.innerHTML='<div><span class="fbk">'+ico("info",20)+'</span><b>'+esc(d[0])+'</b><p>'+d[1]+'</p>'+(d[2]?'<p class="fbfix">'+d[2]+'</p>':'')+'<div class="fbb"><button class="gbtn" data-a="retry-map">Try again</button></div><small>Error code: '+esc(MAP.failed)+'</small></div>'}
 function paintMapTools(){$$("#vseg button").forEach(b=>b.classList.toggle("on",b.dataset.v===MAP.view));$$(".modesw button").forEach(b=>b.classList.toggle("on",b.dataset.v===G.mode))}
 function paintRecenter(){const b=$("#mrec");if(b)b.hidden=!(G.nav&&!MAP.follow)}
 function paintAll(){const d=$("#dash");if(d){d.classList.toggle("navving",!!G.nav);d.classList.toggle("hasroute",!!G.route)}paintTrip();paintNext();paintDrive();paintTbar();paintMapTools();paintRecenter();paintChips()}
 function paintChips(){$$(".gchip").forEach(b=>{const k=b.dataset.k;if(k==="home"||k==="work"||k==="school"){const s=savedOf(k);b.classList.toggle("set",!!s);b.title=s?s.name+" · "+(s.addr||""):"Set your "+k}})}
 function originLabel(){return G.pos?(G.posSrc==="map"?"Map center":"Your location"):"Location off"}
 function paintTrip(){const c=$("#tripcard");if(!c)return;const r=G.route;
-  if(!G.dest){c.innerHTML='<div class="tc0">'+ico("pin",22)+'<div><b>'+(G.pos?"You’re here":"Where we headed?")+'</b><small>'+(G.geoErr?esc(G.geoErr):G.pos?"Search for a place or pick Home, Work or School.":"Allow location to start from where you are.")+'</small></div></div>'+(!G.pos?'<button class="gbtn sm" data-a="locate">'+ico("locate",16)+' Use my location</button>':'');return}
+  c.classList.toggle("hero",!G.dest);
+  if(!G.dest){c.innerHTML='<div class="ghero"><h1>Your City.<br>Your Route.<br><em>Your Vibe.</em></h1><p class="gcaps">Where we headed?</p>'+
+    '<div class="gfeat"><button data-a="focus-search">'+ico("navigate",22)+'<b>Real-time navigation</b><small>Smarter routes. Less stress.</small></button><button data-a="feat-weather">'+ico("cloud",22)+'<b>Weather &amp; time</b><small>Know what to expect.</small></button><a href="'+href("settings")+'" data-go="settings">'+ico("car",22)+'<b>Personalized drive</b><small>Your vehicle. Your style.</small></a><a href="'+href("explore")+'" data-go="explore">'+ico("pin",22)+'<b>Discover more</b><small>Great places. Your next move.</small></a></div>'+
+    '<div class="gstat">'+ico("locate",16)+'<span>'+(G.geoErr?esc(G.geoErr):G.pos?"Starting from your location":"Allow location to start from where you are")+'</span>'+(!G.pos?'<button class="gbtn sm" data-a="locate">Use my location</button>':'')+'</div></div>';return}
   c.innerHTML='<div class="tc">'+ico("pin",22)+'<div class="tct"><b>'+esc(originLabel())+'</b><b class="to">→ '+esc(G.dest.name)+'</b>'+(G.stops.length?'<small>'+G.stops.length+' stop'+(G.stops.length>1?'s':'')+' added</small>':'')+
     (G.busy?'<small>Finding the best route…</small>':G.err?'<small class="warn">'+esc(G.err)+'</small>':r?'<small>'+fmtDur(r.durationSec)+' · '+fmtDist(r.distanceM)+(r.trafficLevel?' · '+r.trafficLevel:'')+'</small>':'')+'</div><button class="tcx" data-a="clear" aria-label="Clear destination">'+ico("x",18)+'</button></div>'+
     (G.routes.length>1&&!G.nav?'<div class="alts">'+G.routes.map((x,i)=>'<button class="'+(i===G.sel?"on":"")+'" data-a="alt" data-i="'+i+'"><b>'+fmtDur(x.durationSec)+'</b><small>'+(i===0?"Best":x.description?"via "+esc(x.description):"Option "+(i+1))+(x.toll?" · tolls":"")+'</small></button>').join("")+'</div>':'')+
@@ -249,9 +315,8 @@ function paintDrive(){const h=$("#dhead"),f=$("#dfoot"),n=$("#dnote");if(!h)retu
   else if(G.route){h.innerHTML=manIco("STRAIGHT",44)+'<div><b>Ready when you are</b><small>'+esc(fmtDur(G.route.durationSec))+' to '+esc(G.dest?G.dest.name:"destination")+'</small></div>'}
   else h.innerHTML=manIco("STRAIGHT",44)+'<div><b>No active route</b><small>Pick a destination to see the road ahead</small></div>';
   const sp=speedFmt(G.speed);
-  f.innerHTML='<div class="spd"><b>'+(sp==null?"—":sp)+'</b><small>'+speedUnit()+'</small></div>'+
-    '<div class="lim" title="Speed limit data isn’t available from the route service yet"><small>SPEED<br>LIMIT</small><b>—</b></div>'+
-    '<div class="lanes">'+laneHtml(ni)+'</div>';
+  const ds=$("#dspd");if(ds)ds.innerHTML='<span class="whl">'+'<svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="2.2"/><path d="M3.5 10.5h6.3M14.2 10.5h6.3M12 14.2V21"/></svg></span><div class="spd"><b>'+(sp==null?"—":sp)+'</b><small>'+speedUnit()+'</small></div><div class="lim" title="Speed limit data isn’t available from the route service yet"><small>SPEED<br>LIMIT</small><b>—</b></div>';
+  f.innerHTML='<div class="lanes">'+laneHtml(ni)+'</div>';
   n.textContent=G.route?(G.sim?"Simulated drive along your real route":"Route ahead, drawn from your real route. Not a camera view."):"";
   DRIVE.dirty=true;
 }
@@ -305,8 +370,8 @@ async function suggest(q){q=q.trim();const lq=q.toLowerCase();
   let remote=[];
   if(q.length>=2&&MAP.libs&&MAP.libs.places.AutocompleteSuggestion){try{const P=MAP.libs.places;SESS=SESS||new P.AutocompleteSessionToken();const req={input:q,sessionToken:SESS};if(G.pos){req.locationBias={center:G.pos,radius:50000};req.origin=G.pos}
     const res=await P.AutocompleteSuggestion.fetchAutocompleteSuggestions(req);if($("#gq").value.trim()!==q)return;
-    remote=(res.suggestions||[]).filter(x=>x.placePrediction).slice(0,6).map(x=>{const p=x.placePrediction;return {t:"place",p,main:(p.mainText&&p.mainText.text)||(p.text&&p.text.text)||"",sub:(p.secondaryText&&p.secondaryText.text)||"",dist:p.distanceMeters,icon:"pin"}})}catch(e){remote=[{t:"err",main:"Search isn’t available right now",sub:"Check the browser key in guide-config.js",icon:"info"}]}}
-  else if(q.length>=2&&!MAP.libs)remote=[{t:"err",main:"Search needs the map key",sub:"Add googleMapsKey in guide/guide-config.js",icon:"info"}];
+    remote=(res.suggestions||[]).filter(x=>x.placePrediction).slice(0,6).map(x=>{const p=x.placePrediction;return {t:"place",p,main:(p.mainText&&p.mainText.text)||(p.text&&p.text.text)||"",sub:(p.secondaryText&&p.secondaryText.text)||"",dist:p.distanceMeters,icon:"pin"}})}catch(e){remote=[{t:"err",main:"Place search isn’t available",sub:placesErr(e),icon:"info"}]}}
+  else if(q.length>=2&&!MAP.libs){const d=diagText(MAP.failed||MAPERR.code||"load");remote=[{t:"err",main:d[0],sub:MAP.loading?"The map is still loading…":"Search uses the same Google key as the map.",icon:"info"}]}
   SUG=local.concat(rec,remote);sugI=-1;const box=$("#gsug");if(!box)return;
   if(!SUG.length){box.innerHTML=q?'<div class="sgx">No matches yet</div>':'';sugOpen(!!q);return}
   box.innerHTML=(G.searchFor?'<div class="sgh">Choose '+esc({home:"Home",work:"Work",school:"School",fav:"a favorite",stop:"a stop",trip:"a trip destination",start:"a starting point"}[G.searchFor]||"a place")+'</div>':'')+
@@ -409,6 +474,7 @@ const DRIVE={cv:null,cx:null,w:0,h:0,dirty:true,raf:0,
     const sky=c.createLinearGradient(0,0,0,hor);if(light){sky.addColorStop(0,"#e9e6f5");sky.addColorStop(1,"#f7f1ff")}else{sky.addColorStop(0,"#0b0b10");sky.addColorStop(.7,"#2a1a16");sky.addColorStop(1,"#5a3324")}
     c.fillStyle=sky;c.fillRect(0,0,W,hor+1);
     const gr=c.createLinearGradient(0,hor,0,H);if(light){gr.addColorStop(0,"#dcd9e6");gr.addColorStop(1,"#c9c5d6")}else{gr.addColorStop(0,"#16151a");gr.addColorStop(1,"#0a0a0c")}c.fillStyle=gr;c.fillRect(0,hor,W,H-hor);
+    this.skyline(c,W,hor,light);
     const glow=c.createRadialGradient(cxp,hor,0,cxp,hor,W*.7);glow.addColorStop(0,light?"rgba(123,63,242,.18)":"rgba(255,159,104,.28)");glow.addColorStop(1,"rgba(0,0,0,0)");c.fillStyle=glow;c.fillRect(0,0,W,H);
     const proj=(x,z)=>{const cz=z+camB;if(cz<0.8)return null;return [cxp+x*f/cz,hor+camH*f/cz]};
     /* points ahead in local metres */
@@ -433,6 +499,9 @@ const DRIVE={cv:null,cx:null,w:0,h:0,dirty:true,raf:0,
     /* the vehicle, from behind */
     this.car(c,cxp,hor+camH*f/camB,W,light);
   },
+  skyline(c,W,hor,light){if(!this.sky||this.sky.w!==Math.round(W)){let s=7;const rnd=()=>{s=(s*9301+49297)%233280;return s/233280};const b=[];let x=-10;while(x<W+10){const w=10+rnd()*26,h=12+rnd()*rnd()*hor*.55,tw=rnd()<.12;b.push([x,w,tw?h*1.5:h,tw]);x+=w+rnd()*4}this.sky={w:Math.round(W),b}}
+    c.save();for(const [x,w,h,tw] of this.sky.b){c.fillStyle=light?"rgba(90,80,130,.28)":"rgba(14,12,18,.92)";c.fillRect(x,hor-h,w,h);if(tw){c.beginPath();c.moveTo(x,hor-h);c.lineTo(x+w/2,hor-h-14);c.lineTo(x+w,hor-h);c.fill()}
+      if(!light){c.fillStyle="rgba(255,190,140,.55)";for(let yy=hor-h+5;yy<hor-4;yy+=6)for(let xx=x+3;xx<x+w-3;xx+=5)if(((xx*7+yy*13)|0)%5===0)c.fillRect(xx,yy,1.6,2)}}c.restore()},
   car(c,x,y,W,light){const col=D.vehicle.color||"#c9ccd3",wide=D.vehicle.type==="truck"||D.vehicle.type==="suv"||D.vehicle.type==="van",w=Math.min(W*0.36,170)*(wide?1.08:1),h=w*(wide?0.62:0.52);
     c.save();c.translate(x,y-h*0.15);
     c.fillStyle="rgba(0,0,0,.45)";c.beginPath();c.ellipse(0,h*0.08,w*0.62,h*0.16,0,0,7);c.fill();
@@ -459,9 +528,10 @@ function quickList(kind){const L=kind==="fav"?D.saved.filter(s=>s.kind!=="home"&
   modal('<h3>'+(kind==="fav"?"Favorites":"Recent")+'</h3>'+(L.length?'<div class="plist">'+L.slice(0,20).map((s,i)=>'<button class="pli" data-a="qpick" data-k="'+kind+'" data-i="'+i+'"><span class="pdot" style="--pc:'+(kind==="fav"?placeColor(s):"#8d877e")+'">'+ico(kind==="fav"?kindIcon(s.kind):"clock",18)+'</span><span><b>'+esc(s.name)+'</b><small>'+esc(s.addr||"")+'</small></span></button>').join("")+'</div>':'<p class="muted">'+(kind==="fav"?"No favorites yet. Save a place with the star after you search for it.":"Places you search for show up here.")+'</p>')+
     '<div class="row">'+(kind==="fav"?'<button class="gbtn ghost" data-a="addfav">'+ico("plus",16)+' Add a favorite</button>':D.recent.length?'<button class="gbtn ghost" data-a="clearrecent">Clear recent</button>':'')+'<button class="gbtn" data-a="close">Close</button></div>')}
 
+function placesErr(e){const t=String(e&&e.message||e);if(/not been used|disabled|SERVICE_DISABLED|API_KEY_SERVICE_BLOCKED|ApiTargetBlocked|PERMISSION_DENIED/i.test(t))return "Places API (New) isn’t enabled or allowed for the browser key. In Google Cloud, enable Places API (New) and add it to the key’s API restrictions.";if(/REQUEST_DENIED|referer|referrer/i.test(t))return "The browser key’s website restrictions blocked place search for this address.";console.warn("[Groove Guide] places error",t);return "Couldn’t load places right now."}
 /* ---------- pages ---------- */
 function renderPage(){const p=$("#gpage");if(!p)return;const f={explore:pExplore,immersive:pImmersive,trips:pTrips,saved:pSaved,settings:pSettings}[G.page];p.innerHTML=f?f():"";if(G.page==="immersive")IMM.mount();if(G.page==="explore"&&EXP.cat&&!EXP.items&&!EXP.loading)exploreLoad(EXP.cat)}
-const head=(k,t,s)=>'<div class="ph"><div class="kick">'+k+'</div><h1>'+t+'</h1>'+(s?'<p>'+s+'</p>':'')+'</div>';
+const head=(k,t,s)=>'<div class="ph"><div class="kick">'+k+'</div><h1>'+t+'</h1>'+(s?'<p>'+s+'</p>':'')+'</div>'+(["Saved","Trips"].includes(k)&&!STORE.uid?'<div class="gsignin gl">'+ico("user",22)+'<span><b>Keep your progress</b><small>Sign in with a free Grooveville account to save places, trips and walks across all your devices.</small></span><button class="gbtn sm" data-a="signin">Sign in</button></div>':'');
 
 /* Explore: real places near you (Places API), Grooveville events, and ecosystem shortcuts */
 const EXP={cat:"",items:null,loading:false,err:""};
@@ -486,7 +556,7 @@ async function exploreLoad(k){EXP.cat=k;EXP.items=null;EXP.err="";EXP.loading=tr
       const {places}=await Place.searchNearby({fields:["id","displayName","location","formattedAddress","rating","userRatingCount","primaryTypeDisplayName","photos"],locationRestriction:{center,radius:6000},includedPrimaryTypes:C[3],maxResultCount:12,rankPreference:SearchNearbyRankPreference?SearchNearbyRankPreference.POPULARITY:undefined});
       EXP.items=(places||[]).map(p=>{const ph=p.photos&&p.photos[0];return {google:true,name:p.displayName,lat:p.location.lat(),lng:p.location.lng(),placeId:p.id,addr:p.formattedAddress,rating:p.rating,count:p.userRatingCount,type:p.primaryTypeDisplayName||"",
         photo:ph&&ph.getURI?ph.getURI({maxWidth:480}):"",attr:ph&&ph.authorAttributions&&ph.authorAttributions[0]?ph.authorAttributions[0].displayName:"",dist:G.pos?hav(G.pos,{lat:p.location.lat(),lng:p.location.lng()}):null,kind:k==="vybr8"?"restaurant":"favorite"}})}
-  }catch(e){EXP.err=e.message==="nokey"?"Explore needs the map key in guide/guide-config.js.":"Couldn’t load places right now."}
+  }catch(e){EXP.err=MAP.failed||MAPERR.code?diagText(MAP.failed||MAPERR.code)[0]+". "+diagText(MAP.failed||MAPERR.code)[1]:placesErr(e)}
   EXP.loading=false;const r2=$("#exr");if(r2)r2.innerHTML=exploreBody()}
 async function liveEvents(){if(!STORE.db)return [];const today=new Date().toISOString().slice(0,10);
   const snap=await STORE.db.collection("events").where("visibility","==","public").get();
@@ -503,7 +573,7 @@ const IMM={el:null,target:null,orbiting:false,kind:"",
       if(M3&&M3.Map3DElement){box.innerHTML="";const o={center:{lat:t.lat,lng:t.lng,altitude:0},range:1100,tilt:67,heading:20};if(M3.MapMode)o.mode=M3.MapMode.HYBRID;this.el=new M3.Map3DElement(o);this.el.style.width="100%";this.el.style.height="100%";box.appendChild(this.el);this.kind="3d"}
       else{box.innerHTML='<div id="immv" style="width:100%;height:100%"></div>';const dark=THEME.cur==="dark",o={center:t,zoom:17,tilt:67,heading:20,mapId:dark?CFG.mapIdDark:CFG.mapIdLight,disableDefaultUI:true,gestureHandling:"greedy"};if(google.maps.ColorScheme)o.colorScheme=dark?google.maps.ColorScheme.DARK:google.maps.ColorScheme.LIGHT;this.el=new MAP.libs.maps.Map($("#immv"),o);this.kind="vector"}
       const n=$("#immnote");if(n)n.textContent=this.kind==="3d"?"Photorealistic 3D from Google. Drag to look around.":"3D buildings view. Photorealistic 3D isn’t enabled for this key yet (Map Tiles API / maps3d).";
-    }catch(e){box.innerHTML='<div class="empty">'+(e.message==="nokey"?"Immersive needs the map key in guide/guide-config.js.":"3D couldn’t load right now.")+'</div>'}},
+    }catch(e){const dg=MAPERR.code?diagText(MAPERR.code):["3D couldn’t load right now",""];box.innerHTML='<div class="empty"><b>'+esc(dg[0])+'</b><br>'+dg[1]+'</div>'}},
   fly(t){this.target=t;if(!this.el)return this.mount();if(this.kind==="3d"&&this.el.flyCameraTo)this.el.flyCameraTo({endCamera:{center:{lat:t.lat,lng:t.lng,altitude:0},range:1000,tilt:67,heading:30},durationMillis:REDUCED?0:3500});else if(this.el.moveCamera)this.el.moveCamera({center:t,zoom:17,tilt:67})},
   orbit(){if(!this.el)return;const t=this.target;this.orbiting=!this.orbiting;$("#orb")&&($("#orb").textContent=this.orbiting?"Stop orbit":"Orbit");
     if(!this.orbiting){this.stop(true);return}
@@ -597,7 +667,7 @@ function pSettings(){const s=D.settings,v=D.vehicle,tg=(id,on,l,d)=>'<label clas
   '<label class="f">Color</label><div class="sws">'+SWATCH.map(c=>'<button class="swc'+(v.color.toLowerCase()===c.toLowerCase()?" on":"")+'" data-a="vcolor" data-v="'+c+'" style="background:'+c+'" aria-label="Color '+c+'"></button>').join("")+'<input type="color" data-veh="color" value="'+esc(v.color)+'" aria-label="Custom color"></div>'+
   '<p class="muted small">Flat map shows an arrow in your color, aerial view shows your car. Detailed make-and-model 3D cars come later.</p></div></div>'+
   '<div class="gl card"><h3>Privacy & data</h3>'+tg("historyOn",s.historyOn,"Save trip history","Finished trips are kept so you can go again")+tg("walkConsent",s.walkConsent,"Walk tracking","Measure distance and pace while a walk is running")+
-  '<p class="muted small">'+(STORE.uid?(STORE.cloud==="blocked"?"Signed in, but account sync is blocked. Publish the latest firestore.rules. Your data is safe on this device.":"Signed in: your places, vehicle and trips sync to your Grooveville account."):"Not signed in: everything stays on this device. Sign in with your Grooveville account to sync.")+'</p>'+
+  '<p class="muted small">'+(!STORE.uid?'<button class="gbtn sm" data-a="signin" style="margin-bottom:8px">Sign in or create an account</button><br>':'')+(STORE.uid?(STORE.cloud==="blocked"?"Signed in, but account sync is blocked. Publish the latest firestore.rules. Your data is safe on this device.":"Signed in: your places, vehicle and trips sync to your Grooveville account."):"Not signed in: everything stays on this device. Sign in with your Grooveville account to sync.")+'</p>'+
   '<div class="row l"><button class="gbtn ghost sm" data-a="export">Download my data</button><button class="gbtn ghost sm" data-a="wipe">Delete my Groove Guide data</button></div></div>'+
   '<div class="gl card"><h3>About</h3><p class="muted small">Groove Guide by Grooveville. Maps, places, routes, weather and time zones by Google. Speed limits and lane-by-lane guidance need a verified lane data provider and aren’t shown until one is connected. Phone browsers can pause navigation when the screen locks.</p></div></div>'}
 
@@ -626,7 +696,10 @@ document.addEventListener("click",e=>{
   const t=e.target.closest("[data-a]");if(!t){if(!e.target.closest(".gsearch"))sugOpen(false);return}
   const a=t.dataset.a,i=Number(t.dataset.i);
   if(a==="scrim"){if(e.target===t)closeModal();return}
-  if(a==="signin"){try{localStorage.setItem("gvReturn",location.pathname+location.search)}catch(x){}return}
+  if(a==="signin")return authModal("in");
+  if(a==="g-mode")return authModal(t.dataset.v);
+  if(a==="g-google")return googleSignIn();
+  if(a==="signout"){try{firebase.auth().signOut()}catch(x){}closeModal();return}
   if(a==="close")return closeModal();
   if(a==="theme"){D.settings.theme=t.dataset.v;save();applyTheme();closeModal();if(G.page==="settings")renderPage();return}
   if(a==="chip"){const k=t.dataset.k;if(k==="fav"||k==="recent")return quickList(k);const s=savedOf(k);if(s){if(G.page!==""&&G.page!=="navigate")go("navigate");return chooseDest(s)}if(G.page!==""&&G.page!=="navigate")go("navigate");return searchFor(k,"Search for your "+k+" address")}
@@ -636,7 +709,9 @@ document.addEventListener("click",e=>{
   if(a==="sug")return pickSug(i);
   if(a==="voice")return voiceSearch();
   if(a==="locate"){G.geoErr="";startGeo();toast("Finding you…");return}
-  if(a==="retry-map"){MAP.failed="";MAP.libs=null;MAP.ensure();return}
+  if(a==="retry-map"){location.reload();return}
+  if(a==="focus-search"){const q=$("#gq");if(q){q.focus();suggest(q.value)}return}
+  if(a==="feat-weather"){if(G.route)return weatherModal();toast("Pick a destination to see its weather and local time");const q=$("#gq");if(q)q.focus();return}
   if(a==="view")return MAP.setView(t.dataset.v);
   if(a==="zoom")return MAP.zoom(Number(t.dataset.d));
   if(a==="north")return MAP.north();
@@ -661,7 +736,7 @@ document.addEventListener("click",e=>{
   if(a==="drivetoggle"){$("#dash").classList.toggle("drive-open");DRIVE.resize();return}
   if(a==="sheet"){$("#dash").classList.toggle("sheet-open");return}
   if(a==="more")return moreSheet();
-  if(a==="acct")return modal('<h3>Your account</h3><p class="muted">Signed in to Grooveville as <b>'+esc(STORE.email)+'</b>.</p><p class="muted small">'+(STORE.cloud==="blocked"?"Sync is waiting for the latest Firestore rules. Your data is safe on this device.":"Places, vehicle and trips sync to your account.")+'</p><div class="row"><a class="gbtn ghost" href="'+esc(CFG.homeUrl)+'">Open Grooveville</a><button class="gbtn" data-a="close">Close</button></div>');
+  if(a==="acct")return modal('<h3>Your account</h3><p class="muted">Signed in as <b>'+esc(STORE.email)+'</b>.</p><p class="muted small">'+(STORE.cloud==="blocked"?"Account sync is waiting for the latest Firestore rules. Your data is safe on this device.":"Your saved places, trips, walks and car sync to this account on every device.")+'</p><div class="row"><button class="gbtn ghost" data-a="signout">Sign out</button><button class="gbtn" data-a="close">Close</button></div>');
   /* explore */
   if(a==="cat")return exploreLoad(t.dataset.k);
   if(a==="exgo"||a==="exsave"){const x=EXP.items[i];resolveText(x).then(p=>{if(a==="exgo")chooseDest(p);else addSaved(Object.assign({},p))}).catch(err=>toast(err.message));return}

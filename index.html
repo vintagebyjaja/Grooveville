@@ -1043,6 +1043,82 @@ html.pv [data-edit].pv-on{outline:2.5px solid #f4a987;outline-offset:-3px}
 .sgmeta{margin-top:6px;font-size:14px}
 .sgmeta a{color:inherit}
 @media (max-width:760px){.sgrow{grid-template-columns:1fr;align-items:start}.sgart{max-width:320px;width:78%;margin-inline:auto}.sgtx{text-align:center}.sgtx .btnrow0{justify-content:center}}
+/* ---------- Groove Guide entry points ---------- */
+.links a.gguide{display:inline-flex;align-items:center;gap:6px}
+.links a.gguide svg{color:var(--peach)}
+.ggcard{grid-column:1/-1;display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:18px;align-items:center;margin-top:12px;padding:18px 22px;text-decoration:none;color:#fff;background:linear-gradient(110deg,#1a120d,#121214 60%)}
+.ggcard .ggt small{display:block;font:600 10.5px var(--f-body);letter-spacing:.24em;text-transform:uppercase;color:var(--peach)}
+.ggcard .ggt b{display:block;font:800 26px/1.1 var(--f-display);letter-spacing:-.03em;margin:4px 0}
+.ggcard .ggt b em{font-style:normal;color:var(--peach)}
+.ggcard .ggt span{color:#cfc9bf;font-size:14px}
+.ggcard .ggo{font-weight:700;color:var(--peach);white-space:nowrap}
+@media (max-width:760px){.ggcard{grid-template-columns:auto minmax(0,1fr);padding:14px}.ggcard .ggo{grid-column:1/-1}.ggcard .ggt b{font-size:22px}}
+/* ---------- Content Studio ---------- */
+.cs .cstabs{margin-bottom:16px;flex-wrap:wrap}
+.csn{display:inline-grid;place-items:center;min-width:20px;height:20px;padding:0 6px;border-radius:999px;background:var(--peach);color:#1b120c;font-size:11.5px;font-weight:700}
+.csquick{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.cskpis{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:10px;margin-bottom:14px}
+.cskpi{text-align:left;padding:14px;border-radius:14px;background:var(--surface);border:1px solid var(--line);color:inherit;font:inherit;display:flex;flex-direction:column;gap:2px}
+button.cskpi:not(:disabled){cursor:pointer}button.cskpi:not(:disabled):hover{border-color:var(--peach)}
+.cskpi small{color:var(--muted);font-size:12.5px}.cskpi b{font:700 26px/1.15 var(--f-display)}.cskpi span{color:var(--muted);font-size:12px}
+.cskpis>div{padding:14px;border-radius:14px;background:var(--surface);border:1px solid var(--line);display:flex;flex-direction:column}.cskpis>div small{color:var(--muted);font-size:12.5px}.cskpis>div b{font:700 22px var(--f-display)}
+.csgrid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.csrow{display:grid;grid-template-columns:52px minmax(0,1fr) auto;gap:12px;align-items:center;padding:8px;border-radius:12px;cursor:pointer;margin-top:6px}
+.csrow:hover{background:#ffffff08}
+.csth{width:52px;height:52px;border-radius:10px;object-fit:cover;background:#0c0d0e;display:grid;place-items:center;font-size:9px;line-height:1.1;text-align:center;overflow:hidden;color:#fff}
+.csth.none,.csqth.none{background:linear-gradient(140deg,var(--bc),#141416);padding:4px}
+.csrt{min-width:0}.csrt b{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.csrt small{color:var(--muted);font-size:12px}
+.cschip{display:inline-block;padding:1px 8px;border-radius:999px;font-size:11.5px;font-weight:600;background:color-mix(in srgb,var(--bc) 18%,transparent);color:var(--ink);border:1px solid color-mix(in srgb,var(--bc) 50%,transparent)}
+.csst{font-size:11.5px;font-weight:600;padding:3px 9px;border-radius:999px;background:var(--surface-2);white-space:nowrap;justify-self:start}
+.csst.s-pending,.csst.s-generated{background:#f4a98726;color:var(--peach)}.csst.s-approved{background:#68d4d026;color:#68d4d0}.csst.s-scheduled{background:#b7a1e526;color:#b7a1e5}.csst.s-published{background:#c9e27a26;color:#c9e27a}.csst.s-failed{background:#f2b13c2b;color:#f2b13c}.csst.s-rejected{opacity:.6}
+.csed{display:grid;grid-template-columns:minmax(0,1fr) minmax(320px,440px);gap:16px;align-items:start}
+.csr{position:sticky;top:76px}
+.cspv{background:repeating-conic-gradient(#ffffff07 0 25%,transparent 0 50%) 0 0/20px 20px,#0b0b0c;border:1px solid var(--line);border-radius:16px;padding:12px;display:grid;place-items:center}
+#csCanvas{max-width:100%;max-height:70vh;width:auto;height:auto;border-radius:8px;box-shadow:0 20px 50px -20px #000}
+.csh{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:6px}.csh h3,.mbox>h3{font-size:18px}
+.mbox .f{margin-top:10px}
+.cschk{display:flex;flex-wrap:wrap;gap:6px 14px;margin:10px 0;font-size:14px}.cschk label{display:flex;gap:6px;align-items:center}
+.csopts{display:grid;gap:8px;margin-top:12px}.csopt{text-align:left;padding:12px;border-radius:12px;border:1px solid var(--line);background:var(--surface-2);color:inherit;font:inherit;cursor:pointer;display:flex;flex-direction:column;gap:3px}.csopt:hover{border-color:var(--peach)}.csopt small{color:var(--peach);font-size:12px}.csopt span{color:var(--muted);font-size:13px}
+.csfeat{display:grid;grid-template-columns:110px minmax(0,1fr) minmax(0,1.3fr) auto;gap:6px;margin-top:6px}.csfeat .i{padding:6px 8px;font-size:13px}
+.csvar{margin-top:10px}.csvar summary{cursor:pointer;font-weight:600;font-size:14px}
+.i.sm{padding:6px 10px;font-size:13px}
+.csq{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
+.csqc{display:flex;flex-direction:column;border-radius:16px;overflow:hidden;background:var(--surface);border:1px solid var(--line);text-align:left;color:inherit;font:inherit}
+button.csqc{cursor:pointer}button.csqc:hover{border-color:var(--peach)}.csqc.arch{opacity:.6}
+.csqi{padding:0;border:0;background:#0c0d0e;cursor:pointer;display:block}.csqth{width:100%;aspect-ratio:4/5;object-fit:cover;display:grid;place-items:center;color:#fff;font:700 18px var(--f-display);text-align:center}
+.csqb{padding:12px;display:flex;flex-direction:column;gap:6px}.csqb b{font-size:15px}
+.csprog{height:6px;border-radius:6px;background:var(--surface-2);overflow:hidden}.csprog i{display:block;height:100%;background:var(--peach)}
+.cscalh{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px}.cscalh b{font:700 19px var(--f-display);min-width:180px;text-align:center}
+.cscal{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px}.cscal.v-day{grid-template-columns:1fr}
+.cscdh{font-size:12px;color:var(--muted);padding:4px 6px}
+.cscd{min-height:118px;border-radius:10px;background:var(--surface);border:1px solid var(--line);padding:6px;display:flex;flex-direction:column;gap:3px;min-width:0}
+.cscal.v-week .cscd,.cscal.v-day .cscd{min-height:300px}
+.cscd.out{opacity:.45}.cscd.today{border-color:var(--peach)}.cscd.over{border-color:var(--peach);background:#f4a98714}
+.cscdn{display:flex;justify-content:space-between;align-items:center}.cscdn button{background:none;border:0;color:var(--muted);font:600 12.5px var(--f-body);cursor:pointer;padding:0}
+.cscadd{width:20px;height:20px;border-radius:6px;opacity:0}.cscd:hover .cscadd{opacity:1}
+.csci{font-size:11.5px;line-height:1.25;padding:3px 6px;border-radius:6px;background:color-mix(in srgb,var(--cc) 18%,transparent);border-left:3px solid var(--cc);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:default}
+.csci.k-post{cursor:grab}.csci[data-act]{cursor:pointer}.csci.s-published{opacity:.6}.csci.k-holiday{background:transparent;color:var(--muted)}
+.csbrands{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px}
+.csbc{border-radius:16px;overflow:hidden;background:var(--surface);border:1px solid var(--line);display:flex;flex-direction:column}.csbc.arch{opacity:.55}
+.csbl{height:110px;display:grid;place-items:center;background:radial-gradient(70% 90% at 70% 20%,color-mix(in srgb,var(--bc) 35%,transparent),transparent),var(--bb);padding:14px}.csbl.lt{background:#f4f6fb}
+.csbl img{max-width:80%;max-height:80px;object-fit:contain}.csbl b{font:800 22px var(--f-display);color:var(--bc)}
+.csbb{padding:12px 14px 4px;display:flex;flex-direction:column;gap:5px}.csbc>.btnrow0{padding:8px 14px 14px}
+.csdots{display:flex;gap:4px}.csdots i{width:18px;height:18px;border-radius:50%;border:1px solid #ffffff30}
+.warnt{color:#f2b13c}
+.csbform h4{margin:18px 0 6px}.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.cscols{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}.cscols input[type=color]{width:100%;height:40px;padding:2px;border-radius:10px}
+.cslogos{display:flex;gap:10px;flex-wrap:wrap;margin:8px 0}.cslogo{width:150px;display:flex;flex-direction:column;gap:4px;padding:8px;border-radius:12px;background:repeating-conic-gradient(#ffffff0a 0 25%,transparent 0 50%) 0 0/14px 14px,var(--surface-2);border:1px solid var(--line);color:inherit;font:inherit;cursor:default}
+button.cslogo{cursor:pointer}.cslogo img{width:100%;height:70px;object-fit:contain}.cslogo.img img{object-fit:cover}.cslogo small{font-size:11.5px;color:var(--muted)}
+.cstr p{margin-top:6px}.cssrc{display:flex;flex-wrap:wrap;gap:6px 14px;margin:8px 0;font-size:13px}.cssrc a{color:var(--peach)}
+img.missing{opacity:.2}
+.csloc{display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:6px;margin-bottom:6px}.csloc .i{padding:7px 9px;font-size:13px}
+@media (max-width:760px){.csloc{grid-template-columns:1fr}}
+@media (max-width:1000px){.csed{grid-template-columns:1fr}.csr{position:static}.csgrid2{grid-template-columns:1fr}}
+@media (max-width:760px){.cscal{grid-template-columns:1fr}.cscdh{display:none}.cscd.out{display:none}.cscd{min-height:0}.grid3,.cscols{grid-template-columns:1fr 1fr}.csfeat{grid-template-columns:1fr 1fr}}
+/* desktop menu fits every link (incl. Groove Guide + Back Office) */
+@media (min-width:761px) and (max-width:1680px){.nav .wrap{gap:12px}.links{gap:2px}.links a{padding:7px 8px;font-size:13.5px}.links a.gguide svg{width:13px;height:13px}}
+@media (min-width:761px) and (max-width:1680px){.logo{font-size:0;gap:0}.nav .wrap{padding-inline:16px}}
+@media (min-width:761px) and (max-width:1380px){.links a{padding:6px 7px;font-size:13px}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style>
 
@@ -1373,11 +1449,13 @@ function navLinks(){
     '<a href="#vine"'+(r==="vine"||r==="brands"||r.startsWith("b-")?' class="on"':'')+'>Ecosystem</a>'+
     '<a href="#live" class="watchlive'+(r==="live"?' on':'')+'">'+(LV.live&&LV.live.live?'<i class="ldot" aria-hidden="true"></i>':'')+'Watch Live</a>'+
     '<a href="#music"'+(/^(music|song|artist|album|playlist|tv|charts|songrate)/.test(r)?' class="on"':'')+'>Media</a>'+
+    '<a href="/guide/" class="gguide"><svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path d="M12 2C7.6 2 4 5.5 4 9.9 4 15.6 12 22 12 22s8-6.4 8-12.1C20 5.5 16.4 2 12 2z" fill="currentColor"/><circle cx="12" cy="9.8" r="3" fill="#0b0b0d"/></svg>Groove Guide</a>'+
     '<a href="#calendar"'+on("calendar")+'>Calendar</a>'+
     '<a href="#collab"'+on("collab")+'>Collaborate</a>'+
     '<a href="#story"'+on("story")+'>Our Story</a>'+
     '<a href="#groove"'+(["groove","signin","join"].includes(r)||r.startsWith("portal")?' class="on"':'')+'>Groove Team</a>'+
     (!S.isAdmin&&SR().checked&&studioAccess()?'<a href="#studio" class="team'+(r.startsWith("studio")?' on':'')+'">Studio</a>':'')+
+    (!S.isAdmin&&S.csRole?'<a href="#content" class="team'+(r==="content"?' on':'')+'">Content</a>':'')+
     (S.isAdmin?'<a href="#team" class="team'+(team||r.startsWith("studio")?' on':'')+'">Back Office</a>':'');
   mobileNav();
 }
@@ -1452,7 +1530,7 @@ function quickThumb(it){
     if(it.link==="#live"){const e=(LV.live&&LV.live.live&&LV.live)||(LV.eps||[])[0];const th=e&&(e.thumb||e.thumbnail);if(th)return '<img src="'+esc(th)+'" alt="" loading="lazy">'}
     if(/^#tv/.test(it.link)){const v=pubList(MU().tvVideos)[0];if(v&&v.thumb)return '<img src="'+esc(v.thumb)+'" alt="" loading="lazy">'}
   }catch(e){}
-  const dflt={"#music":"card-ent","#live":"gv-ent","#vine":"gv-intro","#brands":"gv-box","#story":"gv-story","#collab":"gv-collab"}[it.link];
+  const dflt={"/guide/":"gv-intro","#music":"card-ent","#live":"gv-ent","#vine":"gv-box","#brands":"gv-box","#story":"gv-story","#collab":"gv-collab"}[it.link];
   if(dflt&&ASSETS[dflt])return '<img src="'+esc(ASSETS[dflt])+'" alt="" loading="lazy">';
   const c=["#F4A987","#b7a1e5","#68d4d0","#e8c27a"];const n=String(it.label||"x").length;return sculpt(n+3,c[n%4],c[(n+1)%4],"#2a1d26");
 }
@@ -1466,13 +1544,14 @@ function coCard(b0,i){const b=brandInfo(b0.id),sub=(stv("companies").subs||{})[b
     '<span class="cx"><b>'+esc(b.name)+'</b><small>'+esc(sub)+'</small><span class="cmore"><span>'+esc(b.tagline||"")+'</span><span class="go">Explore <i aria-hidden="true">→</i></span></span></span>'+
     (ext?'<span class="cext" role="link" tabindex="0" data-act="ext" data-url="'+esc(ext)+'">'+esc(ext.replace(/^https?:\/\//,"").replace(/\/$/,""))+' ↗</span>':'')+'</a>';
 }
+function ggCard(){return '<a class="ggcard gtile" href="/guide/" style="--glow:#F4A987"><span class="ggpin" aria-hidden="true"><svg viewBox="0 0 32 40" width="34" height="42"><path d="M16 1C7.7 1 1 7.6 1 15.8 1 26.6 16 39 16 39s15-12.4 15-23.2C31 7.6 24.3 1 16 1z" fill="#F4A987"/><circle cx="16" cy="15.5" r="5.6" fill="#0b0b0d"/></svg></span><span class="ggt"><small>New from Grooveville</small><b><em>groove</em> guide.</b><span>Navigation, weather and local time for every trip. Your City. Your Route. Your Vibe.</span></span><span class="ggo">Open Groove Guide <i aria-hidden="true">→</i></span></a>'}
 function viewVine(){
   const C=stv("companies"),V=VENTURES().filter(b=>!brandInfo(b.id).hidden),view=S.coView||C.view||"gallery";
   return '<section class="co2 page" id="vine"><div class="wrap"><div class="cohead" data-edit="companies.head"><div class="coart" aria-hidden="true">'+(media("companies-art")?imgTag("companies-art","",""):sculpt(11,"#F4A987","#e8c27a","#4a2a1c"))+'</div>'+
     '<div class="kicker">'+esc(C.kicker)+'</div><h1 class="disp">'+esc(C.a)+'<br>'+esc(C.b)+'</h1><p>'+esc(C.p)+'</p><div class="btnrow0"><a class="btn peach arr" href="#brands">'+esc(C.btn)+' <i aria-hidden="true">→</i></a></div>'+
     '<div class="seg coseg" role="tablist" aria-label="View"><button role="tab" aria-selected="'+(view!=="vine")+'" class="'+(view!=="vine"?"on":"")+'" data-act="co-view" data-v="gallery">Gallery</button><button role="tab" aria-selected="'+(view==="vine")+'" class="'+(view==="vine"?"on":"")+'" data-act="co-view" data-v="vine">Groove Vine</button></div></div>'+
     (view==="vine"?'<div class="vinebox">'+treeSVG()+'<div class="vinelist" aria-label="Companies on the Groove Vine">'+V.map(b=>'<a href="#b-'+b.id+'">'+chip(b.id)+'</a>').join("")+'</div></div>':
-      '<div class="cogrid" aria-label="Grooveville companies">'+V.map(coCard).join("")+'</div>')+'</div></section>';
+      '<div class="cogrid" aria-label="Grooveville companies">'+V.map(coCard).join("")+'</div>')+ggCard()+'</div></section>';
 }
 function viewBrands(){
   const feat=VENTURES().filter(b=>!brandInfo(b.id).hidden&&!brandInfo(b.id).unfeatured);
@@ -1609,7 +1688,7 @@ function collabSubmit(form){
 }
 
 /* ---------- team (back office) ---------- */
-const TEAM_TABS=[["team","Dashboard"],["team-time","Timesheet"],["team-cal","Calendar"],["team-rem","Reminders"],["team-out","Collabs"],["team-people","Teams"],["team-docs","Documents"],["team-conv","Converter"],["team-reports","Reports"],["team-vault","Private notes"],["team-web","Website Studio"],["team-media","Media Library"],["ent","Entertainment"],["studio","Ent. Studio"],["team-site","Site settings"]];
+const TEAM_TABS=[["team","Dashboard"],["team-time","Timesheet"],["team-cal","Calendar"],["team-rem","Reminders"],["team-out","Collabs"],["team-people","Teams"],["team-docs","Documents"],["team-conv","Converter"],["team-reports","Reports"],["team-vault","Private notes"],["team-web","Website Studio"],["team-media","Media Library"],["team-content","Content Studio"],["ent","Entertainment"],["studio","Ent. Studio"],["team-site","Site settings"]];
 function teamGate(){
   if(!S.authChecked)return '<div class="wrap gate"><h1>Checking access…</h1><p class="muted">One moment while we confirm who is signed in.</p></div>';
   return '<div class="wrap gate"><div class="eyebrow">Grooveville team</div><h1>Back office sign in</h1><p class="muted">The timesheet, private calendar, reminders and collab tracker are only for the Grooveville team. Open this page while signed in to Claude with the account Grooveville invited as an Editor.</p><p class="muted" style="font-size:13.5px">If you just got access, reload this page.</p><a class="btn" href="#home">Back to the public site</a></div>';
@@ -3330,7 +3409,7 @@ function vizLoop(){cancelAnimationFrame(VZ.raf);const c=$("#viz");if(!c)return;c
 /* ---------- Back office › Entertainment (founder / HNIC only) ----------
    Music library + MP3 uploads (R2), artists, albums, playlists, Sound On / Grooveville Radio, Grooveville TV,
    Song Rate submissions + reviews, Charts, verification. Firestore rules make every write founder-only. */
-const ENT_SECS=[["dash","Dashboard"],["library","Music Library"],["upload","Upload Song"],["artists","Artists"],["albums","Albums & EPs"],["playlists","Playlists"],["soundon","Sound On / Radio"],["tv","Grooveville TV"],["tvcats","TV Categories"],["songrate","Song Rate"],["charts","Charts"],["verify","Verification"]];
+const ENT_SECS=[["dash","Dashboard"],["projects","Projects & orgs"],["library","Music Library"],["upload","Upload Song"],["artists","Artists"],["albums","Albums & EPs"],["playlists","Playlists"],["soundon","Sound On / Radio"],["tv","Grooveville TV"],["tvcats","TV Categories"],["songrate","Song Rate"],["charts","Charts"],["verify","Verification"]];
 const RATE_CATS=[["production","Production"],["vocals","Vocals / Performance"],["lyrics","Lyrics / Songwriting"],["originality","Originality"],["replay","Replay value"]];
 const CHART_DEFAULTS=["Grooveville Top 10","R&B / Soul","Hip-Hop","Afrobeats / Dancehall","Independent Artists","New Discoveries"];
 S.ent={q:"",f:"all",edit:null,sr:null,srF:"submitted",chart:"",tvList:null};
@@ -3353,7 +3432,7 @@ const yes=(v,l)=>'<span class="pill '+(v?"pub":"priv")+'">'+l+'</span>';
 function viewEnt(){
   if(!S.isAdmin)return viewSignin();musicSubscribe();
   const sec=(S.route.split("-")[1])||"dash";
-  const body={dash:entDash,library:entLibrary,upload:entUpload,artists:entArtists,albums:()=>entCollections("albums"),playlists:()=>entCollections("playlists"),soundon:entSoundOn,tv:entTV,tvcats:entTVCats,songrate:entSongRate,charts:entCharts,verify:entVerify}[sec]||entDash;
+  const body={projects:()=>csProjectsView("ent"),dash:entDash,library:entLibrary,upload:entUpload,artists:entArtists,albums:()=>entCollections("albums"),playlists:()=>entCollections("playlists"),soundon:entSoundOn,tv:entTV,tvcats:entTVCats,songrate:entSongRate,charts:entCharts,verify:entVerify}[sec]||entDash;
   return teamShell("ent",'<div class="entnav">'+ENT_SECS.map(([k,l])=>'<a href="#ent-'+k+'"'+(k===sec?' class="on"':'')+'>'+l+'</a>').join("")+'</div>'+(MU().loaded?body():'<div class="empty">Loading the music library…</div>'));
 }
 function entDash(){const s=Object.values(MU().songs),a=Object.values(MU().artists),al=Object.values(MU().albums),tv=Object.values(MU().tvVideos),tp=Object.values(MU().tvPlaylists),en=Object.values(MU().entries),f=muSet("flags");
@@ -3711,7 +3790,7 @@ const ACC_OPTS=[["peach","Peach"],["teal","Teal"],["lavender","Lavender"],["lime
 const ST_DEF={
   home:{kicker2:"Nine companies. Endless possibilities.",heroBtn:"Explore the Groove",heroLink:"#vine",align:"left",accent:"peach",order:["quick","story"],
     story:{on:true,kicker:"Watch the story",title:"",dur:"",video:""},
-    quick:{on:true,title:"Quick Access",items:[{label:"Music",link:"#music",slot:"quick-1"},{label:"Live",link:"#live",slot:"quick-2"},{label:"Companies",link:"#vine",slot:"quick-3"},{label:"TV",link:"#tv",slot:"quick-4"}]}},
+    quick:{on:true,title:"Quick Access",items:[{label:"Music",link:"#music",slot:"quick-1"},{label:"Live",link:"#live",slot:"quick-2"},{label:"Companies",link:"#vine",slot:"quick-3"},{label:"TV",link:"#tv",slot:"quick-4"},{label:"Groove Guide",link:"/guide/",slot:"quick-5"}]}},
   menu:{title:"Explore the Groove",sub:"Nine companies. One ecosystem.",glow:"mixed",tiles:{}},
   companies:{kicker:"The Groove Vine",a:"One root.",b:"Nine companies.",p:"Different paths. Same purpose. Explore each branch and see what we're building together.",btn:"Explore Our Companies",view:"gallery",subs:{}},
   music:{kicker:"Grooveville Radio · Sound On",head:"Exclusive Grooveville songs, nonstop.",p:"Turn Sound On and the Grooveville Originals rotation plays as you move around the site.",btn:"Play Now",trendOn:true,trendTitle:"Trending in the Groove",trendIds:[]},
@@ -4225,6 +4304,523 @@ function wsAct(a,t){
   return false;
 }
 
+/* =====================================================================
+   Grooveville Content Studio + Campaign Mode (founder back office)
+   ===================================================================== */
+const CS={sec:"dash",subbed:false,brands:{},posts:{},camps:{},trends:{},roles:{},settings:{},status:null,storage:null,loaded:{},ed:null,gen:null,genBusy:"",cal:{m:"",view:"month",brand:"all",day:""},qf:"pending",camp:"",tb:"",busy:{}};
+const CS_SECS=[["dash","Dashboard"],["create","Create"],["queue","Approvals"],["cal","Calendar"],["camp","Campaigns"],["trends","Trends"],["brands","Brand Kits"],["storage","Storage"],["settings","Settings"]];
+const CS_FORMATS={portrait:{l:"Flyer / portrait 4:5",w:1080,h:1350,img:"1024x1536"},square:{l:"Square 1:1",w:1080,h:1080,img:"1024x1024"},story:{l:"Story / Reel cover 9:16",w:1080,h:1920,img:"1024x1536"},thumb:{l:"YouTube thumbnail 16:9",w:1280,h:720,img:"1536x1024"},landscape:{l:"Link / LinkedIn 1.91:1",w:1200,h:630,img:"1536x1024"}};
+const CS_PLATS=[["instagram","Instagram"],["facebook","Facebook"],["tiktok","TikTok"],["youtube","YouTube"],["linkedin","LinkedIn"],["x","X"]];
+const CS_ST={generated:"Generated",draft:"Draft",pending:"Pending approval",approved:"Approved",scheduled:"Scheduled",published:"Published",rejected:"Rejected",failed:"Failed"};
+const CS_FONTS=["Inter Tight","Montserrat","Bebas Neue","Anton","Barlow","Playfair Display","Kaushan Script","Permanent Marker","Inter"];
+const CS_DEFAULT_BRANDS=[
+  ["ent","Grooveville Entertainment","dark",["#F4A987","#f3eee6","#F4A987","#0d0d0f","#f7f2ea"],"MUSIC • SHOWS • CULTURE","grooveville.org","Warm, confident, community-first. Celebrates Charlotte creators."],
+  ["music","Grooveville Music","dark",["#F4A987","#b7a1e5","#F4A987","#0c0b10","#f7f2ea"],"ORIGINALS • ARTISTS • SOUND","grooveville.org/#music","Smooth, soulful, proud of Grooveville Originals."],
+  ["tv","Grooveville TV","dark",["#68d4d0","#F4A987","#68d4d0","#0a0d0f","#f3eee6"],"SHOWS • PODCASTS • VIDEOS","grooveville.org/#tv","Fun, conversational, behind-the-scenes."],
+  ["live","Grooveville Live","dark",["#F4A987","#ff9f68","#F4A987","#0b0b0d","#f7f2ea"],"LIVE • SHOWS • EVENTS","grooveville.org/#live","Energetic and immediate. Built for showtime."],
+  ["guide","Groove Guide","dark",["#F4A987","#ffcfb4","#F4A987","#09090b","#f7f2ea"],"NAVIGATE • DISCOVER • EXPLORE","grooveville.org/guide","Sleek, futuristic, helpful. Your City. Your Route. Your Vibe."],
+  ["aec","DrawUp","light",["#1f5bff","#0b0d12","#1f5bff","#f4f6fb","#0b0d12"],"DESIGN • CHECK • BUILD • SMARTER","drawup.com","Precise, professional, empowering architects, students and firms."],
+  ["vybr8","VYBR8","dark",["#F4A987","#f6efe4","#F4A987","#0c0907","#f6efe4"],"FOOD • FRIENDS • PLANS • VIBES","vybr8.live","Playful, social, foodie. Good food, better company."],
+  ["pathd","PATHD","dark",["#b48cff","#c9e27a","#F4A987","#0c0b0f","#f6f1ea"],"JOBS • CONNECTIONS • OPPORTUNITY","pathd","Encouraging, real, career-focused. Real jobs. Real people."],
+  ["scu","Shadow Crown","dark",["#8b5cf6","#e8c27a","#e8c27a","#0a0712","#f4efff"],"BOOKS • GAME • WORLD","grooveville.org/shadowcrown","Adventurous, magical, family-friendly."],
+  ["aelio","AELIO","dark",["#b7a1e5","#68d4d0","#b7a1e5","#0a0a10","#f3f0ff"],"ONE MIND • INFINITE POSSIBILITY","aelio.live","Visionary, calm, human-centered AI."]];
+const csFounder=()=>!!S.isAdmin;
+const csAccess=()=>!!S.isAdmin||!!S.csRole;
+function csBrandList(all){return Object.values(CS.brands).filter(b=>b.id!=="__settings"&&(all||!b.archived)).sort((a,b)=>(a.order||99)-(b.order||99)||String(a.name).localeCompare(b.name))}
+const csBrand=id=>CS.brands[id]||null;
+const csSet=()=>Object.assign({monthlyLimit:25,imageQuality:"medium",weekly:true,rejectedDays:30,publishedDays:365,unusedDays:30,lastCleanup:""},CS.brands.__settings||{});
+
+/* ---------- data ---------- */
+function csSubscribe(){
+  if(CS.subbed||!S.db||!csAccess())return;CS.subbed=true;
+  const on=(col,key,map)=>S.db.collection(col).onSnapshot(s=>{const o={};s.docs.forEach(d=>{o[d.id]=Object.assign({},d.data(),{id:d.id})});CS[key]=o;CS.loaded[key]=true;csData()},()=>{CS.loaded[key]=true;csData()});
+  on("contentBrands","brands");on("contentPosts","posts");on("contentCampaigns","camps");on("contentTrends","trends");
+  if(csFounder())on("contentRoles","roles");
+  csApi("status").then(j=>{CS.status=j;csData()}).catch(e=>{CS.status={error:e.message};csData()});
+  if(csFounder())setTimeout(csImportProposals,2500);
+}
+function csData(){if(!S.route.includes("content")&&S.route!=="ent-projects")return;if(CS.ed&&$("#csEd")&&$("#csEd").contains(document.activeElement))return;scheduleRender(true)}
+async function csApi(path,body,method){const t=await idToken();const r=await fetch("/api/content/"+path,{method:method||(body?"POST":"GET"),headers:Object.assign({authorization:"Bearer "+t},body?{"content-type":"application/json"}:{}),body:body?JSON.stringify(body):undefined});
+  const j=await r.json().catch(()=>({}));if(!r.ok)throw new Error(j.error||("Something went wrong ("+r.status+")"));return j}
+const CSURL={};
+function csFile(key){if(!key)return Promise.resolve("");if(CSURL[key])return CSURL[key];
+  return CSURL[key]=idToken().then(t=>fetch("/api/content/f/"+key,{headers:{authorization:"Bearer "+t}})).then(r=>{if(!r.ok)throw new Error("x");return r.blob()}).then(b=>URL.createObjectURL(b)).catch(()=>{delete CSURL[key];return ""})}
+function csImgEl(key){return csFile(key).then(u=>u?new Promise(res=>{const i=new Image();i.onload=()=>res(i);i.onerror=()=>res(null);i.src=u}):null)}
+function csHydrate(){document.querySelectorAll("img[data-csk]").forEach(im=>{const k=im.dataset.csk;if(im._k===k)return;im._k=k;csFile(k).then(u=>{if(u)im.src=u;else im.classList.add("missing")})})}
+async function csPut(key,blob,type){await xhrPut("/api/content/put?key="+encodeURIComponent(key),blob,type||blob.type)}
+const csSave=(col,id,data)=>save(col,id,JSON.parse(JSON.stringify(data)));
+function csBrandPayload(b,loc){if(!b)return {};const par=b.parent&&CS.brands[b.parent];return {parentName:par?par.name:"",locations:(b.locations||[]).map(l=>({name:l.name,address:l.address,website:l.website})),location:loc||null,id:b.id,name:b.name,tagline:b.tagline,voice:b.voice,audience:b.audience,about:b.about,website:b.website,hashtags:b.hashtags||[],ctas:b.ctas||[],restrictions:b.restrictions,guidelines:b.guidelines,freq:b.freq,enabled:b.enabled!==false&&!b.archived,platforms:b.platforms}}
+async function csSeedBrands(){let i=0;for(const [id,name,theme,c,tag,url,voice] of CS_DEFAULT_BRANDS){if(CS.brands[id])continue;
+  const logo=(BR[id]&&brandInfo(id).logo)||"";
+  await csSave("contentBrands",id,{name,theme,order:++i,enabled:true,archived:false,colors:{primary:c[0],secondary:c[1],accent:c[2],bg:c[3],text:c[4]},fonts:{display:id==="aec"?"Montserrat":"Inter Tight",body:"Inter",script:id==="vybr8"?"Kaushan Script":""},
+    tagline:tag,kicker:"",website:url,voice,audience:"",about:BR[id]?brandInfo(id).tagline||"":"",handles:{},hashtags:[],ctas:[],restrictions:"",guidelines:"",logos:[],imagery:[],freq:2,platforms:["instagram","facebook"],founded:"",siteLogo:!!logo,createdAt:new Date().toISOString()})}
+  toast("Brand workspaces added. Upload each official logo in Brand Kits.");csSyncConfig()}
+/* the weekly job on the server reads this (voice, frequency, confirmed events, campaign weeks, recent headlines) */
+let csCfgT=0;
+function csSyncConfig(){if(!csFounder())return;clearTimeout(csCfgT);csCfgT=setTimeout(()=>{const st=csSet();
+  const weeks={};Object.values(CS.posts).forEach(p=>{if(p.campaignId&&["approved","scheduled"].includes(p.status)&&p.date){const w=csIsoWeek(p.date);(weeks[w]=weeks[w]||[]).includes(p.brandId)||weeks[w].push(p.brandId)}});
+  const recent=Object.values(CS.posts).sort((a,b)=>String(b.createdAt).localeCompare(String(a.createdAt))).slice(0,120).map(p=>(p.headline||[]).join(" ")).filter(Boolean);
+  const events=(typeof upcomingEvents==="function"?upcomingEvents(S.events.filter(e=>e.visibility==="public")):[]).slice(0,40).map(e=>({title:e.title,date:e.date,brand:e.brand,location:e.location||""}));
+  csApi("config",{monthlyLimit:st.monthlyLimit,imageQuality:st.imageQuality,weekly:st.weekly,brands:csBrandList().map(csBrandPayload),events,campaignWeeks:weeks,recent}).catch(()=>{})},1500)}
+function csIsoWeek(ds){const d=new Date(ds+"T12:00:00Z"),t=new Date(Date.UTC(d.getUTCFullYear(),d.getUTCMonth(),d.getUTCDate())),day=t.getUTCDay()||7;t.setUTCDate(t.getUTCDate()+4-day);const y=new Date(Date.UTC(t.getUTCFullYear(),0,1));return t.getUTCFullYear()+"-W"+String(Math.ceil(((t-y)/86400000+1)/7)).padStart(2,"0")}
+async function csImportProposals(){try{const j=await csApi("proposals");const acks=[];
+  for(const pr of j.proposals||[]){const b=csBrand(pr.brandId);if(!b){acks.push(pr.key);continue}
+    for(const [i,ai] of (pr.posts||[]).entries())await csSave("contentPosts","wk-"+pr.week+"-"+pr.brandId+"-"+i,csFromAI(ai,b,{source:"weekly",week:pr.week,status:"generated",cost:i?0:pr.cost||0}));acks.push(pr.key)}
+  if(acks.length){await csApi("proposals/ack",{keys:acks});toast(acks.length+" weekly proposal set"+(acks.length>1?"s":"")+" added to Approvals")}}catch(e){}}
+function csFromAI(ai,b,extra){const fm=extra&&extra.format||"portrait";
+  return Object.assign({brandId:b.id,format:CS_FORMATS[ai.format]?ai.format:fm,platforms:ai.platforms||b.platforms||["instagram"],theme:b.theme||"dark",
+    headline:(ai.headline||[]).slice(0,4).map(String),accent:-1,kicker:String(ai.kicker||""),tagline:String(ai.tagline||b.tagline||""),subline:String(ai.subline||""),
+    features:(ai.features||[]).slice(0,5).map(f=>({icon:String(f.icon||"star"),title:String(f.title||""),text:String(f.text||"")})),cta:String(ai.cta||((b.ctas||[])[0])||"Learn more"),url:String(ai.url||b.website||""),
+    caption:String(ai.caption||""),hashtags:(ai.hashtags||[]).map(h=>String(h).replace(/^#?/,"#")).slice(0,10),variants:ai.variants||{},imagePrompt:String(ai.imagePrompt||""),angle:String(ai.angle||""),
+    date:ai.date||ai.suggestedDate||"",time:"",status:"generated",bgKey:"",bgX:50,bgY:50,bgZoom:1,logoKey:((b.logos||[]).find(l=>l.primary)||(b.logos||[])[0]||{}).key||"",finalKey:"",
+    protected:false,cost:0,createdAt:new Date().toISOString(),by:S.uid||"",history:[{s:"generated",at:new Date().toISOString(),by:S.uid||""}]},extra||{})}
+
+/* ---------- icons for flyer feature rows (stroke paths on a 24 grid) ---------- */
+const C=(cx,cy,r)=>"M"+(cx-r)+" "+cy+"a"+r+" "+r+" 0 1 0 "+(2*r)+" 0a"+r+" "+r+" 0 1 0 "+(-2*r)+" 0";
+const CS_ICONS={navigate:"M20 4 4 11l7 2 2 7z",pin:"M12 21s-6.5-6-6.5-11a6.5 6.5 0 0 1 13 0c0 5-6.5 11-6.5 11z"+C(12,10,2.3),cloud:"M7 18a4.5 4.5 0 0 1-.4-9 6 6 0 0 1 11.4 1.5A3.8 3.8 0 0 1 17.5 18z",
+  car:"M5 16.5V12l1.8-4.6A2 2 0 0 1 8.7 6h6.6a2 2 0 0 1 1.9 1.4L19 12v4.5M3.5 12h17v5h-17z"+C(7.5,19,1.5)+C(16.5,19,1.5),food:"M7 3v8M5 3v4a2 2 0 0 0 4 0V3M7 11v10M16 3c-2 1.5-2.5 4-2.5 7H17V21M17 3v7",
+  drink:"M5 4h14l-7 8zM12 12v8M8 20h8",music:"M9 18V6l11-2v12"+C(6.5,18,2.5)+C(17.5,16,2.5),heart:"M12 20s-7.5-4.6-7.5-10A4.3 4.3 0 0 1 12 7.3 4.3 4.3 0 0 1 19.5 10c0 5.4-7.5 10-7.5 10z",
+  users:C(9,8.5,3)+"M3.5 19.5a5.5 5.5 0 0 1 11 0"+C(17,9.5,2.4)+"M15.5 14.4a4.5 4.5 0 0 1 5.5 4.6",home:"M4 11.5 12 5l8 6.5V20a1 1 0 0 1-1 1h-4.5v-6h-5v6H5a1 1 0 0 1-1-1z",
+  building:"M5 21V4h9v17M14 9h5v12M8 8h3M8 12h3M8 16h3M3 21h18",briefcase:"M3.5 7h17v12.5h-17zM9 7V5h6v2M3.5 12.5h17",dollar:C(12,12,9)+"M15 9.5c-.6-1-1.7-1.5-3-1.5-1.7 0-3 .9-3 2.2 0 3 6 1.6 6 4.6 0 1.3-1.3 2.2-3 2.2-1.4 0-2.6-.6-3.1-1.6M12 6.5v1.5M12 16v1.5",
+  target:C(12,12,9)+C(12,12,5)+C(12,12,1.5),cube:"M12 3 20 7.5v9L12 21 4 16.5v-9zM12 12l8-4.5M12 12 4 7.5M12 12v9",doc:"M6 3h8l4 4v14H6zM14 3v4h4M9 12h6M9 16h6",layers:"M12 3l9 5-9 5-9-5zM3 13l9 5 9-5",
+  ruler:"M4 20 20 4M4 20h16M20 20V4M7 17l2 2M10 14l2 2M13 11l2 2",star:"M12 3.5 14.6 8.9l5.9.8-4.3 4.1 1 5.8L12 16.8l-5.2 2.8 1-5.8-4.3-4.1 5.9-.8z",play:C(12,12,9)+"M10 8.5v7l6-3.5z",
+  mic:"M9 3h6v11H9zM5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21",ticket:"M4 7h16v3a2 2 0 0 0 0 4v3H4v-3a2 2 0 0 0 0-4zM14 7v10",calendar:"M3.5 5h17v15.5h-17zM3.5 10h17M8 3v4M16 3v4",
+  sparkle:"M12 3 13.8 9.2 20 11l-6.2 1.8L12 19l-1.8-6.2L4 11l6.2-1.8z",shield:"M12 3 5 6v6c0 4.5 3 7.5 7 9 4-1.5 7-4.5 7-9V6z",chart:"M4 20V10M10 20V4M16 20v-7M2 20h20",
+  camera:"M3 8h4l2-3h6l2 3h4v12H3z"+C(12,13.5,3.5),book:"M5 4.5h10.5a3 3 0 0 1 3 3V20H8a3 3 0 0 1-3-3zM5 17a3 3 0 0 1 3-3h10.5",crown:"M4 18h16l1-10-5 4-4-6-4 6-5-4zM4 21h16",
+  game:"M7 9h10a4 4 0 0 1 3.9 4.9l-.8 3.4a2 2 0 0 1-3.5.8L15 16H9l-1.6 2.1a2 2 0 0 1-3.5-.8l-.8-3.4A4 4 0 0 1 7 9zM8 11.5v3M6.5 13h3",search:C(11,11,6.5)+"M20 20l-4.2-4.2",
+  bolt:"M13 3 5 13.5h6L10 21l8-10.5h-6z",globe:C(12,12,9)+"M3 12h18M12 3c3 3.5 3 14.5 0 18M12 3c-3 3.5-3 14.5 0 18",phone:"M7 2.5h10v19H7zM11 18.5h2",gift:"M4 9h16v4H4zM5.5 13v8h13v-8M12 9v12M12 9c-1.5-4-6-4-5-1.5S12 9 12 9zM12 9c1.5-4 6-4 5-1.5S12 9 12 9z"};
+
+/* ---------- flyer renderer (canvas). Logos are drawn from the original file, never redrawn. ---------- */
+function csHexA(h,a){const n=parseInt(String(h||"#000").replace("#","").padEnd(6,"0").slice(0,6),16);return "rgba("+(n>>16)+","+(n>>8&255)+","+(n&255)+","+a+")"}
+function csSpaced(c,t,x,y,sp,align){t=String(t||"");const ws=[...t].map(ch=>c.measureText(ch).width);const tw=ws.reduce((a,w)=>a+w,0)+sp*Math.max(0,t.length-1);let cx=align==="right"?x-tw:align==="center"?x-tw/2:x;[...t].forEach((ch,i)=>{c.fillText(ch,cx,y);cx+=ws[i]+sp});return tw}
+function csWrap(c,t,maxW){const out=[];String(t||"").split("\n").forEach(par=>{let line="";par.split(/\s+/).forEach(w=>{const tst=line?line+" "+w:w;if(c.measureText(tst).width>maxW&&line){out.push(line);line=w}else line=tst});if(line)out.push(line)});return out}
+function csRender(cv,P,b,imgs){
+  const F=CS_FORMATS[P.format]||CS_FORMATS.portrait,W=F.w,H=F.h;cv.width=W;cv.height=H;const c=cv.getContext("2d");
+  const col=Object.assign({primary:"#F4A987",secondary:"#f3eee6",accent:"#F4A987",bg:"#0d0d0f",text:"#f7f2ea"},b&&b.colors||{}),light=(P.theme||(b&&b.theme))==="light";
+  const fd='"'+((b&&b.fonts&&b.fonts.display)||"Inter Tight")+'", "Inter Tight", "Helvetica Neue", Arial, sans-serif',fb='"'+((b&&b.fonts&&b.fonts.body)||"Inter")+'", Inter, Arial, sans-serif',fs=(b&&b.fonts&&b.fonts.script)?'"'+b.fonts.script+'", cursive':"";
+  const wide=W>H,m=Math.round(Math.min(W,H)*0.055),U=Math.min(W,H)/1080;
+  const ink=light?"#0b0d12":col.text,muted=light?"rgba(11,13,18,.72)":csHexA(col.text,.78);
+  /* background */
+  c.fillStyle=col.bg;c.fillRect(0,0,W,H);
+  if(imgs&&imgs.bg){const im=imgs.bg,z=Math.max(1,Number(P.bgZoom)||1),s=Math.max(W/im.width,H/im.height)*z,dw=im.width*s,dh=im.height*s,fx=(Number(P.bgX)||50)/100,fy=(Number(P.bgY)||50)/100;c.drawImage(im,(W-dw)*fx,(H-dh)*fy,dw,dh)}
+  else{const g=c.createRadialGradient(W*.8,H*.25,0,W*.8,H*.25,Math.max(W,H)*.8);g.addColorStop(0,csHexA(col.primary,.55));g.addColorStop(.45,csHexA(col.secondary,.18));g.addColorStop(1,csHexA(col.bg,0));c.fillStyle=g;c.fillRect(0,0,W,H)}
+  /* readability overlays */
+  const bgc=light?"#ffffff":col.bg;
+  let g=c.createLinearGradient(0,0,W*(wide?.75:.9),0);g.addColorStop(0,csHexA(bgc,light?.92:.9));g.addColorStop(.55,csHexA(bgc,light?.6:.5));g.addColorStop(1,csHexA(bgc,0));c.fillStyle=g;c.fillRect(0,0,W,H);
+  g=c.createLinearGradient(0,H*(wide?.55:.58),0,H);const bandC=light?"#0b1020":col.bg;g.addColorStop(0,csHexA(bandC,0));g.addColorStop(.45,csHexA(bandC,.88));g.addColorStop(1,csHexA(bandC,.98));c.fillStyle=g;c.fillRect(0,H*(wide?.55:.58),W,H);
+  const bandInk=light?"#f4f6fb":col.text,bandMuted=light?"rgba(244,246,251,.75)":csHexA(col.text,.75);
+  c.textBaseline="alphabetic";
+  /* logo (original file, aspect preserved) */
+  let y=m;const logoBoxW=W*(wide?.3:.5),logoBoxH=H*(wide?.13:.1);
+  if(imgs&&imgs.logo){const im=imgs.logo,s=Math.min(logoBoxW/im.width,logoBoxH/im.height);c.drawImage(im,m,y,im.width*s,im.height*s);y+=im.height*s}
+  else{c.fillStyle=col.primary;c.font="800 "+Math.round(70*U)+"px "+fd;c.fillText((b&&b.name)||"Grooveville",m,y+70*U);y+=80*U}
+  if(P.tagline){c.font="500 "+Math.round(19*U)+"px "+fb;c.fillStyle=muted;y+=34*U;csSpaced(c,String(P.tagline).toUpperCase(),m+2,y,7*U,"left")}
+  /* corner statement */
+  if(P.kicker&&!wide){const L=String(P.kicker).split("\n").slice(0,3);if(fs&&L.length<=2){let ks=Math.round(58*U);c.font="400 "+ks+"px "+fs;while(ks>24&&Math.max(...L.map(l=>c.measureText(l).width))>W*.4){ks-=3;c.font="400 "+ks+"px "+fs}c.save();c.translate(W-m,m+40*U);c.rotate(-0.12);c.fillStyle=col.accent;c.textAlign="right";L.forEach((l,i)=>c.fillText(l,0,i*ks));c.restore();c.textAlign="left"}
+    else{c.font="500 "+Math.round(18*U)+"px "+fb;c.fillStyle=light?ink:col.accent;L.forEach((l,i)=>csSpaced(c,l.toUpperCase(),W-m,m+24*U+i*30*U,6*U,"right"));c.fillStyle=col.accent;c.fillRect(W-m-90*U,m+24*U+L.length*30*U-8*U,90*U,4*U)}}
+  /* headline */
+  const lines=(P.headline||[]).filter(Boolean).slice(0,4);const acc=P.accent>=0&&P.accent<lines.length?P.accent:lines.length-1;
+  const maxW=wide?W*.58:(imgs&&imgs.bg?W*.62:W-2*m);let hs=Math.round((wide?118:P.format==="story"?138:P.format==="square"?104:118)*U);
+  c.font="800 "+hs+"px "+fd;while(hs>30&&Math.max(0,...lines.map(l=>c.measureText(l).width))>maxW){hs-=4;c.font="800 "+hs+"px "+fd}
+  y+=(wide?60:P.format==="story"?120:80)*U;
+  lines.forEach((l,i)=>{y+=hs*0.98;if(i===acc){const gg=c.createLinearGradient(m,0,m+c.measureText(l).width,0);gg.addColorStop(0,col.accent);gg.addColorStop(1,light?col.accent:csHexA(col.secondary,1));c.fillStyle=lines.length>1?col.accent:gg}else c.fillStyle=ink;c.fillText(l,m-2*U,y)});
+  if(P.subline){c.font="500 "+Math.round(21*U)+"px "+fb;c.fillStyle=muted;y+=46*U;String(P.subline).split("\n").slice(0,4).forEach((l,i)=>csSpaced(c,l.toUpperCase(),m,y+i*34*U,8*U,"left"))}
+  /* bottom: CTA pill + url */
+  const pillH=Math.round((wide?78:92)*U),pillY=H-m-pillH;
+  if(P.cta){c.font="700 "+Math.round(27*U)+"px "+fb;const tw=[...String(P.cta).toUpperCase()].reduce((a,ch)=>a+c.measureText(ch).width+6*U,0),pw=Math.max(W*(wide?.26:.38),tw+130*U);
+    const pg=c.createLinearGradient(m,0,m+pw,0);pg.addColorStop(0,col.accent);pg.addColorStop(1,light?col.accent:csHexA(col.secondary,1));c.save();c.shadowColor=csHexA(col.accent,.55);c.shadowBlur=40*U;c.fillStyle=light?col.accent:pg;csRound(c,m,pillY,pw,pillH,pillH/2);c.fill();c.restore();
+    c.fillStyle=light?"#0b0d12":"#140c08";csSpaced(c,String(P.cta).toUpperCase(),m+42*U,pillY+pillH/2+10*U,6*U,"left");c.strokeStyle=c.fillStyle;c.lineWidth=3.2*U;const ax=m+pw-58*U,ay=pillY+pillH/2;c.beginPath();c.moveTo(ax,ay);c.lineTo(ax+28*U,ay);c.moveTo(ax+16*U,ay-12*U);c.lineTo(ax+28*U,ay);c.lineTo(ax+16*U,ay+12*U);c.stroke()}
+  if(P.url){c.font="500 "+Math.round(21*U)+"px "+fb;c.fillStyle=bandMuted;const uw=csSpaced(c,String(P.url).toUpperCase(),W-m,pillY+pillH/2+8*U,9*U,"right");c.fillRect(W-m-uw-130*U,pillY+pillH/2,100*U,2*U)}
+  /* location line */
+  if(P.where){c.font="600 "+Math.round(20*U)+"px "+fb;const ly=pillY-(wide?24:30)*U;c.save();c.translate(m,ly-22*U);c.scale(26*U/24,26*U/24);c.strokeStyle=col.accent;c.lineWidth=2;c.stroke(new Path2D(CS_ICONS.pin));c.restore();c.fillStyle=bandInk;csSpaced(c,String(P.where).toUpperCase().slice(0,60),m+36*U,ly,5*U,"left")}
+  /* feature row */
+  const feats=(P.features||[]).filter(f=>f&&f.title).slice(0,wide?0:5);
+  if(feats.length){const n=feats.length,top=pillY-(P.format==="story"?330:P.format==="square"?210:250)*U-(P.where?44*U:0),cw=(W-2*m)/n;
+    feats.forEach((f,i)=>{const cx=m+cw*i+cw/2;if(i){c.strokeStyle=light?"rgba(244,246,251,.18)":csHexA(col.text,.16);c.lineWidth=1.5*U;c.beginPath();c.moveTo(m+cw*i,top);c.lineTo(m+cw*i,top+170*U);c.stroke()}
+      const isz=Math.round(64*U);c.save();c.translate(cx-isz/2,top);c.scale(isz/24,isz/24);c.strokeStyle=[col.accent,col.secondary,col.primary,col.accent][i%4]||col.accent;c.lineWidth=1.7;c.lineCap="round";c.lineJoin="round";c.stroke(new Path2D(CS_ICONS[f.icon]||CS_ICONS.star));c.restore();
+      c.fillStyle=bandInk;c.font="700 "+Math.round((n>4?18:21)*U)+"px "+fb;c.textAlign="center";const tl=csWrap(c,String(f.title).toUpperCase(),cw-16*U).slice(0,2);tl.forEach((l,j)=>c.fillText(l,cx,top+isz+40*U+j*26*U));
+      c.fillStyle=bandMuted;c.font="400 "+Math.round((n>4?17:19)*U)+"px "+fb;csWrap(c,f.text,cw-20*U).slice(0,2).forEach((l,j)=>c.fillText(l,cx,top+isz+46*U+tl.length*26*U+j*25*U));c.textAlign="left"})}
+  return cv;
+}
+function csRound(c,x,y,w,h,r){c.beginPath();c.moveTo(x+r,y);c.arcTo(x+w,y,x+w,y+h,r);c.arcTo(x+w,y+h,x,y+h,r);c.arcTo(x,y+h,x,y,r);c.arcTo(x,y,x+w,y,r);c.closePath()}
+let CS_FONTS_ON=false;
+function csLoadFonts(){if(CS_FONTS_ON)return Promise.resolve();CS_FONTS_ON=true;const l=document.createElement("link");l.rel="stylesheet";l.href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700;800;900&family=Bebas+Neue&family=Anton&family=Barlow:wght@500;700;800&family=Playfair+Display:wght@700;800&family=Kaushan+Script&family=Permanent+Marker&display=swap";document.head.appendChild(l);return new Promise(r=>setTimeout(r,50))}
+async function csFontsFor(b){const fam=[(b&&b.fonts&&b.fonts.display)||"Inter Tight",(b&&b.fonts&&b.fonts.body)||"Inter",b&&b.fonts&&b.fonts.script].filter(Boolean);try{await Promise.race([Promise.all(fam.map(f=>document.fonts.load('800 60px "'+f+'"'))),new Promise(r=>setTimeout(r,1500))])}catch(e){}}
+
+/* ---------- Brand Kits ---------- */
+function csBrandsView(){const L=csBrandList(true);
+  if(!L.length)return '<div class="mbox"><h3>Set up your brand workspaces</h3><p class="muted" style="margin-top:6px">Load the Grooveville brands (Entertainment, Music, TV, Live, Groove Guide, DrawUp, VYBR8, PATHD, Shadow Crown, AELIO) with starter colors and voices, then upload each official logo.</p><div class="btnrow0" style="margin-top:12px">'+(csFounder()?'<button class="btn peach" data-act="cs-seed">Load Grooveville brands</button><button class="btn ghost" data-act="cs-brand-new">Add a brand</button>':'<span class="muted">Ask the founder to set up brands.</span>')+'</div></div>';
+  return '<div class="sechead" style="margin-bottom:12px"><p class="muted">Each brand keeps its own logo files, colors, type, voice and schedule. Logos are protected: the AI never redraws them.</p>'+(csFounder()?'<button class="btn olive sm" data-act="cs-brand-new">+ Add brand</button>':'')+'</div><div class="csbrands">'+
+    L.filter(b=>!b.parent||!CS.brands[b.parent]).concat(L.filter(b=>b.parent&&CS.brands[b.parent])).map(b=>{const lg=(b.logos||[]).find(l=>l.primary)||(b.logos||[])[0];return '<div class="csbc'+(b.archived?" arch":"")+'" style="--bc:'+esc((b.colors||{}).primary||"#F4A987")+';--bb:'+esc((b.colors||{}).bg||"#111")+'"><div class="csbl'+((b.theme==="light")?" lt":"")+'">'+(lg?'<img data-csk="'+esc(lg.key)+'" alt="'+esc(b.name)+' logo">':'<b>'+esc(b.name)+'</b>')+'</div><div class="csbb"><b>'+esc(b.name)+'</b>'+(b.parent&&CS.brands[b.parent]?'<small class="muted">Project of '+esc(CS.brands[b.parent].name)+'</small>':'')+'<div class="csdots">'+["primary","secondary","accent","bg","text"].map(k=>'<i style="background:'+esc((b.colors||{})[k]||"#000")+'"></i>').join("")+'</div><small class="muted">'+(b.archived?"Archived":(b.enabled===false?"Weekly posts off":(b.freq||0)+" proposed posts / week"))+' · '+((b.logos||[]).length?((b.logos||[]).length+" logo file"+((b.logos||[]).length>1?"s":"")):"<span class=\"warnt\">No logo yet</span>")+'</small></div>'+
+      '<div class="btnrow0"><button class="btn ghost sm" data-act="cs-brand-edit" data-id="'+esc(b.id)+'">'+(csFounder()?"Edit kit":"View kit")+'</button><button class="btn ghost sm" data-act="cs-new-for" data-id="'+esc(b.id)+'">Create post</button></div></div>'}).join("")+'</div>';
+}
+function csBrandModal(id,preset){const b=Object.assign({colors:{},fonts:{},handles:{},logos:[],imagery:[],hashtags:[],ctas:[],platforms:["instagram","facebook"],freq:2,theme:"dark",locations:[],parent:""},csBrand(id)||preset||{});const ro=!csFounder();
+  const f=(k,l,v,ph)=>'<label class="f">'+l+'<input class="i" name="'+k+'" value="'+esc(v==null?"":v)+'"'+(ph?' placeholder="'+esc(ph)+'"':'')+(ro?" readonly":"")+'></label>',ta=(k,l,v)=>'<label class="f">'+l+'<textarea class="i" name="'+k+'" rows="2"'+(ro?" readonly":"")+'>'+esc(v||"")+'</textarea></label>';
+  const fo=(k,v)=>'<select class="i" name="'+k+'"'+(ro?" disabled":"")+'><option value="">—</option>'+CS_FONTS.map(x=>'<option'+(x===v?" selected":"")+'>'+x+'</option>').join("")+'</select>';
+  openModal('<form id="csbf" class="csbform"><h3>'+(id?esc(b.name)+' brand kit':"New brand")+'</h3>'+
+    '<div class="grid2">'+f("name","Brand name",b.name)+'<label class="f">Look<select class="i" name="theme"'+(ro?" disabled":"")+'><option value="dark"'+(b.theme!=="light"?" selected":"")+'>Dark (VYBR8, PATHD, Groove Guide style)</option><option value="light"'+(b.theme==="light"?" selected":"")+'>Light (DrawUp style)</option></select></label></div>'+
+    '<label class="f">Part of<select class="i" name="parent"'+(ro?" disabled":"")+'><option value="">— Its own brand —</option>'+csBrandList(true).filter(x=>x.id!==id&&!x.parent).map(x=>'<option value="'+esc(x.id)+'"'+(b.parent===x.id?" selected":"")+'>'+esc(x.name)+'</option>').join("")+'</select></label>'+
+    '<h4>Logos <span class="pill pub">Protected</span></h4><p class="muted small">Upload the official files (PNG with transparency or SVG work best). They are placed as-is on graphics and never sent to the AI.</p><div class="cslogos">'+(b.logos||[]).map((l,i)=>'<div class="cslogo"><img data-csk="'+esc(l.key)+'" alt=""><small>'+esc(l.name||"Logo")+(l.primary?" · primary":"")+'</small>'+(ro?'':'<span class="btnrow0">'+(l.primary?'':'<button type="button" class="mini" data-act="cs-logo-primary" data-id="'+esc(id)+'" data-i="'+i+'">Make primary</button>')+'<button type="button" class="mini" data-act="cs-logo-del" data-id="'+esc(id)+'" data-i="'+i+'">Delete</button></span>')+'</div>').join("")+'</div>'+
+    (ro||!id?'':'<div class="btnrow0"><label class="btn ghost sm" style="cursor:pointer">Upload logo<input type="file" hidden id="csLogoUp" accept="image/png,image/svg+xml,image/webp,image/jpeg"></label>'+(BR[id]&&brandInfo(id).logo?'<button type="button" class="btn ghost sm" data-act="cs-logo-site" data-id="'+esc(id)+'">Use the logo from the website</button>':'')+'</div>')+
+    '<h4>Colors</h4><div class="cscols">'+[["primary","Primary"],["secondary","Secondary"],["accent","Accent / CTA"],["bg","Background"],["text","Text"]].map(([k,l])=>'<label class="f">'+l+'<input type="color" name="c_'+k+'" value="'+esc((b.colors||{})[k]||"#888888")+'"'+(ro?" disabled":"")+'></label>').join("")+'</div>'+
+    '<h4>Typography</h4><div class="grid3"><label class="f">Headlines'+fo("f_display",b.fonts.display)+'</label><label class="f">Body'+fo("f_body",b.fonts.body)+'</label><label class="f">Script accent (optional)'+fo("f_script",b.fonts.script)+'</label></div>'+
+    '<h4>Voice & messaging</h4>'+f("tagline","Tagline line under the logo",b.tagline,"FOOD • FRIENDS • PLANS • VIBES")+f("website","Web address shown on graphics",b.website)+ta("voice","Brand voice",b.voice)+ta("about","Mission / what it stands for",b.about)+f("audience","Audience",b.audience)+
+    f("hashtags","Default hashtags (space separated)",(b.hashtags||[]).join(" "))+f("ctas","Calls to action (separate with |)",(b.ctas||[]).join(" | "))+ta("restrictions","Never say or show",b.restrictions)+ta("guidelines","Brand guidelines",b.guidelines)+
+    '<h4>Locations & websites</h4><p class="muted small">Where this project usually happens (a bar, lounge, venue or website). Pick one on each flyer.</p><div id="csLocs">'+(b.locations||[]).map(csLocRow).join("")+'</div>'+(ro?'':'<button type="button" class="btn ghost sm" data-act="cs-loc-add">+ Add location</button>')+
+    '<h4>Social accounts</h4><div class="grid3">'+CS_PLATS.map(([k,l])=>f("h_"+k,l,(b.handles||{})[k],"@handle or link")).join("")+'</div>'+
+    '<h4>Schedule</h4><div class="grid3"><label class="f">Proposed posts per week<input class="i" type="number" min="0" max="7" name="freq" value="'+esc(b.freq==null?2:b.freq)+'"'+(ro?" readonly":"")+'></label>'+f("founded","Anniversary (YYYY-MM-DD)",b.founded)+'<label class="f">Status<select class="i" name="state"'+(ro?" disabled":"")+'><option value="on"'+(!b.archived&&b.enabled!==false?" selected":"")+'>Active</option><option value="off"'+(!b.archived&&b.enabled===false?" selected":"")+'>Active, no weekly posts</option><option value="arch"'+(b.archived?" selected":"")+'>Archived</option></select></label></div>'+
+    '<div class="cschk">'+CS_PLATS.map(([k,l])=>'<label><input type="checkbox" name="pl_'+k+'"'+((b.platforms||[]).includes(k)?" checked":"")+(ro?" disabled":"")+'> '+l+'</label>').join("")+'</div>'+
+    '<h4>Approved imagery</h4><div class="cslogos">'+(b.imagery||[]).map((l,i)=>'<div class="cslogo img"><img data-csk="'+esc(l.key)+'" alt=""><small>'+esc(l.name||"")+'</small>'+(ro?'':'<button type="button" class="mini" data-act="cs-img-del" data-id="'+esc(id)+'" data-i="'+i+'">Delete</button>')+'</div>').join("")+'</div>'+
+    (ro||!id?'':'<label class="btn ghost sm" style="cursor:pointer">Upload photos<input type="file" hidden multiple id="csImgUp" accept="image/png,image/jpeg,image/webp"></label>')+
+    '<div class="row">'+(ro?'':'<button type="button" class="btn ghost" data-act="close-modal">Cancel</button><button class="btn olive">Save brand kit</button>')+(ro?'<button type="button" class="btn olive" data-act="close-modal">Close</button>':'')+'</div></form>',
+  el=>{el.closest(".modal").classList.add("wide");csHydrate();if(ro)return;
+    const lu=el.querySelector("#csLogoUp");if(lu)lu.addEventListener("change",()=>csUploadBrandFile(id,lu.files[0],"logos"));
+    const iu=el.querySelector("#csImgUp");if(iu)iu.addEventListener("change",async()=>{for(const f of iu.files)await csUploadBrandFile(id,f,"imagery",true);csBrandModal(id)});
+    el.querySelector("#csbf").addEventListener("submit",async ev=>{ev.preventDefault();const o=formObj(ev.target);if(!o.name){toast("Name the brand");return}
+      const nid=id||o.name.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"").slice(0,30)||uid();
+      const rec=Object.assign({},csBrand(id)||{logos:[],imagery:[],order:csBrandList(true).length+1,createdAt:new Date().toISOString()},{name:o.name,theme:o.theme,colors:{primary:o.c_primary,secondary:o.c_secondary,accent:o.c_accent,bg:o.c_bg,text:o.c_text},
+        fonts:{display:o.f_display||"Inter Tight",body:o.f_body||"Inter",script:o.f_script||""},tagline:o.tagline,website:o.website,voice:o.voice,about:o.about,audience:o.audience,hashtags:(o.hashtags||"").split(/\s+/).filter(Boolean).map(h=>h.replace(/^#?/,"#")),
+        ctas:(o.ctas||"").split("|").map(x=>x.trim()).filter(Boolean),restrictions:o.restrictions,guidelines:o.guidelines,handles:Object.fromEntries(CS_PLATS.map(([k])=>[k,o["h_"+k]||""])),freq:Math.max(0,Math.min(7,Number(o.freq)||0)),founded:o.founded,
+        enabled:o.state==="on",archived:o.state==="arch",parent:o.parent||"",kind:o.parent?"project":"brand",
+        locations:[...ev.target.querySelectorAll(".csloc")].map(r=>({name:r.querySelector("[data-l=name]").value.trim(),address:r.querySelector("[data-l=address]").value.trim(),website:r.querySelector("[data-l=website]").value.trim()})).filter(l=>l.name||l.address||l.website).slice(0,20),platforms:CS_PLATS.map(([k])=>k).filter(k=>ev.target["pl_"+k].checked),updatedAt:new Date().toISOString()});
+      if(!id&&CS.brands[nid]){toast("A brand with that name already exists");return}
+      if(await csSave("contentBrands",nid,rec)){closeModal();toast(rec.parent?"Project saved":"Brand kit saved");csSyncConfig();if(S.route==="ent-projects")render()}})});
+}
+async function csUploadBrandFile(id,file,kind,quiet){if(!file)return;if(file.size>15e6){toast("Files can be up to 15 MB");return}
+  const ext=({"image/png":"png","image/svg+xml":"svg","image/webp":"webp","image/jpeg":"jpg"})[file.type];if(!ext){toast("Use PNG, SVG, WebP or JPG");return}
+  const key="content/brand/"+id+"/"+(kind==="logos"?"logo":"img")+"-"+Date.now().toString(36)+"."+ext;
+  try{toast("Uploading…");await csPut(key,file,file.type);const b=csBrand(id);const L=(b[kind]||[]).slice();L.push({key,name:file.name.replace(/\.[^.]+$/,"").slice(0,40),primary:kind==="logos"&&!L.length,at:new Date().toISOString()});
+    await csSave("contentBrands",id,Object.assign({},b,{[kind]:L}));toast(kind==="logos"?"Logo added (protected)":"Photo added");if(!quiet)csBrandModal(id)}catch(e){toast(e.message||"Upload failed")}}
+async function csLogoFromSite(id){const src=brandInfo(id).logo;if(!src)return;try{const bl=await (await fetch(src)).blob();const f=new File([bl],brandInfo(id).name+" (website)."+(bl.type.split("/")[1]||"png").replace("svg+xml","svg"),{type:bl.type});await csUploadBrandFile(id,f,"logos")}catch(e){toast("Couldn’t copy the website logo")}}
+
+const csLocRow=l=>'<div class="csloc"><input class="i" data-l="name" placeholder="Venue or place name" value="'+esc(l.name||"")+'"><input class="i" data-l="address" placeholder="Address or city" value="'+esc(l.address||"")+'"><input class="i" data-l="website" placeholder="Website or link" value="'+esc(l.website||"")+'"><button type="button" class="mini" data-act="cs-loc-del" aria-label="Remove location">✕</button></div>';
+/* Projects & orgs under a brand (e.g. The Unc & Neph Show under Grooveville Entertainment) */
+const CS_PROJECT_IDEAS=["The Unc & Neph Show","Groove Phi Groove","Game Night","4wardsociety","Lounge Rent"];
+function csProjectsView(parentId){parentId=parentId||"ent";csSubscribe();const par=csBrand(parentId);
+  if(!CS.loaded.brands)return '<div class="empty">Loading…</div>';
+  if(!par)return '<div class="mbox"><p class="muted">Set up the Grooveville brand kits first in Back office › Content Studio › Brand Kits.</p><a class="btn olive sm" href="#team-content" data-act="cs-sec" data-v="brands">Open Brand Kits</a></div>';
+  const L=csBrandList(true).filter(b=>b.parent===parentId),have=new Set(L.map(b=>b.name.toLowerCase()));
+  return '<div class="sechead" style="margin-bottom:12px"><p class="muted" style="max-width:70ch">Shows, groups, events and businesses that run under '+esc(par.name)+'. Each keeps its own logo, mission, look and usual locations, so every flyer stays consistent.</p>'+(csFounder()?'<button class="btn olive sm" data-act="cs-proj-new" data-id="'+esc(parentId)+'">+ New project</button>':'')+'</div>'+
+    (csFounder()&&CS_PROJECT_IDEAS.some(n=>!have.has(n.toLowerCase()))?'<div class="btnrow0" style="margin-bottom:14px"><span class="muted small">Quick add:</span>'+CS_PROJECT_IDEAS.filter(n=>!have.has(n.toLowerCase())).map(n=>'<button class="btn ghost sm" data-act="cs-proj-quick" data-id="'+esc(parentId)+'" data-v="'+esc(n)+'">+ '+esc(n)+'</button>').join("")+'</div>':'')+
+    (L.length?'<div class="csbrands">'+L.map(b=>{const lg=(b.logos||[]).find(l=>l.primary)||(b.logos||[])[0];return '<div class="csbc'+(b.archived?" arch":"")+'" style="--bc:'+esc((b.colors||{}).primary||"#F4A987")+';--bb:'+esc((b.colors||{}).bg||"#111")+'"><div class="csbl">'+(lg?'<img data-csk="'+esc(lg.key)+'" alt="'+esc(b.name)+' logo">':'<b>'+esc(b.name)+'</b>')+'</div><div class="csbb"><b>'+esc(b.name)+'</b><small class="muted">'+esc(b.about||"Add its mission in the kit")+'</small>'+
+      ((b.locations||[]).length?'<small class="muted">📍 '+esc(b.locations.map(l=>l.name||l.website).join(" · "))+'</small>':'')+(lg?'':'<small class="warnt">No logo yet</small>')+'</div><div class="btnrow0"><button class="btn peach sm" data-act="cs-new-for" data-id="'+esc(b.id)+'">Make a flyer</button><button class="btn ghost sm" data-act="cs-brand-edit" data-id="'+esc(b.id)+'">'+(csFounder()?"Edit":"View")+'</button></div></div>'}).join("")+'</div>':'<div class="empty">No projects yet. Add one above.</div>');
+}
+/* ---------- Storage & cleanup ---------- */
+function csStorageView(){const s=CS.storage,st=csSet();
+  return '<div class="mbox"><div class="sechead" style="margin:0 0 10px"><h3 style="font-size:20px">Storage</h3><span class="btnrow0"><button class="btn ghost sm" data-act="cs-storage-load">Refresh</button>'+(csFounder()?'<button class="btn olive sm" data-act="cs-cleanup">Run cleanup now</button>':'')+'</span></div>'+
+    (s?(s.error?'<p class="muted">'+esc(s.error)+'</p>':'<div class="cskpis"><div><small>Total</small><b>'+csBytes(s.bytes)+'</b></div><div><small>Est. storage cost</small><b>$'+s.estMonthlyUSD.toFixed(3)+'/mo</b></div>'+Object.entries(s.prefixes).map(([k,v])=>'<div><small>'+esc({brand:"Brand kits (protected)",tmp:"Temporary AI art",keep:"Art in posts",final:"Finished graphics",upload:"Uploads",proposals:"Weekly proposals",usage:"Cost ledger"}[k]||k)+'</small><b>'+csBytes(v.bytes)+'</b><span class="muted">'+v.files+' files</span></div>').join("")+'</div><p class="muted small">'+esc(s.note)+'</p>'):'<p class="muted">Loading…</p>')+'</div>'+
+  '<div class="mbox"><h3 style="font-size:18px">Retention</h3><div class="grid3" style="margin-top:8px"><label class="f">Delete rejected drafts after (days)<input class="i" type="number" min="7" max="365" id="csRejD" value="'+st.rejectedDays+'"'+(csFounder()?"":" disabled")+'></label><label class="f">Remove unused generated graphics after (days)<input class="i" type="number" min="2" max="365" id="csUnD" value="'+st.unusedDays+'"'+(csFounder()?"":" disabled")+'></label><label class="f">Keep published graphics for (days, 0 = forever)<input class="i" type="number" min="0" max="3650" id="csPubD" value="'+st.publishedDays+'"'+(csFounder()?"":" disabled")+'></label></div>'+
+  '<p class="muted small" style="margin-top:8px">Temporary AI art not used by a saved post is deleted automatically after 30 days by the server. Logos, brand photos, favorites (★ protected) and anything in an active campaign, approval or schedule are never deleted. Published posts keep their caption and history after the image is archived.'+(st.lastCleanup?' Last cleanup: '+esc(new Date(st.lastCleanup).toLocaleString())+'.':'')+'</p>'+(csFounder()?'<div class="btnrow0" style="margin-top:10px"><button class="btn ghost sm" data-act="cs-ret-save">Save retention</button></div>':'')+'</div>'+
+  (s&&s.cleanup&&s.cleanup.length?'<div class="mbox"><h3 style="font-size:18px">Cleanup history</h3>'+s.cleanup.slice(0,15).map(c=>'<div class="lrow" style="grid-template-columns:minmax(0,1fr) auto"><span><b>'+esc(c.kind||"Cleanup")+'</b><small class="muted" style="display:block">'+esc(new Date(c.at).toLocaleString())+' · '+esc(c.by==="scheduled"?"automatic":"manual")+'</small></span><span class="muted">'+(c.files||0)+' files · '+csBytes(c.bytes||0)+'</span></div>').join("")+'</div>':'');
+}
+const csBytes=n=>n>1e9?(n/1e9).toFixed(2)+" GB":n>1e6?(n/1e6).toFixed(1)+" MB":Math.round((n||0)/1e3)+" KB";
+async function csCleanup(silent){if(!csFounder())return;const st=csSet(),now=Date.now(),day=86400000;let files=[],bytes=0,docs=0;
+  try{
+    const keep=new Set();csBrandList(true).forEach(b=>(b.logos||[]).concat(b.imagery||[]).forEach(l=>keep.add(l.key)));
+    const posts=Object.values(CS.posts),activeCamp=id=>{const c=CS.camps[id];return c&&!c.archived};
+    for(const p of posts){const age=now-Date.parse(p.updatedAt||p.createdAt||0);
+      if(p.status==="rejected"&&!p.protected&&age>st.rejectedDays*day&&!(p.campaignId&&activeCamp(p.campaignId))){[p.bgKey,p.finalKey].filter(k=>k&&!k.startsWith("content/brand/")).forEach(k=>files.push(k));await remove("contentPosts",p.id);docs++;continue}
+      if(p.status==="published"&&!p.protected&&st.publishedDays>0&&now-Date.parse(p.publishedAt||p.updatedAt||0)>st.publishedDays*day&&(p.bgKey||p.finalKey)){[p.bgKey,p.finalKey].filter(k=>k&&!k.startsWith("content/brand/")).forEach(k=>files.push(k));await csSave("contentPosts",p.id,Object.assign({},p,{bgKey:"",finalKey:"",archivedImages:true}));docs++;continue}
+      [p.bgKey,p.finalKey].forEach(k=>k&&keep.add(k))}
+    for(const pre of ["content/keep/","content/final/","content/upload/"]){const j=await csApi("files?prefix="+encodeURIComponent(pre));(j.files||[]).forEach(f=>{if(!keep.has(f.key)&&now-Date.parse(f.uploaded)>Math.max(2,st.unusedDays)*day){files.push(f.key);bytes+=f.size||0}})}
+    files=[...new Set(files)];for(let i=0;i<files.length;i+=150)await csApi("delete",{keys:files.slice(i,i+150)});
+    await csApi("cleanup-log",{entry:{kind:"rejected drafts, archived published images, unused graphics",files:files.length,bytes,docs}});
+    await csSave("contentBrands","__settings",Object.assign({},CS.brands.__settings||{},{lastCleanup:new Date().toISOString()}));
+    if(!silent)toast("Cleanup done: "+files.length+" files removed");CS.storage=null;if(CS.sec==="storage")csStorageLoad()}catch(e){if(!silent)toast(e.message||"Cleanup failed")}}
+function csStorageLoad(){csApi("storage").then(j=>{CS.storage=j;csData()}).catch(e=>{CS.storage={error:e.message};csData()})}
+
+/* ---------- Settings & access ---------- */
+function csSettingsView(){const st=csSet(),s=CS.status||{};const ro=!csFounder();
+  return '<div class="mbox"><h3 style="font-size:20px">AI generation</h3>'+(s.error?'<p class="warnt">'+esc(s.error)+'</p>':s.ai?'<p class="muted">OpenAI is connected · writing: <b>'+esc(s.textModel)+'</b> · backgrounds: <b>'+esc(s.imageModel)+'</b></p>':'<div class="banner warn" style="margin:8px 0">Add the Cloudflare secret <code>OPENAI_API_KEY</code> (Workers &amp; Pages › grooveville › Settings › Variables and Secrets, type Secret) to turn on AI. Everything else in Content Studio works without it.</div>')+
+    '<div class="grid3" style="margin-top:10px"><label class="f">Monthly AI budget (USD)<input class="i" type="number" min="0" max="1000" id="csLim" value="'+st.monthlyLimit+'"'+(ro?" disabled":"")+'></label><label class="f">Background image quality<select class="i" id="csQ"'+(ro?" disabled":"")+'>'+[["low","Low (≈$0.02 each)"],["medium","Medium (≈$0.06 each)"],["high","High (≈$0.25 each)"]].map(([k,l])=>'<option value="'+k+'"'+(st.imageQuality===k?" selected":"")+'>'+l+'</option>').join("")+'</select></label><label class="f">Weekly proposals<select class="i" id="csWk"'+(ro?" disabled":"")+'><option value="on"'+(st.weekly?" selected":"")+'>On (every Monday)</option><option value="off"'+(!st.weekly?" selected":"")+'>Off</option></select></label></div>'+
+    '<p class="muted small" style="margin-top:8px">This month: <b>$'+(s.spent||0).toFixed(2)+'</b> of $'+st.monthlyLimit+' across '+(s.calls||0)+' AI calls. Costs are estimates from OpenAI’s published prices; check your OpenAI billing page for exact charges.</p>'+(ro?'':'<div class="btnrow0" style="margin-top:10px"><button class="btn olive sm" data-act="cs-set-save">Save settings</button></div>')+'</div>'+
+    '<div class="mbox"><h3 style="font-size:20px">Publishing</h3><p class="muted" style="margin-top:6px">Publishing is export-ready: approve and schedule a post, then on the day download the graphic, copy the platform caption, post it, and mark it published. Direct posting to '+CS_PLATS.map(x=>x[1]).join(", ")+' needs each platform’s developer approval and can be connected one at a time later. Nothing is ever posted without your approval.</p></div>'+
+    (csFounder()?'<div class="mbox"><h3 style="font-size:20px">Who can use Content Studio</h3><p class="muted small" style="margin-top:4px">Editors can create and send posts for approval. Only you approve, schedule, publish and change brand kits.</p>'+
+      (Object.values(CS.roles).length?Object.values(CS.roles).map(r=>'<div class="lrow" style="grid-template-columns:minmax(0,1fr) auto"><span><b>'+esc(r.name||r.email||r.id)+'</b><small class="muted" style="display:block">'+esc(r.role)+' · '+esc(r.id)+'</small></span><button class="btn ghost sm" data-act="cs-role-del" data-id="'+esc(r.id)+'">Remove</button></div>').join(""):'<p class="muted" style="margin:8px 0">Only you for now.</p>')+
+      '<form id="csRoleF" class="btnrow0" style="margin-top:10px;align-items:flex-end"><label class="f" style="flex:1;min-width:200px">Team member<select class="i" name="uid">'+Object.keys(S.members||{}).map(u=>'<option value="'+esc(u)+'">'+esc((S.names&&S.names[u])||(S.members[u]&&S.members[u].name)||u)+'</option>').join("")+'<option value="">Paste a user ID…</option></select></label><label class="f">or user ID<input class="i" name="raw" placeholder="Firebase user ID"></label><label class="f">Role<select class="i" name="role"><option value="editor">Editor</option><option value="manager">Manager</option></select></label><button class="btn olive sm">Add</button></form></div>':'');
+}
+
+/* ---------- view router ---------- */
+function viewContent(){
+  if(!csAccess())return '<div class="wrap gate"><h1>Content Studio</h1><p class="muted">Only the founder and approved accounts can open Content Studio.</p></div>';
+  csSubscribe();csLoadFonts();
+  if(!CS.loaded.brands||!CS.loaded.posts)return '<div class="empty">Loading Content Studio…</div>';
+  if(csFounder()&&!CS.autoClean){CS.autoClean=1;const lc=csSet().lastCleanup;if(!lc||Date.now()-Date.parse(lc)>7*86400000)setTimeout(()=>csCleanup(true),4000)}
+  const pend=Object.values(CS.posts).filter(p=>p.status==="pending"||p.status==="generated").length;
+  const body={dash:csDash,create:csCreate,queue:csQueue,cal:csCal,camp:csCamps,trends:csTrends,brands:csBrandsView,storage:()=>{if(!CS.storage)csStorageLoad();return csStorageView()},settings:csSettingsView}[CS.sec]||csDash;
+  return '<div class="cs"><div class="seg cstabs" role="tablist">'+CS_SECS.map(([k,l])=>'<button role="tab" aria-selected="'+(CS.sec===k)+'" class="'+(CS.sec===k?"on":"")+'" data-act="cs-sec" data-v="'+k+'">'+l+(k==="queue"&&pend?' <span class="csn">'+pend+'</span>':'')+'</button>').join("")+'</div>'+body()+'</div>';
+}
+function viewContentMember(){return '<section class="teamhead"><div class="wrap"><div class="eyebrow">Grooveville LLC</div><h1>Content Studio</h1></div></section><section class="tsec"><div class="wrap">'+viewContent()+'</div></section>'}
+const csPostsBy=f=>Object.values(CS.posts).filter(f);
+const csToday=()=>{const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")};
+function csThumb(p,cls){return p.finalKey?'<img class="'+(cls||"csth")+'" data-csk="'+esc(p.finalKey)+'" alt="">':p.bgKey?'<img class="'+(cls||"csth")+'" data-csk="'+esc(p.bgKey)+'" alt="">':'<span class="'+(cls||"csth")+' none" style="--bc:'+esc(((csBrand(p.brandId)||{}).colors||{}).primary||"#F4A987")+'">'+esc((p.headline||[])[0]||"Post")+'</span>'}
+const csChip=id=>{const b=csBrand(id);return '<span class="cschip" style="--bc:'+esc(b&&b.colors?b.colors.primary:"#888")+'">'+esc(b?b.name:id||"No brand")+'</span>'};
+
+/* ---------- dashboard ---------- */
+function csDash(){
+  const now=Date.now(),wk=now-7*86400000,t=csToday(),P=Object.values(CS.posts),st=CS.status||{};
+  const gen=P.filter(p=>Date.parse(p.createdAt||0)>wk).length,pend=P.filter(p=>p.status==="pending"||p.status==="generated"),sched=P.filter(p=>p.status==="scheduled"&&p.date>=t).sort((a,b)=>(a.date+a.time).localeCompare(b.date+b.time)),
+    due=P.filter(p=>(p.status==="scheduled"||p.status==="approved")&&p.date&&p.date<=t),fails=P.filter(p=>p.status==="failed"),camps=Object.values(CS.camps).filter(c=>!c.archived&&c.state!=="paused"),
+    trendN=Object.values(CS.trends).reduce((a,x)=>a+((x.topics||[]).length),0),ev=(typeof upcomingEvents==="function"?upcomingEvents(S.events):[]).filter(e=>e.date<=new Date(now+14*86400000).toISOString().slice(0,10)),pub=P.filter(p=>p.status==="published").sort((a,b)=>String(b.publishedAt).localeCompare(String(a.publishedAt))).slice(0,5);
+  const k=(l,v,s,act)=>'<button class="cskpi" '+(act?'data-act="cs-sec" data-v="'+act+'"':'disabled')+'><small>'+l+'</small><b>'+v+'</b>'+(s?'<span>'+s+'</span>':'')+'</button>';
+  return (!st.ai&&!st.error&&CS.status?'<div class="banner warn">AI is off until the Cloudflare secret <code>OPENAI_API_KEY</code> is added. Brand kits, the calendar, approvals and flyer design work now.</div>':'')+
+    '<div class="csquick">'+[["cs-sec","create","Generate post"],["cs-camp-new","","Create campaign"],["cs-sec","cal","Open calendar"],["cs-sec","queue","Review drafts"],["cs-sec","trends","View trends"],["cs-sec","brands","Manage brand kits"],["cs-sec","storage","Manage storage"]].map(([a,v,l],i)=>'<button class="btn '+(i?"ghost":"peach")+' sm" data-act="'+a+'" data-v="'+v+'">'+l+'</button>').join("")+'</div>'+
+    '<div class="cskpis">'+k("Active brands",csBrandList().length,"","brands")+k("Posts generated this week",gen,"","queue")+k("Pending approvals",pend.length,"","queue")+k("Upcoming scheduled",sched.length,sched[0]?"Next "+sched[0].date:"","cal")+k("Active campaigns",camps.length,"","camp")+k("Upcoming events",ev.length,"Next 14 days","cal")+k("Trending topics",trendN,"","trends")+k("Publishing errors",fails.length,"","queue")+k("Storage used",CS.storage&&!CS.storage.error?csBytes(CS.storage.bytes):"—","","storage")+k("AI cost this month",st.ai?"$"+(st.spent||0).toFixed(2):"—",st.ai?"of $"+csSet().monthlyLimit+" budget":"AI off","settings")+'</div>'+
+    '<div class="csgrid2"><div class="mbox"><h3 style="font-size:19px">Ready to post</h3>'+(due.length?due.map(p=>csRow(p)).join(""):'<p class="muted" style="margin-top:6px">Nothing due today.</p>')+'</div>'+
+    '<div class="mbox"><h3 style="font-size:19px">Waiting for you</h3>'+(pend.length?pend.slice(0,6).map(p=>csRow(p)).join("")+(pend.length>6?'<button class="btn ghost sm" data-act="cs-sec" data-v="queue">All '+pend.length+'</button>':''):'<p class="muted" style="margin-top:6px">No drafts waiting.</p>')+'</div></div>'+
+    '<div class="mbox"><h3 style="font-size:19px">Recent publishing</h3>'+(pub.length?pub.map(p=>csRow(p)).join(""):'<p class="muted" style="margin-top:6px">Nothing published yet.</p>')+'<p class="muted small" style="margin-top:8px">Likes and reach appear here once a platform account is connected for analytics.</p></div>';
+}
+function csRow(p){const b=csBrand(p.brandId);return '<div class="csrow" data-act="cs-open" data-id="'+esc(p.id)+'">'+csThumb(p)+'<span class="csrt"><b>'+esc((p.headline||[]).join(" ")||p.caption.slice(0,60)||"Untitled")+'</b><small>'+csChip(p.brandId)+' '+esc(p.date||"no date")+(p.time?" "+esc(p.time):"")+' · '+esc((p.platforms||[]).map(x=>(CS_PLATS.find(y=>y[0]===x)||[,x])[1]).join(", "))+'</small></span><span class="csst s-'+esc(p.status)+'">'+esc(CS_ST[p.status]||p.status)+'</span></div>'}
+
+/* ---------- create / edit ---------- */
+function csNewEd(brandId,seed){const b=csBrand(brandId)||csBrandList()[0];if(!b)return null;
+  return {id:"",post:csFromAI(Object.assign({headline:["Your headline","here."],tagline:b.tagline,cta:(b.ctas||[])[0]||"Learn more",url:b.website},seed||{}),b,{status:"draft",format:(seed&&seed.format)||"portrait"}),imgs:{},brief:(seed&&seed.brief)||"",direction:"",count:2}}
+function csCreate(){
+  if(!csBrandList().length)return '<div class="empty">Set up brand kits first. <button class="btn olive sm" data-act="cs-sec" data-v="brands">Brand Kits</button></div>';
+  if(!CS.ed)CS.ed=csNewEd(csBrandList()[0].id);const E=CS.ed,P=E.post,b=csBrand(P.brandId)||{};const ai=CS.status&&CS.status.ai;const lock=["approved","scheduled","published"].includes(P.status)&&!csFounder();
+  const fld=(k,l,v,ph,ta)=>'<label class="f">'+l+(ta?'<textarea class="i" data-ce="'+k+'" rows="'+ta+'"'+(ph?' placeholder="'+esc(ph)+'"':'')+'>'+esc(v||"")+'</textarea>':'<input class="i" data-ce="'+k+'" value="'+esc(v||"")+'"'+(ph?' placeholder="'+esc(ph)+'"':'')+'>')+'</label>';
+  return '<div class="csed" id="csEd"><div class="csl">'+
+    '<div class="mbox"><h3>'+(E.id?"Edit post · "+esc(CS_ST[P.status]||P.status):"New post")+'</h3>'+(P.campaignId&&CS.camps[P.campaignId]?'<p class="muted small">Campaign: '+esc(CS.camps[P.campaignId].name)+' · '+esc(P.phase||"")+'</p>':'')+
+    '<div class="grid2"><label class="f">Brand<select class="i" data-ce="brandId">'+csBrandList().map(x=>'<option value="'+esc(x.id)+'"'+(x.id===P.brandId?" selected":"")+'>'+(x.parent&&CS.brands[x.parent]?esc(CS.brands[x.parent].name)+" › ":"")+esc(x.name)+'</option>').join("")+'</select></label><label class="f">Format<select class="i" data-ce="format">'+Object.entries(CS_FORMATS).map(([k,f])=>'<option value="'+k+'"'+(k===P.format?" selected":"")+'>'+f.l+'</option>').join("")+'</select></label></div>'+
+    '<div class="cschk">'+CS_PLATS.map(([k,l])=>'<label><input type="checkbox" data-cep="'+k+'"'+((P.platforms||[]).includes(k)?" checked":"")+'> '+l+'</label>').join("")+'</div>'+
+    (E.id?'':'<label class="f">What’s it about?<textarea class="i" id="csBrief" rows="3" placeholder="e.g. Friday rooftop night at Optimist Hall, or a teaser for Groove Guide">'+esc(E.brief||"")+'</textarea></label><label class="f">Creative direction (optional)<input class="i" id="csDir" value="'+esc(E.direction||"")+'" placeholder="moody night skyline, warm peach light"></label>'+
+      '<div class="btnrow0"><button class="btn peach sm" data-act="cs-gen"'+(ai?'':' disabled title="Add OPENAI_API_KEY to turn on AI"')+'>'+(CS.genBusy==="gen"?"Writing…":"Generate copy")+'</button><select class="i sm" id="csCount" style="width:auto">'+[1,2,3].map(n=>'<option'+(n===E.count?" selected":"")+'>'+n+'</option>').join("")+'</select><span class="muted small">options</span></div>')+
+    (CS.gen&&CS.gen.length?'<div class="csopts">'+CS.gen.map((g,i)=>'<button class="csopt" data-act="cs-use" data-i="'+i+'"><b>'+esc((g.headline||[]).join(" "))+'</b><small>'+esc(g.angle||"")+'</small><span>'+esc(String(g.caption||"").slice(0,140))+'…</span></button>').join("")+'</div>':'')+'</div>'+
+    '<div class="mbox"><div class="csh"><h3>Graphic text</h3><span class="btnrow0"><button class="mini" data-act="cs-part" data-v="headline"'+(ai?'':' disabled')+'>New headline</button><button class="mini" data-act="cs-part" data-v="kicker"'+(ai?'':' disabled')+'>New corner line</button></span></div>'+
+    fld("headline","Headline (one line per row; the last row is the accent)",(P.headline||[]).join("\n"),"",3)+'<div class="grid2">'+fld("tagline","Line under the logo",P.tagline,"FOOD • FRIENDS • PLANS • VIBES")+fld("kicker","Corner line(s)",P.kicker,"REAL JOBS.\nREAL PEOPLE.",2)+'</div>'+fld("subline","Spaced caps line(s) under the headline",P.subline,"",2)+
+    ((b.locations||[]).length?'<label class="f">Location on the flyer<select class="i" data-ce="loc"><option value="">No location</option>'+b.locations.map((l,i)=>'<option value="'+i+'"'+(P.loc===String(i)?" selected":"")+'>'+esc([l.name,l.address].filter(Boolean).join(" · ")||l.website)+'</option>').join("")+'</select></label>':'')+fld("where","Location line (shows above the button)",P.where,"THE LOUNGE • 123 S TRYON ST")+
+    '<div class="grid2">'+fld("cta","Button",P.cta)+fld("url","Web address",P.url)+'</div><label class="f">Look<select class="i" data-ce="theme"><option value="dark"'+(P.theme!=="light"?" selected":"")+'>Dark</option><option value="light"'+(P.theme==="light"?" selected":"")+'>Light</option></select></label>'+
+    '<div class="csh" style="margin-top:12px"><h4>Feature row</h4><span class="btnrow0"><button class="mini" data-act="cs-part" data-v="features"'+(ai?'':' disabled')+'>New features</button><button class="mini" data-act="cs-feat-add"'+((P.features||[]).length>=5?" disabled":"")+'>+ Add</button></span></div>'+
+    (P.features||[]).map((f,i)=>'<div class="csfeat"><select class="i" data-cef="'+i+'.icon">'+Object.keys(CS_ICONS).map(k=>'<option'+(k===f.icon?" selected":"")+'>'+k+'</option>').join("")+'</select><input class="i" data-cef="'+i+'.title" value="'+esc(f.title)+'" placeholder="Title"><input class="i" data-cef="'+i+'.text" value="'+esc(f.text)+'" placeholder="Short line"><button class="mini" data-act="cs-feat-del" data-i="'+i+'" aria-label="Remove">✕</button></div>').join("")+'</div>'+
+    '<div class="mbox"><div class="csh"><h3>Background</h3></div><div class="btnrow0"><button class="btn olive sm" data-act="cs-bg-ai"'+(ai?'':' disabled')+'>'+(CS.genBusy==="img"?"Painting…":"New AI background")+'</button><button class="btn ghost sm" data-act="cs-bg-pick">Brand photos</button><label class="btn ghost sm" style="cursor:pointer">Upload<input type="file" hidden id="csBgUp" accept="image/png,image/jpeg,image/webp"></label>'+(P.bgKey?'<button class="btn ghost sm" data-act="cs-bg-clear">Remove</button>':'')+'</div>'+
+    fld("imagePrompt","AI background description (no text or logos are ever drawn by the AI)",P.imagePrompt,"",2)+
+    '<div class="grid3"><label class="f">Left / right<input type="range" min="0" max="100" data-ce="bgX" value="'+(P.bgX??50)+'"></label><label class="f">Up / down<input type="range" min="0" max="100" data-ce="bgY" value="'+(P.bgY??50)+'"></label><label class="f">Zoom<input type="range" min="1" max="2" step=".05" data-ce="bgZoom" value="'+(P.bgZoom||1)+'"></label></div>'+
+    '<label class="f">Logo<select class="i" data-ce="logoKey"><option value="">Brand name as text</option>'+(b.logos||[]).map(l=>'<option value="'+esc(l.key)+'"'+(l.key===P.logoKey?" selected":"")+'>'+esc(l.name||"Logo")+(l.primary?" (primary)":"")+'</option>').join("")+'</select></label>'+((b.logos||[]).length?'':'<p class="warnt small">No official logo uploaded for this brand yet. Add one in Brand Kits.</p>')+'</div>'+
+    '<div class="mbox"><div class="csh"><h3>Caption</h3><span class="btnrow0"><button class="mini" data-act="cs-part" data-v="caption"'+(ai?'':' disabled')+'>New caption</button><button class="mini" data-act="cs-part" data-v="hashtags"'+(ai?'':' disabled')+'>New hashtags</button></span></div>'+fld("caption","Main caption",P.caption,"",5)+fld("hashtags","Hashtags",(P.hashtags||[]).join(" "))+
+    '<details class="csvar"><summary>Platform versions</summary>'+CS_PLATS.map(([k,l])=>'<label class="f">'+l+'<textarea class="i" rows="3" data-cev="'+k+'" placeholder="Uses the main caption if empty">'+esc((P.variants||{})[k]||"")+'</textarea></label>').join("")+'</details>'+
+    '<div class="grid2">'+'<label class="f">Suggested date<input class="i" type="date" data-ce="date" value="'+esc(P.date||"")+'"></label><label class="f">Time<input class="i" type="time" data-ce="time" value="'+esc(P.time||"")+'"></label></div><label class="ck"><input type="checkbox" data-ce="protected"'+(P.protected?" checked":"")+'> ★ Protect (never auto-delete)</label></div></div>'+
+    '<div class="csr"><div class="cspv"><canvas id="csCanvas" aria-label="Graphic preview"></canvas></div><p class="muted small">'+esc(CS_FORMATS[P.format].l)+' · '+CS_FORMATS[P.format].w+'×'+CS_FORMATS[P.format].h+'</p>'+
+    '<div class="btnrow0"><button class="btn ghost sm" data-act="cs-dl">Download PNG</button><button class="btn ghost sm" data-act="cs-copy">Copy caption</button>'+(E.id?'<button class="btn ghost sm" data-act="cs-dup">Duplicate</button>':'')+'<button class="btn ghost sm" data-act="cs-ed-new">New post</button></div>'+
+    '<div class="btnrow0" style="margin-top:10px">'+(lock?'<p class="muted small">Approved posts can only be changed by the founder.</p>':'<button class="btn ghost" data-act="cs-save" data-v="draft">Save draft</button><button class="btn peach" data-act="cs-save" data-v="pending">Send for approval</button>'+(csFounder()?'<button class="btn olive" data-act="cs-save" data-v="approved">Approve</button>':''))+'</div>'+
+    (E.id&&(P.history||[]).length?'<details class="csvar"><summary>History</summary>'+(P.history||[]).map(h=>'<div class="muted small">'+esc(CS_ST[h.s]||h.s)+' · '+esc(new Date(h.at).toLocaleString())+(h.note?' · '+esc(h.note):'')+'</div>').join("")+'</details>':'')+'</div></div>';
+}
+async function csDraw(){const cv=$("#csCanvas");if(!cv||!CS.ed)return;const E=CS.ed,P=E.post,b=csBrand(P.brandId);
+  if(P.bgKey!==E.bgFor){E.bgFor=P.bgKey;E.imgs.bg=P.bgKey?await csImgEl(P.bgKey):null}
+  if(P.logoKey!==E.logoFor){E.logoFor=P.logoKey;E.imgs.logo=P.logoKey?await csImgEl(P.logoKey):null}
+  await csFontsFor(b);csRender(cv,P,b,E.imgs)}
+let csDrawT=0;const csRedraw=()=>{clearTimeout(csDrawT);csDrawT=setTimeout(csDraw,60)};
+document.addEventListener("input",e=>{const t=e.target;if(!CS.ed||!t.closest||!t.closest("#csEd"))return;const P=CS.ed.post;
+  if(t.dataset.ce){const k=t.dataset.ce;let v=t.type==="checkbox"?t.checked:t.value;if(k==="headline")v=t.value.split("\n").slice(0,4);else if(k==="hashtags")v=t.value.split(/\s+/).filter(Boolean).map(h=>h.replace(/^#?/,"#"));else if(["bgX","bgY","bgZoom"].includes(k))v=Number(v);P[k]=v;
+    if(k==="brandId"){const b=csBrand(v);if(b){P.theme=b.theme||"dark";P.logoKey=((b.logos||[]).find(l=>l.primary)||(b.logos||[])[0]||{}).key||"";P.tagline=P.tagline||b.tagline}render();return}
+    if(k==="loc"){const l=(csBrand(P.brandId).locations||[])[+v];if(v!==""&&l){P.where=[l.name,l.address].filter(Boolean).join(" • ");if(l.website)P.url=l.website.replace(/^https?:\/\//,"").replace(/\/$/,"")}else P.where="";render();return}
+    if(k==="format"||k==="logoKey"){render();return}csRedraw()}
+  if(t.dataset.cef){const [i,f]=t.dataset.cef.split(".");P.features[+i][f]=t.value;csRedraw()}
+  if(t.dataset.cev){P.variants=Object.assign({},P.variants,{[t.dataset.cev]:t.value})}
+  if(t.dataset.cep){P.platforms=CS_PLATS.map(x=>x[0]).filter(k=>{const c=document.querySelector('[data-cep="'+k+'"]');return c&&c.checked})}
+  if(t.id==="csBrief")CS.ed.brief=t.value;if(t.id==="csDir")CS.ed.direction=t.value;if(t.id==="csCount")CS.ed.count=+t.value});
+document.addEventListener("change",e=>{const t=e.target;if(t.dataset&&(t.dataset.cep||t.dataset.ce==="protected"||t.dataset.cef||t.dataset.ce==="theme"))t.dispatchEvent(new Event("input",{bubbles:true}));
+  if(t.id==="csBgUp"&&t.files[0])csBgUpload(t.files[0]);if(t.id==="csCount"&&CS.ed)CS.ed.count=+t.value});
+async function csBgUpload(f){if(!/^image\/(png|jpeg|webp)$/.test(f.type)){toast("Use PNG, JPG or WebP");return}if(f.size>15e6){toast("Up to 15 MB");return}
+  const key="content/upload/"+Date.now().toString(36)+"-"+uid()+"."+f.type.split("/")[1].replace("jpeg","jpg");try{toast("Uploading…");await csPut(key,f,f.type);CS.ed.post.bgKey=key;render()}catch(e){toast(e.message)}}
+function csCopyFields(P){return {headline:P.headline,kicker:P.kicker,tagline:P.tagline,subline:P.subline,features:P.features,cta:P.cta,url:P.url,caption:P.caption,hashtags:P.hashtags,imagePrompt:P.imagePrompt,format:P.format,platforms:P.platforms}}
+async function csSavePost(status,note){const E=CS.ed,P=E.post;if(!P.brandId){toast("Pick a brand");return}
+  if(["approved","scheduled","published"].includes(status)&&!csFounder()){toast("Only the founder approves posts");return}
+  try{toast("Saving…");
+    if(P.bgKey&&P.bgKey.startsWith("content/tmp/")){const r=await csApi("keep",{key:P.bgKey});const u=await CSURL[P.bgKey];CSURL[r.key]=Promise.resolve(u);P.bgKey=r.key;E.bgFor=r.key}
+    const id=E.id||uid();await csDraw();const cv=$("#csCanvas");const blob=await new Promise(r=>cv.toBlob(r,"image/png"));const fkey="content/final/"+id+"-"+Date.now().toString(36)+".png";await csPut(fkey,blob,"image/png");
+    const old=P.finalKey;P.finalKey=fkey;CSURL[fkey]=Promise.resolve(URL.createObjectURL(blob));
+    const prevS=(CS.posts[id]||{}).status;P.status=status;P.updatedAt=new Date().toISOString();if(status!==prevS)P.history=(P.history||[]).concat({s:status,at:P.updatedAt,by:S.uid||"",note:note||""});
+    if(await csSave("contentPosts",id,P)){E.id=id;if(old&&old!==fkey)csApi("delete",{keys:[old]}).catch(()=>{});toast(status==="pending"?"Sent for approval":status==="approved"?"Approved":"Saved");csSyncConfig()}
+  }catch(e){toast(e.message||"Couldn’t save")}}
+function csOpen(id){const p=CS.posts[id];if(!p)return;CS.ed={id,post:JSON.parse(JSON.stringify(p)),imgs:{},brief:"",count:2};CS.gen=null;CS.sec="create";render();scrollTo(0,0)}
+
+/* ---------- approvals ---------- */
+function csQueue(){const f=CS.qf,L=csPostsBy(p=>f==="all"||p.status===f||(f==="pending"&&p.status==="generated")).sort((a,b)=>String(a.date||"9").localeCompare(String(b.date||"9")));
+  const n=s=>csPostsBy(p=>p.status===s||(s==="pending"&&p.status==="generated")).length;
+  return '<div class="seg" style="margin-bottom:14px;flex-wrap:wrap">'+[["pending","Waiting"],["draft","Drafts"],["approved","Approved"],["scheduled","Scheduled"],["published","Published"],["rejected","Rejected"],["failed","Failed"],["all","All"]].map(([k,l])=>'<button class="'+(f===k?"on":"")+'" data-act="cs-qf" data-v="'+k+'">'+l+(k!=="all"?' ('+n(k)+')':'')+'</button>').join("")+'</div>'+
+    (L.length?'<div class="csq">'+L.map(p=>'<div class="csqc">'+'<button class="csqi" data-act="cs-open" data-id="'+esc(p.id)+'">'+csThumb(p,"csqth")+'</button><div class="csqb">'+csChip(p.brandId)+'<b>'+esc((p.headline||[]).join(" "))+'</b><small class="muted">'+esc(p.date||"No date")+(p.time?" "+esc(p.time):"")+' · '+esc((p.platforms||[]).join(", "))+(p.source==="weekly"?" · weekly":"")+(p.campaignId?" · campaign":"")+'</small><span class="csst s-'+esc(p.status)+'">'+esc(CS_ST[p.status])+'</span>'+
+      '<div class="btnrow0">'+csActions(p)+'</div></div></div>').join("")+'</div>':'<div class="empty">Nothing here.</div>');
+}
+function csActions(p){const f=csFounder(),id=esc(p.id),B=(a,l,c)=>'<button class="btn '+(c||"ghost")+' sm" data-act="'+a+'" data-id="'+id+'">'+l+'</button>';let h=B("cs-open","Open");
+  if((p.status==="pending"||p.status==="generated")&&f)h+=(p.finalKey?B("cs-approve","Approve","olive"):'')+B("cs-reject","Reject");
+  if(p.status==="approved"&&f)h+=B("cs-schedule","Schedule","olive");
+  if(p.status==="scheduled"&&f)h+=B("cs-dlp","Download")+B("cs-copyp","Copy caption")+B("cs-published","Mark published","olive")+B("cs-failed","Mark failed")+B("cs-schedule","Reschedule");
+  if(p.status==="failed"&&f)h+=B("cs-schedule","Reschedule","olive");
+  if(p.status==="rejected")h+=B("cs-revise","Revise");
+  if(f)h+=B("cs-del","Delete");return h}
+async function csStatus(id,status,extra,note){const p=CS.posts[id];if(!p)return;const at=new Date().toISOString();const rec=Object.assign({},p,extra||{},{status,updatedAt:at,history:(p.history||[]).concat({s:status,at,by:S.uid||"",note:note||""})});
+  if(await csSave("contentPosts",id,rec)){toast(CS_ST[status]);csSyncConfig()}}
+function csScheduleModal(id){const p=CS.posts[id];openModal('<h3>Schedule</h3><div class="grid2"><label class="f">Date<input class="i" type="date" id="csSd" value="'+esc(p.date||csToday())+'"></label><label class="f">Time<input class="i" type="time" id="csSt" value="'+esc(p.time||"12:00")+'"></label></div><p class="muted small">On the day it shows under “Ready to post” with the graphic and the right caption for each platform.</p><div class="row"><button class="btn ghost" data-act="close-modal">Cancel</button><button class="btn olive" id="csSgo">Schedule</button></div>',
+  el=>el.querySelector("#csSgo").addEventListener("click",()=>{const d=el.querySelector("#csSd").value,t=el.querySelector("#csSt").value;if(!d){toast("Pick a date");return}closeModal();csStatus(id,"scheduled",{date:d,time:t})}))}
+function csPublishModal(id){const p=CS.posts[id],norm=s=>String(s||"").toLowerCase().replace(/\W+/g,"");
+  const dup=csPostsBy(x=>x.id!==id&&x.status==="published"&&Date.now()-Date.parse(x.publishedAt||0)<60*86400000&&(norm(x.caption)===norm(p.caption)||(x.finalKey&&x.finalKey===p.finalKey)||norm((x.headline||[]).join())===norm((p.headline||[]).join())));
+  openModal('<h3>Mark as published</h3>'+(dup.length?'<div class="banner warn" style="margin:0 0 10px">This looks like a post already published on '+esc((dup[0].publishedAt||"").slice(0,10))+'. Publishing it again may look repetitive.</div>':'')+'<p class="muted small">Where did it go out? Add links if you have them.</p>'+(p.platforms||[]).map(k=>'<label class="f">'+esc((CS_PLATS.find(x=>x[0]===k)||[,k])[1])+'<input class="i" data-pl="'+esc(k)+'" placeholder="https:// link to the post (optional)"></label>').join("")+'<div class="row"><button class="btn ghost" data-act="close-modal">Cancel</button><button class="btn olive" id="csPgo">Mark published</button></div>',
+  el=>el.querySelector("#csPgo").addEventListener("click",()=>{const links={};el.querySelectorAll("[data-pl]").forEach(i=>{if(/^https:\/\//.test(i.value.trim()))links[i.dataset.pl]=i.value.trim()});closeModal();csStatus(id,"published",{publishedAt:new Date().toISOString(),links})}))}
+function csCaptionFor(p,plat){const v=(p.variants||{})[plat];return (v||p.caption||"")+((p.hashtags||[]).length?"\n\n"+p.hashtags.join(" "):"")}
+function csCopyModal(p){openModal('<h3>Copy caption</h3>'+((p.platforms||["instagram"]).map(k=>'<label class="f">'+esc((CS_PLATS.find(x=>x[0]===k)||[,k])[1])+'<textarea class="i" rows="5" readonly>'+esc(csCaptionFor(p,k))+'</textarea></label><button class="btn ghost sm" data-act="cs-copytxt" data-k="'+esc(k)+'" data-id="'+esc(p.id||"")+'">Copy '+esc(k)+'</button>').join(""))+'<div class="row"><button class="btn olive" data-act="close-modal">Done</button></div>')}
+async function csDownload(key,name){const u=await csFile(key);if(!u){toast("The graphic isn’t available");return}const a=document.createElement("a");a.href=u;a.download=name;a.click()}
+
+/* ---------- calendar ---------- */
+function csHolidays(y){const nth=(m,dow,n)=>{const d=new Date(y,m,1);let c=0;while(true){if(d.getDay()===dow&&++c===n)break;d.setDate(d.getDate()+1)}return d},last=(m,dow)=>{const d=new Date(y,m+1,0);while(d.getDay()!==dow)d.setDate(d.getDate()-1);return d};const f=d=>d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+  return [[y+"-01-01","New Year’s Day"],[f(nth(0,1,3)),"MLK Day"],[y+"-02-14","Valentine’s Day"],[f(nth(4,0,2)),"Mother’s Day"],[f(last(4,1)),"Memorial Day"],[y+"-06-19","Juneteenth"],[f(nth(5,0,3)),"Father’s Day"],[y+"-07-04","Independence Day"],[f(nth(8,1,1)),"Labor Day"],[y+"-10-31","Halloween"],[f(nth(10,4,4)),"Thanksgiving"],[y+"-12-24","Christmas Eve"],[y+"-12-25","Christmas"],[y+"-12-31","New Year’s Eve"],[y+"-02-01","Black History Month begins"]]}
+function csCalItems(from,to){const out=[],br=CS.cal.brand,ok=b=>br==="all"||b===br;
+  Object.values(CS.posts).forEach(p=>{if(p.date&&p.date>=from&&p.date<=to&&ok(p.brandId))out.push({d:p.date,k:"post",id:p.id,t:(p.headline||[]).join(" ")||"Post",c:((csBrand(p.brandId)||{}).colors||{}).primary||"#F4A987",s:p.status})});
+  (S.events||[]).forEach(e=>{if(e.date>=from&&e.date<=to)out.push({d:e.date,k:"event",t:e.title,c:"#68d4d0"})});
+  Object.values(CS.camps).forEach(c=>{if(c.archived||(br!=="all"&&!(c.brands||[]).includes(br)))return;[["start","starts"],["launch","launch"],["end","ends"]].forEach(([f,l])=>{if(c[f]&&c[f]>=from&&c[f]<=to)out.push({d:c[f],k:"camp",id:c.id,t:c.name+" "+l,c:"#b7a1e5"})})});
+  try{Object.values(MU().songs||{}).forEach(s=>{if(s.releaseDate&&s.releaseDate>=from&&s.releaseDate<=to)out.push({d:s.releaseDate,k:"release",t:"Release: "+s.title,c:"#e8c27a"})})}catch(e){}
+  [from.slice(0,4),to.slice(0,4)].filter((v,i,a)=>a.indexOf(v)===i).forEach(y=>csHolidays(+y).forEach(([d,t])=>{if(d>=from&&d<=to)out.push({d,k:"holiday",t,c:"#8d877e"})}));
+  csBrandList().forEach(b=>{if(b.founded&&ok(b.id)){const md=b.founded.slice(5);[from.slice(0,4),to.slice(0,4)].forEach(y=>{const d=y+"-"+md;if(d>=from&&d<=to&&!out.some(x=>x.k==="anniv"&&x.d===d&&x.t.startsWith(b.name)))out.push({d,k:"anniv",t:b.name+" anniversary",c:"#c9e27a"})})}});
+  return out}
+function csCal(){const C=CS.cal;if(!C.m)C.m=csToday().slice(0,7);const [y,mo]=C.m.split("-").map(Number),first=new Date(y,mo-1,1),start=new Date(first);start.setDate(1-((first.getDay()+6)%7));
+  const days=[];if(C.view==="month")for(let i=0;i<42;i++){const d=new Date(start);d.setDate(start.getDate()+i);days.push(d)}else{const base=new Date((C.day||csToday())+"T12:00");const s=new Date(base);if(C.view==="week")s.setDate(base.getDate()-((base.getDay()+6)%7));for(let i=0;i<(C.view==="week"?7:1);i++){const d=new Date(s);d.setDate(s.getDate()+i);days.push(d)}}
+  const f=d=>d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"),from=f(days[0]),to=f(days[days.length-1]),items=csCalItems(from,to),t=csToday();
+  const it=x=>'<div class="csci k-'+x.k+(x.k==="post"?" s-"+x.s:"")+'" style="--cc:'+esc(x.c)+'"'+(x.k==="post"?' draggable="'+(x.s!=="published")+'" data-pid="'+esc(x.id)+'" data-act="cs-open" data-id="'+esc(x.id)+'"':x.k==="camp"?' data-act="cs-camp-open" data-id="'+esc(x.id)+'"':'')+'>'+esc(x.t)+'</div>';
+  return '<div class="cscalh"><div class="btnrow0"><button class="btn ghost sm" data-act="cs-cal-nav" data-d="-1">‹</button><b>'+(C.view==="month"?first.toLocaleDateString("en-US",{month:"long",year:"numeric"}):fmtDate(from)+(from!==to?" – "+fmtDate(to):""))+'</b><button class="btn ghost sm" data-act="cs-cal-nav" data-d="1">›</button><button class="btn ghost sm" data-act="cs-cal-today">Today</button></div>'+
+    '<div class="btnrow0"><div class="seg">'+[["month","Month"],["week","Week"],["day","Day"]].map(([k,l])=>'<button class="'+(C.view===k?"on":"")+'" data-act="cs-cal-view" data-v="'+k+'">'+l+'</button>').join("")+'</div><select class="i sm" id="csCalB" style="width:auto"><option value="all">All brands</option>'+csBrandList().map(b=>'<option value="'+esc(b.id)+'"'+(C.brand===b.id?" selected":"")+'>'+esc(b.name)+'</option>').join("")+'</select></div></div>'+
+    '<div class="cscal v-'+C.view+'">'+(C.view==="month"?["Mon","Tue","Wed","Thu","Fri","Sat","Sun"].map(d=>'<div class="cscdh">'+d+'</div>').join(""):"")+
+    days.map(d=>{const ds=f(d),L=items.filter(x=>x.d===ds);return '<div class="cscd'+(ds===t?" today":"")+(C.view==="month"&&d.getMonth()!==mo-1?" out":"")+'" data-day="'+ds+'"><div class="cscdn"><button data-act="cs-cal-day" data-v="'+ds+'">'+(C.view==="month"?d.getDate():d.toLocaleDateString("en-US",{weekday:"short",month:"short",day:"numeric"}))+'</button>'+(csAccess()?'<button class="cscadd" data-act="cs-cal-add" data-v="'+ds+'" aria-label="New post on this day">+</button>':'')+'</div>'+L.slice(0,C.view==="month"?5:50).map(it).join("")+(C.view==="month"&&L.length>5?'<small class="muted">+'+(L.length-5)+' more</small>':'')+'</div>'}).join("")+'</div>'+
+    '<p class="muted small" style="margin-top:8px">Drag a post to another day to reschedule. Legend: <span class="csci k-event" style="--cc:#68d4d0;display:inline-block">events</span> <span class="csci k-camp" style="--cc:#b7a1e5;display:inline-block">campaigns</span> <span class="csci k-release" style="--cc:#e8c27a;display:inline-block">music releases</span> <span class="csci k-holiday" style="--cc:#8d877e;display:inline-block">holidays</span> <span class="csci k-anniv" style="--cc:#c9e27a;display:inline-block">anniversaries</span></p>';
+}
+document.addEventListener("dragstart",e=>{const t=e.target.closest&&e.target.closest("[data-pid]");if(t){e.dataTransfer.setData("text/csp",t.dataset.pid);e.dataTransfer.effectAllowed="move"}});
+document.addEventListener("dragover",e=>{const d=e.target.closest&&e.target.closest(".cscd");if(d&&[...e.dataTransfer.types].includes("text/csp")){e.preventDefault();d.classList.add("over")}});
+document.addEventListener("dragleave",e=>{const d=e.target.closest&&e.target.closest(".cscd");if(d)d.classList.remove("over")});
+document.addEventListener("drop",e=>{const d=e.target.closest&&e.target.closest(".cscd");const id=e.dataTransfer&&e.dataTransfer.getData("text/csp");if(!d||!id)return;e.preventDefault();d.classList.remove("over");const p=CS.posts[id];if(!p||p.date===d.dataset.day)return;
+  if(p.status==="published"){toast("Published posts stay on their date");return}if(["approved","scheduled"].includes(p.status)&&!csFounder()){toast("Only the founder moves approved posts");return}
+  csSave("contentPosts",id,Object.assign({},p,{date:d.dataset.day,updatedAt:new Date().toISOString(),history:(p.history||[]).concat({s:p.status,at:new Date().toISOString(),by:S.uid||"",note:"moved to "+d.dataset.day})})).then(ok=>ok&&toast("Moved to "+fmtDate(d.dataset.day)))});
+document.addEventListener("change",e=>{if(e.target.id==="csCalB"){CS.cal.brand=e.target.value;render()}});
+
+/* ---------- campaigns ---------- */
+const CS_PHASES=[["awareness","Awareness"],["teasers","Teasers"],["launch","Launch / event"],["followup","Follow-up"]];
+function csCamps(){if(CS.camp&&CS.camps[CS.camp])return csCampDetail(CS.camps[CS.camp]);const L=Object.values(CS.camps).sort((a,b)=>String(b.createdAt).localeCompare(String(a.createdAt)));
+  return '<div class="sechead" style="margin-bottom:12px"><p class="muted">One instruction → a dated four-phase campaign across your brands, each in its own look. Everything goes to Approvals first.</p><button class="btn peach sm" data-act="cs-camp-new">+ New campaign</button></div>'+
+    (L.length?'<div class="csq">'+L.map(c=>{const P=csPostsBy(p=>p.campaignId===c.id),done=P.filter(p=>["approved","scheduled","published"].includes(p.status)).length;return '<button class="csqc camp'+(c.archived?" arch":"")+'" data-act="cs-camp-open" data-id="'+esc(c.id)+'"><div class="csqb"><b>'+esc(c.name)+'</b><small class="muted">'+esc(c.start||"")+' → '+esc(c.end||"")+(c.launch?' · launch '+esc(c.launch)+(c.confirmed?"":" (internal target)"):'')+'</small><div>'+(c.brands||[]).map(csChip).join(" ")+'</div><div class="csprog"><i style="width:'+(P.length?Math.round(done/P.length*100):0)+'%"></i></div><small class="muted">'+done+' of '+P.length+' posts approved · '+esc(c.archived?"archived":c.state||"active")+'</small></div></button>'}).join("")+'</div>':'<div class="empty">No campaigns yet.</div>')}
+function csCampModal(seed){seed=seed||{};const t=csToday(),add=n=>{const d=new Date();d.setDate(d.getDate()+n);return d.toISOString().slice(0,10)};
+  openModal('<form id="cscf"><h3>New campaign</h3><label class="f">Tell us what to do<input class="i" name="name" required value="'+esc(seed.name||"")+'" placeholder="Groove Guide launch campaign"></label>'+
+    '<label class="f">Brands taking part</label><div class="cschk">'+csBrandList().map(b=>'<label><input type="checkbox" name="b_'+esc(b.id)+'"'+((seed.brands||[]).includes(b.id)?" checked":"")+'> '+esc(b.name)+'</label>').join("")+'</div>'+
+    '<div class="grid2"><label class="f">Objective<input class="i" name="objective" value="'+esc(seed.objective||"")+'" placeholder="Sign-ups for the launch"></label><label class="f">Audience<input class="i" name="audience" placeholder="Charlotte drivers, 21–40"></label></div>'+
+    '<div class="grid3"><label class="f">Start<input class="i" type="date" name="start" value="'+add(1)+'"></label><label class="f">Launch / event<input class="i" type="date" name="launch" value="'+add(21)+'"></label><label class="f">End<input class="i" type="date" name="end" value="'+add(35)+'"></label></div>'+
+    '<label class="ck"><input type="checkbox" name="confirmed"> The launch / event date is confirmed (otherwise posts say “coming soon”)</label>'+
+    '<div class="cschk">'+CS_PLATS.map(([k,l])=>'<label><input type="checkbox" name="p_'+k+'"'+(["instagram","facebook"].includes(k)?" checked":"")+'> '+l+'</label>').join("")+'</div>'+
+    '<div class="grid2"><label class="f">Posts per week<input class="i" type="number" min="1" max="14" name="frequency" value="3"></label><label class="f">Budget (optional, USD)<input class="i" type="number" min="0" name="budget"></label></div><label class="f">Creative direction<input class="i" name="direction" value="'+esc(seed.direction||"")+'" placeholder="cinematic night city, peach light"></label>'+
+    '<p class="muted small">Writing the plan costs a few cents. Backgrounds are made later, post by post or all at once, with a cost check first.</p><div class="row"><button type="button" class="btn ghost" data-act="close-modal">Cancel</button><button class="btn peach" id="cscGo"'+(CS.status&&CS.status.ai?'':' disabled title="Add OPENAI_API_KEY"')+'>Plan campaign</button></div></form>',
+  el=>el.querySelector("#cscf").addEventListener("submit",async ev=>{ev.preventDefault();const o=formObj(ev.target),f=ev.target;const brands=csBrandList().filter(b=>f["b_"+b.id].checked);if(!brands.length){toast("Pick at least one brand");return}
+    const btn=el.querySelector("#cscGo");btn.disabled=true;btn.textContent="Planning…";
+    const req={name:o.name,objective:o.objective,audience:o.audience,start:o.start,launch:o.launch,end:o.end,confirmed:!!f.confirmed.checked,platforms:CS_PLATS.map(x=>x[0]).filter(k=>f["p_"+k].checked),frequency:+o.frequency||3,budget:o.budget,direction:o.direction,brands:brands.map(csBrandPayload)};
+    try{const j=await csApi("campaign",req),d=j.data||{},cid=uid();
+      await csSave("contentCampaigns",cid,{name:o.name,brands:brands.map(b=>b.id),objective:o.objective,audience:o.audience,start:o.start,launch:o.launch,end:o.end,confirmed:req.confirmed,platforms:req.platforms,frequency:req.frequency,budget:Number(o.budget)||0,direction:o.direction,
+        theme:d.theme||"",messaging:d.messaging||"",strategy:d.strategy||"",phases:(d.phases||[]).slice(0,4),state:"active",archived:false,cost:j.cost||0,createdAt:new Date().toISOString(),by:S.uid||""});
+      let n=0;for(const ai of (d.posts||[]).slice(0,60)){const b=csBrand(ai.brandId)||brands[0];await csSave("contentPosts",uid(),csFromAI(ai,b,{campaignId:cid,phase:ai.phase||"",date:ai.date||"",format:CS_FORMATS[ai.format]?ai.format:"portrait"}));n++}
+      closeModal();CS.camp=cid;CS.sec="camp";render();toast("Campaign planned: "+n+" posts in Approvals")}
+    catch(e){btn.disabled=false;btn.textContent="Plan campaign";toast(e.message)}}))}
+function csCampDetail(c){const P=csPostsBy(p=>p.campaignId===c.id).sort((a,b)=>String(a.date).localeCompare(String(b.date)));const cost=(c.cost||0)+P.reduce((a,p)=>a+(p.cost||0),0);
+  const cnt=s=>P.filter(p=>p.status===s).length,done=P.filter(p=>["approved","scheduled","published"].includes(p.status)).length,next=P.filter(p=>p.date>=csToday()&&p.status!=="published").slice(0,5);
+  return '<button class="btn ghost sm" data-act="cs-camp-back">‹ All campaigns</button><div class="mbox" style="margin-top:12px"><div class="csh"><div><h3 style="font-size:24px">'+esc(c.name)+'</h3><small class="muted">'+esc(c.start)+' → '+esc(c.end)+(c.launch?' · launch '+esc(c.launch)+(c.confirmed?" (confirmed)":" (internal target, not announced)"):'')+' · '+esc(c.archived?"archived":c.state||"active")+'</small><div style="margin-top:6px">'+(c.brands||[]).map(csChip).join(" ")+'</div></div>'+
+    '<span class="btnrow0"><button class="btn ghost sm" data-act="cs-camp-pause" data-id="'+esc(c.id)+'">'+(c.state==="paused"?"Resume":"Pause")+'</button><button class="btn ghost sm" data-act="cs-camp-extend" data-id="'+esc(c.id)+'">Extend</button><button class="btn ghost sm" data-act="cs-camp-dup" data-id="'+esc(c.id)+'">Duplicate</button><button class="btn ghost sm" data-act="cs-camp-arch" data-id="'+esc(c.id)+'">'+(c.archived?"Unarchive":"Archive")+'</button></span></div>'+
+    '<div class="cskpis" style="margin-top:12px"><div class="cskpi"><small>Progress</small><b>'+(P.length?Math.round(done/P.length*100):0)+'%</b><span>'+done+' of '+P.length+' approved</span></div><div class="cskpi"><small>Pending approval</small><b>'+(cnt("pending")+cnt("generated"))+'</b></div><div class="cskpi"><small>Scheduled</small><b>'+cnt("scheduled")+'</b></div><div class="cskpi"><small>Published</small><b>'+cnt("published")+'</b></div><div class="cskpi"><small>AI cost so far</small><b>$'+cost.toFixed(2)+'</b><span>'+(c.budget?"Budget $"+c.budget:"No budget set")+'</span></div></div>'+
+    (c.theme?'<div class="grid3" style="margin-top:12px"><div><h4>Theme</h4><p>'+esc(c.theme)+'</p></div><div><h4>Messaging</h4><p>'+esc(c.messaging)+'</p></div><div><h4>Strategy</h4><p>'+esc(c.strategy)+'</p></div></div>':'')+
+    '<div class="btnrow0" style="margin-top:12px"><button class="btn olive sm" data-act="cs-camp-art" data-id="'+esc(c.id)+'"'+(CS.status&&CS.status.ai?'':' disabled')+'>Make all missing backgrounds</button><button class="btn ghost sm" data-act="cs-camp-send" data-id="'+esc(c.id)+'">Send finished posts for approval</button></div>'+
+    (next.length?'<h4 style="margin-top:14px">Upcoming deliverables</h4>'+next.map(csRow).join(""):'')+'</div>'+
+    CS_PHASES.map(([k,l])=>{const ph=(c.phases||[]).find(x=>x.key===k)||{},L=P.filter(p=>p.phase===k);return '<div class="mbox"><div class="csh"><h3>'+l+(ph.start?' <small class="muted">'+esc(ph.start)+' → '+esc(ph.end)+'</small>':'')+'</h3></div>'+(ph.goal?'<p class="muted small">'+esc(ph.goal)+'</p>':'')+(L.length?L.map(csRow).join(""):'<p class="muted small">No posts in this phase.</p>')+'</div>'}).join("")+
+    (P.filter(p=>!CS_PHASES.some(x=>x[0]===p.phase)).length?'<div class="mbox"><h3>Other</h3>'+P.filter(p=>!CS_PHASES.some(x=>x[0]===p.phase)).map(csRow).join("")+'</div>':'');
+}
+async function csAutoArt(p){const b=csBrand(p.brandId)||{},F=CS_FORMATS[p.format]||CS_FORMATS.portrait;
+  const j=await csApi("image",{prompt:p.imagePrompt||((p.headline||[]).join(" ")+" — "+(b.name||"")),size:F.img,style:"brand colors "+Object.values(b.colors||{}).join(", ")});
+  const k=await csApi("keep",{key:j.key});const im=await csImgEl(k.key),lg=p.logoKey?await csImgEl(p.logoKey):null;await csFontsFor(b);
+  const cv=document.createElement("canvas");csRender(cv,p,b,{bg:im,logo:lg});const blob=await new Promise(r=>cv.toBlob(r,"image/png"));const fk="content/final/"+p.id+"-"+Date.now().toString(36)+".png";await csPut(fk,blob,"image/png");
+  await csSave("contentPosts",p.id,Object.assign({},p,{bgKey:k.key,finalKey:fk,cost:(p.cost||0)+(j.cost||0),updatedAt:new Date().toISOString()}));return j.cost||0}
+
+/* ---------- trends ---------- */
+const CS_AREAS={ent:["music and entertainment","Charlotte culture"],music:["music releases","independent artists"],tv:["podcasts","streaming shows"],live:["live events","concerts in Charlotte"],guide:["travel and navigation","Charlotte driving and city news"],aec:["architecture and construction","AI in design"],vybr8:["restaurants and food","Charlotte dining and nightlife"],pathd:["careers and employment","hiring trends"],scu:["books and gaming","family reading"],aelio:["artificial intelligence","consumer AI tools"]};
+function csTrends(){const b=csBrand(CS.tb)||csBrandList()[0];if(!b)return '<div class="empty">Add brand kits first.</div>';CS.tb=b.id;const T=Object.values(CS.trends).filter(x=>x.brandId===b.id).sort((a,c)=>String(c.checkedAt).localeCompare(String(a.checkedAt)))[0];
+  return '<div class="mbox"><div class="grid3" style="align-items:end"><label class="f">Brand<select class="i" id="csTb">'+csBrandList().map(x=>'<option value="'+esc(x.id)+'"'+(x.id===b.id?" selected":"")+'>'+esc(x.name)+'</option>').join("")+'</select></label><label class="f">Areas<input class="i" id="csTa" value="'+esc((CS_AREAS[b.id]||["culture","technology"]).join(", "))+'"></label><label class="f">Focus (optional)<input class="i" id="csTf" placeholder="e.g. holiday travel"></label></div>'+
+    '<div class="btnrow0" style="margin-top:10px"><button class="btn peach sm" data-act="cs-trend-run"'+(CS.status&&CS.status.ai?'':' disabled title="Add OPENAI_API_KEY"')+'>'+(CS.genBusy==="trend"?"Researching…":"Research current topics")+'</button><span class="muted small">Uses live web search; every topic links its sources. About $0.05–0.15 per run.</span></div></div>'+
+    (T?'<p class="muted small" style="margin:6px 0 10px">Checked '+esc(new Date(T.checkedAt).toLocaleString())+'</p>'+(T.topics||[]).map((t,i)=>'<div class="mbox cstr"><b>'+esc(t.title)+'</b>'+(t.published?' <small class="muted">'+esc(t.published)+'</small>':'')+'<p>'+esc(t.summary)+'</p>'+(t.angle?'<p class="muted small"><b>Angle:</b> '+esc(t.angle)+'</p>':'')+
+      '<div class="cssrc">'+(t.sources||[]).map(s=>'<a href="'+esc(s.url)+'" target="_blank" rel="noopener noreferrer">'+esc(s.title||new URL(s.url).hostname)+' ↗</a>').join("")+'</div><div class="btnrow0"><button class="btn ghost sm" data-act="cs-trend-post" data-id="'+esc(T.id)+'" data-i="'+i+'">Make a post</button><button class="btn ghost sm" data-act="cs-trend-camp" data-id="'+esc(T.id)+'" data-i="'+i+'">Make a campaign</button></div></div>').join(""):'<div class="empty">No research for '+esc(b.name)+' yet.</div>')}
+document.addEventListener("change",e=>{if(e.target.id==="csTb"){CS.tb=e.target.value;render()}});
+
+/* ---------- actions ---------- */
+function contentAct(a,t){if(!a.startsWith("cs-"))return false;const id=t.dataset.id;
+  if(a==="cs-sec"){CS.sec=t.dataset.v;if(CS.sec!=="camp")CS.camp="";if(CS.sec==="storage"&&!CS.storage)csStorageLoad();render();return true}
+  if(a==="cs-seed"){csSeedBrands();return true}
+  if(a==="cs-brand-new"){csBrandModal("");return true}
+  if(a==="cs-brand-edit"){csBrandModal(id);return true}
+  if(a==="cs-new-for"){CS.ed=csNewEd(id);CS.gen=null;CS.sec="create";if(!S.route.includes("content")){location.hash=S.isAdmin?"#team-content":"#content";return true}render();return true}
+  if(a==="cs-proj-new"){const p=csBrand(id)||{};csBrandModal("",{parent:id,theme:p.theme||"dark",colors:Object.assign({},p.colors),fonts:Object.assign({},p.fonts),freq:1,platforms:p.platforms||["instagram","facebook"]});return true}
+  if(a==="cs-proj-quick"){const p=csBrand(id)||{},name=t.dataset.v,nid=name.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");if(CS.brands[nid]){toast("Already added");return true}
+    csSave("contentBrands",nid,{name,parent:id,kind:"project",theme:p.theme||"dark",order:90,enabled:true,archived:false,colors:Object.assign({},p.colors),fonts:Object.assign({},p.fonts),tagline:"",kicker:"",website:"",voice:p.voice||"",audience:"",about:"",handles:{},hashtags:[],ctas:[],restrictions:"",guidelines:"",logos:[],imagery:[],locations:[],freq:1,platforms:p.platforms||["instagram","facebook"],founded:"",createdAt:new Date().toISOString()})
+      .then(ok=>{if(ok){toast(name+" added. Upload its logo and add its locations.");csSyncConfig();render();setTimeout(()=>csBrandModal(nid),300)}});return true}
+  if(a==="cs-loc-add"){const box=$("#csLocs");if(box&&box.children.length<20)box.insertAdjacentHTML("beforeend",csLocRow({}));return true}
+  if(a==="cs-loc-del"){const r=t.closest(".csloc");if(r)r.remove();return true}
+  if(a==="cs-logo-site"){csLogoFromSite(id);return true}
+  if(a==="cs-logo-primary"||a==="cs-logo-del"||a==="cs-img-del"){const b=csBrand(id),i=+t.dataset.i,kind=a==="cs-img-del"?"imagery":"logos",L=(b[kind]||[]).slice();
+    if(a==="cs-logo-primary"){L.forEach((l,j)=>l.primary=j===i);csSave("contentBrands",id,Object.assign({},b,{logos:L})).then(()=>csBrandModal(id));return true}
+    if(!confirm("Delete this "+(kind==="logos"?"official logo file":"photo")+"? Posts already finished keep their graphic."))return true;const gone=L.splice(i,1)[0];if(kind==="logos"&&gone.primary&&L[0])L[0].primary=true;
+    csApi("delete",{keys:[gone.key],brandKit:true}).catch(()=>{});csSave("contentBrands",id,Object.assign({},b,{[kind]:L})).then(()=>csBrandModal(id));return true}
+  if(a==="cs-gen"){const E=CS.ed,b=csBrand(E.post.brandId);E.brief=($("#csBrief")||{}).value||E.brief;E.direction=($("#csDir")||{}).value||"";if(!E.brief){toast("Describe the post first");return true}CS.genBusy="gen";render();
+    const ev=(typeof upcomingEvents==="function"?upcomingEvents(S.events.filter(e=>e.visibility==="public")):[]).filter(e=>!e.brand||e.brand===b.id||e.brand==="hq").slice(0,10).map(e=>({title:e.title,date:e.date,location:e.location||""}));
+    const loc=E.post.loc!==undefined&&E.post.loc!==""?(b.locations||[])[+E.post.loc]:null;csApi("generate",{brand:csBrandPayload(b,loc),brief:E.brief,direction:E.direction,platforms:E.post.platforms,format:E.post.format,count:E.count||2,date:E.post.date,events:ev,avoid:Object.values(CS.posts).slice(-40).map(p=>(p.headline||[]).join(" "))})
+      .then(j=>{CS.gen=j.posts;E.genCost=j.cost||0}).catch(e=>toast(e.message)).finally(()=>{CS.genBusy="";render()});return true}
+  if(a==="cs-use"){const g=CS.gen[+t.dataset.i],E=CS.ed,b=csBrand(E.post.brandId),keep={bgKey:E.post.bgKey,bgX:E.post.bgX,bgY:E.post.bgY,bgZoom:E.post.bgZoom,logoKey:E.post.logoKey,format:E.post.format,platforms:E.post.platforms,date:E.post.date};
+    const lk={loc:E.post.loc,where:E.post.where};E.post=Object.assign(csFromAI(g,b,{status:"draft",format:keep.format,cost:E.genCost||0}),keep,lk,{date:keep.date||g.suggestedDate||""});if(lk.where&&b.locations&&b.locations[+lk.loc]&&b.locations[+lk.loc].website)E.post.url=b.locations[+lk.loc].website.replace(/^https?:\/\//,"").replace(/\/$/,"");E.genCost=0;render();return true}
+  if(a==="cs-part"){const E=CS.ed,b=csBrand(E.post.brandId),part=t.dataset.v;t.disabled=true;t.textContent="…";
+    csApi("part",{brand:csBrandPayload(b),post:csCopyFields(E.post),part}).then(j=>{const d=j.data||{};if(part==="headline"&&Array.isArray(d.headline))E.post.headline=d.headline.slice(0,4);else if(part==="features"&&Array.isArray(d.features))E.post.features=d.features.slice(0,5).map(f=>({icon:CS_ICONS[f.icon]?f.icon:"star",title:String(f.title||""),text:String(f.text||"")}));
+      else if(part==="hashtags"&&Array.isArray(d.hashtags))E.post.hashtags=d.hashtags.map(h=>String(h).replace(/^#?/,"#"));else if(d[part]!=null)E.post[part]=String(d[part]);if(part==="caption"&&d.variants)E.post.variants=d.variants;E.post.cost=(E.post.cost||0)+(j.cost||0)}).catch(e=>toast(e.message)).finally(()=>render());return true}
+  if(a==="cs-feat-add"){CS.ed.post.features=(CS.ed.post.features||[]).concat({icon:"star",title:"",text:""});render();return true}
+  if(a==="cs-feat-del"){CS.ed.post.features.splice(+t.dataset.i,1);render();return true}
+  if(a==="cs-bg-ai"){const E=CS.ed,P=E.post,b=csBrand(P.brandId)||{};if(!P.imagePrompt){toast("Describe the background first (or generate copy)");return true}const F=CS_FORMATS[P.format];CS.genBusy="img";render();
+    csApi("image",{prompt:P.imagePrompt,size:F.img,style:(b.theme==="light"?"bright, airy, ":"dark, cinematic, ")+"brand colors "+Object.values(b.colors||{}).join(", ")}).then(j=>{P.bgKey=j.key;P.cost=(P.cost||0)+(j.cost||0);toast("Background ready ($"+(j.cost||0).toFixed(3)+")")}).catch(e=>toast(e.message)).finally(()=>{CS.genBusy="";render()});return true}
+  if(a==="cs-bg-pick"){const b=csBrand(CS.ed.post.brandId)||{};openModal('<h3>Brand photos</h3>'+((b.imagery||[]).length?'<div class="cslogos">'+b.imagery.map(l=>'<button class="cslogo img" data-act="cs-bg-use" data-k="'+esc(l.key)+'"><img data-csk="'+esc(l.key)+'" alt=""><small>'+esc(l.name||"")+'</small></button>').join("")+'</div>':'<p class="muted">No approved photos in this brand kit yet.</p>')+'<div class="row"><button class="btn ghost" data-act="close-modal">Close</button></div>',()=>csHydrate());return true}
+  if(a==="cs-bg-use"){CS.ed.post.bgKey=t.dataset.k;closeModal();render();return true}
+  if(a==="cs-bg-clear"){CS.ed.post.bgKey="";render();return true}
+  if(a==="cs-save"){csSavePost(t.dataset.v);return true}
+  if(a==="cs-dl"){csDraw().then(()=>$("#csCanvas").toBlob(bl=>{const u=URL.createObjectURL(bl),l=document.createElement("a");l.href=u;const P=CS.ed.post;l.download=((csBrand(P.brandId)||{}).name||"grooveville").replace(/\W+/g,"-")+"-"+P.format+"-"+(P.date||csToday())+".png";l.click();setTimeout(()=>URL.revokeObjectURL(u),3000)},"image/png"));return true}
+  if(a==="cs-copy"){csCopyModal(CS.ed.post);return true}
+  if(a==="cs-copytxt"){const p=id?CS.posts[id]:CS.ed.post;navigator.clipboard.writeText(csCaptionFor(p,t.dataset.k)).then(()=>toast("Copied")).catch(()=>toast("Select the text and copy it"));return true}
+  if(a==="cs-dup"){const P=JSON.parse(JSON.stringify(CS.ed.post));CS.ed={id:"",post:Object.assign(P,{status:"draft",finalKey:"",history:[],createdAt:new Date().toISOString(),cost:0}),imgs:{},count:2};render();toast("Copy made. Save it to keep it.");return true}
+  if(a==="cs-ed-new"){CS.ed=csNewEd((CS.ed&&CS.ed.post.brandId)||csBrandList()[0].id);CS.gen=null;render();return true}
+  if(a==="cs-open"){csOpen(id);return true}
+  if(a==="cs-qf"){CS.qf=t.dataset.v;render();return true}
+  if(a==="cs-approve"){csStatus(id,"approved");return true}
+  if(a==="cs-reject"){const n=prompt("Why reject it? (optional)")||"";csStatus(id,"rejected",{},n);return true}
+  if(a==="cs-revise"){csStatus(id,"draft",{},"revising");return true}
+  if(a==="cs-schedule"){csScheduleModal(id);return true}
+  if(a==="cs-published"){csPublishModal(id);return true}
+  if(a==="cs-failed"){const n=prompt("What went wrong? (optional)")||"";csStatus(id,"failed",{},n);return true}
+  if(a==="cs-dlp"){const p=CS.posts[id];if(p&&p.finalKey)csDownload(p.finalKey,((csBrand(p.brandId)||{}).name||"post").replace(/\W+/g,"-")+"-"+(p.date||"")+".png");return true}
+  if(a==="cs-copyp"){csCopyModal(CS.posts[id]);return true}
+  if(a==="cs-del"){if(!confirm("Delete this post and its graphics?"))return true;const p=CS.posts[id];csApi("delete",{keys:[p.bgKey,p.finalKey].filter(k=>k&&!k.startsWith("content/brand/"))}).catch(()=>{});remove("contentPosts",id).then(()=>toast("Deleted"));return true}
+  if(a==="cs-cal-nav"){const C=CS.cal;if(C.view==="month"){const [y,m]=C.m.split("-").map(Number),d=new Date(y,m-1+Number(t.dataset.d),1);C.m=d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")}else{const d=new Date((C.day||csToday())+"T12:00");d.setDate(d.getDate()+Number(t.dataset.d)*(C.view==="week"?7:1));C.day=d.toISOString().slice(0,10)}render();return true}
+  if(a==="cs-cal-today"){CS.cal.m=csToday().slice(0,7);CS.cal.day=csToday();render();return true}
+  if(a==="cs-cal-view"){CS.cal.view=t.dataset.v;if(!CS.cal.day)CS.cal.day=csToday();render();return true}
+  if(a==="cs-cal-day"){CS.cal.day=t.dataset.v;CS.cal.view="day";render();return true}
+  if(a==="cs-cal-add"){CS.ed=csNewEd(CS.cal.brand!=="all"?CS.cal.brand:csBrandList()[0].id);CS.ed.post.date=t.dataset.v;CS.gen=null;CS.sec="create";render();return true}
+  if(a==="cs-camp-new"){CS.sec="camp";render();csCampModal();return true}
+  if(a==="cs-camp-open"){CS.camp=id;CS.sec="camp";render();return true}
+  if(a==="cs-camp-back"){CS.camp="";render();return true}
+  if(a==="cs-camp-pause"){const c=CS.camps[id];csSave("contentCampaigns",id,Object.assign({},c,{state:c.state==="paused"?"active":"paused"}));return true}
+  if(a==="cs-camp-arch"){const c=CS.camps[id];csSave("contentCampaigns",id,Object.assign({},c,{archived:!c.archived}));return true}
+  if(a==="cs-camp-extend"){const c=CS.camps[id],d=prompt("New end date (YYYY-MM-DD)",c.end||"");if(d&&/^\d{4}-\d{2}-\d{2}$/.test(d))csSave("contentCampaigns",id,Object.assign({},c,{end:d}));return true}
+  if(a==="cs-camp-dup"){const c=CS.camps[id],shift=Number(prompt("Shift the copy by how many days?","30"));if(!isFinite(shift))return true;const mv=s=>{if(!s)return s;const d=new Date(s+"T12:00");d.setDate(d.getDate()+shift);return d.toISOString().slice(0,10)};const nid=uid();
+    csSave("contentCampaigns",nid,Object.assign({},c,{id:undefined,name:c.name+" (copy)",start:mv(c.start),launch:mv(c.launch),end:mv(c.end),phases:(c.phases||[]).map(p=>Object.assign({},p,{start:mv(p.start),end:mv(p.end)})),state:"active",archived:false,cost:0,createdAt:new Date().toISOString()})).then(async()=>{for(const p of csPostsBy(x=>x.campaignId===id))await csSave("contentPosts",uid(),Object.assign({},p,{id:undefined,campaignId:nid,date:mv(p.date),status:"draft",finalKey:"",bgKey:"",history:[],cost:0,createdAt:new Date().toISOString()}));CS.camp=nid;render();toast("Campaign duplicated as drafts")});return true}
+  if(a==="cs-camp-art"){const L=csPostsBy(p=>p.campaignId===id&&!p.bgKey&&!["published","rejected"].includes(p.status)),est=L.length*({low:.016,medium:.063,high:.25}[csSet().imageQuality]||.063);if(!L.length){toast("Every post already has a background");return true}
+    if(!confirm("Make "+L.length+" backgrounds for about $"+est.toFixed(2)+"?"))return true;(async()=>{let n=0;for(const p of L){try{await csAutoArt(p);n++;toast("Backgrounds: "+n+" of "+L.length)}catch(e){toast(e.message);break}}})();return true}
+  if(a==="cs-camp-send"){csPostsBy(p=>p.campaignId===id&&p.finalKey&&["generated","draft"].includes(p.status)).forEach(p=>csStatus(p.id,"pending"));return true}
+  if(a==="cs-trend-run"){const b=csBrand(CS.tb);CS.genBusy="trend";render();csApi("trends",{brand:csBrandPayload(b),areas:($("#csTa")||{value:""}).value.split(",").map(x=>x.trim()).filter(Boolean),focus:($("#csTf")||{}).value||""})
+    .then(j=>csSave("contentTrends",b.id+"-"+Date.now().toString(36),{brandId:b.id,topics:j.topics,checkedAt:j.checkedAt,cost:j.cost||0})).catch(e=>toast(e.message)).finally(()=>{CS.genBusy="";render()});return true}
+  if(a==="cs-trend-post"||a==="cs-trend-camp"){const T=CS.trends[id],tp=T.topics[+t.dataset.i],brief=tp.title+". "+tp.summary+(tp.angle?" Angle: "+tp.angle:"")+" Sources: "+(tp.sources||[]).map(s=>s.url).join(" ");
+    if(a==="cs-trend-post"){CS.ed=csNewEd(T.brandId,{brief});CS.gen=null;CS.sec="create";render()}else{CS.sec="camp";render();csCampModal({name:tp.title,brands:[T.brandId],objective:tp.angle||"",direction:""})}return true}
+  if(a==="cs-storage-load"){CS.storage=null;csStorageLoad();render();return true}
+  if(a==="cs-cleanup"){if(confirm("Run cleanup now? Rejected drafts past their retention, old published images (captions are kept) and unused graphics are deleted from storage."))csCleanup(false);return true}
+  if(a==="cs-ret-save"){csSave("contentBrands","__settings",Object.assign({},CS.brands.__settings||{},{rejectedDays:+$("#csRejD").value||30,unusedDays:+$("#csUnD").value||30,publishedDays:+$("#csPubD").value})).then(ok=>ok&&toast("Retention saved"));return true}
+  if(a==="cs-set-save"){csSave("contentBrands","__settings",Object.assign({},CS.brands.__settings||{},{monthlyLimit:Math.max(0,+$("#csLim").value||0),imageQuality:$("#csQ").value,weekly:$("#csWk").value==="on"})).then(ok=>{if(ok){toast("Settings saved");setTimeout(csSyncConfig,300);csApi("status").then(j=>{CS.status=j;render()}).catch(()=>{})}});return true}
+  if(a==="cs-role-del"){remove("contentRoles",id).then(()=>toast("Access removed"));return true}
+  return true;
+}
+document.addEventListener("submit",e=>{if(e.target.id!=="csRoleF")return;e.preventDefault();const o=formObj(e.target),u=(o.raw||o.uid||"").trim();if(!u){toast("Pick a team member or paste a user ID");return}
+  save("contentRoles",u,{role:o.role,name:(S.names&&S.names[u])||"",addedAt:new Date().toISOString(),by:S.uid||""}).then(ok=>ok&&toast("Access added"))});
+function csCheck(){if(!S.db||!S.uid||S.isAdmin||S.csChecked)return;S.csChecked=true;S.db.doc("contentRoles/"+S.uid).get().then(d=>{S.csRole=d.exists?(d.data().role||""):"";if(S.csRole)render()}).catch(()=>{})}
+function csAfter(){if(!S.route.includes("content")&&S.route!=="ent-projects")return;csHydrate();if(CS.sec==="create"&&$("#csCanvas"))csDraw()}
+
 /* ===== Interaction layer: story video, company views, reveals, parallax, lighting ===== */
 function storyPlay(){const st=stv("home").story||{},A=st.video?assetMeta(st.video):null;
   if(!A){try{sessionStorage.removeItem("gvIntro")}catch(e){}showIntro();return}
@@ -4267,6 +4863,7 @@ function rvRun(fresh){
 function uiAfter(r){
   if(r==="team-web"&&S.ws.tab==="visual")setTimeout(wsMount,0);
   if($("#viz"))vizLoop();
+  csAfter();
   rvRun(S._lastR!==r);
   if(PREVIEW.on){pvBar();if(S.pvKey)pvMark(S.pvKey)}
   if(S.isAdmin&&BACKEND==="firebase"&&!PT.t&&(PREVIEW.on||r.startsWith("team")))ensureToken();
@@ -4478,6 +5075,7 @@ async function publishSite(btn){
 /* ---------- router & render ---------- */
 let rq=0;
 function scheduleRender(fromData){
+  if(fromData&&S.route.includes("content")&&$("#csEd")&&$("#csEd").contains(document.activeElement)&&/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName))return;
   if(fromData&&typeof wsLive==="function"&&wsLive()){wsRefresh();return}
   if(fromData&&S.route==="ent-upload"&&$("#songForm"))return;
   if(fromData&&S.route.startsWith("studio")&&$("#stClipForm")&&$("#stClipForm").contains(document.activeElement))return;
@@ -4504,10 +5102,11 @@ function render(){
   else if(r==="portal-time")h=viewPortal();
   else if(r==="join")h=S.signedIn&&S.db&&!S.isAdmin?viewJoin():viewSignin();
   else if(r==="portal-team")h=isHead()?viewMyTeam():viewSignin();
+  else if(r==="content")h=csAccess()?viewContentMember():viewSignin();
   else if(r.startsWith("team")){
     if(!S.isAdmin)h=viewSignin();
     else if(!S.db)h='<div class="wrap gate"><h1>Back office unavailable</h1><p class="muted">Saved records can\'t be reached in this view. Open the page from claude.ai while signed in.</p></div>';
-    else{const v={"team":viewDash,"team-time":viewTimesheet,"team-cal":()=>viewCalendar(true),"team-rem":viewReminders,"team-out":viewOutreach,"team-people":viewTeams,"team-vault":viewVault,"team-docs":viewDocs,"team-conv":viewConverter,"team-reports":viewReports,"team-site":viewSite,"team-web":viewWebsite,"team-media":viewMediaLib}[r]||viewDash;h=teamShell(TEAM_TABS.some(t=>t[0]===r)?r:"team",v())}
+    else{const v={"team":viewDash,"team-time":viewTimesheet,"team-cal":()=>viewCalendar(true),"team-rem":viewReminders,"team-out":viewOutreach,"team-people":viewTeams,"team-vault":viewVault,"team-docs":viewDocs,"team-conv":viewConverter,"team-reports":viewReports,"team-site":viewSite,"team-web":viewWebsite,"team-media":viewMediaLib,"team-content":viewContent}[r]||viewDash;h=teamShell(TEAM_TABS.some(t=>t[0]===r)?r:"team",v())}
   }
   else if(r==="live")h=viewLive();
   else if(r==="studio"||r.startsWith("studio-"))h=viewStudio();
@@ -4558,6 +5157,7 @@ document.addEventListener("click",async e=>{
   if(a==="scrim"){if(e.target===t)closeModal();return}
   if(mobileAct(a,t))return;
   if(wsAct(a,t))return;
+  if(contentAct(a,t))return;
   if(uiAct(a,t))return;
   if(webAct(a,t))return;
   if(studioAct(a,t))return;
@@ -4701,7 +5301,7 @@ if(introWanted())showIntro();
       if(started&&!u){location.hash="#home";location.reload();return}
       if(!u){S.authChecked=true;render();return}
       started=true;S.signedIn=true;S.uid=u.uid;S.email=u.email||"";
-      setTimeout(studioCheck,0);
+      setTimeout(studioCheck,0);setTimeout(csCheck,0);
       try{const back=localStorage.getItem("gvReturn");if(back&&/^\/(shadowcrown|guide)\//.test(back)){localStorage.removeItem("gvReturn");location.href=back;return}}catch(e){}
       let first=true;
       S.db.doc("access/"+u.uid).onSnapshot(d=>{
