@@ -1,5 +1,6 @@
 import { musicApi, fsPublic } from "./music.js";
 import { siteApi } from "./site.js";
+import { guideApi } from "./guide.js";
 /* Grooveville Worker
    - Serves the static site (ASSETS binding). Only /api/* runs this code first.
    - YouTube sync for Grooveville LIVE: live status, upcoming show, completed livestream archive.
@@ -249,6 +250,7 @@ const safeName = s => String(s || "file").replace(/[^A-Za-z0-9._-]+/g, "-").slic
 async function api(req, env, ctx) {
   const url = new URL(req.url), p = url.pathname, show = url.searchParams.get("show") || "uncneph";
   if (req.method === "OPTIONS") return new Response(null, { status: 204 });
+  if (p.startsWith("/api/guide/")) return guideApi(req, env, ctx, { p, url });
   if (p.startsWith("/api/site/")) return siteApi(req, env, ctx, { p, url, verifyIdToken, fsField });
   if (/^\/api\/(music|tv|songrate)\//.test(p)) return musicApi(req, env, ctx, { p, url, verifyIdToken, fsField, presignR2: r2Link, yt, isoDur });
   const SH = await getShows(env);

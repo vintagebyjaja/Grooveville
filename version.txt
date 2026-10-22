@@ -1,2 +1,2 @@
-Grooveville site version v5
-Released 2026-10-21
+Grooveville site version v6
+Released 2026-10-22

@@ -158,6 +158,12 @@ service cloud.firestore {
       allow read, write: if isFounder();
     }
 
+    // ---------- Groove Guide ----------
+    // Each signed-in person's saved places, vehicle, trips and walks. Only that person can read or change them.
+    match /guide/{uid} {
+      allow read, write: if signedIn() && request.auth.uid == uid;
+    }
+
     // ---------- Website Studio ----------
     // Draft site (unpublished text, layout and image choices): founder or HNIC only. The public reads settings/site.
     match /sitedraft/{doc} {

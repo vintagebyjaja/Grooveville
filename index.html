@@ -2438,7 +2438,7 @@ function subscribeMedia(){if(mediaSub||!S.db)return;mediaSub=true;S.db.collectio
 
 /* ---------- footer ---------- */
 function fillFooter(){
-  const lg=$("#footlinks");if(lg)lg.innerHTML='<a href="#vine">Companies</a><a href="#b-ent/radio">Radio</a><a href="#story">Our Story</a><a href="https://www.instagram.com/grooveville.ent/" target="_blank" rel="noopener">Instagram ↗</a><a href="#groove">Sign in</a>';
+  const lg=$("#footlinks");if(lg)lg.innerHTML='<a href="#vine">Companies</a><a href="#b-ent/radio">Radio</a><a href="#story">Our Story</a><a href="/guide/">Groove Guide</a><a href="https://www.instagram.com/grooveville.ent/" target="_blank" rel="noopener">Instagram ↗</a><a href="#groove">Sign in</a>';
   const g=$("#footgrid");if(!g)return;
   g.innerHTML='<div><img src="'+LOGO+'" alt="" width="48" height="48" style="border-radius:50%"><p style="margin-top:14px;max-width:30ch">The Creative House. Different worlds, one Groove, rooted in Charlotte, NC.</p><div style="display:flex;gap:14px;margin-top:12px"><a href="https://www.instagram.com/grooveville.ent/" target="_blank" rel="noopener">Instagram ↗</a></div></div>'+
     '<div><h4>Companies</h4>'+VENTURES().filter(b=>!brandInfo(b.id).hidden).map(b=>'<a href="#b-'+b.id+'">'+esc(brandInfo(b.id).name)+'</a>').join("")+'</div>'+
@@ -3600,12 +3600,13 @@ const MI={
   studio:'<circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="3"/><path d="M12 3.5v5.5"/>',
   office:'<rect x="3.5" y="7" width="17" height="12.5" rx="2.5"/><path d="M9 7V5h6v2M3.5 12.5h17"/>',
   search:'<circle cx="11" cy="11" r="6.5"/><path d="m20 20-4.3-4.3"/>',
+  guide:'<path d="M20 4 4 11l7 2 2 7z"/>',
   user:'<circle cx="12" cy="8.5" r="3.8"/><path d="M4.5 20.5a7.5 7.5 0 0 1 15 0"/>',
   back:'<path d="M15 5 8 12l7 7"/>',
   sound:'<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/><path d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11"/>'
 };
 const mIco=k=>'<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+(MI[k]||"")+'</svg>';
-const MENU_DEST=[["home","#home","home","Home","Start here"],["vine","#vine","vine","Ecosystem","Our companies"],["brands","#brands","brands","Brands","Products & IP"],["live","#live","live","Watch Live","Shows & events"],["music","#music","music","Media","Music & originals"],["tv","#tv","tv","Grooveville TV","Videos & playlists"],["radio","#b-ent/radio","radio","Radio","Exclusive sound"],["cal","#calendar","cal","Calendar","Events"],["collab","#collab","collab","Collaborate","Opportunities"],["story","#story","story","Our Story","Who we are"],["aelio","#b-aelio","aelio","AELIO","Our AI"],["crown","#shadowcrown","crown","Shadow Crown","Book · Game"],["team","#groove","team","Groove Team","The people"]];
+const MENU_DEST=[["home","#home","home","Home","Start here"],["vine","#vine","vine","Ecosystem","Our companies"],["brands","#brands","brands","Brands","Products & IP"],["live","#live","live","Watch Live","Shows & events"],["music","#music","music","Media","Music & originals"],["tv","#tv","tv","Grooveville TV","Videos & playlists"],["radio","#b-ent/radio","radio","Radio","Exclusive sound"],["cal","#calendar","cal","Calendar","Events"],["collab","#collab","collab","Collaborate","Opportunities"],["story","#story","story","Our Story","Who we are"],["aelio","#b-aelio","aelio","AELIO","Our AI"],["crown","#shadowcrown","crown","Shadow Crown","Book · Game"],["guide","/guide/","guide","Groove Guide","Navigation"],["team","#groove","team","Groove Team","The people"]];
 const GLOWS={mixed:["#F4A987","#b7a1e5","#68d4d0","#e8c27a"],warm:["#F4A987","#e8c27a","#e59a72","#f2c48f"],cool:["#b7a1e5","#68d4d0","#8fb3ff","#a28be0"]};
 const TOP_ROUTES=["home","","vine","live","music"];
 function mTabOn(k){
@@ -4701,7 +4702,7 @@ if(introWanted())showIntro();
       if(!u){S.authChecked=true;render();return}
       started=true;S.signedIn=true;S.uid=u.uid;S.email=u.email||"";
       setTimeout(studioCheck,0);
-      try{const back=localStorage.getItem("gvReturn");if(back&&/^\/shadowcrown\//.test(back)){localStorage.removeItem("gvReturn");location.href=back;return}}catch(e){}
+      try{const back=localStorage.getItem("gvReturn");if(back&&/^\/(shadowcrown|guide)\//.test(back)){localStorage.removeItem("gvReturn");location.href=back;return}}catch(e){}
       let first=true;
       S.db.doc("access/"+u.uid).onSnapshot(d=>{
         const f=d.exists&&["founder","hnic"].includes(String(d.data().role||"").toLowerCase().replace(/["'\s]/g,""));
