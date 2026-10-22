@@ -234,7 +234,7 @@ const MAP={map:null,failed:"",loading:false,lines:[],marks:[],veh:null,dest:null
     MAP.map=new M.Map(el,o);if(!MAPERR.code){MAP.failed="";paintMapFallback()}else{MAP.failed=MAPERR.code;paintMapFallback()}
     MAP.map.addListener("dragstart",()=>{if(G.nav){MAP.follow=false;paintRecenter()}});
     MAP.map.addListener("heading_changed",()=>MAP.rotateVeh());
-    MAP.draw();
+    MAP.draw();if(MAP.view==="aerial")CITY.show();
   },
   rebuild(){if(!MAP.map)return;const c=MAP.map.getCenter(),z=MAP.map.getZoom();MAP.clear(true);const old=$("#gmap"),n=document.createElement("div");n.id="gmap";old.replaceWith(n);MAP.map=null;MAP.create(c&&{lat:c.lat(),lng:c.lng()},z)},
   clear(all){MAP.lines.forEach(l=>l.setMap(null));MAP.lines=[];if(all){MAP.marks.forEach(m=>m.map=null);MAP.marks=[];if(MAP.veh)MAP.veh.map=null;MAP.veh=null;if(MAP.dest)MAP.dest.map=null;MAP.dest=null}},
@@ -249,28 +249,28 @@ const MAP={map:null,failed:"",loading:false,lines:[],marks:[],veh:null,dest:null
     D.saved.forEach(s=>{if(!s.lat)return;const m=new Mk({map:MAP.map,position:{lat:s.lat,lng:s.lng},content:MAP.pinEl(placeColor(s),kindIcon(s.kind),"",false),title:s.name,zIndex:3});m.addListener("click",()=>chooseDest(s));MAP.marks.push(m)});
     (G.stops||[]).forEach((s,i)=>MAP.marks.push(new Mk({map:MAP.map,position:s,content:MAP.pinEl("#b7a1e5","pin",String(i+1),false),title:s.name||"Stop",zIndex:8})));
     if(G.dest)MAP.dest=new Mk({map:MAP.map,position:{lat:G.dest.lat,lng:G.dest.lng},content:MAP.pinEl(G.dest.color||ROUTE_COLOR(),G.dest.icon||"flag",G.dest.name,true),title:G.dest.name,zIndex:9});
-    MAP.vehicle();
+    MAP.vehicle();if(CITY.on)CITY.draw();
   },
   vehEl(){const d=document.createElement("div");d.className="gveh "+MAP.view;d.innerHTML=MAP.view==="flat"?vehArrowSvg(D.vehicle.color):vehTopSvg(D.vehicle.color,D.vehicle.type);return d},
   vehicle(){if(!MAP.map)return;const p=G.nav?G.nav.snapPos||G.pos:G.pos;if(!p){if(MAP.veh){MAP.veh.map=null;MAP.veh=null}return}
     if(!MAP.veh||MAP.veh._v!==MAP.view+D.vehicle.color+D.vehicle.type){if(MAP.veh)MAP.veh.map=null;MAP.veh=new MAP.libs.marker.AdvancedMarkerElement({map:MAP.map,position:p,content:MAP.vehEl(),zIndex:20,title:D.vehicle.nick||"You"});MAP.veh._v=MAP.view+D.vehicle.color+D.vehicle.type}
-    else MAP.veh.position=p;MAP.rotateVeh()},
+    else MAP.veh.position=p;MAP.rotateVeh();if(CITY.on)CITY.vehicle()},
   rotateVeh(){if(!MAP.veh||!MAP.map)return;const h=(curHeading()||0)-(MAP.map.getHeading()||0);const s=MAP.veh.content.querySelector("svg");if(s)s.style.transform="rotate("+h+"deg)"},
   setView(v){if(v==="toggle")v=MAP.view==="aerial"?"flat":"aerial";MAP.view=v;D.settings.view=v;save();
     if(MAP.map){if(G.nav){MAP.follow=true;paintRecenter();MAP.recenter()}
       else if(v==="aerial"){const r=G.route,p=r&&r.path&&r.path.length?r.path[0]:(G.pos||MAP.map.getCenter()),hd=r&&r.path&&r.path.length>1?bearing(r.path[0],r.path[Math.min(6,r.path.length-1)]):(MAP.map.getHeading()||0);
         MAP.map.moveCamera({center:p,zoom:Math.max(17,MAP.map.getZoom()||0),tilt:67,heading:hd})}
       else{MAP.map.moveCamera({tilt:0,heading:0});if(G.route)MAP.fit()}
-      MAP.vehicle();if(v==="aerial")MAP.check3d()}
+      MAP.vehicle();if(v==="aerial")CITY.show().then(ok=>{if(!ok)MAP.check3d()});else CITY.hide()}
     paintMapTools()},
   check3d(){try{const rt=MAP.map.getRenderingType&&MAP.map.getRenderingType();if(rt&&String(rt).toUpperCase()==="RASTER")toast("This device is showing the flat map, so 3D tilt isn’t available here.",5000)}catch(e){}},
-  zoom(d){if(MAP.map)MAP.map.moveCamera({zoom:(MAP.map.getZoom()||14)+d})},
-  north(){if(MAP.map)MAP.map.moveCamera({heading:0})},
-  fit(){if(!MAP.map||!G.route||!G.route.path)return;const b=new google.maps.LatLngBounds();G.route.path.forEach(p=>b.extend(p));MAP.map.moveCamera({tilt:0,heading:0});
+  zoom(d){if(CITY.on)return CITY.zoom(d);if(MAP.map)MAP.map.moveCamera({zoom:(MAP.map.getZoom()||14)+d})},
+  north(){if(CITY.on)return CITY.north();if(MAP.map)MAP.map.moveCamera({heading:0})},
+  fit(){if(!MAP.map||!G.route||!G.route.path)return;if(CITY.on)CITY.overview();const b=new google.maps.LatLngBounds();G.route.path.forEach(p=>b.extend(p));MAP.map.moveCamera({tilt:0,heading:0});
     let pad={top:120,bottom:90,left:60,right:60};if(innerWidth<=760){const tc=$("#tripcard"),tb=$("#tbar");const bot=G.nav?(tb?tb.offsetHeight:100):(tc&&tc.offsetParent?tc.offsetHeight:220);pad={top:G.nav?130:40,bottom:bot+30,left:36,right:70}}
     MAP.map.fitBounds(b,pad);if(MAP.view==="aerial"){const t=()=>MAP.map&&MAP.map.moveCamera({tilt:45});if(google.maps.event&&google.maps.event.addListenerOnce)google.maps.event.addListenerOnce(MAP.map,"idle",t);else setTimeout(t,400)}},
-  recenter(){MAP.follow=true;paintRecenter();const p=(G.nav&&G.nav.snapPos)||G.pos;if(MAP.map&&p)MAP.map.moveCamera({center:p,zoom:G.nav?17.5:15.5,tilt:MAP.view==="aerial"?(G.nav?65:55):0,heading:G.nav&&MAP.view==="aerial"?curHeading()||0:0})},
-  followTick(){if(!MAP.map||!G.nav||!MAP.follow)return;const p=G.nav.snapPos||G.pos;if(p)MAP.map.moveCamera({center:p,zoom:G.mode==="WALK"?18:17.5,tilt:MAP.view==="aerial"?65:0,heading:MAP.view==="aerial"?curHeading()||0:0})}
+  recenter(){MAP.follow=true;paintRecenter();if(CITY.on)CITY.cam(800);const p=(G.nav&&G.nav.snapPos)||G.pos;if(MAP.map&&p)MAP.map.moveCamera({center:p,zoom:G.nav?17.5:15.5,tilt:MAP.view==="aerial"?(G.nav?65:55):0,heading:G.nav&&MAP.view==="aerial"?curHeading()||0:0})},
+  followTick(){if(!MAP.map||!G.nav||!MAP.follow)return;if(CITY.on)CITY.cam(950);const p=G.nav.snapPos||G.pos;if(p)MAP.map.moveCamera({center:p,zoom:G.mode==="WALK"?18:17.5,tilt:MAP.view==="aerial"?65:0,heading:MAP.view==="aerial"?curHeading()||0:0})}
 };
 function vehArrowSvg(c){return '<svg viewBox="0 0 40 40" width="40" height="40"><circle cx="20" cy="20" r="17" fill="'+c+'" opacity=".22"/><path d="M20 6 31 32l-11-6-11 6z" fill="'+c+'" stroke="#fff" stroke-width="2.4" stroke-linejoin="round"/></svg>'}
 function vehTopSvg(c,type){const w=type==="truck"||type==="suv"?18:16,l=type==="truck"?38:34;
@@ -298,7 +298,7 @@ function paintMapFallback(){const f=$("#mapfb");if(!f)return;
   if(!MAP.failed){f.hidden=true;return}f.hidden=false;const d=diagText(MAP.failed);
   f.innerHTML='<div><span class="fbk">'+ico("info",20)+'</span><b>'+esc(d[0])+'</b><p>'+d[1]+'</p>'+(d[2]?'<p class="fbfix">'+d[2]+'</p>':'')+'<div class="fbb"><button class="gbtn" data-a="retry-map">Try again</button></div><small>Error code: '+esc(MAP.failed)+'</small></div>'}
 function paintMapTools(){const vt=$("#vtog"),a3=MAP.view==="aerial";if(vt){vt.textContent=a3?"3D":"2D";vt.classList.toggle("on",a3);vt.setAttribute("aria-label",a3?"3D view on. Switch to flat 2D map":"Flat 2D map. Switch to 3D view");vt.title=a3?"Switch to 2D":"Switch to 3D"}const gg=$("#gg");if(gg)gg.classList.toggle("v3d",a3);$$(".modesw button").forEach(b=>b.classList.toggle("on",b.dataset.v===G.mode))}
-function paintRecenter(){const b=$("#mrec");if(b)b.hidden=!(G.nav&&!MAP.follow)}
+function paintRecenter(){const b=$("#mrec");if(b)b.hidden=!(G.nav&&!MAP.follow);if(CITY.on)CITY.vehicle()}
 function paintAll(){const d=$("#dash");if(d){d.classList.toggle("navving",!!G.nav);d.classList.toggle("hasroute",!!G.route);if(G.nav)d.classList.remove("sheet-open")}paintRoot();paintTrip();paintNext();paintDrive();paintTbar();paintMapTools();paintRecenter();paintChips();requestAnimationFrame(sizeBottom)}
 /* phone: hide the header chips while a route is up, and the whole header + tab bar while navigating, so the map has room */
 function paintRoot(){const gg=$("#gg");if(!gg)return;const dp=G.page===""||G.page==="navigate";gg.classList.toggle("rt",dp&&!!G.dest);gg.classList.toggle("nv",dp&&!!G.nav)}
@@ -331,8 +331,9 @@ function paintDrive(){const h=$("#dhead"),f=$("#dfoot"),n=$("#dnote");if(!h)retu
   else if(G.route){h.innerHTML=manIco("STRAIGHT",44)+'<div><b>Ready when you are</b><small>'+esc(fmtDur(G.route.durationSec))+' to '+esc(G.dest?G.dest.name:"destination")+'</small></div>'}
   else h.innerHTML=manIco("STRAIGHT",44)+'<div><b>No active route</b><small>Pick a destination to see the road ahead</small></div>';
   const sp=speedFmt(G.speed);
-  const ms=$("#mspd");if(ms){ms.hidden=!G.nav||G.mode==="WALK";ms.innerHTML='<b>'+(sp==null?"—":sp)+'</b><small>'+speedUnit()+'</small>'}
-  const ds=$("#dspd");if(ds)ds.innerHTML='<span class="whl">'+'<svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="2.2"/><path d="M3.5 10.5h6.3M14.2 10.5h6.3M12 14.2V21"/></svg></span><div class="spd"><b>'+(sp==null?"—":sp)+'</b><small>'+speedUnit()+'</small></div><div class="lim" title="Speed limit data isn’t available from the route service yet"><small>SPEED<br>LIMIT</small><b>—</b></div>';
+  const lim=typeof limitFmt==="function"?limitFmt():null,over=sp!=null&&lim!=null&&sp>lim+4;
+  const ms=$("#mspd");if(ms){ms.hidden=!G.nav||G.mode==="WALK";ms.classList.toggle("over",over);ms.innerHTML='<span class="msv"><b>'+(sp==null?"—":sp)+'</b><small>'+speedUnit()+'</small></span>'+(lim!=null?'<span class="lim on" title="Posted limit from OpenStreetMap"><small>SPEED<br>LIMIT</small><b>'+lim+'</b></span>':'')}
+  const ds=$("#dspd");if(ds)ds.classList.toggle("over",over);if(ds)ds.innerHTML='<span class="whl">'+'<svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="2.2"/><path d="M3.5 10.5h6.3M14.2 10.5h6.3M12 14.2V21"/></svg></span><div class="spd"><b>'+(sp==null?"—":sp)+'</b><small>'+speedUnit()+'</small></div>'+(lim!=null?'<div class="lim on" title="Posted limit from OpenStreetMap"><small>SPEED<br>LIMIT</small><b>'+lim+'</b></div>':'');
   f.innerHTML='<div class="lanes">'+laneHtml(ni)+'</div>';
   n.textContent=G.route?(G.sim?"Simulated drive along your real route":"Route ahead, drawn from your real route. Not a camera view."):"";
   DRIVE.dirty=true;
@@ -356,6 +357,54 @@ function paintTbar(){const t=$("#tbin");if(!t)return;const r=G.route,di=G.intel.
 function tools(on){return '<div class="tbtools"><small>Trip tools</small><div><button class="gbtn ghost sm" data-a="addstop"'+(on?'':' disabled')+'>'+ico("pin",16)+' Add Stop</button><button class="gbtn ghost sm" data-a="share"'+(on?'':' disabled')+'>'+ico("share",16)+' Share ETA</button><button class="gbtn ghost sm" data-a="options">'+ico("sliders",16)+' Route Options</button></div></div>'}
 function weatherAt(w,t){if(!w)return null;if(!t||t-Date.now()<45*60000||!w.hours||!w.hours.length)return w.now;let b=null,bd=1e15;w.hours.forEach(h=>{const d=Math.abs(Date.parse(h.t)-t);if(d<bd){bd=d;b=h}});return bd<3*3600000?b:w.now}
 
+/* ---------- City 3D: Google's photorealistic 3D city for the 3D view, with the Groove Guide route glowing on top.
+   Falls back to the tilted vector map when the key doesn't have photorealistic 3D. ---------- */
+const CITY={on:false,ok:null,el:null,lib:null,items:[],veh:null,alt:{},
+  /* Google's 3D camera measures height from sea level, so the camera needs the ground height (Charlotte is ~230 m up).
+     Looked up from Open-Meteo's free elevation service on a ~1 km grid, straight from the browser (no Grooveville server request). */
+  altAt(p){if(!p)return 0;const k=p.lat.toFixed(2)+","+p.lng.toFixed(2);if(CITY.alt[k]!=null)return CITY.alt[k];CITY.alt[k]=CITY.last||0;
+    fetch("https://api.open-meteo.com/v1/elevation?latitude="+p.lat.toFixed(2)+"&longitude="+p.lng.toFixed(2)).then(r=>r.json()).then(j=>{const v=j&&j.elevation&&j.elevation[0];if(isFinite(v)){CITY.alt[k]=v;CITY.last=v;if(CITY.on)CITY.cam(600)}}).catch(()=>{});return CITY.alt[k]},
+  async avail(){if(CITY.ok!==null)return CITY.ok;try{CITY.lib=await google.maps.importLibrary("maps3d");CITY.ok=!!(CITY.lib&&CITY.lib.Map3DElement&&CITY.lib.Polyline3DElement)}catch(e){CITY.ok=false}return CITY.ok},
+  async show(){if(!MAP.libs||!(await CITY.avail()))return false;const box=$(".mapbox");if(!box||MAP.view!=="aerial")return false;
+    if(!CITY.el||!CITY.el.isConnected){CITY.items=[];CITY.veh=null;const w=document.createElement("div");w.id="g3d";w.className="g3d";box.insertBefore(w,$("#gmap").nextSibling);
+      const t=CITY.target();const o={center:t.center,range:t.range,tilt:t.tilt,heading:t.heading};if(CITY.lib.MapMode)o.mode=CITY.lib.MapMode.SATELLITE;
+      try{CITY.el=new CITY.lib.Map3DElement(o)}catch(e){CITY.ok=false;w.remove();return false}
+      try{CITY.el.defaultUIHidden=true}catch(e){}
+      CITY.el.style.cssText="width:100%;height:100%;display:block";w.appendChild(CITY.el);
+      CITY.el.addEventListener("pointerdown",()=>{if(G.nav){MAP.follow=false;paintRecenter()}});
+      w.insertAdjacentHTML("beforeend",'<div class="g3dtint" aria-hidden="true"></div><div class="g3dcar" aria-hidden="true">'+vehArrowSvg(THEME.cur==="dark"?"#ff9f68":ROUTE_COLOR()).replace('width="40" height="40"','width="58" height="58"')+'</div>')}
+    CITY.on=true;$("#dash").classList.add("city");CITY.draw();CITY.cam(1200);return true},
+  hide(){CITY.on=false;const d=$("#dash");if(d)d.classList.remove("city")},
+  ll:p=>({lat:p.lat,lng:p.lng,altitude:0}),
+  cl(p){return {lat:p.lat,lng:p.lng,altitude:CITY.altAt(p)}},
+  target(){const r=G.route,n=G.nav;
+    if(n){const p=n.snapPos||G.pos;return {center:CITY.cl(p),heading:curHeading()||0,tilt:67,range:G.mode==="WALK"?230:420}}
+    if(r&&r.path&&r.path.length>1){let k=0;while(k<r.path.length-1&&r.cum[k]<350)k++;return {center:CITY.cl(r.path[0]),heading:bearing(r.path[0],r.path[Math.max(1,k)]),tilt:62,range:950}}
+    const p=G.pos||(MAP.map&&MAP.map.getCenter()?{lat:MAP.map.getCenter().lat(),lng:MAP.map.getCenter().lng()}:CFG.defaultCenter);return {center:CITY.cl(p),heading:CITY.el?CITY.el.heading||0:20,tilt:60,range:1600}},
+  cam(ms){if(!CITY.on||!CITY.el)return;const t=CITY.target();
+    try{if(CITY.el.flyCameraTo&&!REDUCED)CITY.el.flyCameraTo({endCamera:t,durationMillis:ms||900});else Object.assign(CITY.el,t)}catch(e){Object.assign(CITY.el,t)}},
+  overview(){if(!CITY.on||!G.route)return;const pts=G.route.path;let a=90,b=-90,c=180,d=-180;pts.forEach(p=>{a=Math.min(a,p.lat);b=Math.max(b,p.lat);c=Math.min(c,p.lng);d=Math.max(d,p.lng)});
+    const span=Math.max(hav({lat:a,lng:c},{lat:b,lng:d}),400);const mid={lat:(a+b)/2,lng:(c+d)/2};CITY.el.flyCameraTo({endCamera:{center:CITY.cl(mid),range:span*1.6+400,tilt:45,heading:0},durationMillis:REDUCED?0:1400})},
+  zoom(dz){if(CITY.el)CITY.el.range=clamp((CITY.el.range||800)*(dz>0?.6:1.6),80,60000)},
+  north(){if(CITY.el)CITY.el.heading=0},
+  draw(){if(!CITY.on||!CITY.el)return;CITY.items.forEach(x=>x.remove());CITY.items=[];const L=CITY.lib,dark=THEME.cur==="dark",AM=(L.AltitudeMode&&L.AltitudeMode.CLAMP_TO_GROUND)||"CLAMP_TO_GROUND";
+    const add=x=>{CITY.el.append(x);CITY.items.push(x)};
+    G.routes.forEach((r,i)=>{if(i===G.sel||!r.path)return;add(new L.Polyline3DElement({coordinates:r.path.map(CITY.ll),altitudeMode:AM,strokeColor:"rgba(200,195,215,.75)",strokeWidth:7,drawsOccludedSegments:true}))});
+    const r=G.route;if(r&&r.path){const co=r.path.map(CITY.ll),core=dark?"#ffb27f":ROUTE_COLOR();
+      add(new L.Polyline3DElement({coordinates:co,altitudeMode:AM,strokeColor:dark?"rgba(255,150,90,.38)":"rgba(123,63,242,.3)",strokeWidth:36,drawsOccludedSegments:true}));
+      add(new L.Polyline3DElement({coordinates:co,altitudeMode:AM,strokeColor:core,strokeWidth:14,outerColor:dark?"#fff1e6":"#ffffff",outerWidth:.3,drawsOccludedSegments:true}))}
+    if(G.dest&&L.Marker3DElement){try{const m=new L.Marker3DElement({position:{lat:G.dest.lat,lng:G.dest.lng},altitudeMode:"RELATIVE_TO_GROUND",extruded:true,label:G.dest.name});
+      try{if(MAP.libs.marker.PinElement)m.append(new MAP.libs.marker.PinElement({background:dark?"#ff9f68":ROUTE_COLOR(),borderColor:"#ffffff",glyphColor:"#ffffff"}))}catch(e){}add(m)}catch(e){}}
+    CITY.vehicle()},
+  vehicle(){if(!CITY.on||!CITY.el||!CITY.lib.Marker3DElement)return;const p=G.nav?G.nav.snapPos||G.pos:G.pos;
+    if(!p){if(CITY.veh){CITY.veh.remove();CITY.veh=null}return}
+    const follow=!!(G.nav&&MAP.follow);$("#dash").classList.toggle("cityfollow",follow);
+    const pos={lat:p.lat,lng:p.lng,altitude:3};
+    if(!CITY.veh){try{CITY.veh=new CITY.lib.Marker3DElement({position:pos,altitudeMode:"RELATIVE_TO_GROUND",zIndex:50,sizePreserved:true});const img=document.createElement("img");img.width=46;img.height=46;img.alt="";
+      img.src="data:image/svg+xml;utf8,"+encodeURIComponent(vehArrowSvg(THEME.cur==="dark"?"#ff9f68":ROUTE_COLOR()).replace("<svg ",'<svg xmlns="http://www.w3.org/2000/svg" '));const t=document.createElement("template");t.content.append(img);CITY.veh.append(t);CITY.el.append(CITY.veh)}catch(e){CITY.veh=null}}
+    else CITY.veh.position=pos;if(CITY.veh)CITY.veh.style.display=follow?"none":""}
+};
+
 /* ---------- server calls ---------- */
 async function api(path,o){o=o||{};const r=await fetch(CFG.apiBase+path,{method:o.method||"GET",headers:o.body?{"content-type":"application/json"}:{},body:o.body?JSON.stringify(o.body):undefined,credentials:"same-origin"});
   let j={};try{j=await r.json()}catch(e){}if(!r.ok)throw new Error(j.error||"Something went wrong ("+r.status+")");return j}
@@ -367,9 +416,14 @@ function startGeo(){
   G.watch=navigator.geolocation.watchPosition(onPos,e=>{G.geoErr=e.code===1?"Location is blocked for this site. Allow it in your browser settings.":"Can’t find your location right now.";if(e.code===1){navigator.geolocation.clearWatch(G.watch);G.watch=null}paintTrip()},{enableHighAccuracy:true,maximumAge:1500,timeout:25000});
 }
 function locateOnce(ms){return new Promise(res=>{if(G.pos&&G.posSrc==="gps")return res(G.pos);startGeo();let n=0;const t=setInterval(()=>{n+=200;if((G.pos&&G.posSrc==="gps")||n>(ms||9000)||G.geoErr){clearInterval(t);res(G.posSrc==="gps"?G.pos:null)}},200)})}
-let lastFix=null;
+let lastFix=null,prevFix=null;
 function onPos(p){if(G.sim)return;const c=p.coords,np={lat:c.latitude,lng:c.longitude},first=!G.pos||G.posSrc!=="gps";
-  G.acc=c.accuracy;G.speed=c.speed!=null&&c.speed>=0?c.speed:null;G.geoErr="";
+  G.acc=c.accuracy;G.geoErr="";
+  /* speed: the phone's GPS speed when it gives one, otherwise worked out from the last two fixes */
+  if(c.speed!=null&&c.speed>=0&&isFinite(c.speed))G.speed=c.speed;
+  else if(prevFix&&p.timestamp-prevFix.t>800&&(c.accuracy||99)<60){const v=hav(prevFix.p,np)/((p.timestamp-prevFix.t)/1000);G.speed=v<70?(G.speed!=null?G.speed*.5+v*.5:v):G.speed}
+  else if(!prevFix||p.timestamp-prevFix.t>15000)G.speed=null;
+  if(!prevFix||p.timestamp-prevFix.t>800)prevFix={p:np,t:p.timestamp};
   if(c.heading!=null&&!isNaN(c.heading)&&(G.speed||0)>1)G.heading=c.heading;else if(lastFix&&hav(lastFix,np)>6)G.heading=bearing(lastFix,np);
   if(!lastFix||hav(lastFix,np)>6)lastFix=np;
   G.pos=np;G.posSrc="gps";
@@ -450,7 +504,7 @@ function beginNav(sim){G.nav={s:0,i:0,step:0,off:0,leftSec:G.route.durationSec,h
   if(!sim)try{navigator.wakeLock&&navigator.wakeLock.request("screen").then(w=>WAKE=w).catch(()=>{})}catch(e){}
   speak((G.mode==="WALK"?"Starting walk to ":"Starting route to ")+(G.dest?G.dest.name:"your destination")+". "+fmtDur(G.route.durationSec).replace("hr","hour").replace("min","minutes")+".");
   paintAll()}
-function endNav(quiet){stopSim();G.nav=null;G.walkStats="";if(WAKE){try{WAKE.release()}catch(e){}WAKE=null}MAP.follow=true;if(!quiet)paintAll();if(MAP.map&&!quiet)requestAnimationFrame(()=>MAP.fit())}
+function endNav(quiet){stopSim();G.nav=null;LIM.v=null;LIM.s=-1e9;G.walkStats="";if(WAKE){try{WAKE.release()}catch(e){}WAKE=null}MAP.follow=true;if(!quiet)paintAll();if(MAP.map&&!quiet)requestAnimationFrame(()=>MAP.fit())}
 function navUpdate(p){const n=G.nav,r=G.route;if(!n||!r)return;
   const sn=snap(r.path,r.cum,p,n.i);n.i=sn.i;n.s=sn.s;
   const a=r.path[sn.i],b=r.path[Math.min(sn.i+1,r.path.length-1)];n.snapPos=sn.d<40?{lat:a.lat+(b.lat-a.lat)*sn.t,lng:a.lng+(b.lng-a.lng)*sn.t}:p;
@@ -466,9 +520,17 @@ function navUpdate(p){const n=G.nav,r=G.route;if(!n||!r)return;
     for(const t of th){if(ni.dist<=t&&ni.dist>(t===th[th.length-1]?0:t*0.55)&&!n.spoken[key][t]){n.spoken[key][t]=1;const ins=shortInstr(ni.instr);speak(t===th[th.length-1]?ins:"In "+spokenDist(ni.dist)+", "+ins.charAt(0).toLowerCase()+ins.slice(1));break}}}
   if(G.mode==="WALK"){const el=(Date.now()-n.startedAt)/1000,mi=n.traveled/MI;G.walkStats=fmtDist(n.traveled)+" walked"+(mi>0.05?" · "+paceStr(el/mi)+"/mi":"")}
   if(r.len-n.s<25||hav(p,r.path[r.path.length-1])<20)return arrive();
-  MAP.vehicle();MAP.followTick();paintNext();paintDrive();
+  MAP.vehicle();MAP.followTick();paintNext();paintDrive();if(G.mode==="DRIVE")checkLimit(n.snapPos||p);
   if(!n.tb||Date.now()-n.tb>1000){n.tb=Date.now();paintTbar()}
 }
+/* posted speed limit for the road you're on (OpenStreetMap via our server); looked up every ~250 m or 40 s while driving */
+const LIM={v:null,at:0,s:-1e9,busy:false,miss:0};
+async function checkLimit(p){const n=G.nav;if(!n||!p||LIM.busy)return;const now=Date.now();if(n.s-LIM.s<250&&now-LIM.at<40000)return;if(LIM.miss>4&&now-LIM.at<120000)return;
+  LIM.busy=true;LIM.s=n.s;LIM.at=now;
+  try{const j=await api("/limit?lat="+p.lat.toFixed(5)+"&lng="+p.lng.toFixed(5));LIM.v=j.limit||null;LIM.road=j.road||"";LIM.miss=0}catch(e){LIM.v=null;LIM.miss++}
+  LIM.busy=false;paintDrive()}
+function limitFmt(){const l=LIM.v;if(!l||!G.nav)return null;const metric=D.settings.units==="metric";
+  if(l.unit==="mph")return metric?Math.round(l.value*1.609344/5)*5:l.value;return metric?l.value:Math.round(l.value*0.621371/5)*5}
 const paceStr=sPerMi=>{if(!isFinite(sPerMi)||sPerMi<=0)return "—";const m=Math.floor(sPerMi/60),s=Math.round(sPerMi%60);return m+":"+String(s).padStart(2,"0")};
 function arrive(){const n=G.nav,r=G.route,d=G.dest;speak("You’ve arrived"+(d?" at "+d.name:"")+".");
   if(!n.sim&&D.settings.historyOn){D.history=[{id:uid(),to:{name:d.name,addr:d.addr,lat:d.lat,lng:d.lng},mode:G.mode,startedAt:n.startedAt,endedAt:Date.now(),distanceM:Math.round(n.traveled||r.len)}].concat(D.history).slice(0,200);save()}
@@ -552,8 +614,8 @@ const head=(k,t,s)=>'<div class="ph"><div class="kick">'+k+'</div><h1>'+t+'</h1>
 
 /* Explore: real places near you (Places API), Grooveville events, and ecosystem shortcuts */
 const EXP={cat:"",items:null,loading:false,err:""};
-const CATS=[["vybr8","VYBR8 Eats","food",["restaurant"],"Restaurants near you. Restaurant details come from VYBR8 as it grows.","#F4A987"],["coffee","Coffee","coffee",["cafe","coffee_shop"],"","#e8c27a"],["night","Nightlife","music",["bar","night_club"],"","#b7a1e5"],
-  ["live","Grooveville Live","music",null,"Public Grooveville events with a location.","#ff9f68"],["pathd","PATHD Work","work",null,"Your work and interview places.","#68d4d0"],["gas","Gas","gas",["gas_station"],"","#c9e27a"],["ev","EV charging","bolt",["electric_vehicle_charging_station"],"","#68d4d0"],["park","Parks","park",["park"],"","#9fd3c7"],["shop","Shopping","bag",["shopping_mall","clothing_store"],"","#f2c48f"]];
+const CATS=[["live","Grooveville Live","music",null,"Upcoming Grooveville events. Tap Go for directions.","#ff9f68"],["vybr8","VYBR8 Eats","food",["restaurant"],"Restaurants near you. Restaurant details come from VYBR8 as it grows.","#F4A987"],["coffee","Coffee","coffee",["cafe","coffee_shop"],"","#e8c27a"],["night","Nightlife","music",["bar","night_club"],"","#b7a1e5"],
+  ["pathd","PATHD Work","work",null,"Your work and interview places.","#68d4d0"],["gas","Gas","gas",["gas_station"],"","#c9e27a"],["ev","EV charging","bolt",["electric_vehicle_charging_station"],"","#68d4d0"],["park","Parks","park",["park"],"","#9fd3c7"],["shop","Shopping","bag",["shopping_mall","clothing_store"],"","#f2c48f"]];
 function pExplore(){
   return head("Explore","Find your next stop.","Real places around you, Grooveville events and your ecosystem shortcuts.")+
     '<div class="cats">'+CATS.map(([k,l,i,,,c])=>'<button class="cat gl'+(EXP.cat===k?" on":"")+'" data-a="cat" data-k="'+k+'" style="--pc:'+c+'">'+ico(i,24)+'<b>'+l+'</b></button>').join("")+
@@ -562,12 +624,12 @@ function pExplore(){
 }
 function exploreBody(){if(!EXP.cat)return '<div class="empty">Pick a category to see places near '+(G.pos?"you":"Charlotte")+'.</div>';const C=CATS.find(c=>c[0]===EXP.cat);
   if(EXP.loading)return '<div class="empty">Looking around…</div>';if(EXP.err)return '<div class="empty">'+esc(EXP.err)+'</div>';
-  const L=EXP.items||[];return (C[4]?'<p class="muted" style="margin-bottom:12px">'+esc(C[4])+'</p>':'')+(L.length?'<div class="plist grid">'+L.map((x,i)=>'<div class="pcard gl">'+(x.photo?'<img src="'+esc(x.photo)+'" alt="" loading="lazy">':'<span class="pph" style="--pc:'+C[5]+'">'+ico(C[2],30)+'</span>')+'<div class="pcb"><b>'+esc(x.name)+'</b><small>'+esc([x.type,x.rating?"★ "+x.rating+(x.count?" ("+x.count+")":""):"",x.dist!=null?fmtDist(x.dist):""].filter(Boolean).join(" · "))+'</small><small class="muted">'+esc(x.addr||"")+'</small>'+(x.attr?'<small class="attr">Photo: '+esc(x.attr)+'</small>':'')+
+  const L=EXP.items||[];if(EXP.cat==="live")return '<p class="muted" style="margin-bottom:12px">'+esc(C[4])+'</p>'+liveBody(L);return (C[4]?'<p class="muted" style="margin-bottom:12px">'+esc(C[4])+'</p>':'')+(L.length?'<div class="plist grid">'+L.map((x,i)=>'<div class="pcard gl">'+(x.photo?'<img src="'+esc(x.photo)+'" alt="" loading="lazy">':'<span class="pph" style="--pc:'+C[5]+'">'+ico(C[2],30)+'</span>')+'<div class="pcb"><b>'+esc(x.name)+'</b><small>'+esc([x.type,x.rating?"★ "+x.rating+(x.count?" ("+x.count+")":""):"",x.dist!=null?fmtDist(x.dist):""].filter(Boolean).join(" · "))+'</small><small class="muted">'+esc(x.addr||"")+'</small>'+(x.attr?'<small class="attr">Photo: '+esc(x.attr)+'</small>':'')+
     '<div class="row l"><button class="gbtn sm" data-a="exgo" data-i="'+i+'">'+ico("navigate",15)+' Go</button><button class="gbtn ghost sm" data-a="exsave" data-i="'+i+'">'+ico("star",15)+' Save</button></div></div></div>').join("")+'</div>'+(L.some(x=>x.google)?'<p class="attr">Places data © Google</p>':''):'<div class="empty">Nothing found nearby.</div>')}
-async function exploreLoad(k){EXP.cat=k;EXP.items=null;EXP.err="";EXP.loading=true;const r=$("#exr");if(r)r.innerHTML=exploreBody();$$(".cat").forEach(b=>b.classList.toggle("on",b.dataset.k===k));
+async function exploreLoad(k){EXP.cat=k;EXP.items=null;EXP.err="";EXP.loading=true;const r=$("#exr");if(r)r.innerHTML=exploreBody();if(r&&innerWidth<=760)setTimeout(()=>r.scrollIntoView({behavior:REDUCED?"auto":"smooth",block:"start"}),60);$$(".cat").forEach(b=>b.classList.toggle("on",b.dataset.k===k));
   const C=CATS.find(c=>c[0]===k),center=G.pos||CFG.defaultCenter;
   try{
-    if(k==="live")EXP.items=await liveEvents();
+    if(k==="live"){EXP.items=await liveEvents();MAP.load().catch(()=>{}).then(()=>{EXP.loading=false;const rr=$("#exr");if(rr&&EXP.cat==="live"){rr.innerHTML=exploreBody();liveImages(EXP.items)}});}
     else if(k==="pathd"){EXP.items=D.saved.filter(s=>s.kind==="work").map(s=>Object.assign({},s,{type:"Work",dist:G.pos?hav(G.pos,s):null}));if(!EXP.items.length)EXP.err="Save your work address (Work button at the top) and interview spots here. PATHD job locations will appear as PATHD connects."}
     else{await MAP.load();const {Place,SearchNearbyRankPreference}=MAP.libs.places;
       const {places}=await Place.searchNearby({fields:["id","displayName","location","formattedAddress","rating","userRatingCount","primaryTypeDisplayName","photos"],locationRestriction:{center,radius:6000},includedPrimaryTypes:C[3],maxResultCount:12,rankPreference:SearchNearbyRankPreference?SearchNearbyRankPreference.POPULARITY:undefined});
@@ -575,10 +637,57 @@ async function exploreLoad(k){EXP.cat=k;EXP.items=null;EXP.err="";EXP.loading=tr
         photo:ph&&ph.getURI?ph.getURI({maxWidth:480}):"",attr:ph&&ph.authorAttributions&&ph.authorAttributions[0]?ph.authorAttributions[0].displayName:"",dist:G.pos?hav(G.pos,{lat:p.location.lat(),lng:p.location.lng()}):null,kind:k==="vybr8"?"restaurant":"favorite"}})}
   }catch(e){EXP.err=MAP.failed||MAPERR.code?diagText(MAP.failed||MAPERR.code)[0]+". "+diagText(MAP.failed||MAPERR.code)[1]:placesErr(e)}
   EXP.loading=false;const r2=$("#exr");if(r2)r2.innerHTML=exploreBody()}
-async function liveEvents(){if(!STORE.db)return [];const today=new Date().toISOString().slice(0,10);
+/* Grooveville Live: public events from the back office. Expired dates drop off on their own; repeating events show their next date. */
+const EVD={iso:d=>d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"),parse:s=>{const [y,m,d]=String(s).split("-").map(Number);return new Date(y,(m||1)-1,d||1)},
+  add(s,n){const d=EVD.parse(s);d.setDate(d.getDate()+n);return EVD.iso(d)},media:{},photos:{}};
+function evNth(ds){const d=EVD.parse(ds),dim=new Date(d.getFullYear(),d.getMonth()+1,0).getDate(),n=Math.ceil(d.getDate()/7);return {n,last:d.getDate()+7>dim&&n>=4,wd:d.getDay()}}
+function evOcc(e,from,to){const out=[],iso=EVD.iso;if(!e||!e.date)return out;
+  if(!e.repeat){if(e.date>=from&&e.date<=to)out.push(e.date);return out}
+  const ex=new Set(e.exdates||[]),until=e.until||"9999-12-31",cnt=Number(e.count)||0,start=EVD.parse(e.date);let n=0,guard=0;
+  const done=ds=>ds>to||ds>until||(cnt&&n>=cnt)||++guard>5000,push=ds=>{n++;if(ds>=from&&!ex.has(ds))out.push(ds)};
+  if(e.repeat==="daily"){for(let d=new Date(start);;d.setDate(d.getDate()+1)){const ds=iso(d);if(done(ds))break;push(ds)}}
+  else if(e.repeat==="weekly"||e.repeat==="biweekly"){const step=e.repeat==="biweekly"?2:1,days=((e.days&&e.days.length)?e.days:[start.getDay()]).map(Number).sort((a,b)=>a-b);const wk0=new Date(start);wk0.setDate(wk0.getDate()-wk0.getDay());
+    outer:for(let w=0;;w+=step){for(const dw of days){const d=new Date(wk0);d.setDate(d.getDate()+w*7+dw);const ds=iso(d);if(ds<e.date)continue;if(done(ds))break outer;push(ds)}}}
+  else if(e.repeat==="monthly"){const day=start.getDate();for(let k=0;;k++){const y=start.getFullYear(),m=start.getMonth()+k,dim=new Date(y,m+1,0).getDate();if(dim<day){if(iso(new Date(y,m,1))>to||++guard>5000)break;continue}const ds=iso(new Date(y,m,day));if(done(ds))break;push(ds)}}
+  else if(e.repeat==="monthlyNth"){const ni=evNth(e.date);for(let k=0;;k++){const y=start.getFullYear(),m=start.getMonth()+k;let d;
+      if(ni.last){d=new Date(y,m+1,0);while(d.getDay()!==ni.wd)d.setDate(d.getDate()-1)}else{d=new Date(y,m,1);while(d.getDay()!==ni.wd)d.setDate(d.getDate()+1);d.setDate(d.getDate()+7*(ni.n-1));if(d.getMonth()!==new Date(y,m,1).getMonth()){if(iso(new Date(y,m,1))>to||++guard>5000)break;continue}}
+      const ds=iso(d);if(done(ds))break;push(ds)}}
+  else if(e.repeat==="yearly"){for(let k=0;k<200;k++){const d=new Date(start.getFullYear()+k,start.getMonth(),start.getDate());if(d.getMonth()!==start.getMonth())continue;const ds=iso(d);if(done(ds))break;push(ds)}}
+  return out}
+const evMin=t=>{const m=/^(\d{1,2}):(\d{2})/.exec(t||"");return m?(+m[1])*60+(+m[2]):null};
+/* an occurrence is over after its end time; with no end time, 4 hours after it starts; with no times, at midnight */
+function evOver(e,ds){const now=new Date(),td=EVD.iso(now);if(ds>td)return false;if(ds<td){const s=evMin(e.start),en=evMin(e.end);return !(ds===EVD.add(td,-1)&&s!=null&&en!=null&&en<=s&&now.getHours()*60+now.getMinutes()<en)}
+  const nm=now.getHours()*60+now.getMinutes(),s=evMin(e.start),en=evMin(e.end);if(en!=null)return en>(s||0)?nm>=en:false;if(s!=null)return nm>=s+240;return false}
+function evNext(e){const td=EVD.iso(new Date());const L=evOcc(e,EVD.add(td,-1),EVD.add(td,400));for(const ds of L)if(!evOver(e,ds))return ds;return null}
+const evTime=t=>{const m=evMin(t);if(m==null)return "";const h=Math.floor(m/60),mm=m%60;return ((h%12)||12)+(mm?":"+String(mm).padStart(2,"0"):"")+" "+(h<12?"AM":"PM")};
+function evRepeat(e){if(!e.repeat)return "";const d=EVD.parse(e.date),wd=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+  const days=(e.days&&e.days.length?e.days:[d.getDay()]).map(Number).sort().map(x=>wd[x]).join(", ");
+  return ({daily:"Every day",weekly:"Every "+days,biweekly:"Every other "+days,monthly:"Monthly",monthlyNth:"Monthly",yearly:"Every year"})[e.repeat]||"Repeats"}
+function evWhen(e,ds){const td=EVD.iso(new Date()),d=EVD.parse(ds),diff=Math.round((d-EVD.parse(td))/864e5);
+  const badge=diff<=0?"TODAY":diff===1?"TOMORROW":diff<7?"THIS WEEK":"COMING SOON";
+  const day=diff<=0?"Today":diff===1?"Tomorrow":d.toLocaleDateString("en-US",{weekday:"short",month:"short",day:"numeric"});
+  const tm=evTime(e.start)+(e.end?" – "+evTime(e.end):"");return {badge,cls:diff<=0?"today":diff<7?"soon":"later",line:day+(tm?" · "+tm:"")}}
+async function liveEvents(){if(!STORE.db)throw new Error("Events can’t load right now. Try again in a moment.");
   const snap=await STORE.db.collection("events").where("visibility","==","public").get();
-  return snap.docs.map(d=>Object.assign({id:d.id},d.data())).filter(e=>e.location&&String(e.date||"")>=today).sort((a,b)=>String(a.date).localeCompare(String(b.date))).slice(0,20)
-    .map(e=>({name:e.title,addr:e.location,type:new Date(e.date+"T12:00").toLocaleDateString("en-US",{month:"short",day:"numeric"})+(e.start?" · "+e.start:""),text:e.location,kind:"event"}))}
+  return snap.docs.map(d=>Object.assign({id:d.id},d.data())).filter(e=>e.guide!==false&&(e.place||e.location))
+    .map(e=>{const ds=evNext(e);return ds?Object.assign(e,{_next:ds}):null}).filter(Boolean)
+    .sort((a,b)=>(a._next+(a.start||"")).localeCompare(b._next+(b.start||""))).slice(0,30)
+    .map(e=>{const p=e.place||{};return {ev:e,name:p.name||e.title,addr:p.addr||e.location,text:p.addr||e.location,lat:p.lat,lng:p.lng,placeId:p.id,kind:"event"}})}
+function liveBody(L){if(!L.length)return '<div class="empty">No upcoming Grooveville events right now. Check back soon.</div>';
+  return '<div class="evlist">'+L.map((x,i)=>{const e=x.ev,w=evWhen(e,e._next),rep=evRepeat(e),tl=e.ticket==="rsvp"?"RSVP":e.ticket==="tickets"?"Get tickets":e.ticket==="free"?"Register":"More info";
+    return '<article class="evc gl"><div class="evimg noimg" id="evi-'+i+'">'+'<span class="pph" style="--pc:#ff9f68">'+ico("music",34)+'</span>'+'<span class="evbadge '+w.cls+'">'+w.badge+'</span></div>'+
+      '<div class="evb">'+(e.group?'<small class="evgrp">'+esc(e.group)+'</small>':'')+'<b class="evt">'+esc(e.title||"")+'</b><span class="evw">'+esc(w.line)+'</span>'+(rep?'<small class="evr">'+esc(rep)+'</small>':'')+
+      '<small class="muted">'+esc(x.addr||"")+'</small><small class="attr" id="eva-'+i+'"></small>'+
+      '<div class="row l"><button class="gbtn sm" data-a="exgo" data-i="'+i+'">'+ico("navigate",15)+' Go</button>'+(e.link&&/^https?:\/\//i.test(e.link)?'<a class="gbtn ghost sm" href="'+esc(e.link)+'" target="_blank" rel="noopener">'+tl+' ↗</a>':'')+
+      '<button class="gbtn ghost sm icon" data-a="exsave" data-i="'+i+'" aria-label="Save place">'+ico("star",15)+'</button></div></div></article>'}).join("")+'</div>'}
+/* images: flyer first, then your venue photo, then Google's photo of the venue */
+async function liveImages(L){for(let i=0;i<L.length;i++){const e=L[i].ev,box=$("#evi-"+i);if(!box)continue;let src="",flyer=false,attr="";
+  try{if(e.hasFlyer||e.hasVenueImg){let m=EVD.media[e.id];if(m===undefined){const s=await STORE.db.collection("eventMedia").doc(e.id).get();m=EVD.media[e.id]=s.exists?s.data():null}
+      if(m&&m.flyer){src=m.flyer;flyer=true}else if(m&&m.venue)src=m.venue}
+    if(!src&&(e.venueSrc||"google")==="google"&&e.place&&e.place.id&&MAP.libs){let ph=EVD.photos[e.place.id];if(ph===undefined){const pl=new MAP.libs.places.Place({id:e.place.id});await pl.fetchFields({fields:["photos"]});const f=pl.photos&&pl.photos[0];ph=EVD.photos[e.place.id]=f?{u:f.getURI({maxWidth:720}),a:(f.authorAttributions&&f.authorAttributions[0]&&f.authorAttributions[0].displayName)||""}:null}
+      if(ph){src=ph.u;attr="Venue photo: "+(ph.a||"Google")}}}catch(err){}
+  const b2=$("#evi-"+i);if(!src||!b2)continue;const badge=b2.querySelector(".evbadge");b2.innerHTML='<img src="'+esc(src)+'" alt="'+(flyer?"Event flyer":"Venue")+'" loading="lazy"'+(flyer?' class="flyer" data-a="evflyer" data-i="'+i+'"':'')+'>';if(badge)b2.appendChild(badge);b2.classList.remove("noimg");
+  const a=$("#eva-"+i);if(a)a.textContent=attr}}
 async function resolveText(x){if(x.lat)return x;await MAP.load();const {Place}=MAP.libs.places;const {places}=await Place.searchByText({textQuery:x.text||x.addr||x.name,fields:["id","displayName","location","formattedAddress"],maxResultCount:1,locationBias:G.pos||CFG.defaultCenter});
   const p=places&&places[0];if(!p)throw new Error("Couldn’t find that address");return Object.assign({},x,{lat:p.location.lat(),lng:p.location.lng(),placeId:p.id,addr:p.formattedAddress||x.addr})}
 
@@ -756,7 +865,8 @@ document.addEventListener("click",e=>{
   if(a==="acct")return modal('<h3>Your account</h3><p class="muted">Signed in as <b>'+esc(STORE.email)+'</b>.</p><p class="muted small">'+(STORE.cloud==="blocked"?"Account sync is waiting for the latest Firestore rules. Your data is safe on this device.":"Your saved places, trips, walks and car sync to this account on every device.")+'</p><div class="row"><button class="gbtn ghost" data-a="signout">Sign out</button><button class="gbtn" data-a="close">Close</button></div>');
   /* explore */
   if(a==="cat")return exploreLoad(t.dataset.k);
-  if(a==="exgo"||a==="exsave"){const x=EXP.items[i];resolveText(x).then(p=>{if(a==="exgo")chooseDest(p);else addSaved(Object.assign({},p))}).catch(err=>toast(err.message));return}
+  if(a==="evflyer"){const x=EXP.items&&EXP.items[i],im=t.getAttribute("src");if(!im)return;return modal('<div class="evfly"><img src="'+esc(im)+'" alt="Event flyer"></div><h3 style="margin-top:12px">'+esc(x&&x.ev?x.ev.title:"")+'</h3><div class="row"><button class="gbtn" data-a="close">Close</button></div>')}
+  if(a==="exgo"||a==="exsave"){const x0=EXP.items[i],x=x0&&x0.ev?{name:x0.name,addr:x0.addr,text:x0.text,lat:x0.lat,lng:x0.lng,placeId:x0.placeId,kind:"event"}:x0;if(x&&x.lat==null)delete x.lat;resolveText(x).then(p=>{if(a==="exgo")chooseDest(p);else addSaved(Object.assign({},p))}).catch(err=>toast(err.message));return}
   /* immersive */
   if(a==="immto")return IMM.fly(IMM.targets()[i]);
   if(a==="orbit")return IMM.orbit();

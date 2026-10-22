@@ -6,7 +6,7 @@
    Only pages on grooveville.org may call these (browser fetch metadata), each visitor is rate limited,
    and weather / time zone answers are cached briefly to keep Google costs down. */
 const J = (o, s, extra) => new Response(JSON.stringify(o), { status: s || 200, headers: Object.assign({ "content-type": "application/json; charset=utf-8", "cache-control": "no-store" }, extra || {}) });
-const LIMITS = { route: 40, intel: 90, tz: 120 };          // requests per visitor per 10 minutes, per server instance
+const LIMITS = { route: 40, intel: 90, tz: 120, limit: 240 };          // requests per visitor per 10 minutes, per server instance
 const hits = new Map();
 function limited(ip, kind) {
   const k = kind + ":" + ip, now = Date.now(), w = 600000;
@@ -57,6 +57,34 @@ async function cached(ctx, key, ttl, make) {
   if (c && v && !v.error) { const resp = new Response(JSON.stringify(v), { headers: { "content-type": "application/json", "cache-control": "public, max-age=" + ttl } }); ctx && ctx.waitUntil ? ctx.waitUntil(c.put(ck, resp)) : await c.put(ck, resp) }
   return v;
 }
+/* Posted speed limits come from OpenStreetMap (maxspeed tags), because Google's speed-limit data is only sold to fleet-tracking customers.
+   Coverage depends on the road: when a road has no tag we return limit:null and the app simply hides the sign. */
+function parseMax(v) {
+  v = String(v || "").trim().toLowerCase(); let m;
+  if ((m = v.match(/^(\d{1,3})\s*mph$/))) return { value: +m[1], unit: "mph" };
+  if ((m = v.match(/^(\d{1,3})(\s*km\/h)?$/))) return { value: +m[1], unit: "km/h" };
+  return null;
+}
+function segDist(p, a, b) {
+  const k = Math.cos(p.lat * Math.PI / 180) * 111320, ax = (a.lon - p.lng) * k, ay = (a.lat - p.lat) * 110540, bx = (b.lon - p.lng) * k, by = (b.lat - p.lat) * 110540;
+  const dx = bx - ax, dy = by - ay, l = dx * dx + dy * dy, t = l ? Math.max(0, Math.min(1, -(ax * dx + ay * dy) / l)) : 0;
+  return Math.hypot(ax + t * dx, ay + t * dy);
+}
+async function limitLookup(pt, fetcher) {
+  const q = "[out:json][timeout:8];way(around:25," + pt.lat + "," + pt.lng + ")[highway][maxspeed];out tags geom;";
+  let j;
+  try {
+    const r = await fetcher("https://overpass-api.de/api/interpreter", { method: "POST", headers: { "content-type": "application/x-www-form-urlencoded", "user-agent": "GrooveGuide/1.0 (grooveville.org)" }, body: "data=" + encodeURIComponent(q) });
+    if (!r.ok) return { error: "Speed limit lookup unavailable (" + r.status + ")" };
+    j = await r.json();
+  } catch (e) { return { error: "Speed limit lookup unavailable" } }
+  let best = null, bd = 1e9;
+  for (const w of (j.elements || [])) {
+    const lim = parseMax(w.tags && w.tags.maxspeed); if (!lim || !w.geometry) continue;
+    for (let i = 1; i < w.geometry.length; i++) { const d = segDist(pt, w.geometry[i - 1], w.geometry[i]); if (d < bd) { bd = d; best = { limit: lim, road: (w.tags.name || w.tags.ref || "") } } }
+  }
+  return best && bd < 30 ? Object.assign(best, { source: "OpenStreetMap" }) : { limit: null, source: "OpenStreetMap" };
+}
 async function tzLookup(key, p, ts, fetcher) {
   const r = await fetcher("https://maps.googleapis.com/maps/api/timezone/json?location=" + p.lat + "," + p.lng + "&timestamp=" + ts + "&key=" + encodeURIComponent(key));
   const j = await r.json().catch(() => ({}));
@@ -91,6 +119,15 @@ export async function guideApi(req, env, ctx, h) {
     const k = String(env.GOOGLE_MAPS_BROWSER_KEY || "").trim();
     return J({ googleMapsKey: k, mapIdDark: String(env.GUIDE_MAP_ID_DARK || "").trim(), mapIdLight: String(env.GUIDE_MAP_ID_LIGHT || "").trim(),
       serverRoutes: !!env.GOOGLE_ROUTES_API_KEY, browserKeySet: !!k, sameAsServerKey: !!k && k === env.GOOGLE_ROUTES_API_KEY }, 200, { "cache-control": "private, max-age=60" });
+  }
+  if (p === "/api/guide/limit" && req.method === "GET") {
+    const ip0 = req.headers.get("cf-connecting-ip") || "0";
+    if (limited(ip0, "limit")) return J({ error: "Too many requests. Wait a few minutes." }, 429);
+    const pt = ll({ lat: url.searchParams.get("lat"), lng: url.searchParams.get("lng") });
+    if (!pt) return J({ error: "Bad location" }, 400);
+    const g = { lat: Math.round(pt.lat * 5000) / 5000, lng: Math.round(pt.lng * 5000) / 5000 };   // ~20 m grid
+    const v = await cached(ctx, "lim/" + g.lat + "/" + g.lng, 604800, () => limitLookup(g, fetcher));
+    return J(v, v.error ? 502 : 200);
   }
   const key = env.GOOGLE_ROUTES_API_KEY;
   if (!key) return J({ error: "The Cloudflare secret GOOGLE_ROUTES_API_KEY isn't set yet", setup: true }, 503);

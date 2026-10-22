@@ -235,6 +235,12 @@ service cloud.firestore {
       allow write: if isFounder();
     }
 
+    // Groove Guide event images (flyer, venue photo): readable when the event is public, written by the founder
+    match /eventMedia/{id} {
+      allow read: if isFounder() || get(/databases/$(database)/documents/events/$(id)).data.visibility == "public";
+      allow write: if isFounder();
+    }
+
     // Company heads list: everyone signed in can read it, only the founder changes it
     match /org/{doc} {
       allow read: if signedIn();

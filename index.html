@@ -1120,6 +1120,15 @@ img.missing{opacity:.2}
 @media (min-width:761px) and (max-width:1680px){.logo{font-size:0;gap:0}.nav .wrap{padding-inline:16px}}
 @media (min-width:761px) and (max-width:1380px){.links a{padding:6px 7px;font-size:13px}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+/* Groove Guide fields on events */
+.evgsug{position:absolute;left:0;right:0;top:100%;z-index:30;margin-top:4px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r-sm);box-shadow:0 14px 34px -14px rgba(0,0,0,.45);overflow:hidden}
+.evgsug button{display:flex;flex-direction:column;align-items:flex-start;width:100%;text-align:left;padding:9px 12px;gap:1px;border-bottom:1px solid var(--line)}
+.evgsug button:hover{background:var(--surface-2)}.evgsug b{font-size:14px}.evgsug small{font-size:12px;color:var(--muted)}
+.evgattr{display:block;font-size:10.5px;color:var(--muted);padding:4px 10px;text-align:right}
+.evgimgs{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.evgimg{display:flex;flex-direction:column;gap:8px}.evgl{font-size:13px;font-weight:600;color:var(--muted)}
+.evgprev{min-height:110px;border:1px dashed var(--line);border-radius:var(--r-sm);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:8px;font-size:12.5px;text-align:center;overflow:hidden}
+.evgprev.tall{min-height:150px}.evgprev img{max-width:100%;max-height:220px;border-radius:8px;object-fit:contain}
 </style>
 
 </head>
@@ -4879,6 +4888,95 @@ addEventListener("scroll",()=>{if(UIR)return;UIR=requestAnimationFrame(()=>{UIR=
 /* light follows the finger or cursor on glass tiles */
 document.addEventListener("pointermove",e=>{const t=e.target.closest&&e.target.closest(".gtile");if(!t)return;const r=t.getBoundingClientRect();t.style.setProperty("--lx",((e.clientX-r.left)/r.width*100).toFixed(0)+"%");t.style.setProperty("--ly",((e.clientY-r.top)/r.height*100).toFixed(0)+"%")},{passive:true});
 
+/* ---------- Events on Groove Guide (Explore › Grooveville Live) ----------
+   Extra fields on public calendar events: event group, a Google-matched venue, venue image (Google photo or your own),
+   a flyer, and a ticket / RSVP link. Images live in eventMedia/{eventId} so the public site doesn't download them
+   with every page load; the event itself stays in events/{id} like before. */
+const EVG={maps:null,loading:null,sess:null,sug:[],photoTok:0};
+async function evgMaps(){
+  if(EVG.maps)return EVG.maps;if(EVG.loading)return EVG.loading;
+  EVG.loading=(async()=>{
+    if(!(window.google&&google.maps&&google.maps.importLibrary)){
+      const r=await fetch("/api/guide/config",{credentials:"same-origin"});const j=await r.json().catch(()=>({}));
+      if(!r.ok||!j.googleMapsKey)throw new Error("Google address search needs the Groove Guide map key in Cloudflare (GOOGLE_MAPS_BROWSER_KEY).");
+      await new Promise((res,rej)=>{window.__evgReady=res;const s=document.createElement("script");s.async=true;
+        s.src="https://maps.googleapis.com/maps/api/js?key="+encodeURIComponent(j.googleMapsKey)+"&v=beta&loading=async&callback=__evgReady";s.onerror=()=>rej(new Error("Google Maps didn't load"));document.head.appendChild(s)});
+    }
+    EVG.maps=await google.maps.importLibrary("places");return EVG.maps})();
+  try{return await EVG.loading}catch(e){EVG.loading=null;throw e}
+}
+function evgShrink(file,maxPx,maxLen){return new Promise(res=>{const r=new FileReader();r.onload=()=>{const img=new Image();img.onload=()=>{
+  let px=maxPx,q=.85,out="";for(let k=0;k<8;k++){const sc=Math.min(1,px/Math.max(img.width,img.height));const c=document.createElement("canvas");c.width=Math.max(1,Math.round(img.width*sc));c.height=Math.max(1,Math.round(img.height*sc));
+    const cx=c.getContext("2d");cx.fillStyle="#fff";cx.fillRect(0,0,c.width,c.height);cx.drawImage(img,0,0,c.width,c.height);out=c.toDataURL("image/jpeg",q);if(out.length<=maxLen)break;if(q>.6)q-=.1;else px=Math.round(px*.8)}
+  res(out.length<=maxLen?out:(toast("That image is too large. Try a smaller one."),null))};img.onerror=()=>{toast("That file isn't an image we can read");res(null)};img.src=r.result};r.readAsDataURL(file)})}
+const EVG_TICKETS=[["","No tickets needed"],["rsvp","RSVP"],["tickets","Tickets (paid)"],["free","Free, register"]];
+function evGuideHtml(d){
+  const groups=[...new Set((S.events||[]).map(e=>e.group).filter(Boolean))].sort();
+  const p=d.place||{};
+  return '<fieldset id="evg" style="border:1px solid var(--line);border-radius:var(--r-sm);padding:12px;margin:0;display:flex;flex-direction:column;gap:10px"><legend style="font-size:13px;font-weight:600;color:var(--muted);padding:0 6px">Groove Guide</legend>'+
+    '<label style="display:flex;gap:8px;align-items:center;font-size:14px"><input type="checkbox" id="evg-on" name="guide"'+(d.guide!==false?" checked":"")+'> Show under <b>Grooveville Live</b> on Groove Guide</label>'+
+    '<p class="muted" id="evg-note" style="font-size:12.5px;margin:-4px 0 0">Public events only. It drops off on its own once it’s over; repeating events show their next date.</p>'+
+    '<label class="f">Event group or series<input class="i" id="evg-group" name="group" list="evg-groups" value="'+esc(d.group||"")+'" placeholder="e.g. The Unc &amp; Neph Show"><datalist id="evg-groups">'+groups.map(g=>'<option value="'+esc(g)+'">').join("")+'</datalist></label>'+
+    '<label class="f" style="position:relative">Address or venue<input class="i" id="evg-addr" autocomplete="off" value="'+esc(p.name?(p.name+(p.addr&&p.addr.indexOf(p.name)!==0?", "+p.addr:"")):(d.location||""))+'" placeholder="Search a venue or address">'+
+      '<div id="evg-sug" class="evgsug" hidden></div><small class="muted" id="evg-placeinfo" style="font-size:12px">'+(p.id?"Matched on Google ✓ "+esc(p.addr||""):"Pick a suggestion so Groove Guide can route people there.")+'</small></label>'+
+    '<div class="evgimgs"><div class="evgimg"><span class="evgl">Venue image</span><div class="seg" id="evg-vseg"><button type="button" data-v="google" class="'+((d.venueSrc||"google")==="google"?"on":"")+'">Google photo</button><button type="button" data-v="upload" class="'+(d.venueSrc==="upload"?"on":"")+'">My own</button><button type="button" data-v="none" class="'+(d.venueSrc==="none"?"on":"")+'">None</button></div>'+
+      '<div class="evgprev" id="evg-vprev"></div><input type="file" accept="image/*" id="evg-vfile" hidden></div>'+
+      '<div class="evgimg"><span class="evgl">Flyer</span><div class="evgprev tall" id="evg-fprev"></div><div class="row l" style="margin:0"><button type="button" class="btn ghost sm" id="evg-fbtn">Upload flyer</button><button type="button" class="btn ghost sm" id="evg-frm" hidden>Remove</button></div><input type="file" accept="image/*" id="evg-ffile" hidden></div></div>'+
+    '<div class="grid2"><label class="f">Tickets<select class="i" id="evg-ticket" name="ticket">'+EVG_TICKETS.map(([v,l])=>'<option value="'+v+'"'+((d.ticket||"")===v?" selected":"")+'>'+l+'</option>').join("")+'</select></label></div>'+
+  '</fieldset>';
+}
+function evGuideInit(el,d){
+  const st=el._evg={place:d.place||null,venueSrc:d.venueSrc||"google",venue:null,flyer:null,mediaLoaded:!d.id,changed:false};
+  const $e=s=>el.querySelector(s);
+  const vis=()=>{const pub=$e("#ev-vis").value==="public";$e("#evg").style.opacity=pub?"":".55";$e("#evg-note").textContent=pub?"Public events only. It drops off on its own once it’s over; repeating events show their next date.":"Switch the event to Public to show it on Groove Guide."};
+  el.querySelectorAll("#ev-visseg button").forEach(b=>b.addEventListener("click",()=>setTimeout(vis,0)));vis();
+  /* the old Location box becomes the Google-matched address */
+  const loc=$e("#ev-loc");if(loc)loc.closest("label").hidden=true;
+  const tl=$e("#ev-link");if(tl){const lab=tl.closest("label");lab.firstChild.textContent="Ticket, RSVP or info link";const tk=$e("#evg-ticket");tk.closest(".grid2").appendChild(lab)}
+  const addr=$e("#evg-addr"),box=$e("#evg-sug"),info=$e("#evg-placeinfo");let t=0;
+  const syncLoc=()=>{if(loc)loc.value=st.place?(st.place.name&&st.place.addr&&st.place.addr.indexOf(st.place.name)!==0?st.place.name+", "+st.place.addr:(st.place.addr||st.place.name)):addr.value.trim()};
+  addr.addEventListener("input",()=>{st.place=null;info.textContent="Pick a suggestion so Groove Guide can route people there.";syncLoc();clearTimeout(t);const q=addr.value.trim();if(q.length<3){box.hidden=true;return}
+    t=setTimeout(async()=>{try{const P=await evgMaps();EVG.sess=EVG.sess||new P.AutocompleteSessionToken();
+      const {suggestions}=await P.AutocompleteSuggestion.fetchAutocompleteSuggestions({input:q,sessionToken:EVG.sess,locationBias:{center:{lat:35.2271,lng:-80.8431},radius:50000}});
+      if(addr.value.trim()!==q)return;EVG.sug=(suggestions||[]).filter(x=>x.placePrediction).slice(0,6);
+      box.innerHTML=EVG.sug.map((x,i)=>{const p=x.placePrediction;return '<button type="button" data-i="'+i+'"><b>'+esc(p.mainText?p.mainText.text:p.text.text)+'</b><small>'+esc(p.secondaryText?p.secondaryText.text:"")+'</small></button>'}).join("")+'<small class="evgattr">powered by Google</small>';box.hidden=!EVG.sug.length}
+      catch(e){box.hidden=true;info.textContent=String(e.message||e)}},250)});
+  addr.addEventListener("blur",()=>setTimeout(()=>box.hidden=true,200));
+  box.addEventListener("click",async ev=>{const b=ev.target.closest("[data-i]");if(!b)return;box.hidden=true;const x=EVG.sug[Number(b.dataset.i)];if(!x)return;
+    try{const pl=x.placePrediction.toPlace();await pl.fetchFields({fields:["id","displayName","formattedAddress","location","photos"]});EVG.sess=null;
+      st.place={id:pl.id,name:pl.displayName||"",addr:pl.formattedAddress||"",lat:pl.location.lat(),lng:pl.location.lng()};st._photos=pl.photos||[];
+      addr.value=st.place.name+(st.place.addr&&st.place.addr.indexOf(st.place.name)!==0?", "+st.place.addr:"");info.textContent="Matched on Google ✓ "+st.place.addr;syncLoc();vprev()}
+    catch(e){toast("Couldn't open that place. Try again.")}});
+  /* venue image */
+  const vp=$e("#evg-vprev");
+  const vprev=async()=>{const tok=++EVG.photoTok;
+    if(st.venueSrc==="none"){vp.innerHTML='<span class="muted">No venue image</span>';return}
+    if(st.venueSrc==="upload"){vp.innerHTML=st.venue?'<img src="'+st.venue+'" alt=""><button type="button" class="btn ghost sm" id="evg-vchg">Change</button>':(!st.mediaLoaded?'<span class="muted">Loading…</span>':'<button type="button" class="btn ghost sm" id="evg-vchg">Choose image</button>');const c=$e("#evg-vchg");if(c)c.onclick=()=>$e("#evg-vfile").click();return}
+    if(!st.place||!st.place.id){vp.innerHTML='<span class="muted">Pick the venue above and Google’s photo shows here.</span>';return}
+    vp.innerHTML='<span class="muted">Loading Google photo…</span>';
+    try{let ph=st._photos;if(!ph){const P=await evgMaps();const pl=new P.Place({id:st.place.id});await pl.fetchFields({fields:["photos"]});ph=st._photos=pl.photos||[]}
+      if(tok!==EVG.photoTok)return;const f=ph[0];vp.innerHTML=f?'<img src="'+esc(f.getURI({maxWidth:640}))+'" alt=""><small class="evgattr">Photo: '+esc((f.authorAttributions&&f.authorAttributions[0]&&f.authorAttributions[0].displayName)||"Google")+'</small>':'<span class="muted">Google has no photo for this place. Upload your own.</span>'}
+    catch(e){vp.innerHTML='<span class="muted">'+esc(String(e.message||"Google photo unavailable"))+'</span>'}};
+  el.querySelectorAll("#evg-vseg button").forEach(b=>b.addEventListener("click",()=>{el.querySelectorAll("#evg-vseg button").forEach(x=>x.classList.toggle("on",x===b));st.venueSrc=b.dataset.v;st.changed=true;vprev();if(b.dataset.v==="upload"&&!st.venue&&st.mediaLoaded)$e("#evg-vfile").click()}));
+  $e("#evg-vfile").addEventListener("change",async ev=>{const f=ev.target.files[0];ev.target.value="";if(!f)return;const v=await evgShrink(f,1000,220000);if(v){st.venue=v;st.changed=true;vprev()}});
+  /* flyer */
+  const fp=$e("#evg-fprev"),frm=$e("#evg-frm");
+  const fprev=()=>{fp.innerHTML=st.flyer?'<img src="'+st.flyer+'" alt="Flyer">':'<span class="muted">'+(st.mediaLoaded?"No flyer yet":"Loading…")+'</span>';frm.hidden=!st.flyer;$e("#evg-fbtn").textContent=st.flyer?"Replace flyer":"Upload flyer"};
+  $e("#evg-fbtn").addEventListener("click",()=>$e("#evg-ffile").click());
+  $e("#evg-ffile").addEventListener("change",async ev=>{const f=ev.target.files[0];ev.target.value="";if(!f)return;const v=await evgShrink(f,1500,560000);if(v){st.flyer=v;st.changed=true;fprev()}});
+  frm.addEventListener("click",()=>{st.flyer=null;st.changed=true;fprev()});
+  fprev();vprev();
+  if(d.id&&S.db)S.db.collection("eventMedia").doc(d.id).get().then(s=>{const m=s.exists?s.data():{};st.venue=m.venue||null;st.flyer=m.flyer||null;st.mediaLoaded=true;fprev();vprev()}).catch(()=>{st.mediaLoaded=true;fprev();vprev()});
+}
+/* adds the Groove Guide fields to the event record; saves images separately */
+function evGuideRec(el,rec){const st=el._evg;if(!st)return rec;const g=el.querySelector("#evg-on");
+  return Object.assign(rec,{guide:!!(g&&g.checked),group:(el.querySelector("#evg-group").value||"").trim().slice(0,80),place:st.place||null,venueSrc:st.venueSrc,ticket:el.querySelector("#evg-ticket").value||"",
+    hasFlyer:!!st.flyer,hasVenueImg:st.venueSrc==="upload"&&!!st.venue})}
+async function evGuideSave(el,id){const st=el._evg;if(!st||!S.db||!st.mediaLoaded||!st.changed)return true;
+  try{if(!st.flyer&&!(st.venueSrc==="upload"&&st.venue))await S.db.collection("eventMedia").doc(id).delete();
+    else await S.db.collection("eventMedia").doc(id).set({flyer:st.flyer||"",venue:st.venueSrc==="upload"&&st.venue?st.venue:"",updatedAt:new Date().toISOString()});return true}
+  catch(e){toast(/permission/.test(String(e&&e.code))?"The event saved, but Firebase blocked the images. Publish the latest rules (eventMedia).":"The event saved, but the images didn't. Try again.");return false}}
+
 /* ---------- modals ---------- */
 const brandOpts=(sel,only)=>BRANDS.filter(b=>!only||only.includes(b.id)).map(b=>'<option value="'+b.id+'"'+(b.id===sel?" selected":"")+'>'+esc(brandInfo(b.id).name)+'</option>').join("");
 const delBtn=has=>has?'<button type="button" class="btn danger left" data-act="del-arm">Delete</button>':'';
@@ -4944,13 +5042,14 @@ function eventModal(d){
     '</fieldset>'+
     '<label class="f">Location<input class="i" id="ev-loc" name="location" value="'+esc(d.location)+'"></label>'+
     '<label class="f">Tickets or info link<input class="i" type="url" id="ev-link" name="link" value="'+esc(d.link)+'" placeholder="https://"></label>'+
-    '<label class="f">Description<textarea class="i" id="ev-desc" name="description" style="min-height:70px">'+esc(d.description)+'</textarea></label></div>'+
+    '<label class="f">Description<textarea class="i" id="ev-desc" name="description" style="min-height:70px">'+esc(d.description)+'</textarea></label>'+evGuideHtml(d)+'</div>'+
     (d.id&&d.repeat&&d._occ?'<div class="banner" style="margin:0">You opened the '+esc(fmtDate(d._occ))+' date of a repeating event. Changes apply to the whole series.<button type="button" class="btn ghost sm" id="ev-skip">Skip just '+esc(fmtDate(d._occ))+'</button></div>':'')+
     '<div class="row">'+(d.id?'<button type="button" class="btn danger left" data-act="del-arm">'+(d.repeat?"Delete series":"Delete")+'</button>':'')+(d.id?'<a class="btn ghost" href="'+esc(gcal({title:d.title,date:d.date,start:d.start,end:d.end,location:d.location,details:d.description,recur:rrule(d)}))+'" target="_blank" rel="noopener">Add to Google Calendar</a>':'')+'<button type="button" class="btn ghost" data-act="close-modal">Cancel</button><button class="btn olive" type="submit">Save event</button></div></form>',
   el=>{
     const help=()=>{el.querySelector("#vis-help").textContent=el.querySelector("#ev-vis").value==="public"?"Shows on the public calendar and company page after you publish. Use for launches and events you are hosting.":"Back office only. Visitors never see private events."};help();
     el.querySelectorAll("#ev-visseg button").forEach(b=>b.addEventListener("click",()=>{el.querySelectorAll("#ev-visseg button").forEach(x=>x.classList.toggle("on",x===b));el.querySelector("#ev-vis").value=b.dataset.v;help()}));
-    el._del=async()=>{if(await remove("events",d.id)){closeModal();toast("Event deleted")}};
+    evGuideInit(el,d);
+    el._del=async()=>{if(await remove("events",d.id)){if(S.db)S.db.collection("eventMedia").doc(d.id).delete().catch(()=>{});closeModal();toast("Event deleted")}};
     el._ex=(d.exdates||[]).slice();
     const repUI=()=>{const r=el.querySelector("#ev-repeat").value,ends=el.querySelector("#ev-ends").value;
       el.querySelector("#ev-endsbox").hidden=!r;el.querySelector("#ev-untilbox").hidden=!r||ends!=="until";el.querySelector("#ev-countbox").hidden=!r||ends!=="count";
@@ -4967,7 +5066,8 @@ function eventModal(d){
       const rec={brand:o.brand,title:o.title,date:o.date,start:o.start||"",end:o.end||"",location:o.location||"",link:o.link||"",description:o.description||"",visibility:o.visibility==="public"?"public":"private",remindDays:o.remindDays,createdAt:d.createdAt||new Date().toISOString()};
       Object.assign(rec,readRepeat(el,o));
       if(rec.repeat&&rec.until&&rec.until<rec.date){toast("The end date is before the first date");return}
-      if(await save("events",d.id||uid(),rec)){closeModal();toast(rec.visibility==="public"?"Saved. Publish to show it on the public site.":"Event saved")}});
+      evGuideRec(el,rec);const eid=d.id||uid();
+      if(await save("events",eid,rec)){await evGuideSave(el,eid);closeModal();toast(rec.visibility==="public"?(rec.guide?"Saved. It’s live on Groove Guide now; publish to show it on the public site.":"Saved. Publish to show it on the public site."):"Event saved")}});
   });
 }
 function remModal(d){
