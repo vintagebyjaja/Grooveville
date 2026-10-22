@@ -310,11 +310,33 @@ async function artistShare(env, id, url) {
     '<meta property="og:type" content="profile"><meta property="og:site_name" content="Grooveville"><meta property="og:title" content="' + e(name) + ' · Grooveville Music"><meta property="og:description" content="' + e(desc) + '"><meta property="og:image" content="' + e(img) + '"><meta property="og:url" content="' + e(url.origin + "/artist/" + id) + '">' +
     '<meta name="twitter:card" content="summary_large_image"><meta http-equiv="refresh" content="0; url=' + e(dest) + '"><script>location.replace(' + JSON.stringify(dest) + ')</script></head><body style="background:#101112;color:#f3efe7;font-family:system-ui;padding:40px"><a style="color:#f4a987" href="' + e(dest) + '">' + e(name) + ' on Grooveville</a></body></html>', { headers: { "content-type": "text/html; charset=utf-8", "cache-control": "public, max-age=300" } });
 }
+/* Share links for songs (grooveville.org/song/<id>): a rich preview in messages and social apps, then straight to the song.
+   Only published songs get a preview; the audio itself is never offered as a file. */
+async function songShare(env, id, url) {
+  let s = null, a = null, al = null;
+  try { s = await fsPublic(env, "musicSongs/" + id) } catch (e) { }
+  if (s && s.published !== true) s = null;
+  if (s && s.artistId) { try { a = await fsPublic(env, "musicArtists/" + s.artistId) } catch (e) { } }
+  if (s && !s.art && s.albumId) { try { al = await fsPublic(env, "musicAlbums/" + s.albumId) } catch (e) { } }
+  const e = v => String(v || "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+  const artist = (a && a.name) || (s && (s.artistName || s.artist)) || "Grooveville";
+  const title = s ? s.title + " · " + artist : "Grooveville Music";
+  const desc = s ? "Listen to “" + s.title + "” by " + artist + ", a Grooveville Original. Plays right on grooveville.org." : "Grooveville Originals, artists and the Grooveville sound.";
+  const art = (s && s.art) || (al && al.art) || "";
+  const img = art ? url.origin + "/api/music/img/" + art : url.origin + "/media/og-square-v2.jpg", dest = s ? "/#song/" + id : "/#music";
+  return new Response('<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>' + e(title) + ' · Grooveville</title><meta name="description" content="' + e(desc) + '">' +
+    '<meta property="og:type" content="music.song"><meta property="og:site_name" content="Grooveville"><meta property="og:title" content="' + e(title) + '"><meta property="og:description" content="' + e(desc) + '"><meta property="og:image" content="' + e(img) + '"><meta property="og:url" content="' + e(url.origin + "/song/" + id) + '">' +
+    '<meta name="twitter:card" content="' + (art ? "summary" : "summary_large_image") + '"><meta name="twitter:title" content="' + e(title) + '"><meta name="twitter:image" content="' + e(img) + '"><meta name="theme-color" content="#0b0b0c">' +
+    '<meta http-equiv="refresh" content="0; url=' + e(dest) + '"><script>location.replace(' + JSON.stringify(dest) + ')</script></head><body style="background:#0b0b0c;color:#f3efe7;font-family:system-ui,sans-serif;display:grid;place-items:center;min-height:100vh;margin:0"><a style="color:#f4a987" href="' + e(dest) + '">Open ' + e(s ? s.title : "Grooveville Music") + ' on Grooveville</a></body></html>',
+    { headers: { "content-type": "text/html; charset=utf-8", "cache-control": "public, max-age=300" } });
+}
 export default {
   async fetch(req, env, ctx) {
     const url = new URL(req.url);
     const am = /^\/artist\/([a-z0-9-]{1,60})\/?$/.exec(url.pathname);
     if (am) return artistShare(env, am[1], url);
+    const sm = /^\/song\/([A-Za-z0-9_-]{2,64})\/?$/.exec(url.pathname);
+    if (sm) return songShare(env, sm[1], url);
     if (url.pathname.startsWith("/api/")) {
       try { return await api(req, env, ctx) } catch (e) { return json({ error: "Server error" }, 500) }
     }

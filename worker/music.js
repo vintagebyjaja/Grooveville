@@ -77,8 +77,14 @@ export async function musicApi(req, env, ctx, h) {
   /* public: stream published originals */
   let m = /^\/api\/music\/a\/([A-Za-z0-9_-]{2,64})$/.exec(p);
   if (m && (req.method === "GET" || req.method === "HEAD")) {
+    /* stream only into a player on grooveville.org: opening the audio address in a tab, or embedding it on another site, is refused */
+    const dest = req.headers.get("sec-fetch-dest"), site = req.headers.get("sec-fetch-site");
+    if (dest === "document" || dest === "iframe" || dest === "embed" || dest === "object") return Response.redirect(url.origin + "/song/" + m[1], 302);
+    if (site === "cross-site") return new Response("Grooveville Originals play on grooveville.org", { status: 403 });
     const s = await publishedSong(env, m[1], fetcher); if (!s) return new Response("Not found", { status: 404 });
-    return serveR2(env, s.audioKey, req, "audio/mpeg", "public, max-age=86400");
+    const r = await serveR2(env, s.audioKey, req, "audio/mpeg", "private, max-age=3600");
+    r.headers.set("content-disposition", "inline");r.headers.set("x-content-type-options", "nosniff");r.headers.set("cross-origin-resource-policy", "same-origin");
+    return r;
   }
   m = /^\/api\/music\/img\/(music\/img\/[A-Za-z0-9._\/-]+)$/.exec(p);
   if (m && (req.method === "GET" || req.method === "HEAD")) { if (m[1].includes("..")) return new Response("Bad", { status: 400 }); return serveR2(env, m[1], req, null, "public, max-age=604800, immutable") }
