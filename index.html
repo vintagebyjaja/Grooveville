@@ -1351,9 +1351,9 @@ function navLinks(){
   const team=r.startsWith("team");
   $("#links").innerHTML=
     '<a href="#home"'+(r==="home"?' class="on"':'')+'>Home</a>'+
-    '<a href="#vine"'+(r==="vine"||r==="brands"||r.startsWith("b-")?' class="on"':'')+'>Companies</a>'+
+    '<a href="#vine"'+(r==="vine"||r==="brands"||r.startsWith("b-")?' class="on"':'')+'>Ecosystem</a>'+
     '<a href="#live" class="watchlive'+(r==="live"?' on':'')+'">'+(LV.live&&LV.live.live?'<i class="ldot" aria-hidden="true"></i>':'')+'Watch Live</a>'+
-    '<a href="#music"'+(/^(music|artist|album|playlist|tv|charts|songrate)/.test(r)?' class="on"':'')+'>Music</a>'+
+    '<a href="#music"'+(/^(music|artist|album|playlist|tv|charts|songrate)/.test(r)?' class="on"':'')+'>Media</a>'+
     '<a href="#calendar"'+on("calendar")+'>Calendar</a>'+
     '<a href="#collab"'+on("collab")+'>Collaborate</a>'+
     '<a href="#story"'+on("story")+'>Our Story</a>'+
@@ -3570,7 +3570,7 @@ const MI={
   sound:'<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/><path d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11"/>'
 };
 const mIco=k=>'<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+(MI[k]||"")+'</svg>';
-const MENU_DEST=[["home","#home","home","Home","Start here"],["vine","#vine","vine","Companies","Our ecosystem"],["brands","#brands","brands","Brands","Products & IP"],["live","#live","live","Watch Live","Shows & events"],["music","#music","music","Music","Originals"],["tv","#tv","tv","Grooveville TV","Videos & playlists"],["radio","#b-ent/radio","radio","Radio","Exclusive sound"],["cal","#calendar","cal","Calendar","Events"],["collab","#collab","collab","Collaborate","Opportunities"],["story","#story","story","Our Story","Who we are"],["aelio","#b-aelio","aelio","AELIO","Our AI"],["crown","#shadowcrown","crown","Shadow Crown","Book · Game"],["team","#groove","team","Groove Team","The people"]];
+const MENU_DEST=[["home","#home","home","Home","Start here"],["vine","#vine","vine","Ecosystem","Our companies"],["brands","#brands","brands","Brands","Products & IP"],["live","#live","live","Watch Live","Shows & events"],["music","#music","music","Media","Music & originals"],["tv","#tv","tv","Grooveville TV","Videos & playlists"],["radio","#b-ent/radio","radio","Radio","Exclusive sound"],["cal","#calendar","cal","Calendar","Events"],["collab","#collab","collab","Collaborate","Opportunities"],["story","#story","story","Our Story","Who we are"],["aelio","#b-aelio","aelio","AELIO","Our AI"],["crown","#shadowcrown","crown","Shadow Crown","Book · Game"],["team","#groove","team","Groove Team","The people"]];
 const GLOWS={mixed:["#F4A987","#b7a1e5","#68d4d0","#e8c27a"],warm:["#F4A987","#e8c27a","#e59a72","#f2c48f"],cool:["#b7a1e5","#68d4d0","#8fb3ff","#a28be0"]};
 const TOP_ROUTES=["home","","vine","live","music"];
 function mTabOn(k){
@@ -3606,7 +3606,7 @@ function mobileNav(){
   mHeader();
   const live=typeof LV!=="undefined"&&LV.live&&LV.live.live;
   const tab=(h,k,l)=>'<a href="'+h+'"'+(mTabOn(k)?' class="on" aria-current="page"':'')+'>'+mIco(k)+(k==="live"&&live?'<i class="ldot" aria-hidden="true"></i>':'')+'<span>'+l+'</span></a>';
-  bar.innerHTML=tab("#home","home","Home")+tab("#vine","vine","Companies")+tab("#live","live","Live")+tab("#music","music","Music")+
+  bar.innerHTML=tab("#home","home","Home")+tab("#vine","vine","Ecosystem")+tab("#live","live","Live")+tab("#music","music","Media")+
     '<button data-act="m-menu" aria-expanded="'+$("#appmenu").classList.contains("open")+'" aria-controls="appmenu">'+mIco("menu")+'<span>Menu</span></button>';
   if($("#appmenu").classList.contains("open"))mMenuFill();
 }
