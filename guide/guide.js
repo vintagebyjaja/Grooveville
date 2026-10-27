@@ -245,6 +245,7 @@ const MAP={map:null,failed:"",loading:false,lines:[],marks:[],veh:null,dest:null
     if(r&&r.path){MAP.lines.push(new P({path:r.path,strokeColor:ROUTE_COLOR(),strokeOpacity:dark?.22:.18,strokeWeight:26,zIndex:4,clickable:false,map:MAP.map}));
       MAP.lines.push(new P({path:r.path,strokeColor:dark?"#2a1408":"#ffffff",strokeOpacity:dark?.85:1,strokeWeight:15,zIndex:5,clickable:false,map:MAP.map}));
       MAP.lines.push(new P({path:r.path,strokeColor:ROUTE_COLOR(),strokeOpacity:1,strokeWeight:9,zIndex:6,clickable:false,map:MAP.map}));
+      MAP.lines.push(new P({path:r.path,strokeColor:dark?"#ffe1cc":"#e7dcff",strokeOpacity:.85,strokeWeight:2.5,zIndex:6,clickable:false,map:MAP.map}));
       if(G.mode==="DRIVE")r.traffic.forEach(t=>{if(t.speed==="NORMAL")return;const seg=r.path.slice(t.s,t.e+1);if(seg.length>1)MAP.lines.push(new P({path:seg,strokeColor:t.speed==="TRAFFIC_JAM"?"#d9572b":"#f2b13c",strokeWeight:5,zIndex:7,clickable:false,map:MAP.map}))})}
     D.saved.forEach(s=>{if(!s.lat)return;const m=new Mk({map:MAP.map,position:{lat:s.lat,lng:s.lng},content:MAP.pinEl(placeColor(s),kindIcon(s.kind),"",false),title:s.name,zIndex:3});m.addListener("click",()=>chooseDest(s));MAP.marks.push(m)});
     (G.stops||[]).forEach((s,i)=>MAP.marks.push(new Mk({map:MAP.map,position:s,content:MAP.pinEl("#b7a1e5","pin",String(i+1),false),title:s.name||"Stop",zIndex:8})));
@@ -259,8 +260,8 @@ const MAP={map:null,failed:"",loading:false,lines:[],marks:[],veh:null,dest:null
   setView(v){if(v==="toggle")v=MAP.view==="aerial"?"flat":"aerial";MAP.view=v;D.settings.view=v;save();
     if(MAP.map){if(G.nav){MAP.follow=true;paintRecenter();MAP.recenter()}
       else if(v==="aerial"){const r=G.route,p=r&&r.path&&r.path.length?r.path[0]:(G.pos||MAP.map.getCenter()),hd=r&&r.path&&r.path.length>1?bearing(r.path[0],r.path[Math.min(6,r.path.length-1)]):(MAP.map.getHeading()||0);
-        MAP.map.moveCamera({center:p,zoom:Math.max(17,MAP.map.getZoom()||0),tilt:67,heading:hd})}
-      else{MAP.map.moveCamera({tilt:0,heading:0});if(G.route)MAP.fit()}
+        MAP.anim({center:p,zoom:Math.max(17,MAP.map.getZoom()||0),tilt:67,heading:hd},800)}
+      else MAP.anim({tilt:0,heading:0},550).then(()=>{if(G.route&&!G.nav)MAP.fit()})
       MAP.vehicle();if(v==="aerial")CITY.show().then(ok=>{if(!ok)MAP.check3d()});else CITY.hide()}
     paintMapTools()},
   check3d(){try{const rt=MAP.map.getRenderingType&&MAP.map.getRenderingType();if(rt&&String(rt).toUpperCase()==="RASTER")toast("This device is showing the flat map, so 3D tilt isn’t available here.",5000)}catch(e){}},
@@ -269,8 +270,15 @@ const MAP={map:null,failed:"",loading:false,lines:[],marks:[],veh:null,dest:null
   fit(){if(!MAP.map||!G.route||!G.route.path)return;if(CITY.on)CITY.overview();const b=new google.maps.LatLngBounds();G.route.path.forEach(p=>b.extend(p));MAP.map.moveCamera({tilt:0,heading:0});
     let pad={top:120,bottom:90,left:60,right:60};if(innerWidth<=760){const tc=$("#tripcard"),tb=$("#tbar");const bot=G.nav?(tb?tb.offsetHeight:100):(tc&&tc.offsetParent?tc.offsetHeight:220);pad={top:G.nav?130:40,bottom:bot+30,left:36,right:70}}
     MAP.map.fitBounds(b,pad);if(MAP.view==="aerial"){const t=()=>MAP.map&&MAP.map.moveCamera({tilt:45});if(google.maps.event&&google.maps.event.addListenerOnce)google.maps.event.addListenerOnce(MAP.map,"idle",t);else setTimeout(t,400)}},
-  recenter(){MAP.follow=true;paintRecenter();if(CITY.on)CITY.cam(800);const p=(G.nav&&G.nav.snapPos)||G.pos;if(MAP.map&&p)MAP.map.moveCamera({center:p,zoom:G.nav?17.5:15.5,tilt:MAP.view==="aerial"?(G.nav?65:55):0,heading:G.nav&&MAP.view==="aerial"?curHeading()||0:0})},
-  followTick(){if(!MAP.map||!G.nav||!MAP.follow)return;if(CITY.on)CITY.cam(950);const p=G.nav.snapPos||G.pos;if(p)MAP.map.moveCamera({center:p,zoom:G.mode==="WALK"?18:17.5,tilt:MAP.view==="aerial"?65:0,heading:MAP.view==="aerial"?curHeading()||0:0})}
+  /* smooth camera moves between views (instant with reduced motion) */
+  anim(to,ms){return new Promise(res=>{if(!MAP.map){res();return}const id=MAP._an=(MAP._an||0)+1;if(REDUCED||!ms){MAP.map.moveCamera(to);res();return}
+    const c=MAP.map.getCenter(),f={lat:c?c.lat():0,lng:c?c.lng():0,zoom:MAP.map.getZoom()||14,tilt:(MAP.map.getTilt&&MAP.map.getTilt())||0,heading:MAP.map.getHeading()||0};
+    const tc=to.center?(typeof to.center.lat==="function"?{lat:to.center.lat(),lng:to.center.lng()}:to.center):null,dh=to.heading!=null?((to.heading-f.heading)%360+540)%360-180:0,t0=performance.now(),ez=x=>x<.5?4*x*x*x:1-Math.pow(-2*x+2,3)/2;
+    MAP.anOn=true;const step=now=>{if(id!==MAP._an){res();return}const k=Math.min(1,(now-t0)/ms),q=ez(k),o={};
+      if(tc)o.center={lat:f.lat+(tc.lat-f.lat)*q,lng:f.lng+(tc.lng-f.lng)*q};if(to.zoom!=null)o.zoom=f.zoom+(to.zoom-f.zoom)*q;if(to.tilt!=null)o.tilt=f.tilt+(to.tilt-f.tilt)*q;if(to.heading!=null)o.heading=f.heading+dh*q;
+      MAP.map.moveCamera(o);if(k<1)requestAnimationFrame(step);else{MAP.anOn=false;res()}};requestAnimationFrame(step)})},
+  recenter(){MAP.follow=true;paintRecenter();if(CITY.on)CITY.cam(800);const p=(G.nav&&G.nav.snapPos)||G.pos;if(MAP.map&&p)MAP.anim({center:p,zoom:G.nav?17.5:15.5,tilt:MAP.view==="aerial"?(G.nav?65:55):0,heading:G.nav&&MAP.view==="aerial"?curHeading()||0:0},700)},
+  followTick(){if(!MAP.map||!G.nav||!MAP.follow||MAP.anOn)return;if(CITY.on)CITY.cam(950);const p=G.nav.snapPos||G.pos;if(p)MAP.map.moveCamera({center:p,zoom:G.mode==="WALK"?18:17.5,tilt:MAP.view==="aerial"?65:0,heading:MAP.view==="aerial"?curHeading()||0:0})}
 };
 function vehArrowSvg(c){return '<svg viewBox="0 0 40 40" width="40" height="40"><circle cx="20" cy="20" r="17" fill="'+c+'" opacity=".22"/><path d="M20 6 31 32l-11-6-11 6z" fill="'+c+'" stroke="#fff" stroke-width="2.4" stroke-linejoin="round"/></svg>'}
 function vehTopSvg(c,type){const w=type==="truck"||type==="suv"?18:16,l=type==="truck"?38:34;
@@ -279,7 +287,7 @@ function curHeading(){if(G.nav&&G.nav.heading!=null)return G.nav.heading;return 
 
 /* ---------- dashboard ---------- */
 function dashShell(){
-  $("#dash").innerHTML='<div class="mapcol"><div class="mapbox"><div id="gmap" role="application" aria-label="Map"></div><div class="mapfb" id="mapfb" hidden></div>'+
+  $("#dash").innerHTML='<div class="mapcol"><div class="mapbox"><div id="gmap" role="application" aria-label="Map"></div><div class="mapamb" aria-hidden="true"></div><div class="mapfb" id="mapfb" hidden></div>'+
     '<div class="tripcard gl" id="tripcard"></div>'+
     '<div class="mtools"><button class="rb vtog" id="vtog" data-a="view" data-v="toggle">3D</button><button class="rb" data-a="fit" aria-label="Show the whole route" title="Whole route">'+ico("layers",20)+'</button><button class="rb dvbtn" data-a="drivetoggle" aria-label="Driving view" title="Driving view">'+ico("car",20)+'</button></div>'+
     '<div class="mzoom gl"><button data-a="zoom" data-d="1" aria-label="Zoom in">'+ico("plus",20)+'</button><button data-a="zoom" data-d="-1" aria-label="Zoom out">'+ico("minus",20)+'</button></div>'+
@@ -289,7 +297,7 @@ function dashShell(){
     '<div class="laysw gl" role="group" aria-label="Screen layout"><button data-a="layout" data-v="70">70/30</button><button data-a="layout" data-v="80">80/20</button><button data-a="layout" data-v="map">Map</button></div>'+
     '<div class="modesw gl" role="group" aria-label="Travel mode"><button data-a="mode" data-v="DRIVE">'+ico("car",18)+'<span>Drive</span></button><button data-a="mode" data-v="WALK">'+ico("walk",18)+'<span>Walk</span></button></div>'+
     '</div></div>'+
-    '<aside class="drivecol gl" id="drivecol" aria-label="Driving view"><button class="dexp" data-a="drivetoggle" aria-label="Show or hide the driving view"></button><div class="dhead" id="dhead"></div><div class="dstage"><canvas id="dcv"></canvas><div class="dnote" id="dnote"></div><div class="dspd" id="dspd"></div></div><div class="dfoot" id="dfoot"></div></aside>'+
+    '<aside class="drivecol gl" id="drivecol" aria-label="Driving view"><button class="dexp" data-a="drivetoggle" aria-label="Show or hide the driving view"></button><div class="dhead" id="dhead"></div><div class="dstage"><canvas id="dcv"></canvas><div class="dnote" id="dnote"></div><small class="dattr">Streets &amp; buildings © OpenStreetMap contributors</small><div class="dspd" id="dspd"></div></div><div class="dfoot" id="dfoot"></div></aside>'+
     '<footer class="tbar gl" id="tbar"><button class="tgrab" data-a="sheet" aria-label="Show trip details"></button><div class="tbin" id="tbin"></div></footer>';
   DRIVE.init($("#dcv"));setLayout(D.settings.layout||"70",true);
 }
@@ -321,9 +329,10 @@ function paintTrip(){const c=$("#tripcard");if(!c)return;const r=G.route;
 function nextInfo(){const n=G.nav;if(!n||!G.route)return null;const st=G.route.steps;const k=n.step;const nx=st[k+1];
   return {dist:Math.max(0,(st[k]?st[k].endD:G.route.len)-n.s),man:nx?nx.maneuver:"DESTINATION",instr:nx?nx.instr:"Arrive at "+(G.dest?G.dest.name:"your destination")}}
 function paintNext(){const e=$("#nextturn");if(!e)return;const r=G.route;let ni=nextInfo();
+  requestAnimationFrame(()=>{const d=$("#dash");if(d&&e.offsetHeight)d.style.setProperty("--ntH",e.offsetHeight+"px")});
   if(!ni&&r&&r.steps.length){const s=r.steps[1]||r.steps[0];ni={dist:r.steps[0].distanceM,man:s.maneuver,instr:s.instr,preview:true}}
   if(!ni){e.hidden=true;return}e.hidden=false;
-  e.innerHTML='<span class="nti">'+manIco(ni.man,46)+'</span><div><small>'+(ni.preview?"First turn":"Next turn")+'</small><b>'+fmtDist(ni.dist)+'</b><span>'+esc(shortInstr(ni.instr))+'</span></div><button class="ntv" data-a="voice-toggle" aria-label="'+(D.settings.voice?"Mute voice guidance":"Turn on voice guidance")+'">'+ico(D.settings.voice?"vol":"mute",20)+'</button>';
+  e.innerHTML='<span class="nti">'+manIco(ni.man,46)+'</span><div><small>'+(ni.preview?"First turn":"Next turn")+'</small><b>'+fmtDist(ni.dist)+'</b><span>'+esc(shortInstr(ni.instr))+'</span>'+(function(){const l=!ni.preview&&LANES.get(ni);return l&&l.lanes?'<span class="ntl" aria-label="Lanes">'+l.lanes.map(x=>'<i class="ln'+(x.ok?" ok":"")+'">'+manIco(x.dir,18)+'</i>').join("")+'</span>':''})()+'</div><button class="ntv" data-a="voice-toggle" aria-label="'+(D.settings.voice?"Mute voice guidance":"Turn on voice guidance")+'">'+ico(D.settings.voice?"vol":"mute",20)+'</button>';
 }
 const shortInstr=t=>String(t||"").split("\n")[0].replace(/\s*Pass by.*$/,"");
 function paintDrive(){const h=$("#dhead"),f=$("#dfoot"),n=$("#dnote");if(!h)return;const ni=nextInfo();
@@ -335,12 +344,12 @@ function paintDrive(){const h=$("#dhead"),f=$("#dfoot"),n=$("#dnote");if(!h)retu
   const ms=$("#mspd");if(ms){ms.hidden=!G.nav||G.mode==="WALK";ms.classList.toggle("over",over);ms.innerHTML='<span class="msv"><b>'+(sp==null?"—":sp)+'</b><small>'+speedUnit()+'</small></span>'+(lim!=null?'<span class="lim on" title="Posted limit from OpenStreetMap"><small>SPEED<br>LIMIT</small><b>'+lim+'</b></span>':'')}
   const ds=$("#dspd");if(ds)ds.classList.toggle("over",over);if(ds)ds.innerHTML='<span class="whl">'+'<svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="2.2"/><path d="M3.5 10.5h6.3M14.2 10.5h6.3M12 14.2V21"/></svg></span><div class="spd"><b>'+(sp==null?"—":sp)+'</b><small>'+speedUnit()+'</small></div>'+(lim!=null?'<div class="lim on" title="Posted limit from OpenStreetMap"><small>SPEED<br>LIMIT</small><b>'+lim+'</b></div>':'');
   f.innerHTML='<div class="lanes">'+laneHtml(ni)+'</div>';
-  n.textContent=G.route?(G.sim?"Simulated drive along your real route":"Route ahead, drawn from your real route. Not a camera view."):"";
+  if(!D3.active)n.textContent=G.route?(G.sim?"Simulated drive along your real route":"Route ahead, drawn from your real route. Not a camera view."):"";
   DRIVE.dirty=true;
 }
 /* Lane guidance: only shown when a verified lane provider supplies data. None is connected yet, so we show the maneuver, not lanes. */
 const LANES={provider:null,get(step){return this.provider?this.provider(step):null}};
-function laneHtml(ni){const l=ni&&LANES.get(ni);if(l&&l.lanes)return l.lanes.map(x=>'<span class="ln'+(x.ok?" ok":"")+'">'+manIco(x.dir,26)+'</span>').join("");
+function laneHtml(ni){const l=ni&&LANES.get(ni);const dc=$("#drivecol");if(dc)dc.classList.toggle("haslanes",!!(l&&l.lanes));if(l&&l.lanes)return l.lanes.map(x=>'<span class="ln'+(x.ok?" ok":"")+'">'+manIco(x.dir,26)+'</span>').join("");
   return '<span class="ln ok">'+manIco(ni?ni.man:"STRAIGHT",28)+'</span><small class="lnn">Lane data unavailable. Follow the arrow.</small>'}
 function arrival(){const r=G.route;if(!r)return null;const left=G.nav?G.nav.leftSec:r.durationSec;return Date.now()+left*1000}
 function paintTbar(){const t=$("#tbin");if(!t)return;const r=G.route,di=G.intel.dest,oi=G.intel.origin;
@@ -480,7 +489,7 @@ async function planRoute(keep){if(!G.dest)return;
     avoid:{tolls:D.settings.avoidTolls,highways:D.settings.avoidHighways,ferries:D.settings.avoidFerries},alternatives:!keep};
   try{const j=await api("/route",{method:"POST",body});G.routes=j.routes.map(prepRoute);G.sel=0;G.route=G.routes[0];G.routeAt=Date.now();if(G.nav){G.nav.i=0;G.nav.s=0;G.nav.step=0;G.nav.off=0}}
   catch(e){G.err=e.message;if(!keep){G.routes=[];G.route=null}}
-  G.busy=false;MAP.draw();paintAll();if(!keep)requestAnimationFrame(()=>MAP.fit());if(G.route)loadIntel();
+  G.busy=false;MAP.draw();paintAll();if(!keep)requestAnimationFrame(()=>MAP.fit());if(G.route&&D3.ok&&(innerWidth>760||G.nav))D3.prefetch(G.route);if(G.route)loadIntel();
 }
 function pickRoute(i){if(G.nav||!G.routes[i])return;G.sel=i;G.route=G.routes[i];MAP.draw();paintAll();loadIntel()}
 async function loadIntel(){const r=G.route;if(!r)return;const end=(r.legs[r.legs.length-1]||{}).end||G.dest;const arr=arrival();
@@ -501,6 +510,8 @@ async function startNav(){if(!G.route)return;stopSim();
   beginNav(false)}
 function beginNav(sim){G.nav={s:0,i:0,step:0,off:0,leftSec:G.route.durationSec,heading:G.route.path.length>1?bearing(G.route.path[0],G.route.path[1]):0,snapPos:G.route.path[0],spoken:{},startedAt:Date.now(),traveled:0,last:null,lastRe:0,sim};
   MAP.follow=true;if(G.page!=="navigate")go("navigate");MAP.recenter();
+  /* phones open the driving view when you start; tap the car button for the map (that choice is remembered) */
+  if(innerWidth<=760&&D.settings.driveView!==false&&G.mode==="DRIVE"){const d=$("#dash");if(d){d.classList.add("drive-open");DRIVE.resize()}}if(D3.ok)D3.prefetch(G.route);D3.sDisp=null;
   if(!sim)try{navigator.wakeLock&&navigator.wakeLock.request("screen").then(w=>WAKE=w).catch(()=>{})}catch(e){}
   speak((G.mode==="WALK"?"Starting walk to ":"Starting route to ")+(G.dest?G.dest.name:"your destination")+". "+fmtDur(G.route.durationSec).replace("hr","hour").replace("min","minutes")+".");
   paintAll()}
@@ -546,7 +557,11 @@ function stopSim(){if(G.sim){clearInterval(G.sim.t);G.sim=null;G.speed=null;if(G
 
 /* ---------- driving view: the real route ahead, drawn in perspective (not a camera feed) ---------- */
 const DRIVE={cv:null,cx:null,w:0,h:0,dirty:true,raf:0,
-  init(cv){this.cv=cv;this.cx=cv.getContext("2d");try{new ResizeObserver(()=>this.resize()).observe(cv.parentElement)}catch(e){}this.resize();const loop=()=>{this.raf=requestAnimationFrame(loop);if(this.dirty||G.nav)this.draw()};loop()},
+  init(cv){this.cv=cv;this.cx=cv.getContext("2d");try{new ResizeObserver(()=>this.resize()).observe(cv.parentElement)}catch(e){}this.resize();
+    /* v12: the 3D driving view (g4c-drive3d.js) renders on its own WebGL canvas; this flat drawing is the fallback */
+    const loop=now=>{this.raf=requestAnimationFrame(loop);
+      try{if(!window.__noD3)D3.tick(now)}catch(e){console.warn("[Groove Guide] driving view off:",e);D3.failed=true;D3.active=false;const st=$(".dstage");if(st)st.classList.remove("d3on");this.dirty=true}
+      if(D3.active)return;if(this.dirty||G.nav)this.draw()};requestAnimationFrame(loop)},
   resize(){if(!this.cv)return;const r=this.cv.parentElement.getBoundingClientRect(),dpr=Math.min(2,devicePixelRatio||1);this.w=Math.max(1,r.width);this.h=Math.max(1,r.height);this.cv.width=this.w*dpr;this.cv.height=this.h*dpr;this.cx.setTransform(dpr,0,0,dpr,0,0);this.dirty=true},
   draw(){const c=this.cx,W=this.w,H=this.h;if(!c||W<10||!this.cv.offsetParent){this.dirty=false;return}this.dirty=false;const light=THEME.cur==="light";
     const hor=H*0.36,f=W*0.95,camB=8.5,camH=3.1,cxp=W/2;
@@ -592,6 +607,233 @@ const DRIVE={cv:null,cx:null,w:0,h:0,dirty:true,raf:0,
     c.restore()}
 };
 function shade(hex,p){const n=parseInt(String(hex).replace("#","").padEnd(6,"0").slice(0,6),16);let r=n>>16,g=n>>8&255,b=n&255;const f=p/100;const m=v=>Math.round(clamp(f<0?v*(1+f):v+(255-v)*f,0,255));return "rgb("+m(r)+","+m(g)+","+m(b)+")"}
+
+/* ---------- Driving view (v12): a 3D visual layer over the real route ----------
+   Routing, ETAs and turn-by-turn still come from Google exactly as before. This only draws what you see:
+   - the route (Google) as a glowing lane-width path on the road,
+   - the streets, lane counts, turn lanes, sidewalks, crosswalks, street lights and building footprints around it,
+     from OpenStreetMap, ONLY where those things are actually mapped. Unknown lane counts get no lane lines;
+     no traffic cars are drawn because there's no live vehicle feed.
+   Plain WebGL (no library), paused when hidden, 30 fps on phones, calmer motion with reduced-motion on.
+   If WebGL isn't available the older flat drawing is used, and the standard map is always there. */
+const D3={tried:false,failed:false,active:false,gl:null,cv:null,prog:null,sky:null,meshes:[],dyn:{},route:null,org:null,
+  rp:[],rc:[],off:[],chunks:[],osm:{roads:[],ids:new Set(),nodeUse:new Map(),grid:new Map(),lamps:[]},busy:false,status:"",
+  get ok(){return D3.active},prefetch(){if(D3.active&&D3.route!==G.route)D3.setRoute()},
+  dispS:0,lastT:0,lastDraw:0,carB:null,camB:null,stepK:-1,need:true,
+  pal(){const L=THEME.cur==="light",rc=ROUTE_COLOR();return L?
+    {sky:["#cfcbe0","#f4eee9"],fog:"#f4eee9",ground:"#e3e1ea",curb:"#c4c0cf",road:"#a7a4b3",walk:"#cfccd8",mark:"#ffffff",markA:.9,center:"#ffffff",wall:"#f2f0f6",roof:"#e1dee9",edge:rc,edgeA:.2,route:rc,routeHi:"#b99bff",chev:"#ffffff",lamp:"#ffd9b0",light:true}:
+    {sky:["#050507","#26160f"],fog:"#26160f",ground:"#0d0c0f",curb:"#36313b",road:"#1b1a1f",walk:"#26242b",mark:"#efe6dc",markA:.55,center:"#f2d6bb",wall:"#24212a",roof:"#2c2932",edge:"#ff9f68",edgeA:.42,route:"#ff9f68",routeHi:"#ffd2b5",chev:"#ffe3cf",lamp:"#ffcf9e",light:false}},
+  /* ---- setup ---- */
+  init(){D3.tried=true;const st=$(".dstage");if(!st)return false;
+    const cv=document.createElement("canvas");cv.id="dgl";cv.setAttribute("aria-hidden","true");st.insertBefore(cv,st.firstChild);
+    let gl=null;try{gl=cv.getContext("webgl",{antialias:true,alpha:false,powerPreference:"high-performance",preserveDrawingBuffer:false})}catch(e){}
+    if(!gl){cv.remove();D3.failed=true;return false}
+    const sh=(t,src)=>{const s=gl.createShader(t);gl.shaderSource(s,src);gl.compileShader(s);if(!gl.getShaderParameter(s,gl.COMPILE_STATUS))throw new Error(gl.getShaderInfoLog(s));return s};
+    const prog=(vs,fs)=>{const p=gl.createProgram();gl.attachShader(p,sh(gl.VERTEX_SHADER,vs));gl.attachShader(p,sh(gl.FRAGMENT_SHADER,fs));gl.linkProgram(p);if(!gl.getProgramParameter(p,gl.LINK_STATUS))throw new Error("link");return p};
+    try{
+      D3.prog=prog("attribute vec3 p;attribute vec3 n;attribute vec4 c;uniform mat4 uVP;uniform mat4 uM;uniform vec3 uL;uniform float uUnlit;varying vec4 vC;varying vec3 vW;"+
+        "void main(){vec4 w=uM*vec4(p,1.0);vW=w.xyz;gl_Position=uVP*w;vec3 nn=normalize(mat3(uM)*n);float d=max(dot(nn,uL),0.0)*0.55+max(dot(nn,vec3(0.0,1.0,0.0)),0.0)*0.12;vC=vec4(c.rgb*mix(0.42+d,1.0,uUnlit),c.a);}",
+        "precision mediump float;varying vec4 vC;varying vec3 vW;uniform vec3 uCam;uniform vec3 uFog;uniform vec2 uFR;uniform float uAdd;"+
+        "void main(){float f=clamp((distance(vW,uCam)-uFR.x)/(uFR.y-uFR.x),0.0,1.0);f=f*f;gl_FragColor=uAdd>0.5?vec4(vC.rgb,vC.a*(1.0-f)):vec4(mix(vC.rgb,uFog,f),vC.a);}");
+      D3.sky=prog("attribute vec2 q;varying float y;void main(){y=q.y;gl_Position=vec4(q,0.9999,1.0);}",
+        "precision mediump float;varying float y;uniform vec3 uT;uniform vec3 uH;uniform float uHz;void main(){float t=clamp((y-uHz)/(1.0-uHz),0.0,1.0);gl_FragColor=vec4(mix(uH,uT,pow(t,0.6)),1.0);}");
+    }catch(e){console.warn("[Groove Guide] driving view shader",e);cv.remove();D3.failed=true;return false}
+    D3.gl=gl;D3.cv=cv;D3.skyBuf=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,D3.skyBuf);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,1,-1,1,1,-1,-1,1,1,-1,1]),gl.STATIC_DRAW);
+    const P=D3.prog;D3.loc={p:gl.getAttribLocation(P,"p"),n:gl.getAttribLocation(P,"n"),c:gl.getAttribLocation(P,"c")};
+    ["uVP","uM","uL","uUnlit","uCam","uFog","uFR","uAdd"].forEach(k=>D3.loc[k]=gl.getUniformLocation(P,k));
+    D3.sloc={q:gl.getAttribLocation(D3.sky,"q"),uT:gl.getUniformLocation(D3.sky,"uT"),uH:gl.getUniformLocation(D3.sky,"uH"),uHz:gl.getUniformLocation(D3.sky,"uHz")};
+    cv.addEventListener("webglcontextlost",e=>{e.preventDefault();D3.failed=true;D3.active=false;st.classList.remove("d3on")});
+    D3.active=true;st.classList.add("d3on");D3.theme=THEME.cur;return true},
+  /* ---- math ---- */
+  persp(f,a,n,fa){const t=1/Math.tan(f/2),nf=1/(n-fa);return new Float32Array([t/a,0,0,0,0,t,0,0,0,0,(fa+n)*nf,-1,0,0,2*fa*n*nf,0])},
+  look(e,c){let zx=e[0]-c[0],zy=e[1]-c[1],zz=e[2]-c[2],l=Math.hypot(zx,zy,zz);zx/=l;zy/=l;zz/=l;let xx=zz,xy=0,xz=-zx;l=Math.hypot(xx,xz)||1;xx/=l;xz/=l;
+    const yx=zy*xz-zz*xy,yy=zz*xx-zx*xz,yz=zx*xy-zy*xx;return new Float32Array([xx,yx,zx,0,xy,yy,zy,0,xz,yz,zz,0,-(xx*e[0]+xy*e[1]+xz*e[2]),-(yx*e[0]+yy*e[1]+yz*e[2]),-(zx*e[0]+zy*e[1]+zz*e[2]),1])},
+  mul(a,b){const o=new Float32Array(16);for(let i=0;i<4;i++)for(let j=0;j<4;j++){let s=0;for(let k=0;k<4;k++)s+=a[k*4+j]*b[i*4+k];o[i*4+j]=s}return o},
+  trs(x,y,z,ry){const c=Math.cos(ry),s=Math.sin(ry);return new Float32Array([c,0,-s,0,0,1,0,0,s,0,c,0,x,y,z,1])},
+  I:new Float32Array([1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1]),
+  col(h,a){h=String(h).replace("#","");const n=parseInt(h.length===3?h.split("").map(x=>x+x).join(""):h,16);return [(n>>16&255)/255,(n>>8&255)/255,(n&255)/255,a==null?1:a]},
+  proj(lat,lng){const o=D3.org;return [(lng-o.lng)*o.kx,-(lat-o.lat)*o.ky]},
+  /* ---- geometry builders (x, y, z, normal, rgba per vertex) ---- */
+  gb(){const a=[];const v=(x,y,z,nx,ny,nz,c)=>a.push(x,y,z,nx,ny,nz,c[0],c[1],c[2],c[3]);
+    return {a,v,tri(p,q,r,n,c){v(...p,...n,c);v(...q,...n,c);v(...r,...n,c)},quad(p,q,r,s,n,c){v(...p,...n,c);v(...q,...n,c);v(...r,...n,c);v(...p,...n,c);v(...r,...n,c);v(...s,...n,c)}}},
+  clean(P){const o=[];for(const p of P){const l=o[o.length-1];if(!l||Math.hypot(p[0]-l[0],p[1]-l[1])>.25)o.push(p)}return o},
+  rights(P){const n=P.length,S=[];for(let i=0;i<n-1;i++){const dx=P[i+1][0]-P[i][0],dz=P[i+1][1]-P[i][1],l=Math.hypot(dx,dz)||1;S.push([-dz/l,dx/l])}
+    const R=[];for(let i=0;i<n;i++){if(i===0){R.push(S[0]);continue}if(i===n-1){R.push(S[n-2]);continue}const a=S[i-1],b=S[i];let mx=a[0]+b[0],mz=a[1]+b[1];const l=Math.hypot(mx,mz)||1;mx/=l;mz/=l;const k=1/Math.max(.55,mx*b[0]+mz*b[1]);R.push([mx*k,mz*k])}return R},
+  ribbon(g,P,hw,y,c,off,offArr){P=D3.clean(P);if(P.length<2)return;const R=D3.rights(P);
+    for(let i=0;i<P.length-1;i++){const o0=offArr?offArr[i]:(off||0),o1=offArr?offArr[i+1]:(off||0),a=P[i],b=P[i+1],ra=R[i],rb=R[i+1];
+      g.quad([a[0]+ra[0]*(o0-hw),y,a[1]+ra[1]*(o0-hw)],[b[0]+rb[0]*(o1-hw),y,b[1]+rb[1]*(o1-hw)],[b[0]+rb[0]*(o1+hw),y,b[1]+rb[1]*(o1+hw)],[a[0]+ra[0]*(o0+hw),y,a[1]+ra[1]*(o0+hw)],[0,1,0],c)}},
+  cumOf(P){const c=[0];for(let i=1;i<P.length;i++)c.push(c[i-1]+Math.hypot(P[i][0]-P[i-1][0],P[i][1]-P[i-1][1]));return c},
+  at(P,C,s){let lo=0,hi=C.length-1;if(s<=0)return {p:P[0],i:0,t:0};if(s>=C[hi])return {p:P[hi],i:Math.max(0,hi-1),t:1};while(hi-lo>1){const m=(lo+hi)>>1;if(C[m]<=s)lo=m;else hi=m}
+    const t=(s-C[lo])/((C[lo+1]-C[lo])||1);return {p:[P[lo][0]+(P[lo+1][0]-P[lo][0])*t,P[lo][1]+(P[lo+1][1]-P[lo][1])*t],i:lo,t}},
+  dashes(g,P,off,dash,gap,w,y,c,skip){P=D3.clean(P);if(P.length<2)return;const C=D3.cumOf(P),L=C[C.length-1];
+    for(let s=gap*.5;s+dash<L;s+=dash+gap){const a=D3.at(P,C,s),b=D3.at(P,C,s+dash);if(skip&&skip((a.p[0]+b.p[0])/2,(a.p[1]+b.p[1])/2))continue;
+      const dx=b.p[0]-a.p[0],dz=b.p[1]-a.p[1],l=Math.hypot(dx,dz)||1,rx=-dz/l,rz=dx/l,h=w/2;
+      g.quad([a.p[0]+rx*(off-h),y,a.p[1]+rz*(off-h)],[b.p[0]+rx*(off-h),y,b.p[1]+rz*(off-h)],[b.p[0]+rx*(off+h),y,b.p[1]+rz*(off+h)],[a.p[0]+rx*(off+h),y,a.p[1]+rz*(off+h)],[0,1,0],c)}},
+  disc(g,x,z,rx,rz,y,c,cEdge,seg){seg=seg||24;for(let i=0;i<seg;i++){const a=i/seg*6.2832,b=(i+1)/seg*6.2832;g.v(x,y,z,0,1,0,c);g.v(x+Math.cos(a)*rx,y,z+Math.sin(a)*rz,0,1,0,cEdge||c);g.v(x+Math.cos(b)*rx,y,z+Math.sin(b)*rz,0,1,0,cEdge||c)}},
+  box(g,x0,x1,y0,y1,z0,z1,c,top){const F=[[[x0,y0,z1],[x1,y0,z1],[x1,y1,z1],[x0,y1,z1],[0,0,1]],[[x1,y0,z0],[x0,y0,z0],[x0,y1,z0],[x1,y1,z0],[0,0,-1]],[[x0,y0,z0],[x0,y0,z1],[x0,y1,z1],[x0,y1,z0],[-1,0,0]],[[x1,y0,z1],[x1,y0,z0],[x1,y1,z0],[x1,y1,z1],[1,0,0]],[[x0,y1,z1],[x1,y1,z1],[x1,y1,z0],[x0,y1,z0],[0,1,0]]];
+    F.forEach((f,i)=>g.quad(f[0],f[1],f[2],f[3],f[4],i===4&&top?top:c))},
+  earcut(P){const n=P.length;if(n<3)return [];let A=0;for(let i=0;i<n;i++){const a=P[i],b=P[(i+1)%n];A+=a[0]*b[1]-b[0]*a[1]}let idx=[...Array(n).keys()];if(A<0)idx.reverse();
+    const cr=(a,b,c)=>(b[0]-a[0])*(c[1]-a[1])-(b[1]-a[1])*(c[0]-a[0]),inT=(p,a,b,c)=>cr(a,b,p)>=0&&cr(b,c,p)>=0&&cr(c,a,p)>=0;const out=[];let g=0;
+    while(idx.length>3&&g++<4000){let ok=false;for(let i=0;i<idx.length;i++){const ia=idx[(i+idx.length-1)%idx.length],ib=idx[i],ic=idx[(i+1)%idx.length],a=P[ia],b=P[ib],c=P[ic];if(cr(a,b,c)<=1e-9)continue;
+        let bad=false;for(const j of idx){if(j===ia||j===ib||j===ic)continue;if(inT(P[j],a,b,c)){bad=true;break}}if(bad)continue;out.push([ia,ib,ic]);idx.splice(i,1);ok=true;break}if(!ok)break}
+    if(idx.length===3)out.push(idx);return out},
+  /* ---- GPU meshes ---- */
+  mesh(arr,o){const gl=D3.gl;if(!arr.length)return null;const b=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,b);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array(arr),gl.STATIC_DRAW);
+    return Object.assign({b,n:arr.length/10,mode:gl.TRIANGLES,pass:"o",unlit:1,m:null,tag:""},o)},
+  add(m){if(m)D3.meshes.push(m);return m},
+  drop(tag){const gl=D3.gl;D3.meshes=D3.meshes.filter(m=>{if(m.tag===tag){gl.deleteBuffer(m.b);return false}return true})},
+  dynSet(k,arr,o){const gl=D3.gl;let m=D3.dyn[k];if(!m){m=D3.dyn[k]=Object.assign({b:gl.createBuffer(),n:0,mode:gl.TRIANGLES,pass:"+",unlit:1,m:null},o)}gl.bindBuffer(gl.ARRAY_BUFFER,m.b);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array(arr),gl.DYNAMIC_DRAW);m.n=arr.length/10;return m},
+  /* ---- route ---- */
+  setRoute(){const r=G.route;D3.route=r;D3.meshes.forEach(m=>D3.gl.deleteBuffer(m.b));D3.meshes=[];D3.osm={roads:[],ids:new Set(),nodeUse:new Map(),grid:new Map(),lamps:[]};D3.chunks=[];D3.stepK=-1;D3.carB=null;D3.camB=null;D3.dispS=0;D3.status="";
+    const base=r&&r.path&&r.path.length>1?r.path[0]:(G.pos||CFG.defaultCenter);D3.org={lat:base.lat,lng:base.lng,kx:111320*Math.cos(base.lat*Math.PI/180),ky:110540};
+    if(r&&r.path&&r.path.length>1){D3.rp=D3.clean(r.path.map(p=>D3.proj(p.lat,p.lng)));D3.rc=D3.cumOf(D3.rp);D3.scale=r.len/(D3.rc[D3.rc.length-1]||1);D3.off=D3.rp.map(()=>0);
+      const L=D3.rc[D3.rc.length-1];for(let s=0;s<L;s+=1100)D3.chunks.push({s0:s,s1:Math.min(L,s+1250),st:0})}
+    else{D3.rp=[];D3.rc=[];D3.off=[];D3.chunks=G.pos?[{pos:true,st:0}]:[]}
+    D3.buildStatic();D3.buildRoute();D3.need=true},
+  sOf(){/* distance along OUR local path that matches the nav distance along Google's path */return G.nav?G.nav.s/(D3.scale||1):0},
+  /* ---- OpenStreetMap corridor (fetched straight from the browser, only around the route) ---- */
+  async pump(){if(D3.busy)return;const s=D3.dispS,ch=D3.chunks.find(c=>!c.st&&(c.pos||c.s1>s-200&&c.s0<s+2600));if(!ch)return;D3.busy=true;ch.st=1;
+    let ll;if(ch.pos){const p=G.pos;ll=p.lat.toFixed(6)+","+p.lng.toFixed(6);ch.r=[260,260,120]}
+    else{const pts=[];for(let k=ch.s0;k<=ch.s1;k+=45){const a=D3.at(D3.rp,D3.rc,k).p;pts.push(D3.unproj(a))}const e=D3.at(D3.rp,D3.rc,ch.s1).p;pts.push(D3.unproj(e));ll=pts.map(q=>q[0].toFixed(6)+","+q[1].toFixed(6)).join(",")}
+    const R=ch.pos?[260,260,120]:[70,150,60];
+    const q='[out:json][timeout:25];(way(around:'+R[0]+','+ll+')["highway"~"^(motorway|motorway_link|trunk|trunk_link|primary|primary_link|secondary|secondary_link|tertiary|tertiary_link|unclassified|residential|living_street|service|footway)$"];way(around:'+R[1]+','+ll+')["building"];node(around:'+R[2]+','+ll+')["highway"="street_lamp"];);out body geom qt;';
+    D3.status=D3.status||"loading";let j=null;
+    for(const u of ["https://overpass-api.de/api/interpreter","https://overpass.kumi.systems/api/interpreter"]){try{const r=await fetch(u,{method:"POST",headers:{"content-type":"application/x-www-form-urlencoded"},body:"data="+encodeURIComponent(q)});if(r.ok){j=await r.json();break}}catch(e){}}
+    D3.busy=false;if(D3.route!==G.route&&!ch.pos)return;
+    if(!j){ch.st=0;ch.fail=(ch.fail||0)+1;if(ch.fail>2){ch.st=2;D3.status=D3.osm.roads.length?"ok":"fail"}D3.note();return}
+    ch.st=2;D3.ingest(j,D3.chunks.indexOf(ch));D3.status="ok";D3.note();D3.need=true},
+  unproj(p){const o=D3.org;return [o.lat-p[1]/o.ky,o.lng+p[0]/o.kx]},
+  ROADW:{motorway:11,trunk:10,primary:9,secondary:8,tertiary:7,unclassified:6,residential:6,living_street:5,service:3.6},
+  ingest(j,ci){const P=D3.pal(),pc=D3.col,tag="c"+ci,els=j.elements||[],O=D3.osm;
+    const roads=[],walks=[],cross=[],blds=[];
+    for(const e of els){if(e.type==="node"&&e.tags&&e.tags.highway==="street_lamp"){if(!O.ids.has("n"+e.id)){O.ids.add("n"+e.id);O.lamps.push(D3.proj(e.lat,e.lon))}continue}
+      if(e.type!=="way"||!e.geometry||O.ids.has("w"+e.id))continue;const t=e.tags||{};
+      if(t.highway==="footway"){if(t.footway==="sidewalk"){O.ids.add("w"+e.id);walks.push(e)}else if(t.footway==="crossing"){O.ids.add("w"+e.id);cross.push(e)}continue}
+      if(t.highway){if(t.highway==="service"&&/parking_aisle|driveway|drive-through/.test(t.service||""))continue;if(t.area==="yes")continue;O.ids.add("w"+e.id);roads.push(e);(e.nodes||[]).forEach(n=>O.nodeUse.set(n,(O.nodeUse.get(n)||0)+1));continue}
+      if(t.building){O.ids.add("w"+e.id);blds.push(e)}}
+    const gC=D3.gb(),gR=D3.gb(),gM=D3.gb(),gW=D3.gb(),gB=D3.gb(),gE=D3.gb(),gL=D3.gb(),gLo=D3.gb();
+    const cCurb=pc(P.curb),cRoad=pc(P.road),cWalk=pc(P.walk),cMark=pc(P.mark,P.markA),cCen=pc(P.center,P.markA+.1),cEdge=pc(P.mark,P.markA*.6);
+    for(const e of roads){const t=e.tags,pts=e.geometry.map(g=>D3.proj(g.lat,g.lon));const W=D3.roadW(t),one=t.oneway==="yes"||t.oneway==="1"||/motorway/.test(t.highway)||t.junction==="roundabout";
+      const rd={id:e.id,pts,W,one,t,nodes:e.nodes||[]};O.roads.push(rd);D3.index(rd);
+      D3.ribbon(gC,pts,W/2+.35,.02,cCurb);D3.ribbon(gR,pts,W/2,.04,cRoad);
+      /* intersections: no paint inside them */
+      const X=[];(e.nodes||[]).forEach((n,i)=>{if((O.nodeUse.get(n)||0)>1&&e.geometry[i])X.push(pts[i])});const near=(x,z)=>X.some(q=>Math.hypot(q[0]-x,q[1]-z)<Math.max(9,W*.9));
+      if(W>=5){D3.dashes(gM,pts,-(W/2-.35),12,.0001,.12,.06,cEdge,near);D3.dashes(gM,pts,W/2-.35,12,.0001,.12,.06,cEdge,near)}
+      const L=parseInt(t.lanes);if(L>1&&L<12){const lw=(W-.6)/L;
+        if(one){for(let k=1;k<L;k++)D3.dashes(gM,pts,-(W-.6)/2+k*lw,3,6,.13,.06,cMark,near)}
+        else{const fw=parseInt(t["lanes:forward"]),bw=parseInt(t["lanes:backward"]);let split=null;if(fw>0&&bw>0&&fw+bw<=L)split=bw;else if(L%2===0)split=L/2;
+          if(split!=null){const c0=-(W-.6)/2+split*lw;D3.dashes(gM,pts,c0-.12,12,.0001,.12,.06,cCen,near);D3.dashes(gM,pts,c0+.12,12,.0001,.12,.06,cCen,near);
+            for(let k=1;k<L;k++)if(k!==split)D3.dashes(gM,pts,-(W-.6)/2+k*lw,3,6,.13,.06,cMark,near)}
+          else D3.dashes(gM,pts,0,12,.0001,.12,.06,cCen,near)}}
+      if(/^(both|left|right)$/.test(t.sidewalk||"")&&W>=5){if(t.sidewalk!=="right")D3.ribbon(gW,pts,.9,.03,cWalk,-(W/2+1.5));if(t.sidewalk!=="left")D3.ribbon(gW,pts,.9,.03,cWalk,W/2+1.5)}}
+    for(const e of walks)D3.ribbon(gW,e.geometry.map(g=>D3.proj(g.lat,g.lon)),.9,.03,cWalk);
+    for(const e of cross){const pts=D3.clean(e.geometry.map(g=>D3.proj(g.lat,g.lon)));if(pts.length<2)continue;const C=D3.cumOf(pts),Lc=C[C.length-1];
+      for(let s=.4;s<Lc-.3;s+=.9){const a=D3.at(pts,C,s),b=D3.at(pts,C,s+.45),dx=b.p[0]-a.p[0],dz=b.p[1]-a.p[1],l=Math.hypot(dx,dz)||1,rx=-dz/l*1.5,rz=dx/l*1.5;
+        gM.quad([a.p[0]-rx,.065,a.p[1]-rz],[b.p[0]-rx,.065,b.p[1]-rz],[b.p[0]+rx,.065,b.p[1]+rz],[a.p[0]+rx,.065,a.p[1]+rz],[0,1,0],pc(P.mark,P.markA*.9))}}
+    const cWall=pc(P.wall),cRoof=pc(P.roof),cE=pc(P.edge,P.edgeA);
+    for(const e of blds){let pts=e.geometry.map(g=>D3.proj(g.lat,g.lon));if(pts.length>3&&Math.hypot(pts[0][0]-pts[pts.length-1][0],pts[0][1]-pts[pts.length-1][1])<.5)pts.pop();if(pts.length<3)continue;
+      const t=e.tags;let h=parseFloat(t.height);if(!(h>2))h=parseFloat(t["building:levels"])*3.2+1;if(!(h>2))h=t.building==="house"||t.building==="garage"?6:t.building==="apartments"?14:9;h=Math.min(h,320);
+      let cx=0,cz=0;pts.forEach(p=>{cx+=p[0];cz+=p[1]});cx/=pts.length;cz/=pts.length;
+      for(let i=0;i<pts.length;i++){const a=pts[i],b=pts[(i+1)%pts.length];let nx=b[1]-a[1],nz=-(b[0]-a[0]);const l=Math.hypot(nx,nz)||1;nx/=l;nz/=l;if(nx*((a[0]+b[0])/2-cx)+nz*((a[1]+b[1])/2-cz)<0){nx=-nx;nz=-nz}
+        gB.quad([a[0],0,a[1]],[b[0],0,b[1]],[b[0],h,b[1]],[a[0],h,a[1]],[nx,0,nz],cWall);gE.v(a[0],h,a[1],0,1,0,cE);gE.v(b[0],h,b[1],0,1,0,cE)}
+      for(const [i,k,m] of D3.earcut(pts))gB.tri([pts[i][0],h,pts[i][1]],[pts[k][0],h,pts[k][1]],[pts[m][0],h,pts[m][1]],[0,1,0],cRoof)}
+    const gl=D3.gl;
+    D3.add(D3.mesh(gC.a,{tag,pass:"o"}));D3.add(D3.mesh(gW.a,{tag,pass:"o"}));D3.add(D3.mesh(gR.a,{tag,pass:"o"}));D3.add(D3.mesh(gB.a,{tag,pass:"o",unlit:0}));
+    D3.add(D3.mesh(gM.a,{tag,pass:"a"}));D3.add(D3.mesh(gE.a,{tag,pass:"+",mode:gl.LINES}));
+    D3.lampsBuild();D3.fitRoute();D3.buildLanes(true)},
+  roadW(t){const w=parseFloat(t.width);if(w>2.5&&w<40)return w;const l=parseInt(t.lanes);if(l>0&&l<12)return l*3.3+.6;const k=String(t.highway).replace("_link","");return /_link/.test(t.highway)?5:(D3.ROADW[k]||6)},
+  index(rd){for(let i=0;i<rd.pts.length-1;i++){const a=rd.pts[i],b=rd.pts[i+1],n=Math.max(1,Math.ceil(Math.hypot(b[0]-a[0],b[1]-a[1])/20));
+    for(let k=0;k<=n;k++){const x=a[0]+(b[0]-a[0])*k/n,z=a[1]+(b[1]-a[1])*k/n,key=Math.floor(x/30)+","+Math.floor(z/30);let L=D3.osm.grid.get(key);if(!L)D3.osm.grid.set(key,L=[]);const it=[rd,i];if(!L.some(q=>q[0]===rd&&q[1]===i))L.push(it)}}},
+  /* the mapped road you're on: nearest segment that points the same way you're going */
+  nearRoad(x,z,dx,dz){let best=null,bd=1e9;const gx=Math.floor(x/30),gz=Math.floor(z/30);
+    for(let i=-1;i<=1;i++)for(let k=-1;k<=1;k++){const L=D3.osm.grid.get((gx+i)+","+(gz+k));if(!L)continue;
+      for(const [rd,s] of L){const a=rd.pts[s],b=rd.pts[s+1],ex=b[0]-a[0],ez=b[1]-a[1],l2=ex*ex+ez*ez||1,t=clamp(((x-a[0])*ex+(z-a[1])*ez)/l2,0,1),d=Math.hypot(a[0]+ex*t-x,a[1]+ez*t-z);
+        const al=(ex*dx+ez*dz)/(Math.sqrt(l2)*(Math.hypot(dx,dz)||1));const sc=d+(1-Math.abs(al))*25;if(sc<bd&&d<14){bd=sc;best={rd,dir:al>=0?1:-1,d}}}}return best},
+  /* keep the route path on your side of two-way streets (center of the right half); centered on one-ways */
+  fitRoute(){if(!D3.rp.length)return;const P=D3.rp,o=[];for(let i=0;i<P.length;i++){const a=P[Math.max(0,i-1)],b=P[Math.min(P.length-1,i+1)],m=D3.nearRoad(P[i][0],P[i][1],b[0]-a[0],b[1]-a[1]);o.push(m&&!m.rd.one?Math.min(m.rd.W/4,2.6):0)}
+    const sm=o.map((_,i)=>{let s=0,n=0;for(let k=-4;k<=4;k++){const v=o[i+k];if(v!=null){s+=v;n++}}return s/n});D3.off=sm;D3.buildRoute()},
+  buildStatic(){const P=D3.pal(),g=D3.gb();const c=D3.col(P.ground);g.quad([-4000,0,-4000],[4000,0,-4000],[4000,0,4000],[-4000,0,4000],[0,1,0],c);D3.drop("ground");D3.add(D3.mesh(g.a,{tag:"ground",pass:"o",follow:true}));D3.buildCar()},
+  buildRoute(){D3.drop("route");if(D3.rp.length<2)return;const P=D3.pal(),g=D3.gb(),ga=D3.gb(),gl=D3.gb(),pc=D3.col;
+    ga.a.length=0;D3.ribbon(ga,D3.rp,1.55,.075,pc(P.route,P.light?.22:.26),0,D3.off);
+    D3.ribbon(g,D3.rp,.11,.085,pc(P.routeHi,.95),0,D3.off.map(o=>o-1.5));D3.ribbon(g,D3.rp,.11,.085,pc(P.routeHi,.95),0,D3.off.map(o=>o+1.5));
+    D3.ribbon(gl,D3.rp,2.6,.07,pc(P.route,P.light?.10:.13),0,D3.off);
+    D3.add(D3.mesh(gl.a,{tag:"route",pass:"+"}));D3.add(D3.mesh(ga.a,{tag:"route",pass:"a"}));D3.add(D3.mesh(g.a,{tag:"route",pass:"+"}))},
+  lampsBuild(){D3.drop("lamps");const P=D3.pal(),g=D3.gb(),gg=D3.gb(),pc=D3.col,cp=pc(P.light?"#8d899a":"#3b3742"),cg=pc(P.lamp,P.light?.18:.32),cg0=pc(P.lamp,0),cp2=pc(P.lamp,P.light?.08:.13);
+    for(const [x,z] of D3.osm.lamps){D3.box(g,x-.08,x+.08,0,6.2,z-.08,z+.08,cp);D3.box(g,x-.25,x+.25,6.1,6.3,z-.25,z+.25,cp,pc(P.lamp));
+      D3.disc(gg,x,z,7,7,.05,cp2,cg0,20);gg.quad([x-.9,5.4,z],[x+.9,5.4,z],[x+.9,7,z],[x-.9,7,z],[0,0,1],cg);gg.quad([x,5.4,z-.9],[x,5.4,z+.9],[x,7,z+.9],[x,7,z-.9],[1,0,0],cg)}
+    D3.add(D3.mesh(g.a,{tag:"lamps",pass:"o",unlit:0}));D3.add(D3.mesh(gg.a,{tag:"lamps",pass:"+"}))},
+  /* the car, seen from behind: model space has forward = -z */
+  buildCar(){["car","carfx"].forEach(D3.drop);const P=D3.pal(),pc=D3.col,g=D3.gb(),fx=D3.gb(),body=pc(D.vehicle.color||"#c9ccd3"),glass=pc(P.light?"#2a2f3a":"#0c0f15"),dark=pc("#0b0b0d"),tl=pc("#ff4f2e"),
+      wide=/truck|suv|van/.test(D.vehicle.type||""),w=wide?.98:.92,L=wide?2.45:2.3;
+    D3.box(g,-w,w,.32,.98,-L,L,body);D3.box(g,-w-.02,w+.02,.28,.5,-L-.02,L+.02,pc(P.light?"#3a3a44":"#141418"));
+    const cab=(x0,x1,y0,z0,z1,tx0,tx1,y1,tz0,tz1)=>{const A=[[x0,y0,z1],[x1,y0,z1],[x1,y0,z0],[x0,y0,z0]],B=[[tx0,y1,tz1],[tx1,y1,tz1],[tx1,y1,tz0],[tx0,y1,tz0]];
+      for(let i=0;i<4;i++){const j=(i+1)%4,e1=[B[i][0]-A[i][0],B[i][1]-A[i][1],B[i][2]-A[i][2]],e2=[A[j][0]-A[i][0],A[j][1]-A[i][1],A[j][2]-A[i][2]];let n=[e1[1]*e2[2]-e1[2]*e2[1],e1[2]*e2[0]-e1[0]*e2[2],e1[0]*e2[1]-e1[1]*e2[0]];const l=Math.hypot(...n)||1;n=n.map(v=>-v/l);g.quad(A[i],A[j],B[j],B[i],n,glass)}
+      g.quad(B[0],B[1],B[2],B[3],[0,1,0],body)};
+    cab(-w*.93,w*.93,.98,-1.05*(L/2.3),1.3*(L/2.3),-w*.72,w*.72,wide?1.72:1.48,-.45,.95*(L/2.3));
+    [[-1,-1.45],[1,-1.45],[-1,1.45],[1,1.45]].forEach(([sx,sz])=>D3.box(g,sx<0?-w-.06:w-.12,sx<0?-w+.12:w+.06,0,.66,sz*(L/2.3)-.34,sz*(L/2.3)+.34,dark));
+    D3.box(g,-w+.04,-w*.45,.74,.84,L,L+.03,tl);D3.box(g,w*.45,w-.04,.74,.84,L,L+.03,tl);D3.box(g,-w*.45,w*.45,.77,.8,L,L+.025,pc("#ff6a3d",.95));
+    D3.disc(fx,0,0,w*1.45,L*1.22,.012,pc("#000000",P.light?.22:.5),pc("#000000",0),28);
+    const gfx=D3.gb();if(!P.light)D3.disc(gfx,0,0,w*1.9,L*1.45,.02,pc(P.route,.16),pc(P.route,0),28);
+    {const a0=pc("#ff5a36",0),a1=pc("#ff5a36",P.light?.16:.3),z=L+.08,X=w*1.25;[[.5,.79,a0,a1],[.79,1.08,a1,a0]].forEach(([y0,y1,c0,c1])=>{gfx.v(-X,y0,z,0,0,1,c0);gfx.v(X,y0,z,0,0,1,c0);gfx.v(X,y1,z,0,0,1,c1);gfx.v(-X,y0,z,0,0,1,c0);gfx.v(X,y1,z,0,0,1,c1);gfx.v(-X,y1,z,0,0,1,c1)})}
+    D3.add(D3.mesh(g.a,{tag:"car",pass:"o",unlit:0,car:true}));D3.add(D3.mesh(fx.a,{tag:"car",pass:"a",car:true}));D3.add(D3.mesh(gfx.a,{tag:"carfx",pass:"+",car:true}))},
+  /* lane guidance: which lanes to be in, from OpenStreetMap turn:lanes, for the next maneuver */
+  TOK:{left:["left","sharp_left"],sleft:["slight_left","left","merge_to_left"],right:["right","sharp_right"],sright:["slight_right","right","merge_to_right"],straight:["through"],uturn:["reverse","left"],merge:["through","merge_to_left","merge_to_right"],round:["through","left","right","slight_right","slight_left"]},
+  ICON:{left:"TURN_LEFT",sharp_left:"TURN_SHARP_LEFT",slight_left:"TURN_SLIGHT_LEFT",through:"STRAIGHT",right:"TURN_RIGHT",sharp_right:"TURN_SHARP_RIGHT",slight_right:"TURN_SLIGHT_RIGHT",reverse:"UTURN_LEFT",merge_to_left:"MERGE",merge_to_right:"MERGE",none:"STRAIGHT","":"STRAIGHT"},
+  laneInfo(){const r=G.route,n=G.nav;if(!r||!D3.rp.length||!D3.osm.roads.length)return null;const k=n?n.step:0,st=r.steps,nx=st[k+1];if(!nx)return null;
+    const sm=(st[k]?st[k].endD:r.len)/(D3.scale||1);const s=Math.max(0,sm-30),a=D3.at(D3.rp,D3.rc,s).p,b=D3.at(D3.rp,D3.rc,s+8).p,m=D3.nearRoad(a[0],a[1],b[0]-a[0],b[1]-a[1]);if(!m)return null;
+    const t=m.rd.t,raw=t["turn:lanes"]||(m.dir>0?t["turn:lanes:forward"]:t["turn:lanes:backward"]);if(!raw)return null;const lanes=raw.split("|");if(lanes.length<2||lanes.length>10)return null;
+    const want=D3.TOK[manKey(nx.maneuver)]||["through"],L=lanes.map(x=>{const tk=x.split(";").map(y=>y.trim());return {dir:D3.ICON[tk[0]]||"STRAIGHT",ok:tk.some(y=>want.includes(y)),tk}});
+    if(!L.some(x=>x.ok))return null;return {lanes:L,road:m.rd,dir:m.dir,sm,step:k}},
+  buildLanes(force){const li=D3.laneInfo(),key=li?li.step+":"+li.road.id:"";if(!force&&key===D3.laneKey)return;D3.laneKey=key;D3.drop("lanes");D3.drop("mark");
+    const r=G.route,P=D3.pal(),pc=D3.col;if(!r||!D3.rp.length)return;const k=G.nav?G.nav.step:0,st=r.steps;
+    if(st[k+1]){const sm=(st[k]?st[k].endD:r.len)/(D3.scale||1),p=D3.at(D3.rp,D3.rc,sm).p,g=D3.gb();D3.disc(g,p[0],p[1],4.2,4.2,.1,pc(P.route,.0),pc(P.route,.55),32);D3.disc(g,p[0],p[1],3.4,3.4,.105,pc(P.route,0),pc(P.route,0),32);
+      g.quad([p[0]-.25,0,p[1]],[p[0]+.25,0,p[1]],[p[0]+.25,16,p[1]],[p[0]-.25,16,p[1]],[0,0,1],pc(P.route,.18));g.quad([p[0],0,p[1]-.25],[p[0],0,p[1]+.25],[p[0],16,p[1]+.25],[p[0],16,p[1]-.25],[1,0,0],pc(P.route,.18));D3.add(D3.mesh(g.a,{tag:"mark",pass:"+"}))}
+    if(!li)return;const rd=li.road,W=rd.W,N=li.lanes.length,two=!rd.one,lw=two?Math.min(3.4,(W/2-.3)/N):(W-.6)/N,g=D3.gb();
+    const s0=Math.max(D3.dispS,li.sm-260),s1=li.sm-12;if(s1-s0<10)return;const pts=[];for(let s=s0;s<=s1;s+=6)pts.push(D3.at(D3.rp,D3.rc,s).p);
+    li.lanes.forEach((x,i)=>{if(!x.ok)return;const o=two?(i+.5)*lw:-(W-.6)/2+(i+.5)*lw;D3.ribbon(g,pts,lw*.42,.08,pc(P.route,P.light?.16:.2),o)});D3.add(D3.mesh(g.a,{tag:"lanes",pass:"+"}))},
+  note(){const n=$("#dnote");if(!n||!D3.active)return;n.textContent=D3.status==="ok"?"":D3.status==="fail"?"Surrounding streets unavailable right now · showing your route":D3.status==="loading"?"Loading the streets around your route…":""},
+  /* ---- per frame ---- */
+  tick(now){if(D3.failed)return;const st=$(".dstage");const vis=st&&st.offsetParent&&st.clientWidth>40&&st.clientHeight>40&&!document.hidden;
+    if(!vis){D3.lastT=now;return}if(!D3.tried&&!D3.init())return;if(!D3.active)return;
+    if(D3.theme!==THEME.cur){D3.theme=THEME.cur;D3.setRoute()}if(D3.route!==G.route||(!G.route&&!D3.org)||(!G.route&&G.pos&&!D3.chunks.length))D3.setRoute();if(D3.carColor!==D.vehicle.color+D.vehicle.type){D3.carColor=D.vehicle.color+D.vehicle.type;D3.buildCar()}
+    const mob=matchMedia("(pointer:coarse)").matches;if(now-D3.lastDraw<(mob?32:15))return;const dt=Math.min(.1,(now-(D3.lastT||now))/1000);D3.lastT=now;D3.lastDraw=now;
+    D3.pump();D3.frame(dt,now)},
+  frame(dt,now){const gl=D3.gl,cv=D3.cv,P=D3.pal(),pc=D3.col,dpr=Math.min(devicePixelRatio||1,matchMedia("(pointer:coarse)").matches?1.6:2),W=Math.round(cv.clientWidth*dpr),H=Math.round(cv.clientHeight*dpr);
+    if(cv.width!==W||cv.height!==H){cv.width=W;cv.height=H}
+    /* where the car is: glide between GPS fixes along the route instead of jumping */
+    let px,pz,hd;if(D3.rp.length>1){const tgt=D3.sOf()+(G.nav&&G.speed?Math.min(G.speed*.6,12)/(D3.scale||1):0);if(Math.abs(tgt-D3.dispS)>120)D3.dispS=tgt;else D3.dispS+=(tgt-D3.dispS)*(1-Math.exp(-dt*(REDUCED?2:3)));
+      const s=D3.dispS,a=D3.at(D3.rp,D3.rc,s),o=D3.off.length?D3.off[a.i]+(D3.off[Math.min(a.i+1,D3.off.length-1)]-D3.off[a.i])*a.t:0;
+      const f0=D3.at(D3.rp,D3.rc,Math.max(0,s-3)).p,f1=D3.at(D3.rp,D3.rc,s+14).p;hd=Math.atan2(f1[0]-f0[0],-(f1[1]-f0[1]));
+      const fx=Math.sin(hd),fz=-Math.cos(hd);px=a.p[0]-fz*o;pz=a.p[1]+fx*o}
+    else{const p=G.pos?D3.proj(G.pos.lat,G.pos.lng):[0,0];px=p[0];pz=p[1];hd=(G.heading||0)*Math.PI/180}
+    const wrap=x=>{while(x>Math.PI)x-=2*Math.PI;while(x<-Math.PI)x+=2*Math.PI;return x};
+    if(D3.carB==null)D3.carB=hd;D3.carB=wrap(D3.carB+wrap(hd-D3.carB)*(1-Math.exp(-dt*5)));if(D3.camB==null)D3.camB=D3.carB;D3.camB=wrap(D3.camB+wrap(D3.carB-D3.camB)*(1-Math.exp(-dt*(REDUCED?1.6:2.4))));
+    const narrow=cv.clientWidth<cv.clientHeight*.9,cx=Math.sin(D3.camB),cz=-Math.cos(D3.camB),back=narrow?11:12,up=narrow?5.2:4.6,ahead=narrow?15:17,ty=narrow?0:.3;
+    const eye=[px-cx*back,up,pz-cz*back],tgt=[px+cx*ahead,ty,pz+cz*ahead],V=D3.look(eye,tgt),Pm=D3.persp((narrow?62:52)*Math.PI/180,W/H,.4,900),VP=D3.mul(Pm,V);
+    if(D3.stepK!==(G.nav?G.nav.step:0)){D3.stepK=G.nav?G.nav.step:0;D3.buildLanes(true);paintNext()}
+    /* chevrons gliding along the route ahead */
+    if(D3.rp.length>1){const g=D3.gb(),c=pc(P.chev,P.light?.75:.8),ph=REDUCED?0:(now/1000*7)%9,L=D3.rc[D3.rc.length-1];
+      for(let s=D3.dispS+6+ph;s<Math.min(L,D3.dispS+150);s+=9){const a=D3.at(D3.rp,D3.rc,s),b=D3.at(D3.rp,D3.rc,s+1).p,o=D3.off[a.i]||0,dx=b[0]-a.p[0],dz=b[1]-a.p[1],l=Math.hypot(dx,dz)||1,fx=dx/l,fz=dz/l,rx=-fz,rz=fx;
+        const q=[a.p[0]+rx*o,a.p[1]+rz*o],fade=1-clamp((s-D3.dispS-90)/60,0,1),cc=[c[0],c[1],c[2],c[3]*fade];
+        const pt=(f,r)=>[q[0]+fx*f+rx*r,.09,q[1]+fz*f+rz*r];g.quad(pt(.9,0),pt(-.1,-1.05),pt(-.55,-1.05),pt(.45,0),[0,1,0],cc);g.quad(pt(.9,0),pt(.45,0),pt(-.55,1.05),pt(-.1,1.05),[0,1,0],cc)}
+      D3.dynSet("chev",g.a,{pass:"+"})}else D3.dynSet("chev",[],{pass:"+"});
+    /* draw */
+    gl.viewport(0,0,W,H);const fog=pc(P.fog);gl.clearColor(fog[0],fog[1],fog[2],1);gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);
+    gl.useProgram(D3.sky);gl.disable(gl.DEPTH_TEST);gl.disable(gl.BLEND);gl.bindBuffer(gl.ARRAY_BUFFER,D3.skyBuf);gl.enableVertexAttribArray(D3.sloc.q);gl.vertexAttribPointer(D3.sloc.q,2,gl.FLOAT,false,0,0);
+    const t0=pc(P.sky[0]),h0=pc(P.sky[1]);gl.uniform3f(D3.sloc.uT,t0[0],t0[1],t0[2]);gl.uniform3f(D3.sloc.uH,h0[0],h0[1],h0[2]);gl.uniform1f(D3.sloc.uHz,((up-ty)/(back+ahead))/Math.tan((narrow?62:52)*Math.PI/360)-.04);gl.drawArrays(gl.TRIANGLES,0,6);gl.disableVertexAttribArray(D3.sloc.q);
+    const Lc=D3.loc;gl.useProgram(D3.prog);gl.enable(gl.DEPTH_TEST);gl.depthFunc(gl.LEQUAL);gl.uniformMatrix4fv(Lc.uVP,false,VP);gl.uniform3f(Lc.uCam,eye[0],eye[1],eye[2]);gl.uniform3f(Lc.uFog,fog[0],fog[1],fog[2]);gl.uniform2f(Lc.uFR,P.light?140:110,P.light?620:520);
+    const ld=[-.35,.85,.4],ll=Math.hypot(...ld);gl.uniform3f(Lc.uL,ld[0]/ll,ld[1]/ll,ld[2]/ll);
+    const carM=D3.trs(px,0,pz,-D3.carB),gM=D3.trs(px,0,pz,0),all=D3.meshes.concat(Object.values(D3.dyn));
+    [Lc.p,Lc.n,Lc.c].forEach(x=>gl.enableVertexAttribArray(x));
+    for(const pass of ["o","a","+"]){if(pass==="o"){gl.disable(gl.BLEND);gl.depthMask(true)}else{gl.enable(gl.BLEND);gl.depthMask(false);if(pass==="a")gl.blendFunc(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA);else gl.blendFunc(gl.SRC_ALPHA,gl.ONE)}
+      gl.uniform1f(Lc.uAdd,pass==="+"?1:0);
+      for(const m of all){if(m.pass!==pass||!m.n)continue;gl.bindBuffer(gl.ARRAY_BUFFER,m.b);gl.vertexAttribPointer(Lc.p,3,gl.FLOAT,false,40,0);gl.vertexAttribPointer(Lc.n,3,gl.FLOAT,false,40,12);gl.vertexAttribPointer(Lc.c,4,gl.FLOAT,false,40,24);
+        gl.uniformMatrix4fv(Lc.uM,false,m.car?carM:m.follow?gM:D3.I);gl.uniform1f(Lc.uUnlit,m.unlit);gl.drawArrays(m.mode,0,m.n)}}
+    gl.depthMask(true)}
+};
+/* lane chips under the turn banner / in the driving panel use the same OpenStreetMap turn lanes */
+LANES.provider=()=>{const li=D3.active?D3.laneInfo():null;return li?{lanes:li.lanes}:null};
+window.__D3=D3; /* debug handle for tests */
 
 /* ---------- saved places ---------- */
 const KIND_COLORS={home:"#e8c27a",work:"#68d4d0",school:"#8fb3ff",favorite:"#F4A987",restaurant:"#f2a65a",event:"#ff9f68",custom:"#b7a1e5"};
@@ -859,7 +1101,7 @@ document.addEventListener("click",e=>{
   if(a==="optmode"){G.mode=t.dataset.v;$$('[data-a="optmode"]').forEach(b=>b.classList.toggle("on",b===t));return}
   if(a==="rmstop"){G.stops.splice(i,1);optionsModal();return}
   if(a==="optapply"){$$("[data-opt]").forEach(c=>D.settings[c.dataset.opt]=c.checked);save();closeModal();paintMapTools();if(G.dest)planRoute(!!G.nav);return}
-  if(a==="drivetoggle"){$("#dash").classList.toggle("drive-open");DRIVE.resize();return}
+  if(a==="drivetoggle"){const on=$("#dash").classList.toggle("drive-open");if(G.nav){D.settings.driveView=on;save()}DRIVE.resize();if(on&&D3.ok&&G.route)D3.prefetch(G.route);return}
   if(a==="sheet"){$("#dash").classList.toggle("sheet-open");requestAnimationFrame(sizeBottom);return}
   if(a==="more")return moreSheet();
   if(a==="acct")return modal('<h3>Your account</h3><p class="muted">Signed in as <b>'+esc(STORE.email)+'</b>.</p><p class="muted small">'+(STORE.cloud==="blocked"?"Account sync is waiting for the latest Firestore rules. Your data is safe on this device.":"Your saved places, trips, walks and car sync to this account on every device.")+'</p><div class="row"><button class="gbtn ghost" data-a="signout">Sign out</button><button class="gbtn" data-a="close">Close</button></div>');

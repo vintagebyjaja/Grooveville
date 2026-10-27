@@ -6,7 +6,7 @@
    Only pages on grooveville.org may call these (browser fetch metadata), each visitor is rate limited,
    and weather / time zone answers are cached briefly to keep Google costs down. */
 const J = (o, s, extra) => new Response(JSON.stringify(o), { status: s || 200, headers: Object.assign({ "content-type": "application/json; charset=utf-8", "cache-control": "no-store" }, extra || {}) });
-const LIMITS = { route: 40, intel: 90, tz: 120, limit: 240 };          // requests per visitor per 10 minutes, per server instance
+const LIMITS = { route: 40, intel: 90, tz: 120, limit: 240, scene: 300 };          // requests per visitor per 10 minutes, per server instance
 const hits = new Map();
 function limited(ip, kind) {
   const k = kind + ":" + ip, now = Date.now(), w = 600000;
@@ -85,6 +85,37 @@ async function limitLookup(pt, fetcher) {
   }
   return best && bd < 30 ? Object.assign(best, { source: "OpenStreetMap" }) : { limit: null, source: "OpenStreetMap" };
 }
+/* Driving-view scene: real road shapes, lane counts and turn lanes, buildings and street lamps from OpenStreetMap
+   for one ~300 m grid cell (plus a margin). Only what OSM has mapped is returned; the app draws nothing it doesn't know. */
+const ROADS = "motorway|trunk|primary|secondary|tertiary|unclassified|residential|service|living_street|motorway_link|trunk_link|primary_link|secondary_link|tertiary_link|footway|pedestrian|path|cycleway";
+const r6 = v => Math.round(v * 1e6) / 1e6;
+async function sceneLookup(c, fetcher) {
+  const m = 0.0022, b = [c.lat - m, c.lng - m * 1.25, c.lat + m, c.lng + m * 1.25].map(r6).join(",");
+  const q = "[out:json][timeout:20];(way[\"highway\"~\"^(" + ROADS + ")$\"](" + b + ");way[\"building\"](" + b + ");node[\"highway\"=\"street_lamp\"](" + b + ");node[\"highway\"=\"traffic_signals\"](" + b + "););out tags geom qt;";
+  let j;
+  try {
+    const r = await fetcher("https://overpass-api.de/api/interpreter", { method: "POST", headers: { "content-type": "application/x-www-form-urlencoded", "user-agent": "GrooveGuide/1.0 (grooveville.org)" }, body: "data=" + encodeURIComponent(q) });
+    if (!r.ok) return { error: "Map scene unavailable (" + r.status + ")" };
+    j = await r.json();
+  } catch (e) { return { error: "Map scene unavailable" } }
+  const out = { roads: [], buildings: [], lamps: [], signals: [], source: "OpenStreetMap contributors" };
+  for (const e of (j.elements || [])) {
+    const t = e.tags || {};
+    if (e.type === "node") { (t.highway === "street_lamp" ? out.lamps : out.signals).push([r6(e.lat), r6(e.lon)]); continue }
+    if (!e.geometry || e.geometry.length < 2) continue;
+    const g = e.geometry.map(p => [r6(p.lat), r6(p.lon)]);
+    if (t.building) {
+      if (out.buildings.length >= 700) continue;
+      let h = parseFloat(t.height); if (!(h > 0)) { const lv = parseFloat(t["building:levels"]); h = lv > 0 ? lv * 3.2 : 0 }
+      out.buildings.push({ g, h: h > 0 ? Math.min(h, 320) : 0 });
+    } else {
+      const o = { id: e.id, t: t.highway, g };
+      for (const [k, v] of [["lanes", "ln"], ["lanes:forward", "lf"], ["lanes:backward", "lb"], ["oneway", "ow"], ["turn:lanes", "tl"], ["turn:lanes:forward", "tlf"], ["turn:lanes:backward", "tlb"], ["width", "w"], ["sidewalk", "sw"], ["name", "n"], ["ref", "rf"], ["maxspeed", "ms"], ["footway", "fw"], ["bridge", "br"], ["tunnel", "tu"], ["layer", "ly"]]) if (t[k]) o[v] = String(t[k]).slice(0, 80);
+      out.roads.push(o);
+    }
+  }
+  return out;
+}
 async function tzLookup(key, p, ts, fetcher) {
   const r = await fetcher("https://maps.googleapis.com/maps/api/timezone/json?location=" + p.lat + "," + p.lng + "&timestamp=" + ts + "&key=" + encodeURIComponent(key));
   const j = await r.json().catch(() => ({}));
@@ -119,6 +150,15 @@ export async function guideApi(req, env, ctx, h) {
     const k = String(env.GOOGLE_MAPS_BROWSER_KEY || "").trim();
     return J({ googleMapsKey: k, mapIdDark: String(env.GUIDE_MAP_ID_DARK || "").trim(), mapIdLight: String(env.GUIDE_MAP_ID_LIGHT || "").trim(),
       serverRoutes: !!env.GOOGLE_ROUTES_API_KEY, browserKeySet: !!k, sameAsServerKey: !!k && k === env.GOOGLE_ROUTES_API_KEY }, 200, { "cache-control": "private, max-age=60" });
+  }
+  if (p === "/api/guide/scene" && req.method === "GET") {
+    const ip1 = req.headers.get("cf-connecting-ip") || "0";
+    if (limited(ip1, "scene")) return J({ error: "Too many requests. Wait a few minutes." }, 429);
+    const pt = ll({ lat: url.searchParams.get("lat"), lng: url.searchParams.get("lng") });
+    if (!pt) return J({ error: "Bad location" }, 400);
+    const c = { lat: Math.round(pt.lat / 0.003) * 0.003, lng: Math.round(pt.lng / 0.003) * 0.003 };      // same cell for everyone → shared cache
+    const v = await cached(ctx, "scene2/" + c.lat.toFixed(3) + "/" + c.lng.toFixed(3), 1209600, () => sceneLookup(c, fetcher));
+    return J(v, v.error ? 502 : 200, v.error ? {} : { "cache-control": "public, max-age=86400" });
   }
   if (p === "/api/guide/limit" && req.method === "GET") {
     const ip0 = req.headers.get("cf-connecting-ip") || "0";

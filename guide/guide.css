@@ -369,3 +369,40 @@ a{color:inherit}
 @media (max-width:760px){.evlist{grid-template-columns:1fr}.evimg{aspect-ratio:4/4.4}}
 .evimg.noimg{aspect-ratio:auto;height:96px;background:linear-gradient(120deg,color-mix(in srgb,var(--acc) 22%,transparent),transparent 70%),var(--chip)}
 .evimg.noimg .pph{width:auto;height:auto;background:none;display:grid;place-items:center;color:var(--acc)}
+/* ---------- v12: 3D driving view ---------- */
+#dgl{position:absolute;inset:0;width:100%;height:100%;display:block}
+.dstage.d3on #dcv{display:none}
+.dstage.d3on{background:#08080a}
+.dattr{display:none;position:absolute;right:8px;bottom:6px;font-size:9.5px;color:rgba(255,255,255,.45);pointer-events:none;z-index:2}
+.dstage.d3on .dattr{display:block}
+.dstage.d3on .dnote{top:auto;bottom:22px;left:10px;right:auto;text-align:left;color:rgba(255,236,224,.7);font-size:11.5px;z-index:2}
+.dstage.d3on .dnote:empty{display:none}
+.drivecol .dstage{border-radius:0}
+@media (max-width:760px){
+  /* while navigating, the driving view takes the screen under the turn banner */
+  .gg.nv .dash.drive-open .drivecol{top:calc(98px + env(safe-area-inset-top));bottom:calc(var(--bot,96px) + 8px);height:auto;left:8px;right:8px;border-radius:22px;overflow:hidden}
+  .gg.nv .dash.drive-open .mtools{z-index:9}
+  .drivecol.haslanes .dfoot{display:grid;position:absolute;left:10px;right:10px;bottom:10px;z-index:3;border:0;padding:8px;background:rgba(10,10,12,.72);border-radius:14px;backdrop-filter:blur(10px);grid-template-columns:1fr}
+  .drivecol.haslanes .dfoot .lnn{display:none}
+}
+/* ---------- v12: lane chips in the turn banner, banner always above the driving view ---------- */
+.nextturn .ntl{display:flex;gap:4px;margin-top:6px;max-width:none;overflow:visible}
+.nextturn .ntl .ln{display:grid;place-items:center;width:30px;height:30px;border-radius:8px;color:var(--muted);font-style:normal}
+.nextturn .ntl .ln.ok{color:var(--acc);background:var(--glow);box-shadow:inset 0 0 0 1.5px var(--acc)}
+.gg.nv .nextturn{z-index:9}
+@media (max-width:760px){
+  .gg.nv .dash.drive-open .drivecol{top:calc(var(--ntH,96px) + 14px + env(safe-area-inset-top))}
+  .drivecol.haslanes .dfoot{right:64px}
+  .gg.nv .dash.drive-open .drivecol.haslanes .dfoot{display:none}
+}
+/* map controls: minimal glass, peach when active */
+.rb,.mcomp,.mzoom{background:color-mix(in srgb,var(--panel) 88%,transparent);border:1px solid var(--line);box-shadow:0 10px 26px -14px rgba(0,0,0,.6);transition:background .2s,color .2s,transform .15s}
+.rb:hover,.mcomp:hover{transform:translateY(-1px)}
+.rb:active,.mcomp:active{transform:scale(.96)}
+.gg.dark .rb,.gg.dark .mcomp,.gg.dark .mzoom{background:rgba(18,17,21,.78);border-color:rgba(255,255,255,.08)}
+/* ambient light over the map: soft vignette, warm haze low in the frame (dark) / lilac haze (light) */
+.mapamb{position:absolute;inset:0;z-index:2;pointer-events:none;transition:opacity .4s}
+.gg.dark .mapamb{background:radial-gradient(ellipse at 50% 55%,rgba(0,0,0,0) 55%,rgba(5,4,7,.55) 100%),linear-gradient(0deg,rgba(255,140,90,.07),rgba(255,140,90,0) 35%)}
+.gg.light .mapamb{background:radial-gradient(ellipse at 50% 55%,rgba(255,255,255,0) 60%,rgba(123,63,242,.08) 100%)}
+.dash.city .mapamb{opacity:0}
+.gg .rb.vtog.on,.gg .dash.drive-open .rb.dvbtn{background:var(--acc);color:var(--acc-ink);border-color:transparent;box-shadow:0 0 0 4px color-mix(in srgb,var(--acc) 22%,transparent),0 10px 26px -10px var(--acc)}
