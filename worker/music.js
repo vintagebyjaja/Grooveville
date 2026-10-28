@@ -86,6 +86,30 @@ export async function musicApi(req, env, ctx, h) {
     r.headers.set("content-disposition", "inline");r.headers.set("x-content-type-options", "nosniff");r.headers.set("cross-origin-resource-policy", "same-origin");
     return r;
   }
+  /* public: play counts. The player reports a play after 30 seconds of listening; each listener counts once per song per 30 minutes. */
+  if (p === "/api/music/plays" && req.method === "GET") {
+    const c = typeof caches !== "undefined" ? caches.default : null, ck = new Request("https://plays-cache.grooveville.org/v1");
+    if (c) { const hit = await c.match(ck); if (hit) return new Response(hit.body, { headers: { "content-type": "application/json; charset=utf-8", "cache-control": "public, max-age=30" } }) }
+    const o = await env.STUDIO_BUCKET.get("music/plays.json"), counts = o ? await o.json().catch(() => ({})) : {};
+    const body = JSON.stringify({ counts }); if (c && ctx && ctx.waitUntil) ctx.waitUntil(c.put(ck, new Response(body, { headers: { "content-type": "application/json", "cache-control": "public, max-age=45" } })));
+    return new Response(body, { headers: { "content-type": "application/json; charset=utf-8", "cache-control": "public, max-age=30" } });
+  }
+  if (p === "/api/music/play" && req.method === "POST") {
+    const site = req.headers.get("sec-fetch-site"); if (site === "cross-site") return json({ error: "Plays count on grooveville.org only" }, 403);
+    let b = {}; try { b = await req.json() } catch (e) { }
+    const id = String(b.id || ""); if (!/^[A-Za-z0-9_-]{2,64}$/.test(id)) return json({ error: "Bad song" }, 400);
+    if (!(await publishedSong(env, id, fetcher))) return json({ error: "Not found" }, 404);
+    const ip = req.headers.get("cf-connecting-ip") || "0", slot = Math.floor(Date.now() / 1800000);
+    const hash = Array.from(new Uint8Array(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(ip + "|" + id + "|" + slot + "|" + (env.FIREBASE_PROJECT_ID || ""))))).slice(0, 10).map(x => x.toString(16).padStart(2, "0")).join("");
+    const c = typeof caches !== "undefined" ? caches.default : null, dk = new Request("https://plays-cache.grooveville.org/seen/" + hash);
+    if (c && await c.match(dk)) return json({ ok: true, counted: false });
+    if (c) { const put = c.put(dk, new Response("1", { headers: { "cache-control": "public, max-age=1800" } })); if (ctx && ctx.waitUntil) ctx.waitUntil(put); else await put }
+    const o = await env.STUDIO_BUCKET.get("music/plays.json"), counts = o ? await o.json().catch(() => ({})) : {};
+    counts[id] = (Number(counts[id]) || 0) + 1;
+    await env.STUDIO_BUCKET.put("music/plays.json", JSON.stringify(counts), { httpMetadata: { contentType: "application/json" } });
+    if (c) { const del = c.delete(new Request("https://plays-cache.grooveville.org/v1")); if (ctx && ctx.waitUntil) ctx.waitUntil(del) }
+    return json({ ok: true, counted: true, plays: counts[id] });
+  }
   m = /^\/api\/music\/img\/(music\/img\/[A-Za-z0-9._\/-]+)$/.exec(p);
   if (m && (req.method === "GET" || req.method === "HEAD")) { if (m[1].includes("..")) return new Response("Bad", { status: 400 }); return serveR2(env, m[1], req, null, "public, max-age=604800, immutable") }
   /* public: Song Rate submission (only when the founder switched it on) */

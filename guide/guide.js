@@ -622,7 +622,7 @@ const D3={tried:false,failed:false,active:false,gl:null,cv:null,prog:null,sky:nu
   dispS:0,lastT:0,lastDraw:0,carB:null,camB:null,stepK:-1,need:true,
   pal(){const L=THEME.cur==="light",rc=ROUTE_COLOR();return L?
     {sky:["#cfcbe0","#f4eee9"],fog:"#f4eee9",ground:"#e3e1ea",curb:"#c4c0cf",road:"#a7a4b3",walk:"#cfccd8",mark:"#ffffff",markA:.9,center:"#ffffff",wall:"#f2f0f6",roof:"#e1dee9",edge:rc,edgeA:.2,route:rc,routeHi:"#b99bff",chev:"#ffffff",lamp:"#ffd9b0",light:true}:
-    {sky:["#050507","#26160f"],fog:"#26160f",ground:"#0d0c0f",curb:"#36313b",road:"#1b1a1f",walk:"#26242b",mark:"#efe6dc",markA:.55,center:"#f2d6bb",wall:"#24212a",roof:"#2c2932",edge:"#ff9f68",edgeA:.42,route:"#ff9f68",routeHi:"#ffd2b5",chev:"#ffe3cf",lamp:"#ffcf9e",light:false}},
+    {sky:["#050507","#26160f"],fog:"#26160f",ground:"#0d0c0f",curb:"#36313b",road:"#1b1a1f",walk:"#26242b",mark:"#efe6dc",markA:.55,center:"#f2d6bb",wall:"#d08b6c",roof:"#f2b595",edge:"#ffd6bf",edgeA:.55,route:"#a58bff",routeHi:"#dcd0ff",chev:"#f1ecff",lamp:"#ffcf9e",light:false}},
   /* ---- setup ---- */
   init(){D3.tried=true;const st=$(".dstage");if(!st)return false;
     const cv=document.createElement("canvas");cv.id="dgl";cv.setAttribute("aria-hidden","true");st.insertBefore(cv,st.firstChild);
