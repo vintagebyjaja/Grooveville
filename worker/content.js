@@ -7,8 +7,15 @@
    - Every AI call is priced (estimate) and counted against the founder's monthly budget before it runs. */
 import { serveR2 } from "./music.js";
 const J = (o, s) => new Response(JSON.stringify(o), { status: s || 200, headers: { "content-type": "application/json; charset=utf-8", "cache-control": "no-store" } });
-const TEXT_MODEL = env => env.OPENAI_TEXT_MODEL || "gpt-5-mini";
-const IMAGE_MODEL = env => env.OPENAI_IMAGE_MODEL || "gpt-image-1";
+/* model names from Cloudflare are trimmed (a pasted space or line break makes OpenAI reject them); if a model isn't available
+   to this OpenAI account (unknown name, no access, or organization not verified for gpt-image-1) the next one is tried */
+const cleanModel = v => { v = String(v || "").trim().replace(/^["']|["']$/g, ""); return /^[a-z0-9][a-z0-9._:-]{1,60}$/i.test(v) ? v : "" };
+const TEXT_MODEL = env => cleanModel(env.OPENAI_TEXT_MODEL) || "gpt-5-mini";
+const IMAGE_MODEL = env => cleanModel(env.OPENAI_IMAGE_MODEL) || "gpt-image-1";
+const TEXT_MODELS = env => [...new Set([TEXT_MODEL(env), "gpt-5-mini", "gpt-4.1-mini", "gpt-4o-mini"])];
+const IMAGE_MODELS = env => [...new Set([IMAGE_MODEL(env), "gpt-image-1", "gpt-image-1-mini", "dall-e-3"])];
+const modelProblem = (status, j) => { const e = (j && j.error) || {}, m = String(e.message || "") + " " + String(e.code || "") + " " + String(e.param || "");
+  return (status === 400 || status === 403 || status === 404) && /model|verif|does not exist|not found|access|unsupported|not supported/i.test(m) && !/safety|policy|moderation/i.test(m) };
 /* Price estimates in USD (check openai.com/pricing; adjust here if they change) */
 export const PRICE = {
   text: { "gpt-5": [1.25, 10], "gpt-5-mini": [0.25, 2], "gpt-5-nano": [0.05, 0.4], "gpt-4.1": [2, 8], "gpt-4.1-mini": [0.4, 1.6], "gpt-4o-mini": [0.15, 0.6] },   // per 1M tokens in / out
@@ -26,14 +33,18 @@ async function charge(env, kind, cost, by, note) {
   await writeJson(env, "content/usage/" + month() + ".json", u); return u;
 }
 async function budgetOk(env, est) { const cfg = await readJson(env, "content/config.json", {}); const lim = Number(cfg.monthlyLimit || 25); const u = await usage(env); return { ok: u.total + est <= lim, total: u.total, limit: lim } }
-function textCost(env, usage, searches) { const p = PRICE.text[TEXT_MODEL(env)] || PRICE.text["gpt-5-mini"]; return ((usage && usage.input_tokens) || 0) / 1e6 * p[0] + ((usage && usage.output_tokens) || 0) / 1e6 * p[1] + (searches || 0) * PRICE.search }
+function textCost(env, usage, searches, model) { const p = PRICE.text[model || TEXT_MODEL(env)] || PRICE.text["gpt-5-mini"]; return ((usage && usage.input_tokens) || 0) / 1e6 * p[0] + ((usage && usage.output_tokens) || 0) / 1e6 * p[1] + (searches || 0) * PRICE.search }
 
 /* ---------- OpenAI ---------- */
 export async function openaiJSON(env, sys, user, opts, fetcher) {
-  const body = { model: TEXT_MODEL(env), input: [{ role: "system", content: sys }, { role: "user", content: user }], text: { format: { type: "json_object" } } };
-  if (opts && opts.search) { body.tools = [{ type: "web_search" }]; body.tool_choice = "auto" }
-  const r = await (fetcher || fetch)("https://api.openai.com/v1/responses", { method: "POST", headers: { "content-type": "application/json", authorization: "Bearer " + env.OPENAI_API_KEY }, body: JSON.stringify(body) });
-  const j = await r.json().catch(() => ({}));
+  let r, j, used = "";
+  for (const model of TEXT_MODELS(env)) {
+    const body = { model, input: [{ role: "system", content: sys + " Answer in JSON." }, { role: "user", content: user }], text: { format: { type: "json_object" } } };
+    if (opts && opts.search) { body.tools = [{ type: "web_search" }]; body.tool_choice = "auto" }
+    r = await (fetcher || fetch)("https://api.openai.com/v1/responses", { method: "POST", headers: { "content-type": "application/json", authorization: "Bearer " + env.OPENAI_API_KEY }, body: JSON.stringify(body) });
+    j = await r.json().catch(() => ({})); used = model;
+    if (r.ok || !modelProblem(r.status, j)) break;
+  }
   if (!r.ok) throw Object.assign(new Error(openaiErr(r.status, j)), { status: r.status });
   let text = "", cites = [], searches = 0;
   for (const it of j.output || []) {
@@ -43,13 +54,14 @@ export async function openaiJSON(env, sys, user, opts, fetcher) {
   if (!text && typeof j.output_text === "string") text = j.output_text;
   let data; try { data = JSON.parse(text) } catch (e) { const m = /\{[\s\S]*\}/.exec(text); try { data = m ? JSON.parse(m[0]) : null } catch (e2) { data = null } }
   if (!data) throw new Error("The AI answer couldn't be read. Try again.");
-  return { data, cites, cost: textCost(env, j.usage, searches), usage: j.usage || {} };
+  return { data, cites, cost: textCost(env, j.usage, searches, used), usage: j.usage || {}, model: used };
 }
 function openaiErr(status, j) {
   const m = (j && j.error && (j.error.message || j.error.code)) || "";
   if (status === 401) return "OpenAI rejected the key (OPENAI_API_KEY). Check it in Cloudflare.";
   if (status === 429) return /quota|billing/i.test(m) ? "OpenAI says the account is out of credit or over quota." : "OpenAI is busy (rate limit). Try again in a minute.";
-  if (status === 400 && /model/i.test(m)) return "OpenAI doesn't recognize the model. Set OPENAI_TEXT_MODEL / OPENAI_IMAGE_MODEL in Cloudflare.";
+  if (/verif/i.test(m)) return "OpenAI needs your organization verified before it allows this image model (platform.openai.com › Settings › Organization › General › Verify). OpenAI said: " + String(m).slice(0, 200);
+  if ((status === 400 || status === 404) && /model/i.test(m)) return "OpenAI couldn't use the model. OpenAI said: " + String(m).slice(0, 220) + " (Check OPENAI_TEXT_MODEL / OPENAI_IMAGE_MODEL in Cloudflare, or delete them to use the defaults.)";
   if (/safety|policy|moderation/i.test(m)) return "OpenAI declined that request (content policy). Rephrase the brief.";
   return "OpenAI error" + (m ? ": " + String(m).slice(0, 160) : " (" + status + ")");
 }
@@ -187,14 +199,21 @@ export async function contentApi(req, env, ctx, h) {
     const est = PRICE.image[q][size]; const bud = await budgetOk(env, est); if (!bud.ok) return J({ error: "Monthly AI budget reached ($" + bud.total.toFixed(2) + " of $" + bud.limit + ")." }, 402);
     const prompt = "Background artwork for a premium social media graphic. " + String(b.prompt || "").slice(0, 1600) + (b.style ? " Style and palette: " + String(b.style).slice(0, 300) + "." : "") +
       " Cinematic, high-end, photographic quality, rich lighting, leave calm negative space on the left and top for text. Absolutely no text, no letters, no numbers, no logos, no watermarks, no brand names, no UI screens with readable words.";
-    const r = await fetcher("https://api.openai.com/v1/images/generations", { method: "POST", headers: { "content-type": "application/json", authorization: "Bearer " + env.OPENAI_API_KEY }, body: JSON.stringify({ model: IMAGE_MODEL(env), prompt, size, quality: q, n: 1 }) });
-    const j = await r.json().catch(() => ({}));
+    let r, j, used = "", cost = est;
+    for (const model of IMAGE_MODELS(env)) {
+      const d3 = /^dall-e-3/.test(model), sz = d3 ? ({ "1024x1536": "1024x1792", "1536x1024": "1792x1024" })[size] || "1024x1024" : size;
+      const body = d3 ? { model, prompt: prompt.slice(0, 3900), size: sz, quality: q === "high" ? "hd" : "standard", response_format: "b64_json", n: 1 } : { model, prompt, size, quality: q, n: 1 };
+      r = await fetcher("https://api.openai.com/v1/images/generations", { method: "POST", headers: { "content-type": "application/json", authorization: "Bearer " + env.OPENAI_API_KEY }, body: JSON.stringify(body) });
+      j = await r.json().catch(() => ({})); used = model;
+      cost = d3 ? (q === "high" ? (sz === "1024x1024" ? .08 : .12) : (sz === "1024x1024" ? .04 : .08)) : /mini/.test(model) ? est * .3 : est;
+      if (r.ok || !modelProblem(r.status, j)) break;
+    }
     if (!r.ok) return J({ error: openaiErr(r.status, j) }, r.status === 429 ? 429 : 502);
     const b64 = j.data && j.data[0] && j.data[0].b64_json; if (!b64) return J({ error: "OpenAI returned no image" }, 502);
     const bin = Uint8Array.from(atob(b64), c => c.charCodeAt(0)), key = "content/tmp/" + Date.now().toString(36) + "-" + crypto.randomUUID().slice(0, 8) + ".png";
     await env.STUDIO_BUCKET.put(key, bin, { httpMetadata: { contentType: "image/png" }, customMetadata: { by, at: new Date().toISOString() } });
-    await charge(env, "image", est, by, size + " " + q);
-    return J({ key, cost: est, size, quality: q });
+    await charge(env, "image", cost, by, used + " " + size + " " + q);
+    return J({ key, cost, size, quality: q, model: used });
   }
   return J({ error: "Not found" }, 404);
 }
