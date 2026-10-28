@@ -13,8 +13,8 @@ const cleanModel = v => { v = String(v || "").trim().replace(/^["']|["']$/g, "")
 const TEXT_MODEL = env => cleanModel(env.OPENAI_TEXT_MODEL) || "gpt-5-mini";
 const IMAGE_MODEL = env => cleanModel(env.OPENAI_IMAGE_MODEL) || "gpt-image-1";
 const TEXT_MODELS = env => [...new Set([TEXT_MODEL(env), "gpt-5-mini", "gpt-4.1-mini", "gpt-4o-mini"])];
-const IMAGE_MODELS = env => [...new Set([IMAGE_MODEL(env), "gpt-image-1", "gpt-image-1-mini", "dall-e-3"])];
-const modelProblem = (status, j) => { const e = (j && j.error) || {}, m = String(e.message || "") + " " + String(e.code || "") + " " + String(e.param || "");
+export const IMAGE_MODELS = env => [...new Set([IMAGE_MODEL(env), "gpt-image-1", "gpt-image-1-mini", "dall-e-3"])];
+export const modelProblem = (status, j) => { const e = (j && j.error) || {}, m = String(e.message || "") + " " + String(e.code || "") + " " + String(e.param || "");
   return (status === 400 || status === 403 || status === 404) && /model|verif|does not exist|not found|access|unsupported|not supported/i.test(m) && !/safety|policy|moderation/i.test(m) };
 /* Price estimates in USD (check openai.com/pricing; adjust here if they change) */
 export const PRICE = {
@@ -28,11 +28,11 @@ const month = () => new Date().toISOString().slice(0, 7);
 async function readJson(env, key, dflt) { try { const o = await env.STUDIO_BUCKET.get(key); return o ? await o.json() : dflt } catch (e) { return dflt } }
 const writeJson = (env, key, v) => env.STUDIO_BUCKET.put(key, JSON.stringify(v), { httpMetadata: { contentType: "application/json" } });
 async function usage(env) { return readJson(env, "content/usage/" + month() + ".json", { total: 0, count: 0, items: [] }) }
-async function charge(env, kind, cost, by, note) {
+export async function charge(env, kind, cost, by, note) {
   const u = await usage(env); u.total = Math.round((u.total + cost) * 10000) / 10000; u.count++; u.items.unshift({ t: new Date().toISOString(), kind, cost: Math.round(cost * 10000) / 10000, by: by || "", note: String(note || "").slice(0, 80) }); u.items = u.items.slice(0, 400);
   await writeJson(env, "content/usage/" + month() + ".json", u); return u;
 }
-async function budgetOk(env, est) { const cfg = await readJson(env, "content/config.json", {}); const lim = Number(cfg.monthlyLimit || 25); const u = await usage(env); return { ok: u.total + est <= lim, total: u.total, limit: lim } }
+export async function budgetOk(env, est) { const cfg = await readJson(env, "content/config.json", {}); const lim = Number(cfg.monthlyLimit || 25); const u = await usage(env); return { ok: u.total + est <= lim, total: u.total, limit: lim } }
 function textCost(env, usage, searches, model) { const p = PRICE.text[model || TEXT_MODEL(env)] || PRICE.text["gpt-5-mini"]; return ((usage && usage.input_tokens) || 0) / 1e6 * p[0] + ((usage && usage.output_tokens) || 0) / 1e6 * p[1] + (searches || 0) * PRICE.search }
 
 /* ---------- OpenAI ---------- */
@@ -56,7 +56,7 @@ export async function openaiJSON(env, sys, user, opts, fetcher) {
   if (!data) throw new Error("The AI answer couldn't be read. Try again.");
   return { data, cites, cost: textCost(env, j.usage, searches, used), usage: j.usage || {}, model: used };
 }
-function openaiErr(status, j) {
+export function openaiErr(status, j) {
   const m = (j && j.error && (j.error.message || j.error.code)) || "";
   if (status === 401) return "OpenAI rejected the key (OPENAI_API_KEY). Check it in Cloudflare.";
   if (status === 429) return /quota|billing/i.test(m) ? "OpenAI says the account is out of credit or over quota." : "OpenAI is busy (rate limit). Try again in a minute.";

@@ -283,6 +283,36 @@ service cloud.firestore {
       }
     }
 
+    // ---------- Creative Studio, Groove Reads, Grooveville Sound Lab ----------
+    // Roles live in creativeRoles/{uid}.role, set only by the founder. Public Groove Reads accounts get no role,
+    // so signing in to read books never opens the Back Office.
+    function crPath() { return /databases/$(database)/documents/creativeRoles/$(request.auth.uid); }
+    function crRoleIs(roles) { return signedIn() && exists(crPath()) && get(crPath()).data.role is string && get(crPath()).data.role in roles; }
+    function crAny() { return crRoleIs(["admin", "writer", "illustrator", "animator", "gamedev", "editor", "producer", "viewer"]); }
+    function crEdit() { return crRoleIs(["admin", "writer", "illustrator", "animator", "gamedev", "editor"]); }
+    function soundRole() { return crRoleIs(["admin", "producer"]); }
+
+    match /creativeRoles/{uid} {
+      allow read: if signedIn() && (request.auth.uid == uid || isFounder());
+      allow write: if isFounder();
+    }
+    match /readsStaff/{uid} {
+      allow read: if signedIn() && (request.auth.uid == uid || isFounder());
+      allow write: if isFounder();
+    }
+    // Each reader's own progress and bookmarks
+    match /grooveReadsProgress/{uid} {
+      allow read, write: if signedIn() && request.auth.uid == uid;
+    }
+    match /{crCol}/{crId} {
+      allow read: if (crCol.matches("creative.*") && crCol != "creativeRoles" && crAny())
+        || (crCol.matches("soundlab.*") && soundRole());
+      allow create, update: if (crCol.matches("creative.*") && crCol != "creativeRoles" && crEdit())
+        || (crCol.matches("soundlab.*") && crCol != "soundlabReleases" && soundRole()
+            && (crCol != "soundlabVoices" || request.resource.data.get("status", "") != "verified" || (resource != null && resource.data.get("status", "") == "verified")));
+      allow delete: if (crCol.matches("creative.*") && crCol != "creativeRoles" && crRoleIs(["admin"]));
+    }
+
     // Everything else (founder timesheet, receipts, reminders, collabs, private notes): founder only
     match /{collection}/{id} {
       allow read, write: if isFounder();
