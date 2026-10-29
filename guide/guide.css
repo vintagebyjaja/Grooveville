@@ -209,7 +209,7 @@ a{color:inherit}
 @media (max-width:1180px){.gchip span{display:none}.gchip{padding:0 12px}.tbi{padding:12px}.tbi b{font-size:19px}.tbtools{max-width:240px}}
 @media (max-width:980px){.dash{grid-template-columns:minmax(0,1fr) minmax(260px,38%)}.dash.lay-80{grid-template-columns:minmax(0,1fr) minmax(220px,30%)}.tbin{flex-wrap:wrap}.tbi{flex:1 1 30%;border-bottom:1px solid var(--line)}.tbtools{flex:1 1 100%;max-width:none}.immx{grid-template-columns:1fr;height:auto}.immstage{height:60vh}}
 /* ---------- phones: full-screen map, compact guidance, sheets ---------- */
-@media (max-width:760px){
+@media (max-width:760px),(max-height:500px) and (pointer:coarse){
   .gg{grid-template-columns:1fr;grid-template-rows:auto minmax(0,1fr) auto}
   .ghd{flex-wrap:wrap;gap:8px;padding:calc(8px + env(safe-area-inset-top)) 12px 8px}
   .gbrand b{font-size:24px}.gbrand small{margin-left:16px;font-size:8.5px}
@@ -251,7 +251,7 @@ a{color:inherit}
   .gmain:has(#gpage:not([hidden])){overflow:auto}
 }
 .dvbtn{display:none}
-@media (max-width:760px){.dvbtn{display:grid}.dash.drive-open .dvbtn{background:var(--acc);color:var(--acc-ink)}}
+@media (max-width:760px),(max-height:500px) and (pointer:coarse){.dvbtn{display:grid}.dash.drive-open .dvbtn{background:var(--acc);color:var(--acc-ink)}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 
 /* ---------- flyer look: brand, hero, diagnostics, driving view ---------- */
@@ -281,7 +281,7 @@ a{color:inherit}
 .gg.light .dspd{background:rgba(255,255,255,.75);color:var(--ink)}
 .dspd .whl{color:#4fb6ff;display:grid}.dspd .spd b{font-size:34px}.dspd .spd small{color:inherit;opacity:.75}
 .dfoot{grid-template-columns:1fr}
-@media (max-width:760px){.tripcard.hero{padding:16px}.ghero h1{font-size:30px}.gcaps{font-size:11px;margin:10px 0 12px}.gfeat{grid-template-columns:repeat(2,1fr)}.gfeat>*:nth-child(2){border-right:0}.gfeat>*:nth-child(-n+2){border-bottom:1px solid var(--line)}.gfeat small{display:none}.gbrand b{font-size:24px}.gpinlogo svg{width:24px;height:30px}.dspd{top:6px}.dspd .spd b{font-size:26px}}
+@media (max-width:760px),(max-height:500px) and (pointer:coarse){.tripcard.hero{padding:16px}.ghero h1{font-size:30px}.gcaps{font-size:11px;margin:10px 0 12px}.gfeat{grid-template-columns:repeat(2,1fr)}.gfeat>*:nth-child(2){border-right:0}.gfeat>*:nth-child(-n+2){border-bottom:1px solid var(--line)}.gfeat small{display:none}.gbrand b{font-size:24px}.gpinlogo svg{width:24px;height:30px}.dspd{top:6px}.dspd .spd b{font-size:26px}}
 
 .mapfb{z-index:12}
 
@@ -292,13 +292,13 @@ a{color:inherit}
 .gamsg{min-height:1.2em;font-size:13px}.gauthl{display:flex;justify-content:space-between;gap:10px;margin:12px 0 8px;flex-wrap:wrap}
 .linkb{color:var(--acc);font-weight:600;font-size:13.5px;text-decoration:underline}
 .gsignin{display:flex;align-items:center;gap:14px;padding:14px 16px;margin:-8px 0 18px}.gsignin>.ic{color:var(--acc)}.gsignin span{flex:1}.gsignin b{display:block}.gsignin small{color:var(--muted);font-size:13px}
-@media (max-width:760px){.gav.gin span{display:none}.gav.gin{padding:0;width:40px;justify-content:center}}
+@media (max-width:760px),(max-height:500px) and (pointer:coarse){.gav.gin span{display:none}.gav.gin{padding:0;width:40px;justify-content:center}}
 
 /* ---------- v9: map-first phone layout ---------- */
 .vtog{font:800 14px/1 var(--fd);letter-spacing:.02em;color:var(--muted)}
 .vtog.on{background:var(--acc);color:var(--acc-ink);border-color:transparent}
 .tcdet,.tbend,.mspd{display:none}
-@media (max-width:760px){
+@media (max-width:760px),(max-height:500px) and (pointer:coarse){
   .rb{width:44px;height:44px}
   .gg:not(.v3d) .mcomp{display:none}
   /* route picked: drop the quick-place chips and tagline */
@@ -328,7 +328,7 @@ a{color:inherit}
   .drivecol .dfoot,.gg.nv .dspd{display:none}
   .dnote{top:auto;bottom:6px}
 }
-@media (max-width:760px){.tbi>div{min-width:0;max-width:100%}.tbi span{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}}
+@media (max-width:760px),(max-height:500px) and (pointer:coarse){.tbi>div{min-width:0;max-width:100%}.tbi span{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}}
 /* ---------- v11: city 3D + speed ---------- */
 .g3d{position:absolute;inset:0;z-index:1;display:none;overflow:hidden;background:#0b0b10}
 .dash.city .g3d{display:block}
@@ -343,7 +343,7 @@ a{color:inherit}
 .mspd .lim{width:44px;padding:4px 2px;border-width:2px;border-radius:7px}
 .mspd .lim small{font-size:6.5px}.mspd .lim b{font-size:18px}
 .mspd.over .msv b,.dspd.over .spd b{color:#f2a43c}
-@media (max-width:760px){
+@media (max-width:760px),(max-height:500px) and (pointer:coarse){
   .gg.nv .mspd:not([hidden]){flex-direction:row;gap:8px;width:auto;height:auto;min-width:64px;min-height:64px;padding:8px 10px;border-radius:20px}
 }
 .g3dcar{display:none;position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);pointer-events:none;filter:drop-shadow(0 0 14px rgba(255,159,104,.75)) drop-shadow(0 6px 10px rgba(0,0,0,.5))}
@@ -366,7 +366,7 @@ a{color:inherit}
 .evr{color:var(--muted);font-size:12.5px}
 .evb .row{margin-top:8px;flex-wrap:wrap}
 .evfly img{width:100%;max-height:72vh;object-fit:contain;border-radius:12px;display:block}
-@media (max-width:760px){.evlist{grid-template-columns:1fr}.evimg{aspect-ratio:4/4.4}}
+@media (max-width:760px),(max-height:500px) and (pointer:coarse){.evlist{grid-template-columns:1fr}.evimg{aspect-ratio:4/4.4}}
 .evimg.noimg{aspect-ratio:auto;height:96px;background:linear-gradient(120deg,color-mix(in srgb,var(--acc) 22%,transparent),transparent 70%),var(--chip)}
 .evimg.noimg .pph{width:auto;height:auto;background:none;display:grid;place-items:center;color:var(--acc)}
 /* ---------- v12: 3D driving view ---------- */
@@ -378,7 +378,7 @@ a{color:inherit}
 .dstage.d3on .dnote{top:auto;bottom:22px;left:10px;right:auto;text-align:left;color:rgba(255,236,224,.7);font-size:11.5px;z-index:2}
 .dstage.d3on .dnote:empty{display:none}
 .drivecol .dstage{border-radius:0}
-@media (max-width:760px){
+@media (max-width:760px),(max-height:500px) and (pointer:coarse){
   /* while navigating, the driving view takes the screen under the turn banner */
   .gg.nv .dash.drive-open .drivecol{top:calc(98px + env(safe-area-inset-top));bottom:calc(var(--bot,96px) + 8px);height:auto;left:8px;right:8px;border-radius:22px;overflow:hidden}
   .gg.nv .dash.drive-open .mtools{z-index:9}
@@ -390,7 +390,7 @@ a{color:inherit}
 .nextturn .ntl .ln{display:grid;place-items:center;width:30px;height:30px;border-radius:8px;color:var(--muted);font-style:normal}
 .nextturn .ntl .ln.ok{color:var(--acc);background:var(--glow);box-shadow:inset 0 0 0 1.5px var(--acc)}
 .gg.nv .nextturn{z-index:9}
-@media (max-width:760px){
+@media (max-width:760px),(max-height:500px) and (pointer:coarse){
   .gg.nv .dash.drive-open .drivecol{top:calc(var(--ntH,96px) + 14px + env(safe-area-inset-top))}
   .drivecol.haslanes .dfoot{right:64px}
   .gg.nv .dash.drive-open .drivecol.haslanes .dfoot{display:none}
@@ -406,3 +406,70 @@ a{color:inherit}
 .gg.light .mapamb{background:radial-gradient(ellipse at 50% 55%,rgba(255,255,255,0) 60%,rgba(123,63,242,.08) 100%)}
 .dash.city .mapamb{opacity:0}
 .gg .rb.vtog.on,.gg .dash.drive-open .rb.dvbtn{background:var(--acc);color:var(--acc-ink);border-color:transparent;box-shadow:0 0 0 4px color-mix(in srgb,var(--acc) 22%,transparent),0 10px 26px -10px var(--acc)}
+
+/* ---------- v17: phone app shell (persistent header, 3-state trip sheet, no stuck panels) ---------- */
+html,body{height:100%;height:100dvh}
+.gg{height:100%;height:100dvh;-webkit-tap-highlight-color:transparent}
+.gg button,.gg a,.gg input,.gg label{touch-action:manipulation}
+.gmod{position:relative}.gmx{position:absolute;top:10px;right:10px;width:44px;height:44px;border-radius:50%;display:grid;place-items:center;color:var(--muted);z-index:2}.gmx:hover{color:var(--ink);background:var(--chip)}
+.gdest{display:none}.gret{display:none}.gbtn.confirm{background:var(--warn)!important;color:#1b120c!important;border-color:transparent!important}
+.tripcard .retry{margin-top:6px}
+@media (max-width:760px),(max-height:500px) and (pointer:coarse){
+  .gsearch input{font-size:16px}
+  .gthm button{width:44px;height:40px}.gav{width:44px;height:44px}
+  .ghd{position:relative;z-index:20}
+  /* the header never hides; while navigating it is one compact row: logo, destination control, theme, account */
+  .gg.nv .ghd{display:flex;flex-wrap:nowrap;padding:calc(6px + env(safe-area-inset-top)) 10px 6px}
+  .gg.nv .gsearch,.gg.nv .gchips,.gg.nv .gbrand small{display:none}
+  .gg.nv .gbrand b{font-size:21px}
+  .gdest:not([hidden]){display:flex;align-items:center;gap:6px;flex:1;min-width:0;height:40px;padding:0 12px;border-radius:999px;background:var(--chip);border:1px solid var(--line);font-size:13.5px;font-weight:600}
+  .gdest span{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:left}.gdest small{color:var(--muted);font-weight:600}
+  .gg.nv .gtabs{display:grid}
+  .gtabs a,.gtabs button{min-height:48px}
+  .gg.nv .nextturn{top:8px}
+  .gg.nv .drivecol,.gg.nv .dash.drive-open .drivecol{top:calc(var(--ntH,96px) + 16px)}
+  .kbd .gtabs{display:none}
+  /* the trip sheet */
+  .tbar{max-height:none;height:var(--sheetH,0);transition:height .28s var(--ease);overflow:hidden;display:flex;flex-direction:column;padding-bottom:0}
+  .dash.sheet-open .tbar{max-height:none;overflow:hidden}
+  .tbar.dragging{transition:none}
+  .dash.sheet-open .tbar,.tbar.dragging{z-index:12}
+  .tgrab{flex:none;height:28px;width:100%;touch-action:none;cursor:grab}.tgrab::after{top:10px;width:44px;height:5px}
+  .tbin{display:block;flex:1;min-height:0;overflow:hidden}
+  .tbar.s-half .tbin,.tbar.s-full .tbin{overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+  .tpeek{display:flex;align-items:center;gap:14px;padding:0 14px 12px;touch-action:none;min-height:52px}
+  .tpk{display:flex;flex-direction:column;min-width:0}.tpk small{font-size:11px;color:var(--muted);font-weight:600}.tpk b{font:700 20px/1.1 var(--fd)}.tpk span{font-size:12px;color:var(--muted);white-space:nowrap}
+  .tturn{flex-direction:row;align-items:center;gap:6px}.ttico{color:var(--acc)}
+  .tpeek .tbend,.tpeek>.gbtn{margin-left:auto;display:inline-flex;height:44px;align-self:center;margin-bottom:0}
+  .gg.nv .tbend{margin:0 0 0 auto}
+  .tbar.s-peek .tmore{display:none}
+  .tmore{padding:0 12px 16px;display:flex;flex-direction:column;gap:12px}
+  .tmh{display:flex;justify-content:space-between;align-items:center;touch-action:none;padding-top:4px}.tmh b{font:700 16px var(--fd)}
+  .tgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+  .tgrid .tbi{flex:none;padding:10px;border:1px solid var(--line);border-radius:14px;background:var(--chip);text-align:left;display:flex;flex-direction:column;gap:2px}.tgrid .tbi b{font-size:17px}
+  .tmore .tbtools{padding:0}.tmore .tbtools>div{display:flex;flex-wrap:wrap;gap:8px}.tmore .tbtools .gbtn{min-height:44px}
+  .tbar.s-half .tsteps{display:none}
+  .tsteps ol{list-style:none;display:flex;flex-direction:column;margin-top:6px}.tsteps li{display:grid;grid-template-columns:30px 1fr auto;gap:8px;align-items:center;padding:9px 0;border-top:1px solid var(--line);font-size:14px}.tsteps small{color:var(--muted)}.tsi{color:var(--acc)}
+  .gret:not([hidden]){display:inline-flex;align-items:center;gap:8px;position:fixed;left:50%;transform:translateX(-50%);bottom:calc(66px + env(safe-area-inset-bottom));z-index:30;padding:0 18px;height:46px;border-radius:999px;font-weight:700;color:var(--acc);text-decoration:none}
+  .gscrim{align-items:end;padding:0}.gmod{width:100%;max-height:85dvh;border-radius:22px 22px 0 0;padding:22px 18px calc(18px + env(safe-area-inset-bottom))}
+}
+
+.gsx{display:none;width:40px;height:40px;border-radius:50%;place-items:center;color:var(--muted)}.gsearch.for .gsx{display:grid}
+@media (max-width:760px),(max-height:500px) and (pointer:coarse){.gg.nv .gsearch.for{display:flex;order:5;flex:1 1 100%}.gg.nv .ghd:has(.gsearch.for){flex-wrap:wrap}}
+@media (max-width:760px),(max-height:500px) and (pointer:coarse){
+  .ghd{gap:6px;padding-bottom:6px}
+  .gchips{display:flex;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;gap:6px;-webkit-overflow-scrolling:touch}.gchips::-webkit-scrollbar{display:none}
+  .gchip{flex:none;height:40px}
+  .kbd .gchips{display:none}
+}
+@media (max-width:760px),(max-height:500px) and (pointer:coarse){
+  .ghd{flex-wrap:wrap;align-items:center}.gbrand{flex:1 1 auto;min-width:0}.gbrand b{font-size:22px}
+  .gthm button{width:40px;height:40px}.gthm{flex:none}.gacct{flex:none}
+}
+@media (max-width:760px),(max-height:500px) and (pointer:coarse){.tgrab{height:40px}.tgrab::after{top:12px}.tpeek{padding-bottom:10px}.gbrand{min-height:44px;display:flex;align-items:center}}
+@media (max-width:760px),(max-height:500px) and (pointer:coarse){
+  .gg.nv .gbrand{flex:0 0 auto}.gg.nv .gbrand b{font-size:18px}.gg.nv .gpinlogo svg{width:20px;height:26px}
+  .gg.nv .gthm{border:0;padding:0;background:none}.gg.nv .gthm button.on{display:none}.gg.nv .gthm button{width:40px;height:40px;border-radius:50%;background:var(--chip);border:1px solid var(--line)}
+  .gg.nv .gdest:not([hidden]){flex:1 1 0}
+  .tpk b{font-size:18px;white-space:nowrap}.tpeek{gap:16px}
+}
