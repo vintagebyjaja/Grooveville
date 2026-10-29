@@ -4,7 +4,7 @@ import { writeFileSync, unlinkSync, mkdtempSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { execFileSync } from "node:child_process";
-const NAMES = ["GOOGLE_MAPS_BROWSER_KEY", "GOOGLE_ROUTES_API_KEY", "YOUTUBE_API_KEY", "OPENAI_API_KEY", "CF_ACCOUNT_ID", "R2_ACCESS_KEY_ID", "R2_SECRET_ACCESS_KEY", "SITE_PREVIEW_SECRET", "OPENAI_TEXT_MODEL", "OPENAI_IMAGE_MODEL", "GUIDE_MAP_ID_DARK", "GUIDE_MAP_ID_LIGHT", "STRIPE_SECRET_KEY", "STRIPE_WEBHOOK_SECRET", "READS_SECRET"];
+const NAMES = ["GOOGLE_MAPS_BROWSER_KEY", "GOOGLE_ROUTES_API_KEY", "YOUTUBE_API_KEY", "OPENAI_API_KEY", "CF_ACCOUNT_ID", "R2_ACCESS_KEY_ID", "R2_SECRET_ACCESS_KEY", "SITE_PREVIEW_SECRET", "OPENAI_TEXT_MODEL", "OPENAI_IMAGE_MODEL", "GUIDE_MAP_ID_DARK", "GUIDE_MAP_ID_LIGHT", "STRIPE_SECRET_KEY", "STRIPE_WEBHOOK_SECRET", "READS_SECRET", "FIREBASE_SERVICE_ACCOUNT", "CONTENT_RENDER", "GEN_WORKER_URL", "GEN_WORKER_TOKEN", "GEN_MONTHLY_LIMIT_USD", "GEN_GPU_USD_PER_HOUR", "GEN_DAILY_JOBS"];
 const found = {}, missing = [];
 for (const n of NAMES) { const v = (process.env[n] || "").trim(); if (v) found[n] = v; else missing.push(n) }
 if (!Object.keys(found).length) { console.log("[sync-secrets] No keys found in the build variables. Nothing to copy."); process.exit(0) }

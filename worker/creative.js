@@ -327,3 +327,5 @@ export async function creativeApi(req, env, ctx, h) {
   return J({ error: "Not found" }, 404);
 }
 const bid0 = b => ID_RE.test(String(b.id || "")) ? b.id : "";
+/* shared with the generation gateway (gen.js) */
+export { caller, fsDoc, rj, wj, hmacHex, safeEq, KEY_RE };

@@ -6,6 +6,7 @@
      keep/ (art used by saved posts), final/ (finished graphics), proposals/ (weekly auto drafts), usage/ (cost ledger).
    - Every AI call is priced (estimate) and counted against the founder's monthly budget before it runs. */
 import { serveR2 } from "./music.js";
+import { autopilotApi, autopilotCron, apConfig } from "./autopilot.js";
 const J = (o, s) => new Response(JSON.stringify(o), { status: s || 200, headers: { "content-type": "application/json; charset=utf-8", "cache-control": "no-store" } });
 /* model names from Cloudflare are trimmed (a pasted space or line break makes OpenAI reject them); if a model isn't available
    to this OpenAI account (unknown name, no access, or organization not verified for gpt-image-1) the next one is tried */
@@ -25,8 +26,8 @@ export const PRICE = {
 const SAFE_KEY = /^content\/(brand|tmp|keep|final|upload)\/[A-Za-z0-9._\/-]{3,180}$/;
 const IMG_TYPES = /^image\/(png|jpeg|webp|svg\+xml)$/;
 const month = () => new Date().toISOString().slice(0, 7);
-async function readJson(env, key, dflt) { try { const o = await env.STUDIO_BUCKET.get(key); return o ? await o.json() : dflt } catch (e) { return dflt } }
-const writeJson = (env, key, v) => env.STUDIO_BUCKET.put(key, JSON.stringify(v), { httpMetadata: { contentType: "application/json" } });
+export async function readJson(env, key, dflt) { try { const o = await env.STUDIO_BUCKET.get(key); return o ? await o.json() : dflt } catch (e) { return dflt } }
+export const writeJson = (env, key, v) => env.STUDIO_BUCKET.put(key, JSON.stringify(v), { httpMetadata: { contentType: "application/json" } });
 async function usage(env) { return readJson(env, "content/usage/" + month() + ".json", { total: 0, count: 0, items: [] }) }
 export async function charge(env, kind, cost, by, note) {
   const u = await usage(env); u.total = Math.round((u.total + cost) * 10000) / 10000; u.count++; u.items.unshift({ t: new Date().toISOString(), kind, cost: Math.round(cost * 10000) / 10000, by: by || "", note: String(note || "").slice(0, 80) }); u.items = u.items.slice(0, 400);
@@ -68,13 +69,15 @@ export function openaiErr(status, j) {
 
 /* ---------- prompts ---------- */
 const FEATURE_ICONS = "navigate,pin,cloud,car,food,drink,music,heart,users,home,building,briefcase,dollar,target,cube,doc,layers,ruler,star,play,mic,ticket,calendar,sparkle,shield,chart,camera,book,crown,game,search,bolt,globe,phone,gift";
-function brandBrief(b) {
+export function brandBrief(b) {
   b = b || {};
   return ["Brand: " + (b.name || "Grooveville"), b.tagline ? "Tagline: " + b.tagline : "", b.voice ? "Voice: " + b.voice : "", b.audience ? "Audience: " + b.audience : "",
     b.parentName ? "Part of: " + b.parentName + " (keep this project's own identity)" : "", b.about ? "Mission / what it stands for: " + b.about : "",
     (b.locations || []).length ? "Usual locations: " + b.locations.slice(0, 6).map(l => [l.name, l.address, l.website].filter(Boolean).join(", ")).join(" | ") : "",
     b.location ? "This post's location: " + [b.location.name, b.location.address, b.location.website].filter(Boolean).join(", ") : "", b.website ? "Website: " + b.website : "", (b.hashtags || []).length ? "Default hashtags: " + b.hashtags.join(" ") : "",
-    (b.ctas || []).length ? "Preferred calls to action: " + b.ctas.join(" | ") : "", b.restrictions ? "Never do: " + b.restrictions : "", b.guidelines ? "Guidelines: " + b.guidelines : ""].filter(Boolean).join("\n");
+    (b.ctas || []).length ? "Preferred calls to action: " + b.ctas.join(" | ") : "", b.restrictions ? "Never do: " + b.restrictions : "", b.guidelines ? "Guidelines: " + b.guidelines : "",
+    ...(b.intel ? [b.intel.purpose ? "Purpose: " + b.intel.purpose : "", b.intel.industry ? "Industry: " + b.intel.industry : "", (b.intel.markets || []).length ? "Markets: " + b.intel.markets.join(", ") : "", b.intel.personality ? "Personality: " + b.intel.personality : "",
+      (b.intel.products || []).length ? "Products, services and features (only these exist): " + b.intel.products.join("; ") : "", (b.intel.avoid || []).length ? "Topics to avoid completely: " + b.intel.avoid.join(", ") : "", b.intel.rules ? "Brand rules: " + b.intel.rules : ""] : [])].filter(Boolean).join("\n");
 }
 const POST_SHAPE = `Each post object: {"angle": short label, "kicker": up to 3 short lines for the top-right corner joined with \\n (e.g. "REAL JOBS.\\nREAL PEOPLE."), "tagline": spaced-caps line under the logo like "FOOD • FRIENDS • PLANS • VIBES",
 "headline": array of 2-4 SHORT punchy lines (max 14 characters each, the last one is the accent line), "subline": 1-3 short lines in caps, "features": array of 3-5 {"icon": one of [${FEATURE_ICONS}], "title": max 22 chars, "text": max 40 chars},
@@ -215,9 +218,10 @@ export async function contentApi(req, env, ctx, h) {
     await charge(env, "image", cost, by, used + " " + size + " " + q);
     return J({ key, cost, size, quality: q, model: used });
   }
+  if (p.startsWith("/api/content/autopilot/")) return autopilotApi(req, env, ctx, { p, url, founder, by, b, fetcher });
   return J({ error: "Not found" }, 404);
 }
-async function genPosts(env, b, fetcher) {
+export async function genPosts(env, b, fetcher) {
   const n = Math.max(1, Math.min(4, Number(b.count) || 1));
   const r = await openaiJSON(env, "You are Grooveville's in-house creative agency writing branded social media posts and flyer copy. " + RULES,
     brandBrief(b.brand) + "\n\nBrief: " + String(b.brief || "Evergreen brand post").slice(0, 2000) + (b.direction ? "\nCreative direction: " + String(b.direction).slice(0, 500) : "") +
@@ -240,6 +244,8 @@ export async function contentCron(env, fetcher) {
     if (n) { const log = await readJson(env, "content/cleanup-log.json", []); log.unshift({ at: now.toISOString(), by: "scheduled", kind: "expired temporary art (30 days)", files: n, bytes }); await writeJson(env, "content/cleanup-log.json", log.slice(0, 100)) }
     await writeJson(env, "content/state.json", st);
   }
+  /* Autopilot replaces the old weekly copy-only proposals when it is on */
+  const ap = await apConfig(env); if (ap.on) { await autopilotCron(env, fetcher); return }
   const wk = isoWeek(now);
   if (st.week !== wk && now.getUTCDay() === 1 && now.getUTCHours() >= 12 && env.OPENAI_API_KEY) {
     st.week = wk; await writeJson(env, "content/state.json", st);

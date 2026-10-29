@@ -3,6 +3,7 @@ import { siteApi } from "./site.js";
 import { guideApi } from "./guide.js";
 import { contentApi, contentCron } from "./content.js";
 import { creativeApi } from "./creative.js";
+import { genApi, genCron } from "./gen.js";
 /* Grooveville Worker
    - Serves the static site (ASSETS binding). Only /api/* runs this code first.
    - YouTube sync for Grooveville LIVE: live status, upcoming show, completed livestream archive.
@@ -253,6 +254,7 @@ async function api(req, env, ctx) {
   const url = new URL(req.url), p = url.pathname, show = url.searchParams.get("show") || "uncneph";
   if (req.method === "OPTIONS") return new Response(null, { status: 204 });
   if (p.startsWith("/api/content/")) return contentApi(req, env, ctx, { p, url, verifyIdToken, fsField });
+  if (p.startsWith("/api/gen/")) return genApi(req, env, ctx, { p, url, verifyIdToken });
   if (p.startsWith("/api/creative/") || p.startsWith("/api/reads/")) return creativeApi(req, env, ctx, { p, url, verifyIdToken });
   if (p.startsWith("/api/guide/")) return guideApi(req, env, ctx, { p, url });
   if (p.startsWith("/api/site/")) return siteApi(req, env, ctx, { p, url, verifyIdToken, fsField });
@@ -352,5 +354,6 @@ export default {
     const SH = await getShows(env);
     for (const [s, cfg] of Object.entries(SH)) if (!cfg.disabled) ctx.waitUntil(syncShow(env, s, null, cfg).catch(() => {}));
     ctx.waitUntil(contentCron(env).catch(() => {}));
+    ctx.waitUntil(genCron(env).catch(() => {}));
   }
 };
