@@ -14,11 +14,20 @@
   "r2_buckets": [
     { "binding": "STUDIO_BUCKET", "bucket_name": "grooveville-studio" }
   ],
-  // Checks YouTube (and Twitch, if connected) every 2 minutes.
+  // Content Autopilot background jobs. Create this queue once before deploying:
+  // Cloudflare dashboard › Storage & Databases › Queues › Create queue › name: grooveville-autopilot
+  "queues": {
+    "producers": [{ "binding": "AUTOPILOT_Q", "queue": "grooveville-autopilot" }],
+    "consumers": [{ "queue": "grooveville-autopilot", "max_batch_size": 1, "max_batch_timeout": 5, "max_retries": 3 }]
+  },
+  // Cloudflare Images assembles finished Autopilot graphics (photo + official logo + exact text). Nothing to create.
+  "images": { "binding": "IMAGES" },
+  // Every 2 minutes: checks YouTube (and Twitch, if connected) and starts Content Autopilot when work is due.
   "triggers": { "crons": ["*/2 * * * *"] },
   "vars": {
     "FIREBASE_PROJECT_ID": "groovevillellc",
-    "R2_BUCKET_NAME": "grooveville-studio"
+    "R2_BUCKET_NAME": "grooveville-studio",
+    "SITE_URL": "https://grooveville.org"
   },
   // Keep variables you add in the dashboard. Secrets (YOUTUBE_API_KEY, R2 keys) are never stored in this file.
   "keep_vars": true,

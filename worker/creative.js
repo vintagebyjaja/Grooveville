@@ -93,7 +93,8 @@ function publicMeta(ed) {
     toc: (ed.toc || []).map(t => ({ title: t.title, page: t.page })), free: !!ed.free, featured: !!ed.featured, collections: ed.collections || [], publishAt: ed.publishAt || "",
     audio: (ed.audio || []).length > 0, readalong: (ed.audio || []).some(a => a.align && a.align.length), physical: ed.physical || {},
     products: Object.fromEntries(Object.entries(pk).filter(([k, v]) => v && v.enabled !== false && v.price > 0).map(([k, v]) => [k, { price: v.price, currency: v.currency || "usd", formats: v.formats || [] }])),
-    downloads: Object.entries(ed.downloads || {}).filter(([k, v]) => v).map(([k]) => k), rev: ed.rev || 1 };
+    downloads: Object.entries(ed.downloads || {}).filter(([k, v]) => v).map(([k]) => k), rev: ed.rev || 1,
+    editions: [].concat((ed.originalPages || []).length ? ["original"] : [], !ed.onlyOriginal && (ed.pages || []).length ? ["cinematic"] : []), originalPages: (ed.originalPages || []).length, trim: ed.trim || null };
 }
 const visible = ed => ed && ed.status === "published" && (!ed.publishAt || Date.parse(ed.publishAt) <= Date.now());
 async function signAsset(env, id, key, mins) { const exp = Math.floor(Date.now() / 1000) + (mins || 30) * 60; const sig = (await hmacHex(secretOf(env), id + "|" + key + "|" + exp)).slice(0, 32); return "/api/reads/a/" + id + "/" + exp + "." + sig + "/" + key }
@@ -179,12 +180,13 @@ export async function creativeApi(req, env, ctx, h) {
     const formats = await formatsFor(env, ed, user);
     if (p === "/api/reads/book") return J({ book: publicMeta(ed), access: formats, signedIn: !!user, draft: !visible(ed) });
     if (p === "/api/reads/pages") {                                          // the 5-page preview is enforced here
-      const total = (ed.pages || []).length, prev = Math.min(ed.previewPages == null ? 5 : ed.previewPages, total), full = formats.includes("read") || formats.includes("readalong");
+      const set = url.searchParams.get("ed") === "original" && (ed.originalPages || []).length ? ed.originalPages : (ed.pages || []);
+      const total = set.length, prev = Math.min(ed.previewPages == null ? 5 : ed.previewPages, total), full = formats.includes("read") || formats.includes("readalong");
       let from = Math.max(1, Number(url.searchParams.get("from")) || 1), to = Math.min(total, Number(url.searchParams.get("to")) || from + 9); if (to - from > 40) to = from + 40;
       if (!full && from > prev) return J({ locked: true, preview: prev, total }, 402);
       if (!full) to = Math.min(to, prev);
-      const pages = []; for (let i = from; i <= to; i++)pages.push(Object.assign({ n: i }, await pageOut(env, ed, ed.pages[i - 1])));
-      return J({ pages, total, preview: prev, full, style: ed.style || {}, layout: ed.layout || "reflow" });
+      const pages = []; for (let i = from; i <= to; i++)pages.push(Object.assign({ n: i }, await pageOut(env, ed, set[i - 1])));
+      return J({ pages, total, preview: prev, full, style: ed.style || {}, layout: set === ed.originalPages ? "fixed" : ed.layout || "reflow", edition: set === ed.originalPages ? "original" : "cinematic" });
     }
     if (p === "/api/reads/audio") {
       if (!formats.includes("listen") && !formats.includes("readalong")) return J({ error: "The audiobook is part of a purchase", locked: true }, 402);
@@ -297,10 +299,16 @@ export async function creativeApi(req, env, ctx, h) {
     if (!isFounderOnly()) return J({ error: "Only the founder manages Groove Reads" }, 403);
     if (p === "/api/creative/reads/publish" && req.method === "POST") {
       const ed = body.edition || {}; if (!ID_RE.test(ed.id || "")) return J({ error: "Bad book id" }, 400); if (!String(ed.title || "").trim()) return J({ error: "Add a title" }, 400);
-      if (!Array.isArray(ed.pages) || !ed.pages.length) return J({ error: "Format the book into pages first" }, 400); if (ed.pages.length > 3000) return J({ error: "That edition is too long" }, 400);
-      const keys = []; ed.pages.forEach(pg => { [pg.img, pg.bg].concat(pg.panels || [], (pg.blocks || []).map(x => x && x.key)).forEach(k => { if (k) keys.push(k) }) }); (ed.audio || []).forEach(a => keys.push(a.key)); Object.values(ed.files || {}).forEach(k => k && keys.push(k)); if (ed.cover) keys.push(ed.cover);
+      const prev0 = await rj(env, edKey(ed.id), null);
+      /* Original Edition: the finished book's pages exactly as designed (one image per page). Kept when the formatted edition is republished, and vice versa. */
+      if (Array.isArray(ed.originalPages)) { ed.originalPages = ed.originalPages.filter(x => x && x.img).map(x => ({ kind: "image", img: String(x.img), w: Number(x.w) || 0, h: Number(x.h) || 0 })) } else if (prev0 && prev0.originalPages) ed.originalPages = prev0.originalPages;
+      if (ed.keepPages && prev0 && !prev0.onlyOriginal && (prev0.pages || []).length) { ed.pages = prev0.pages; ed.toc = prev0.toc; ed.audio = prev0.audio; ed.layout = prev0.layout; ed.style = prev0.style; ed.onlyOriginal = false }
+      else if ((!Array.isArray(ed.pages) || !ed.pages.length) && (ed.originalPages || []).length) { ed.pages = ed.originalPages.map(x => ({ kind: "image", img: x.img })); ed.layout = "fixed"; ed.onlyOriginal = true } else if (Array.isArray(ed.pages) && ed.pages.length) ed.onlyOriginal = false;
+      delete ed.keepPages;
+      if (!Array.isArray(ed.pages) || !ed.pages.length) return J({ error: "Format the book into pages first" }, 400); if (ed.pages.length > 3000 || (ed.originalPages || []).length > 3000) return J({ error: "That edition is too long" }, 400);
+      const keys = []; (ed.originalPages || []).forEach(pg => keys.push(pg.img)); ed.pages.forEach(pg => { [pg.img, pg.bg].concat(pg.panels || [], (pg.blocks || []).map(x => x && x.key)).forEach(k => { if (k) keys.push(k) }) }); (ed.audio || []).forEach(a => keys.push(a.key)); Object.values(ed.files || {}).forEach(k => k && keys.push(k)); if (ed.cover) keys.push(ed.cover);
       const bad = keys.find(k => !KEY_RE.test(k)); if (bad) return J({ error: "A file in this edition isn't in Creative Studio storage: " + bad }, 400);
-      const prev = await rj(env, edKey(ed.id), null); ed.rev = (prev && prev.rev || 0) + 1; ed.updatedAt = new Date().toISOString(); ed.status = ["draft", "scheduled", "published", "unpublished"].includes(ed.status) ? ed.status : "draft";
+      const prev = prev0; ed.rev = (prev && prev.rev || 0) + 1; ed.updatedAt = new Date().toISOString(); ed.status = ["draft", "scheduled", "published", "unpublished"].includes(ed.status) ? ed.status : "draft";
       if (ed.status === "scheduled") { ed.status = "published"; if (!ed.publishAt) return J({ error: "Pick a publish date" }, 400) }
       ed.previewPages = Math.max(0, Math.min(Number(ed.previewPages == null ? 5 : ed.previewPages) || 0, 50));
       for (const [k, v] of Object.entries(ed.products || {})) { v.price = Math.max(0, Math.round(Number(v.price || 0) * 100) / 100); v.formats = (v.formats || []).filter(x => FORMATS.includes(x)) }

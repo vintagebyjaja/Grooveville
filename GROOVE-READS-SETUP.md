@@ -29,3 +29,23 @@ Until `STRIPE_SECRET_KEY` is set, Buy buttons say “Checkout isn’t connected 
 ## Publishing a book
 
 Book Studio › your book › **Publish**: set prices, formats, downloads and preview pages, then **Publish to Groove Reads**. Tick “Show on the Shadow Crown website” to list it on shadowcrown pages too.
+
+## Original Edition (finished PDF → virtual book)
+Creative Studio › Book Studio › your book › **Original Edition** › **Upload Finished Book (PDF)**.
+
+**Processing**
+- Every page is rendered in your browser at print quality (about 1700 × 2200 px for a letter-size page) and saved to Creative Studio storage. The original PDF is kept too.
+- No text extraction or OCR is needed. Pages look exactly as designed.
+- A 71-page book takes about a minute. If the tab closes, choose the same PDF again and it picks up where it stopped.
+
+**Open virtual book**
+- The cover shows alone, then two-page spreads, with a page-flip animation.
+- You can switch to single pages (automatic on phones), zoom with drag-to-pan, go fullscreen and swipe.
+- There's a page slider, page thumbnails, bookmarks and an optional page-turn sound. The reader remembers your last page.
+
+**Publish Original Edition**
+- Sends the pages to Groove Reads.
+- Readers see **Read Original Edition** on the book page. If a formatted or Cinematic Edition is also published, they choose between the two, and each is stored separately.
+- Pages after the free preview are only sent to readers who own the book (checked on the server).
+
+The PDF reader (PDF.js, Apache 2.0) is hosted on the site under `/vendor/pdfjs`; nothing loads from another CDN.

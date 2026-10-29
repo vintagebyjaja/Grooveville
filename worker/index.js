@@ -2,6 +2,7 @@ import { musicApi, fsPublic } from "./music.js";
 import { siteApi } from "./site.js";
 import { guideApi } from "./guide.js";
 import { contentApi, contentCron } from "./content.js";
+import { autopilotQueue } from "./autopilot.js";
 import { creativeApi } from "./creative.js";
 import { genApi, genCron } from "./gen.js";
 /* Grooveville Worker
@@ -355,5 +356,9 @@ export default {
     for (const [s, cfg] of Object.entries(SH)) if (!cfg.disabled) ctx.waitUntil(syncShow(env, s, null, cfg).catch(() => {}));
     ctx.waitUntil(contentCron(env).catch(() => {}));
     ctx.waitUntil(genCron(env).catch(() => {}));
+  },
+  /* Content Autopilot background work (Cloudflare Queue "grooveville-autopilot"): one step per message */
+  async queue(batch, env, ctx) {
+    for (const m of batch.messages) { try { await autopilotQueue(env, m.body); m.ack() } catch (e) { console.log("autopilot queue", e && e.message); m.retry({ delaySeconds: 60 }) } }
   }
 };
