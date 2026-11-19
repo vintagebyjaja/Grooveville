@@ -75,7 +75,7 @@ def style(name, font, size, leading, after=0, before=0):
     )
 
 
-def flow(text, publisher=False):
+def flow(text, publisher=False, author_note=False):
     blocks = re.split(r"\n\s*\n", text.strip())
     if publisher:
         title, subtitle, *blocks = blocks
@@ -94,7 +94,9 @@ def flow(text, publisher=False):
         yield Spacer(1, 7)
     for block in blocks:
         block = block.strip()
-        if block.startswith("# "):
+        if author_note and block.startswith("# "):
+            yield Paragraph(escape(block[2:]), style("AuthorTitle", "SerifBold", 20, 24, 5))
+        elif block.startswith("# "):
             yield Spacer(1, 24)
             yield Paragraph(escape(block[2:]), style("Chapter", "SerifBold", 22, 29, 19))
         elif block.startswith("## "):
@@ -109,26 +111,29 @@ def flow(text, publisher=False):
             inline = escape(" ".join(block.splitlines()))
             inline = re.sub(r"\*\*(.+?)\*\*", r"<b>\1</b>", inline)
             inline = re.sub(r"\*(.+?)\*", r"<i>\1</i>", inline)
-            yield Paragraph(inline, style("Body", "Serif", 10.5, 13.1 if publisher else 14.5, 4 if publisher else 6))
+            yield Paragraph(inline, style("Body", "Serif", 10 if author_note else 10.5, 12.2 if author_note else 13.1 if publisher else 14.5, 2 if author_note else 4 if publisher else 6))
 
 
 class ReviewDocument(BaseDocTemplate):
-    def __init__(self, path, title, has_cover, digital=False):
+    def __init__(self, path, title, has_cover, digital=False, book_front=False):
         super().__init__(str(path), pagesize=PAGE, title=title, author="JABARI JAJA", creator="Grooveville LLC",
                          invariant=1, initialFontName="Serif")
         self.has_cover = has_cover
         self.digital = digital
 
-        def frame(left, width=PAGE[0] - 106):
-            return Frame(left, 49, width, PAGE[1] - 104, leftPadding=0,
+        def frame(left, width=PAGE[0] - 106, bottom=49, top=55):
+            return Frame(left, bottom, width, PAGE[1] - bottom - top, leftPadding=0,
                          rightPadding=0, topPadding=0, bottomPadding=0)
 
         covers = [PageTemplate("cover", [Frame(0, 0, *PAGE, leftPadding=0,
                   rightPadding=0, topPadding=0, bottomPadding=0)])] if has_cover else []
-        self.addPageTemplates(covers + [
+        front = [
+            PageTemplate("publisher", [frame(42, 348)], onPage=self.furniture, autoNextPageTemplate="author"),
+            PageTemplate("author", [frame(29, 374, bottom=40, top=43)], onPage=self.furniture, autoNextPageTemplate="right"),
+        ] if book_front else []
+        self.addPageTemplates(covers + front + [
             PageTemplate("right", [frame(59)], onPage=self.furniture, autoNextPageTemplate="left"),
             PageTemplate("left", [frame(47)], onPage=self.furniture, autoNextPageTemplate="right"),
-            PageTemplate("publisher", [frame(42, 348)], onPage=self.furniture, autoNextPageTemplate="right"),
         ])
 
     def furniture(self, pdf, doc):
@@ -249,16 +254,16 @@ def build(path, texts, title, toc=False, cover=None, journal_pages=0, reflection
     for index, text in enumerate(texts):
         publisher = text.startswith("# GROOVEVILLE LLC\n")
         if index:
-            if publisher:
-                story.append(NextPageTemplate("publisher"))
+            if toc and index <= 2:
+                story.append(NextPageTemplate("author" if index == 1 else "right"))
             story.append(PageBreak())
         if toc and index == 2:
             story.extend(flow("# Contents"))
             contents = TableOfContents()
             contents.levelStyles = [style("Entry", "Serif", 10, 17, 3)]
             contents.tableStyle.add("FONTNAME", (0, 0), (-1, -1), "Serif")
-            story.extend([contents, PageBreak()])
-        story.extend(flow(text, publisher=publisher))
+            story.extend([contents, NextPageTemplate("right"), PageBreak()])
+        story.extend(flow(text, publisher=publisher, author_note=text.startswith("# A Word from the Author\n")))
         chapter_match = re.match(r"# LAW (\d{2}) —", text)
         if reflections and chapter_match:
             story.extend([PageBreak(), LinedPage(f"Law {chapter_match[1]} Reflection")])
@@ -267,7 +272,7 @@ def build(path, texts, title, toc=False, cover=None, journal_pages=0, reflection
     path.parent.mkdir(parents=True, exist_ok=True)
     with tempfile.TemporaryDirectory(dir=path.parent) as folder:
         candidate = Path(folder) / path.name
-        doc = ReviewDocument(candidate, title, bool(cover), digital=digital)
+        doc = ReviewDocument(candidate, title, bool(cover), digital=digital, book_front=toc)
         doc.multiBuild(story)
         verify(candidate, texts)
         if expected_pages is not None:
@@ -289,7 +294,7 @@ def book():
     front = ROOT / "book/front-matter"
     back = ROOT / "book/back-matter"
     texts = [(front / name).read_text() for name in
-             ("title-page.md", "publisher.md", "introduction.md")]
+             ("publisher.md", "author.md", "introduction.md")]
     for number in range(1, 15):
         source, pdf = chapter_paths(number)
         text = source.read_text()
