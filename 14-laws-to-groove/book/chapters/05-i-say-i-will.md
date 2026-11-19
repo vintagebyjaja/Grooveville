@@ -1,5 +1,13 @@
 # LAW 05 — I SAY = I WILL
 
+## Opening questions
+
+What makes it easy or hard for you to say no?
+
+Which promise are other people counting on you to keep this week?
+
+How do you usually respond when you realize you might be late or have to cancel?
+
 ## Understanding the Law
 
 Your word has value because another person can use it to plan. I Say = I Will treats reliability as a practice with three parts: give a promise you can carry, communicate when its conditions change, and repair the cost when you fall short.
@@ -24,10 +32,10 @@ Make incomplete coverage visible in a group calendar. Allow people to say which 
 
 Give your word at the size you can deliver it.
 
-## Food for Thought
+## Closing questions
 
-Which recent promise would have been easier to keep if you had made it more precise?
+Which promise could you make clearer before someone builds a plan around it?
 
-Who absorbs the cost of a missed commitment in a group you belong to?
+What would an honest early update sound like if you still had no solution?
 
-Should managers be evaluated on the consistency between their stated values and decisions, and what records would make that evaluation fair?
+When you have let someone down, what might repair part of what they lost?
