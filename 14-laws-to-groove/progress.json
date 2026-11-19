@@ -1,5 +1,14 @@
 {
   "title": "The 14 Laws to Groove",
   "author": "Jabari Jaja",
-  "chapters": {}
+  "chapters": {
+    "01": {
+      "title": "REFLECTION",
+      "words": 3156,
+      "status": "drafted",
+      "review_status": "editorial review recorded; founder review pending",
+      "pdf": "exports/chapters/law-01-reflection.pdf",
+      "commit": "1a50dcf60013a57940673e018c5b019e9ad39070"
+    }
+  }
 }
