@@ -1,5 +1,13 @@
 # LAW 13 — MOTHER'S CHILD
 
+## Opening questions
+
+Who knew you before the titles you use today?
+
+Which part of your upbringing still shows up in your decisions?
+
+When do you feel most like yourself?
+
 ## Understanding the Law
 
 Mother's Child asks you to know who you are when no one in the room needs to be impressed by your title. Identity includes your history, commitments, relationships and choices. A degree, affiliation or position changes what you can do. Character shows in how you use it, including how you treat people who cannot advance your career.
@@ -26,10 +34,10 @@ Families and communities can allow members to change without demanding access to
 
 A title may introduce you. The way you use it gives people more to go on.
 
-## Food for Thought
+## Closing questions
 
-What part of your story do you explain differently depending on who is listening?
+What could you change about how you present yourself and still feel true to your values?
 
-How can communities affirm where people come from while leaving room for change?
+How would the people affected by your decisions describe what your title gives you the power to do?
 
-How might narrative identity research account for the roles of culture and material circumstances in the stories people tell?
+Which part of your story do you want to claim, and which part do you prefer to keep private?
