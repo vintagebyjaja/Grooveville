@@ -49,6 +49,14 @@
       "review_status": "editorial review recorded; founder review pending",
       "pdf": "exports/chapters/law-06-peers-arent-dears.pdf",
       "commit": "a6d3a42ca3a06d1722b24183ddac8f398b18a870"
+    },
+    "07": {
+      "title": "ENDOWMENT",
+      "words": 654,
+      "status": "drafted",
+      "review_status": "editorial review recorded; founder review pending",
+      "pdf": "exports/chapters/law-07-endowment.pdf",
+      "commit": "998affc10e1bb55d3ac701aa06eb2baca705e55b"
     }
   }
 }
