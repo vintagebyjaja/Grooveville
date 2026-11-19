@@ -57,6 +57,14 @@
       "review_status": "editorial review recorded; founder review pending",
       "pdf": "exports/chapters/law-07-endowment.pdf",
       "commit": "a4dacafccb3d3f878bbfe644478de0fcf4c8f1c1"
+    },
+    "08": {
+      "title": "RISKY REWARDS",
+      "words": 345,
+      "status": "drafted",
+      "review_status": "editorial review recorded; founder review pending",
+      "pdf": "exports/chapters/law-08-risky-rewards.pdf",
+      "commit": "9ade68565912ae6a9ea04c48e9da8288315d8c27"
     }
   }
 }
