@@ -20,11 +20,11 @@
     },
     "03": {
       "title": "SCOUT",
-      "words": 338,
+      "words": 373,
       "status": "drafted",
       "review_status": "editorial review recorded; founder review pending",
       "pdf": "exports/chapters/law-03-scout.pdf",
-      "commit": "6919c75d0ae161c1b053249bbe058d155d82d40d"
+      "commit": "3fdda5597b67fdc2d7b33ed098bc997eff532f8d"
     },
     "04": {
       "title": "BRANDING",
