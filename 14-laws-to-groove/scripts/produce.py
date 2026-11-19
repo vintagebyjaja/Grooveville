@@ -129,7 +129,7 @@ class ReviewDocument(BaseDocTemplate):
                   rightPadding=0, topPadding=0, bottomPadding=0)])] if has_cover else []
         front = [
             PageTemplate("publisher", [frame(42, 348)], onPage=self.furniture, autoNextPageTemplate="author"),
-            PageTemplate("author", [frame(29, 374, bottom=40, top=43)], onPage=self.furniture, autoNextPageTemplate="right"),
+            PageTemplate("author", [frame(20, 374, bottom=40, top=43)], onPage=self.furniture, autoNextPageTemplate="right"),
         ] if book_front else []
         self.addPageTemplates(covers + front + [
             PageTemplate("right", [frame(59)], onPage=self.furniture, autoNextPageTemplate="left"),

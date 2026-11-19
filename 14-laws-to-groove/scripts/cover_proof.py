@@ -1,8 +1,11 @@
 """Build the jacket design proof using the supplied Bennett’s Bone wrap as a size reference."""
 
+from argparse import ArgumentParser
 from pathlib import Path
 import re
 from xml.sax.saxutils import escape
+
+from PIL import Image as RasterImage
 
 from reportlab.lib.colors import Color, HexColor
 from reportlab.lib.utils import ImageReader
@@ -40,6 +43,17 @@ def paragraph(pdf, text, x, y, w, size, leading, color, bold=False):
     return y - height
 
 
+def back_copy(pdf, center, top, width, title_size, body_size, leading, gap):
+    copy = (ROOT / "assets/cover/back-cover.md").read_text().strip().split("\n\n")
+    centered(pdf, copy[0][2:], center, top, "SerifBold", title_size, CREAM)
+    centered(pdf, copy[1][3:], center, top - 29, "SerifItalic", 13, GOLD)
+    y = top - 71
+    for index, block in enumerate(copy[2:]):
+        y = paragraph(pdf, block, center - width / 2, y, width, body_size, leading,
+                      GOLD if index in (0, 3) else CREAM, bold=index in (0, 3)) - gap
+    return y
+
+
 def proof(destination, front):
     register_fonts()
     pdf = Canvas(str(destination), pagesize=(W, H), invariant=1, initialFontName="Serif")
@@ -61,14 +75,7 @@ def proof(destination, front):
     pdf.line(77, H - 91, PANEL - 77, H - 91)
     pdf.line(77, 92, PANEL - 77, 92)
 
-    copy = (ROOT / "assets/cover/back-cover.md").read_text().strip().split("\n\n")
-    center = PANEL / 2
-    centered(pdf, copy[0][2:], center, H - 143, "SerifBold", 22, CREAM)
-    centered(pdf, copy[1][3:], center, H - 172, "SerifItalic", 13, GOLD)
-    y = H - 214
-    for index, block in enumerate(copy[2:]):
-        y = paragraph(pdf, block, 80, y, PANEL - 160, 12, 18,
-                      GOLD if index in (0, 3) else CREAM, bold=index in (0, 3)) - 19
+    y = back_copy(pdf, PANEL / 2, H - 143, PANEL - 160, 22, 12, 18, 19)
     if y < 160:
         raise ValueError("Back copy reached the barcode or publisher area")
 
@@ -91,7 +98,63 @@ def proof(destination, front):
     pdf.save()
 
 
+def paperback(destination, front, page_count):
+    """KDP 6 × 9-inch, black ink/white paper, with the standard cover bleed."""
+    register_fonts()
+    bleed = 9
+    trim_width, trim_height = 432, 648
+    # KDP white-paper paperback spine: page count × 0.002252 inches.
+    spine = page_count * 0.002252 * 72
+    back_edge = bleed + trim_width
+    front_edge = back_edge + spine
+    width = front_edge + trim_width + bleed
+    height = trim_height + 2 * bleed
+    pdf = Canvas(str(destination), pagesize=(width, height), invariant=1, initialFontName="Serif")
+    pdf.setTitle("The 14 Laws to Groove — KDP Paperback Cover")
+    pdf.setAuthor("JABARI JAJA")
+
+    pdf.setFillColor(DEEP)
+    pdf.rect(0, 0, width, height, fill=1, stroke=0)
+    pdf.setFillColor(PLUM)
+    pdf.rect(back_edge, 0, spine, height, fill=1, stroke=0)
+    with RasterImage.open(front) as source:
+        rgb = source.convert("RGB")
+        corner = rgb.getpixel((0, 0))
+        # Match the output sampling density to print export; retain the original artwork.
+        art = ImageReader(rgb.resize((1800, 2700), RasterImage.Resampling.LANCZOS))
+        pdf.setFillColor(Color(*(value / 255 for value in corner)))
+        pdf.rect(front_edge, 0, width - front_edge, height, fill=1, stroke=0)
+        pdf.drawImage(art, front_edge + 12, bleed + 18, width=408, height=612,
+                      preserveAspectRatio=True, anchor="c")
+
+    pdf.setStrokeColor(GOLD)
+    pdf.setLineWidth(0.7)
+    pdf.line(62, height - 78, back_edge - 53, height - 78)
+    pdf.line(62, 126, back_edge - 53, 126)
+    y = back_copy(pdf, bleed + trim_width / 2, height - 122, 316, 20, 11, 16, 16)
+    if y < 116:
+        raise ValueError("Paperback back copy enters the barcode area")
+    # Leave the lower-right back clear for KDP's automatic barcode.
+    centered(pdf, "G R O O V E V I L L E   L L C", 134, 65, "SerifBold", 8, SOFT)
+
+    pdf.saveState()
+    pdf.translate(back_edge + spine / 2 - 2.5, height / 2)
+    pdf.rotate(-90)
+    centered(pdf, "THE 14 LAWS TO GROOVE", -32, 0, "SerifBold", 10.5, CREAM)
+    centered(pdf, "JABARI JAJA", 131, 0, "Serif", 8, GOLD)
+    pdf.restoreState()
+    pdf.showPage()
+    pdf.save()
+
+
 if __name__ == "__main__":
-    out = ROOT / "exports/cover/the-14-laws-to-groove-hardcover-wrap-proof.pdf"
-    out.parent.mkdir(parents=True, exist_ok=True)
-    proof(out, ROOT / "assets/cover/recreated-front.png")
+    parser = ArgumentParser(description=__doc__)
+    parser.add_argument("--paperback-pages", type=int, help="Build a white-paper KDP paperback wrap")
+    pages = parser.parse_args().paperback_pages
+    source = ROOT / "assets/cover/recreated-front.png"
+    output = ROOT / "exports/cover"
+    output.mkdir(parents=True, exist_ok=True)
+    if pages is None:
+        proof(output / "the-14-laws-to-groove-hardcover-wrap-proof.pdf", source)
+    else:
+        paperback(output / f"the-14-laws-to-groove-KDP-paperback-white-{pages}.pdf", source, pages)

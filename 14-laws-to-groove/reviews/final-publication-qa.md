@@ -9,3 +9,7 @@ The standalone copyright page and References section were removed from the inter
 Rendered thumbnails of all 162 pages were inspected, with a larger publisher-page proof. Automated checks verified trim and content bounds, consecutive numbering, embedded fonts, no duplicated numbered pages, no link annotations or visible web addresses and DOI strings, and no draft notices. A separate lined reflection page follows each law. Pages 143–162 are lined journal pages. Each of the 34 writing pages contains 22 ruled lines.
 
 This is an interior-only, no-bleed PDF. The printer and paper stock have not been specified. Confirm any printer-specific PDF standard, color profile, and paper and cover requirements before submission. The exterior cover source was unavailable for file-level verification and spine calculation.
+
+## KDP margin correction
+
+Moved the unchanged author statement away from the even-page binding edge. Checked text and image bounds and stroked drawings on all 162 pages of each rebuilt PDF against the KDP preview thresholds: 0.5 inch inside and 0.25 inch outside, top, and bottom. Both editions passed. The separate KDP paperback wrap assumes black ink on white paper. Actual acceptance is subject to KDP’s upload preview.
