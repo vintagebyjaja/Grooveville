@@ -1,3 +1,3 @@
 # Law 03
 
-Follow a worker evaluating trade training. Contrast solicitation, first-hand observation and independently verifiable terms.
+Compare written requirements, informal practice and recurring costs. Use apprenticeship guidance as a verification starting point.
