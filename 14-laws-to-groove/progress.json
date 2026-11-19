@@ -68,11 +68,11 @@
     },
     "09": {
       "title": "DISENGAGEMENT",
-      "words": 332,
+      "words": 369,
       "status": "drafted",
       "review_status": "editorial review recorded; founder review pending",
       "pdf": "exports/chapters/law-09-disengagement.pdf",
-      "commit": "6919c75d0ae161c1b053249bbe058d155d82d40d"
+      "commit": "e59f3bb84c18a14290e3b3ebbd8647d89f230643"
     },
     "10": {
       "title": "STRATEGY",
