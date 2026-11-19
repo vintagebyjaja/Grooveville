@@ -76,11 +76,11 @@
     },
     "10": {
       "title": "STRATEGY",
-      "words": 324,
+      "words": 361,
       "status": "drafted",
       "review_status": "editorial review recorded; founder review pending",
       "pdf": "exports/chapters/law-10-strategy.pdf",
-      "commit": "6919c75d0ae161c1b053249bbe058d155d82d40d"
+      "commit": "63ca656b649bf821b8c04fc4d81a4c4c742256eb"
     },
     "11": {
       "title": "TIME",
