@@ -81,6 +81,14 @@
       "review_status": "editorial review recorded; founder review pending",
       "pdf": "exports/chapters/law-10-strategy.pdf",
       "commit": "f3a8cfd3abbbed4b8803e848c043ed6e8a513235"
+    },
+    "11": {
+      "title": "TIME",
+      "words": 333,
+      "status": "drafted",
+      "review_status": "editorial review recorded; founder review pending",
+      "pdf": "exports/chapters/law-11-time.pdf",
+      "commit": "2ca15dcf93f444be8e9052a6ff436b349317a5f4"
     }
   }
 }
