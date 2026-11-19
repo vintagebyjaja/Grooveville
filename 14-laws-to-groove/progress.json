@@ -52,11 +52,11 @@
     },
     "07": {
       "title": "ENDOWMENT",
-      "words": 654,
+      "words": 688,
       "status": "drafted",
       "review_status": "editorial review recorded; founder review pending",
       "pdf": "exports/chapters/law-07-endowment.pdf",
-      "commit": "998affc10e1bb55d3ac701aa06eb2baca705e55b"
+      "commit": "a4dacafccb3d3f878bbfe644478de0fcf4c8f1c1"
     }
   }
 }
