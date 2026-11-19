@@ -1,55 +1,37 @@
 # LAW 02 — PHONE DOWN
 
-## The Law
+## Understanding the Law
 
-Give the person in front of you enough attention to tell you something you could not have guessed.
+Attention is part of what we offer when another person is trying to communicate. Phone Down asks you to decide which signals deserve access to that moment. A person waiting on a child to get home, relying on live captions or using an accessibility tool has a real reason to keep a phone nearby. Good judgment begins with the purpose the device serves.
 
-## The Story
+## The Reality Behind It
 
-Fictional illustration.
+A message can divide a conversation at the moment when the speaker is deciding how much to tell you. In a field experiment, Dwyer, Kushlev and Dunn assigned groups dining together to keep phones available or put them away. The study linked phone availability in that setting to more distraction and less reported enjoyment. It gives us evidence about the setting studied and leaves room for other uses of phones to support connection. [2]
 
-Monica's father had called her twice on his way home from the clinic. By the time she arrived at his apartment, he had arranged the papers from the visit in a fan on the kitchen table. She sat across from him, took her phone out to check a message from her sister, and asked him what the doctor had said.
+The first answer to a difficult question is sometimes the easiest one a person can give. When someone says an appointment was fine, sit with the answer for a moment. The detail that comes next may tell you what kind of help they are prepared to accept.
 
-“Same thing as last time.”
+## Where We Go Wrong
 
-She heard the refrigerator cut off. Outside, somebody was trying to get a stubborn lawn mower started. Her sister wanted to know whether their father needed groceries. Monica began typing that she would check.
+We can confuse being reachable with being present. Replying promptly to a group chat may make us feel attentive while the person sitting across the table waits for a complete answer. There is also a mistake in the other direction. A classroom or meeting rule can treat a screen as proof of disengagement even when a student uses it to follow the discussion.
 
-Her father picked a sheet out of the fan. “There was another woman there this time.”
+## Applying the Law
 
-“What woman?”
+Before a serious conversation, state what needs to stay available. You can say that you have twenty minutes and may need to take a call from a caregiver. Silence unrelated alerts. Let the other person finish a thought, ask a follow-up and say what you understood before offering a solution. If you do get interrupted, return to the sentence that was underway.
 
-“That's what I'm telling you.”
+Test one change in a setting you can compare over time. Put a phone out of sight during a weekly check-in and ask what each of you noticed. Give more weight to the conversation you actually had than to the satisfaction of completing the experiment.
 
-Monica had come straight from work. Her supervisor was waiting for an answer about Saturday and her daughter was on a bus coming home from a game. Every message had somebody real behind it. She put the phone face down and told her father she needed to keep the ringer on for her daughter. Then she asked him to start with the woman.
+## The Community Connection
 
-A benefits counselor had asked him to bring the names of the medicines he took and the letters he had received about coverage. He had picked up the prescription bottles at home and set them down again. He could read the labels in the light by the stove. The letters were harder. He knew which paragraph usually contained the amount due, and sometimes he paid the amount to spare himself the rest of the page.
-
-Monica put her hand on the papers. “Do you want me to read these with you?”
-
-“This one first,” he said, drawing a letter out from the bottom.
-
-It was something she could do with him. Her father read the first line and passed it over when the language became dense. When her daughter called from the bus, Monica answered and made sure she knew which stop to get off at. Then she returned to the table. Her father had already picked up the next letter.
-
-## The Reality
-
-A phone can carry the people who depend on you into every room. For a caregiver, an hourly worker, a parent waiting for a child to get home, or a person using a phone to communicate, putting it away may cost more than it appears to someone watching. The question is which interruptions deserve entry into the conversation. Monica could choose to hear an urgent call and leave the scheduling thread for half an hour. Her daughter and supervisor had different claims on that time.
-
-Attention also changes what people feel able to disclose. Monica's father began with a bland account of the visit. His next sentence, about the woman in the room, was the first piece of a request he had taken some trouble to avoid making. If she had replied only to his first answer, she could have walked away sincerely believing he wanted nothing.
-
-Group chats have another complication. A person can follow a family discussion through fragments forwarded by different relatives and develop a firm opinion about something nobody present has actually said. It helps to hear from the person the discussion concerns, with enough privacy for them to speak plainly.
-
-## The Lesson
-
-Listening has a physical component. A small change in where you sit, the light falling on a face, or the conversation happening behind you can affect how much you hear. A person who needs captions or translation may be using a screen precisely because they want to follow. It is worth asking what would make the conversation easier for both of you.
-
-The kind of attention Monica gave her father allowed him to keep directing the help. She could have photographed every letter and put herself in charge. Instead, she asked where he wanted to begin. That distinction matters when a person is sharing something they have managed privately for years. Their ability to decide how you help may be part of what makes the help acceptable.
-
-## The Groove
-
-At the start of one conversation this week, say how much uninterrupted time you have and name the call you may have to take. Use an emergency exception if your phone supports one. Keep enough time after the first answer to ask a follow-up. At the end, say aloud what you think the other person wants and leave room for a correction.
-
-In a public place, try another kind of attention. Look up long enough to see where people are waiting, who is having trouble finding the entrance, and which conversation you have joined in the middle. Observation can keep you from treating every delay as a personal offense.
+A group can protect attention by posting decisions afterward, agreeing on emergency exceptions or providing accessible materials ahead of time. These choices help people attend without pretending they have identical responsibilities. At home, deciding together which hours need to stay quiet can acknowledge the person whose job expects them to remain on call.
 
 ## The Final Word
 
-Monica's father had brought the letters to the table before she came in. Once she gave him time, he showed her which envelope mattered.
+An unanswered notification can wait for you. A person deciding whether to trust you may find another time or place.
+
+## Food for Thought
+
+When has your device helped you listen, and when has it divided your attention?
+
+How should a classroom agree on phone use when students have different family and accessibility needs?
+
+How far can a study of restaurant conversations inform rules for work meetings or schools?
