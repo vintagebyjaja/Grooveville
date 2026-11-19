@@ -28,11 +28,11 @@
     },
     "04": {
       "title": "BRANDING",
-      "words": 449,
+      "words": 1987,
       "status": "drafted",
       "review_status": "editorial review recorded; founder review pending",
       "pdf": "exports/chapters/law-04-branding.pdf",
-      "commit": "a48b78f5cca1de233ae3cbd0add758ff9310de95"
+      "commit": "486ab839f7afbf4bfbca2556324aa121459efc2a"
     },
     "05": {
       "title": "I SAY = I WILL",
