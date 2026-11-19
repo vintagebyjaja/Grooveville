@@ -1,5 +1,13 @@
 # LAW 08 — RISKY REWARDS
 
+## Opening questions
+
+What is a chance you are thinking about taking?
+
+What kind of uncertainty makes you most likely to wait?
+
+Who do you usually consult before a decision that could affect your household?
+
 ## Understanding the Law
 
 A calculated risk is a choice you can explain in terms of possible gains, losses and who bears them. Courage enters when a worthwhile choice still feels uncertain after you have done the work. Recklessness begins when you leave a foreseeable cost for somebody else to discover.
@@ -24,10 +32,10 @@ Community can make a risk more affordable through child care, shared equipment o
 
 When the risk is clear, you can choose what you are willing to put at stake.
 
-## Food for Thought
+## Closing questions
 
-How would a smaller trial change a risk you are currently considering?
+What would a trial run tell you before you commit?
 
-Which risks should a household share, and what decisions should remain individual?
+Who would absorb a loss you have been thinking of as yours alone?
 
-Should a workforce program pay stipends for entry-level training, and how would you evaluate the benefits and tradeoffs?
+What would make you decide that the cost of waiting is higher than the cost of trying?
