@@ -1,5 +1,13 @@
 # LAW 02 — PHONE DOWN
 
+## Opening questions
+
+When do you reach for your phone without thinking?
+
+Who gets your most undivided attention these days?
+
+What do you need your phone nearby for when you're with other people?
+
 ## Understanding the Law
 
 Attention is part of what we offer when another person is trying to communicate. Phone Down asks you to decide which signals deserve access to that moment. A person waiting on a child to get home, relying on live captions or using an accessibility tool has a real reason to keep a phone nearby. Good judgment begins with the purpose the device serves.
@@ -28,10 +36,10 @@ A group can protect attention by posting decisions afterward, agreeing on emerge
 
 An unanswered notification can wait for you. A person deciding whether to trust you may find another time or place.
 
-## Food for Thought
+## Closing questions
 
-When has your device helped you listen, and when has it divided your attention?
+Which interruption would you handle differently now?
 
-How should a classroom agree on phone use when students have different family and accessibility needs?
+Who might tell you more if you stayed with their first answer a little longer?
 
-How far can a study of restaurant conversations inform rules for work meetings or schools?
+What agreement about phones would help you and the people you spend time with?
