@@ -44,11 +44,11 @@
     },
     "06": {
       "title": "PEERS AREN'T DEARS",
-      "words": 389,
+      "words": 1826,
       "status": "drafted",
       "review_status": "editorial review recorded; founder review pending",
       "pdf": "exports/chapters/law-06-peers-arent-dears.pdf",
-      "commit": "d0e385470dabb461977a4415e8dd5579db2ba7ce"
+      "commit": "c91d6abaf7b4c11ff6e096db0f5bcaa5b7ace4c4"
     },
     "07": {
       "title": "ENDOWMENT",
