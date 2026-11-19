@@ -1,5 +1,13 @@
 # LAW 11 — TIME
 
+## Opening questions
+
+What are you currently working toward in life?
+
+How much of your day is spent doing things that bring you closer to that goal?
+
+If you had an extra hour every day, what would you do with it?
+
 ## Understanding the Law
 
 Time management begins by putting real obligations on a real calendar. Decide what matters, estimate how long it takes, and leave room for transitions and delays. Punctuality becomes easier when the schedule includes the trip, the handoff and the minutes it takes to get ready.
@@ -24,10 +32,10 @@ Time is a resource we allocate to other people. A manager who posts shifts earli
 
 Leave yourself the time your promises actually require.
 
-## Food for Thought
+## Closing questions
 
-Which regular commitment takes longer than you allow for it?
+What are you spending time on that no longer deserves your attention?
 
-Who gets the least control over time in an institution you know, and how could its practices change?
+Are your daily habits helping you build the future you say you want?
 
-What can time-use data reveal about unpaid work, and which parts of that work does it miss?
+What is one thing you could change tomorrow to make better use of your time?
