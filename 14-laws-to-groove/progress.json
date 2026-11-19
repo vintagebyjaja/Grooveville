@@ -97,6 +97,14 @@
       "review_status": "editorial review recorded; founder review pending",
       "pdf": "exports/chapters/law-12-planning.pdf",
       "commit": "e4373d4458796b11b645e1d5b23c8f3ff5298df8"
+    },
+    "13": {
+      "title": "MOTHER'S CHILD",
+      "words": 407,
+      "status": "drafted",
+      "review_status": "editorial review recorded; founder review pending",
+      "pdf": "exports/chapters/law-13-mothers-child.pdf",
+      "commit": "17d5f6be29943933d6c7d6e745d22475e1332117"
     }
   }
 }
