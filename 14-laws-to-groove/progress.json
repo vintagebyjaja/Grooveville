@@ -41,6 +41,14 @@
       "review_status": "editorial review recorded; founder review pending",
       "pdf": "exports/chapters/law-05-i-say-i-will.pdf",
       "commit": "d5b8233799fbf56af2ae5aae07c0c2783d60a5c9"
+    },
+    "06": {
+      "title": "PEERS AREN'T DEARS",
+      "words": 699,
+      "status": "drafted",
+      "review_status": "editorial review recorded; founder review pending",
+      "pdf": "exports/chapters/law-06-peers-arent-dears.pdf",
+      "commit": "a6d3a42ca3a06d1722b24183ddac8f398b18a870"
     }
   }
 }
