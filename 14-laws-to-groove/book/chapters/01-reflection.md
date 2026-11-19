@@ -1,5 +1,13 @@
 # LAW 01 — REFLECTION
 
+## Opening questions
+
+When something goes wrong, whose part in it do you usually think about first?
+
+What do people who know you well say you do under pressure?
+
+Which lesson from your upbringing do you still use without thinking much about it?
+
 ## Understanding the Law
 
 Reflection means reviewing the distance between what happened and what you decided it meant. The central claim of this law is that you can improve a judgment by making its basis visible. Begin with a decision small enough to recount precisely. What did the person say? What did you assume? How did the assumption shape the next thing you did?
@@ -30,10 +38,10 @@ Try this method when reviewing who gets nominated, disciplined or promoted. Exam
 
 Your first account may explain why you acted. A fuller account can tell you what to do next.
 
-## Food for Thought
+## Closing questions
 
-Which judgment about yourself would you revise if you included the help or obstacles you faced?
+What would someone else have noticed in a disagreement you remember clearly?
 
-Who has a chance to correct the record when your school, workplace or community group makes a mistake?
+Which past experience helps explain your reaction without settling whether it was fair?
 
-What can an audit experiment establish about discrimination, and what additional evidence should guide a remedy?
+Where would a correction have to reach for it to make a difference?
