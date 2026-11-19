@@ -1,5 +1,13 @@
 # LAW 04 — BRANDING
 
+## Opening questions
+
+How do you usually describe yourself to somebody you just met?
+
+What do you hope people notice about the way you work?
+
+When do you feel most comfortable speaking for yourself?
+
 ## Understanding the Law
 
 Branding concerns the relationship between character, reputation and power. Character describes what you practice. Reputation describes what other people have heard or observed. Power determines whose description reaches the person making a decision. You can make your work easier to recognize while asking institutions to judge it fairly.
@@ -26,10 +34,10 @@ If you supervise, compare evaluations for people who performed similar work. Ask
 
 Give people evidence of your character. Ask them to take responsibility for the way they describe it.
 
-## Food for Thought
+## Closing questions
 
-Which part of your reputation reflects evidence you could point to today?
+What can you value about yourself even when the room fails to see it?
 
-How could a workplace make it easier to challenge an unfair description without exposing people to unnecessary risk?
+Which label would you ask someone to back up with an example?
 
-What should count as evidence when comparing how reviewers label the same behavior?
+Whose work could you give clearer credit the next time you are in a position to do so?
