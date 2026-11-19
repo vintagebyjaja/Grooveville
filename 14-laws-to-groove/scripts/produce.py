@@ -14,7 +14,7 @@ from reportlab.lib.styles import ParagraphStyle
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.platypus import (
-    BaseDocTemplate, Frame, Image, NextPageTemplate, PageBreak, PageTemplate,
+    BaseDocTemplate, Flowable, Frame, Image, NextPageTemplate, PageBreak, PageTemplate,
     Paragraph, Spacer,
 )
 from reportlab.platypus.tableofcontents import TableOfContents
@@ -124,6 +124,23 @@ class ReviewDocument(BaseDocTemplate):
                 self.notify("TOCEntry", (0, title, self.page - self.has_cover, key))
 
 
+class LinedPage(Flowable):
+    def __init__(self, title):
+        super().__init__()
+        self.title = title
+        self.width = PAGE[0] - 106
+        self.height = 538
+
+    def draw(self):
+        self.canv.setFont("SerifBold", 17)
+        self.canv.setFillColor(INK)
+        self.canv.drawString(0, self.height - 27, self.title)
+        self.canv.setStrokeColor(colors.HexColor("#a99bab"))
+        self.canv.setLineWidth(0.45)
+        for y in range(18, self.height - 49, 22):
+            self.canv.line(0, y, self.width, y)
+
+
 def tokens(text):
     return re.findall(r"[\w]+", text.casefold())
 
@@ -149,7 +166,7 @@ def verify(pdf, texts):
         remaining = remaining[start + len(expected):]
 
 
-def build(path, texts, title, toc=False, cover=None):
+def build(path, texts, title, toc=False, cover=None, journal_pages=0, reflections=False):
     register_fonts()
     story = []
     if cover:
@@ -165,6 +182,11 @@ def build(path, texts, title, toc=False, cover=None):
             contents.tableStyle.add("FONTNAME", (0, 0), (-1, -1), "Serif")
             story.extend([contents, PageBreak()])
         story.extend(flow(text))
+        chapter_match = re.match(r"# LAW (\d{2}) —", text)
+        if reflections and chapter_match:
+            story.extend([PageBreak(), LinedPage(f"Law {chapter_match[1]} Reflection")])
+    for _ in range(journal_pages):
+        story.extend([PageBreak(), LinedPage("Journal")])
     path.parent.mkdir(parents=True, exist_ok=True)
     with tempfile.TemporaryDirectory(dir=path.parent) as folder:
         candidate = Path(folder) / path.name
@@ -179,7 +201,7 @@ def chapter(number):
     source, pdf = chapter_paths(number)
     text = source.read_text()
     validate_source(number, text)
-    build(pdf, [text], f"Law {number:02d} — {TITLES[number - 1]}")
+    build(pdf, [text], f"Law {number:02d} — {TITLES[number - 1]}", reflections=True)
 
 
 def book():
@@ -195,11 +217,21 @@ def book():
         texts.append(text)
     texts.extend((back / name).read_text() for name in ("conclusion.md", "references.md"))
     folder = ROOT / "exports/complete-book"
-    build(folder / "the-14-laws-to-groove-review.pdf", texts, "The 14 Laws to Groove", toc=True)
+    build(folder / "the-14-laws-to-groove-review.pdf", texts, "The 14 Laws to Groove", toc=True, journal_pages=20, reflections=True)
     cover = ROOT / "assets/cover/approved-cover.png"
     if cover.is_file():
         build(folder / "the-14-laws-to-groove-cover-review.pdf", texts,
-              "The 14 Laws to Groove", toc=True, cover=cover)
+              "The 14 Laws to Groove", toc=True, cover=cover, journal_pages=20, reflections=True)
+
+
+def guide():
+    source = ROOT / "guide/educator-community-discussion-guide.md"
+    texts = re.split(r"\n(?=# LAW \d{2} — )", source.read_text())
+    expected = [f"# LAW {i:02d} — {title}" for i, title in enumerate(TITLES, 1)]
+    if [text.splitlines()[0] for text in texts[1:]] != expected:
+        raise ValueError("Educator guide chapters are missing or out of order")
+    build(ROOT / "exports/complete-book/the-14-laws-to-groove-educator-guide.pdf",
+          texts, "The 14 Laws to Groove — Educator & Community Discussion Guide")
 
 
 def checkpoint(number):
@@ -235,6 +267,7 @@ def main():
     commands = parser.add_subparsers(dest="command", required=True)
     commands.add_parser("status")
     commands.add_parser("book")
+    commands.add_parser("guide")
     for name in ("chapter", "checkpoint"):
         commands.add_parser(name).add_argument("number", type=int, choices=range(1, 15))
     args = parser.parse_args()
@@ -242,6 +275,8 @@ def main():
         print((ROOT / "progress.json").read_text(), end="")
     elif args.command == "book":
         book()
+    elif args.command == "guide":
+        guide()
     elif args.command == "chapter":
         chapter(args.number)
     else:
