@@ -36,11 +36,11 @@
     },
     "05": {
       "title": "I SAY = I WILL",
-      "words": 620,
+      "words": 358,
       "status": "drafted",
       "review_status": "editorial review recorded; founder review pending",
       "pdf": "exports/chapters/law-05-i-say-i-will.pdf",
-      "commit": "d5b8233799fbf56af2ae5aae07c0c2783d60a5c9"
+      "commit": "ed6402f88c98f1af1413210cb1abe01b64ab6839"
     },
     "06": {
       "title": "PEERS AREN'T DEARS",
