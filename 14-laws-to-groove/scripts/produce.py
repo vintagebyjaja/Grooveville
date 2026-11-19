@@ -27,8 +27,8 @@ TITLES = (
     "PEERS AREN'T DEARS", "ENDOWMENT", "RISKY REWARDS", "DISENGAGEMENT",
     "STRATEGY", "TIME", "PLANNING", "MOTHER'S CHILD", "MENTAL AWARENESS",
 )
-SECTIONS = ("Understanding the Law", "The Reality Behind It", "Where We Go Wrong",
-            "Applying the Law", "The Community Connection", "The Final Word", "Food for Thought")
+SECTIONS = ("Opening questions", "Understanding the Law", "The Reality Behind It", "Where We Go Wrong",
+            "Applying the Law", "The Community Connection", "The Final Word", "Closing questions")
 INK = colors.HexColor("#211824")
 ACCENT = colors.HexColor("#663d63")
 
@@ -48,9 +48,14 @@ def validate_source(number, content):
     expected = f"# LAW {number:02d} — {TITLES[number - 1]}"
     if content.splitlines()[0] != expected or tuple(headings) != SECTIONS:
         raise ValueError(f"Law {number:02d} has invalid title or section order")
-    for section in re.split(r"^## .+$", content, flags=re.M)[1:]:
+    sections = re.split(r"^## .+$", content, flags=re.M)[1:]
+    for section in sections:
         if not section.strip():
             raise ValueError(f"Law {number:02d} has an empty section")
+    opening, closing = [re.split(r"\n\s*\n", section.strip()) for section in (sections[0], sections[-1])]
+    if not (len(opening) == len(closing) == 3 and len(set(opening + closing)) == 6
+            and all(question.endswith("?") for question in opening + closing)):
+        raise ValueError(f"Law {number:02d} must have three distinct opening and closing questions")
 
 
 def register_fonts():
@@ -77,7 +82,11 @@ def flow(text):
             yield Spacer(1, 35)
             yield Paragraph(escape(block[2:]), style("Chapter", "SerifBold", 22, 29, 19))
         elif block.startswith("## "):
-            yield Paragraph(escape(block[3:]), style("Section", "SerifBold", 12, 17, 7, 10))
+            heading = block[3:]
+            if heading in {"Opening questions", "Closing questions"}:
+                yield Paragraph(escape(heading), style("Section", "SerifItalic", 10, 14, 5, 7))
+            else:
+                yield Paragraph(escape(heading), style("Section", "SerifBold", 12, 17, 7, 10))
         else:
             inline = escape(" ".join(block.splitlines()))
             inline = re.sub(r"\*\*(.+?)\*\*", r"<b>\1</b>", inline)
