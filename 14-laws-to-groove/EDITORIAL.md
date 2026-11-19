@@ -176,3 +176,7 @@ If the chapter mainly describes what happens to an invented character, it has fa
 **The reader should finish each law understanding not only what it means, but how to use it.**
 
 Implement this correction now on the review branch.
+
+## Educational and community use
+
+Each chapter presents a thesis, defines concepts through prose, examines consequences and limitations, and cites relevant evidence by author or institution. The laws are philosophical frameworks. The research supports specific claims about specific circumstances. End every law with three open-ended Food for Thought questions about personal behavior, community, and a researchable debate. Keep the secondary-school, college, and adult-group instructional materials in the independently exported educator guide. 

@@ -28,7 +28,7 @@ TITLES = (
     "STRATEGY", "TIME", "PLANNING", "MOTHER'S CHILD", "MENTAL AWARENESS",
 )
 SECTIONS = ("Understanding the Law", "The Reality Behind It", "Where We Go Wrong",
-            "Applying the Law", "The Community Connection", "The Final Word")
+            "Applying the Law", "The Community Connection", "The Final Word", "Food for Thought")
 INK = colors.HexColor("#211824")
 ACCENT = colors.HexColor("#663d63")
 
