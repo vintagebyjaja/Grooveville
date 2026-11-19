@@ -1,5 +1,13 @@
 # LAW 03 — SCOUT
 
+## Opening questions
+
+When you face an unfamiliar decision, whose advice do you seek first?
+
+What upcoming opportunity are you curious about?
+
+Which parts of a new commitment do you usually figure out as you go?
+
 ## Understanding the Law
 
 Scout means learning how an institution works before committing time, wages or reputation. Look for three things: the written rules, the way decisions are actually made and the costs of participating. A training program can teach a valuable skill and still be inaccessible if the last bus leaves before class ends.
@@ -24,10 +32,10 @@ An institution can publish requirements and full costs in language a first-time 
 
 Study what it takes to walk through the door on an ordinary day.
 
-## Food for Thought
+## Closing questions
 
-What recurring cost did you discover too late in a past commitment?
+What detail would make an appealing offer a poor fit on an ordinary day?
 
-Which instructions in your community are available only to people who know whom to ask?
+Who could answer a question that the person recruiting you might miss?
 
-What evidence should training providers publish so applicants can compare quality and access fairly?
+What did you have to learn the hard way that you could make easier for a newcomer?
