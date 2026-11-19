@@ -13,7 +13,6 @@ from reportlab.lib import colors
 from reportlab.lib.styles import ParagraphStyle
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
-from reportlab.pdfgen import canvas
 from reportlab.platypus import (
     BaseDocTemplate, Frame, Image, NextPageTemplate, PageBreak, PageTemplate,
     Paragraph, Spacer,
@@ -86,7 +85,7 @@ def flow(text):
 
 class ReviewDocument(BaseDocTemplate):
     def __init__(self, path, title, has_cover):
-        super().__init__(str(path), pagesize=PAGE, title=title, author="Jabari Jaja")
+        super().__init__(str(path), pagesize=PAGE, title=title, author="Jabari Jaja", invariant=1, initialFontName="Serif")
         self.has_cover = has_cover
 
         def frame(left):
@@ -135,7 +134,10 @@ def verify(pdf, texts):
     if not fonts or any(font.split()[-5] != "yes" for font in fonts):
         raise ValueError("PDF fonts are not embedded")
     extracted = run("pdftotext", "-raw", str(pdf), "-")
-    cleaned = re.sub(r"^THE 14 LAWS TO GROOVE\s*$|^\d+\s*$", "", extracted, flags=re.M)
+    cleaned = "\n".join(
+        re.sub(r"^THE 14 LAWS TO GROOVE\n[0-9]+\n", "", page)
+        for page in extracted.split("\f")
+    )
     remaining = " ".join(tokens(cleaned))
     for text in texts:
         expected = " ".join(tokens(text))
@@ -164,8 +166,7 @@ def build(path, texts, title, toc=False, cover=None):
     with tempfile.TemporaryDirectory(dir=path.parent) as folder:
         candidate = Path(folder) / path.name
         doc = ReviewDocument(candidate, title, bool(cover))
-        doc.multiBuild(story, canvasmaker=lambda *a, **kw: canvas.Canvas(*a, **kw, invariant=1,
-                                                                       initialFontName="Serif"))
+        doc.multiBuild(story)
         verify(candidate, texts)
         candidate.replace(path)
     print(path.relative_to(ROOT))
