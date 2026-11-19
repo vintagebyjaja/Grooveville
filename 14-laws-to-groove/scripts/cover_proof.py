@@ -98,6 +98,89 @@ def proof(destination, front):
     pdf.save()
 
 
+def paperback_back(pdf, width, height):
+    purple = HexColor("#592260")
+    blue = HexColor("#c5e5f8")
+    peach = HexColor("#eda882")
+    paper = HexColor("#faf5f0")
+    ink = HexColor("#27182b")
+    center = 225
+    pdf.setFillColor(paper)
+    pdf.rect(0, 0, width, height, fill=1, stroke=0)
+    background = ROOT / "assets/cover/paperback-back-photo.png"
+    with RasterImage.open(background) as source:
+        art = ImageReader(source.convert("RGB").resize((1840, 2775), RasterImage.Resampling.LANCZOS))
+        pdf.drawImage(art, 0, 0, width=width, height=height)
+
+    pdf.setStrokeColor(peach)
+    pdf.setLineWidth(0.9)
+    pdf.line(95, 620, 197, 620)
+    pdf.line(253, 620, 355, 620)
+    centered(pdf, "T H E", center, 614, "SerifBold", 15, ink)
+    centered(pdf, "14 LAWS TO", center, 579, "SerifBold", 33, ink)
+    centered(pdf, "GROOVE", center, 527, "SerifItalic", 59, purple)
+    centered(pdf, "LESSONS FOR A STRONGER TOMORROW", center, 504, "SerifItalic", 11, ink)
+
+    # Layer a few shallow strokes to give the blue field a dry-brush silhouette.
+    for inset, y, h in ((0, 470, 13), (7, 448, 35), (4, 443, 11), (17, 428, 19)):
+        pdf.setFillColor(blue)
+        pdf.roundRect(39 + inset, y, 372 - 2 * inset, h, 5, fill=1, stroke=0)
+
+    copy = (ROOT / "assets/cover/back-cover.md").read_text().strip().split("\n\n")
+    paragraph(pdf, copy[2].upper(), 54, 477, 342, 14, 16, ink, bold=True)
+    y = 419
+    for block in copy[3:5]:
+        y = paragraph(pdf, block, 45, y, 360, 11, 14, ink) - 10
+
+    if y < 254:
+        raise ValueError("Back cover copy crosses the closing rule")
+    pdf.setStrokeColor(peach)
+    pdf.line(62, 254, 388, 254)
+    for baseline, line in zip((234, 218, 202), (
+        "KNOW WHO YOU ARE.",
+        "UNDERSTAND WHERE YOU STAND.",
+        "GIVE PURPOSE TO WHERE YOU’RE GOING.",
+    )):
+        centered(pdf, line, center, baseline, "SerifBold", 12.2, purple)
+    pdf.line(62, 190, 388, 190)
+
+    pdf.setStrokeColor(purple)
+    pdf.setLineWidth(1.3)
+    for radius in (4, 7, 10):
+        pdf.arc(90 - radius, 172 - radius, 90 + radius, 172 + radius, 12, 310)
+    for x, y, radius in ((180, 177, 4.2), (171, 175, 3), (189, 175, 3)):
+        pdf.circle(x, y, radius)
+        pdf.arc(x - radius - 2, y - 14, x + radius + 2, y - 3, 0, 180)
+    for x, h in ((261, 5), (268, 8), (275, 12)):
+        pdf.rect(x, 162, 4, h)
+    trend = pdf.beginPath()
+    trend.moveTo(260, 172)
+    trend.lineTo(266, 178)
+    trend.lineTo(271, 176)
+    trend.lineTo(279, 184)
+    trend.lineTo(279, 180)
+    trend.moveTo(275, 184)
+    trend.lineTo(279, 184)
+    pdf.drawPath(trend)
+    for y in (164, 170, 176):
+        layer = pdf.beginPath()
+        layer.moveTo(348, y)
+        layer.lineTo(360, y + 5)
+        layer.lineTo(372, y)
+        layer.lineTo(360, y - 5)
+        layer.close()
+        pdf.drawPath(layer)
+    for x, label in zip((90, 180, 270, 360), ("IDENTITY", "COMMUNITY", "DISCIPLINE", "LEGACY")):
+        centered(pdf, label, x, 147, "SerifBold", 8, ink)
+    pdf.setStrokeColor(peach)
+    for x in (135, 225, 315):
+        pdf.line(x, 145, x, 185)
+
+    # The ISBN remains KDP-generated. Clear its zone to a plain field.
+    pdf.setFillColor(paper)
+    pdf.rect(width - 162, 27, 144, 86.4, fill=1, stroke=0)
+
+
 def paperback(destination, front, page_count):
     """KDP 6 × 9-inch, black ink/white paper, with the standard cover bleed."""
     register_fonts()
@@ -113,9 +196,8 @@ def paperback(destination, front, page_count):
     pdf.setTitle("The 14 Laws to Groove — KDP Paperback Cover")
     pdf.setAuthor("JABARI JAJA")
 
-    pdf.setFillColor(DEEP)
-    pdf.rect(0, 0, width, height, fill=1, stroke=0)
-    pdf.setFillColor(PLUM)
+    paperback_back(pdf, back_edge, height)
+    pdf.setFillColor(HexColor("#592260"))
     pdf.rect(back_edge, 0, spine, height, fill=1, stroke=0)
     with RasterImage.open(front) as source:
         rgb = source.convert("RGB")
@@ -127,21 +209,11 @@ def paperback(destination, front, page_count):
         pdf.drawImage(art, front_edge + 12, bleed + 18, width=408, height=612,
                       preserveAspectRatio=True, anchor="c")
 
-    pdf.setStrokeColor(GOLD)
-    pdf.setLineWidth(0.7)
-    pdf.line(62, height - 78, back_edge - 53, height - 78)
-    pdf.line(62, 126, back_edge - 53, 126)
-    y = back_copy(pdf, bleed + trim_width / 2, height - 122, 316, 20, 11, 16, 16)
-    if y < 116:
-        raise ValueError("Paperback back copy enters the barcode area")
-    # Leave the lower-right back clear for KDP's automatic barcode.
-    centered(pdf, "G R O O V E V I L L E   L L C", 134, 65, "SerifBold", 8, SOFT)
-
     pdf.saveState()
     pdf.translate(back_edge + spine / 2 - 2.5, height / 2)
     pdf.rotate(-90)
     centered(pdf, "THE 14 LAWS TO GROOVE", -32, 0, "SerifBold", 10.5, CREAM)
-    centered(pdf, "JABARI JAJA", 131, 0, "Serif", 8, GOLD)
+    centered(pdf, "JABARI JAJA", 131, 0, "Serif", 8, HexColor("#f5b28e"))
     pdf.restoreState()
     pdf.showPage()
     pdf.save()
