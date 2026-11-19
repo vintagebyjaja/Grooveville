@@ -84,11 +84,11 @@
     },
     "11": {
       "title": "TIME",
-      "words": 366,
+      "words": 2082,
       "status": "drafted",
       "review_status": "editorial review recorded; founder review pending",
       "pdf": "exports/chapters/law-11-time.pdf",
-      "commit": "9e7c7c44c82042b2ae1500d67f465fa33cd940f2"
+      "commit": "cbded1d4bace19cc3111ba092541ac3552b51d67"
     },
     "12": {
       "title": "PLANNING",
