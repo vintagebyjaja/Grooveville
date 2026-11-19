@@ -8,7 +8,7 @@
       "status": "drafted",
       "review_status": "editorial review recorded; founder review pending",
       "pdf": "exports/chapters/law-01-reflection.pdf",
-      "commit": "c6b514d9b7c6e259c5cbf09c9f9e7f07fb0205cd"
+      "commit": "6919c75d0ae161c1b053249bbe058d155d82d40d"
     },
     "02": {
       "title": "PHONE DOWN",
@@ -16,7 +16,7 @@
       "status": "drafted",
       "review_status": "editorial review recorded; founder review pending",
       "pdf": "exports/chapters/law-02-phone-down.pdf",
-      "commit": "83b722037c01f8d06deb14aafd3d6f0133b651d4"
+      "commit": "6919c75d0ae161c1b053249bbe058d155d82d40d"
     },
     "03": {
       "title": "SCOUT",
@@ -24,7 +24,7 @@
       "status": "drafted",
       "review_status": "editorial review recorded; founder review pending",
       "pdf": "exports/chapters/law-03-scout.pdf",
-      "commit": "90d971010ca65f16234c69a9f993c938d40a4470"
+      "commit": "6919c75d0ae161c1b053249bbe058d155d82d40d"
     },
     "04": {
       "title": "BRANDING",
@@ -32,7 +32,7 @@
       "status": "drafted",
       "review_status": "editorial review recorded; founder review pending",
       "pdf": "exports/chapters/law-04-branding.pdf",
-      "commit": "c83926da023487568f46283790767c32185bdcc8"
+      "commit": "6919c75d0ae161c1b053249bbe058d155d82d40d"
     },
     "05": {
       "title": "I SAY = I WILL",
@@ -40,7 +40,7 @@
       "status": "drafted",
       "review_status": "editorial review recorded; founder review pending",
       "pdf": "exports/chapters/law-05-i-say-i-will.pdf",
-      "commit": "ed6402f88c98f1af1413210cb1abe01b64ab6839"
+      "commit": "6919c75d0ae161c1b053249bbe058d155d82d40d"
     },
     "06": {
       "title": "PEERS AREN'T DEARS",
@@ -48,7 +48,7 @@
       "status": "drafted",
       "review_status": "editorial review recorded; founder review pending",
       "pdf": "exports/chapters/law-06-peers-arent-dears.pdf",
-      "commit": "9595de8a280b3f76f13909dd05a86abb347427b9"
+      "commit": "6919c75d0ae161c1b053249bbe058d155d82d40d"
     },
     "07": {
       "title": "ENDOWMENT",
@@ -56,7 +56,7 @@
       "status": "drafted",
       "review_status": "editorial review recorded; founder review pending",
       "pdf": "exports/chapters/law-07-endowment.pdf",
-      "commit": "a4dacafccb3d3f878bbfe644478de0fcf4c8f1c1"
+      "commit": "6919c75d0ae161c1b053249bbe058d155d82d40d"
     },
     "08": {
       "title": "RISKY REWARDS",
@@ -64,7 +64,7 @@
       "status": "drafted",
       "review_status": "editorial review recorded; founder review pending",
       "pdf": "exports/chapters/law-08-risky-rewards.pdf",
-      "commit": "9ade68565912ae6a9ea04c48e9da8288315d8c27"
+      "commit": "6919c75d0ae161c1b053249bbe058d155d82d40d"
     },
     "09": {
       "title": "DISENGAGEMENT",
@@ -72,7 +72,7 @@
       "status": "drafted",
       "review_status": "editorial review recorded; founder review pending",
       "pdf": "exports/chapters/law-09-disengagement.pdf",
-      "commit": "6b80fddd80dcd9815d25d9427192deb21e65d9a0"
+      "commit": "6919c75d0ae161c1b053249bbe058d155d82d40d"
     },
     "10": {
       "title": "STRATEGY",
@@ -80,7 +80,7 @@
       "status": "drafted",
       "review_status": "editorial review recorded; founder review pending",
       "pdf": "exports/chapters/law-10-strategy.pdf",
-      "commit": "f3a8cfd3abbbed4b8803e848c043ed6e8a513235"
+      "commit": "6919c75d0ae161c1b053249bbe058d155d82d40d"
     },
     "11": {
       "title": "TIME",
@@ -88,7 +88,7 @@
       "status": "drafted",
       "review_status": "editorial review recorded; founder review pending",
       "pdf": "exports/chapters/law-11-time.pdf",
-      "commit": "2ca15dcf93f444be8e9052a6ff436b349317a5f4"
+      "commit": "6919c75d0ae161c1b053249bbe058d155d82d40d"
     },
     "12": {
       "title": "PLANNING",
@@ -96,7 +96,7 @@
       "status": "drafted",
       "review_status": "editorial review recorded; founder review pending",
       "pdf": "exports/chapters/law-12-planning.pdf",
-      "commit": "e4373d4458796b11b645e1d5b23c8f3ff5298df8"
+      "commit": "6919c75d0ae161c1b053249bbe058d155d82d40d"
     },
     "13": {
       "title": "MOTHER'S CHILD",
@@ -104,7 +104,7 @@
       "status": "drafted",
       "review_status": "editorial review recorded; founder review pending",
       "pdf": "exports/chapters/law-13-mothers-child.pdf",
-      "commit": "17d5f6be29943933d6c7d6e745d22475e1332117"
+      "commit": "6919c75d0ae161c1b053249bbe058d155d82d40d"
     },
     "14": {
       "title": "MENTAL AWARENESS",
@@ -112,7 +112,7 @@
       "status": "drafted",
       "review_status": "editorial review recorded; founder review pending",
       "pdf": "exports/chapters/law-14-mental-awareness.pdf",
-      "commit": "055f3395c6f3f96dbee11a15221a135686ef4d0e"
+      "commit": "6919c75d0ae161c1b053249bbe058d155d82d40d"
     }
   }
 }
