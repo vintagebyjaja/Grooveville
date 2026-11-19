@@ -1,41 +1,41 @@
 # LAW 07 — ENDOWMENT
 
-## The Law
+## Understanding the Law
 
-Take an inventory of what has reached you, and give someone else a way to use what you can pass on.
+Endowment includes inherited resources and the resources you acquire and can pass on. Property, savings and paid time solve different problems from advice, practical skills, reliable care and professional introductions. To understand unequal starting points, ask what each resource lets someone do and who can get it when it matters.
 
-## The Story
+## The Reality Behind It
 
-Fictional illustration.
+The University of Richmond's Mapping Inequality project preserves federal Home Owners' Loan Corporation maps and neighborhood descriptions from the 1930s. Some descriptions explicitly treated race as part of an area's risk assessment. The documents show a practice within a broader history of housing discrimination. Determining how a particular family gained or lost property requires records specific to that family. [7]
 
-When Miss Ora sold her duplex, she brought a folder to her niece Camille's apartment. Inside were paint receipts, a list of dates for the water heater and the number of a plumber who had once come out on Christmas morning. She had written a note by his number saying to ask who was coming and how they billed.
+## Where We Go Wrong
 
-Camille was saving for a place of her own. An inheritance of money would have shortened her timeline. The folder did something more modest. It gave her questions she could bring to a housing counselor and later to an inspector. At the bottom she found a paper envelope marked “downstairs.” It had copies of letters Ora sent when the tenant reported a damp wall. One letter acknowledged that Ora had waited too long to get it looked at.
+It can be tempting to call knowledge priceless and leave the discussion there. Knowledge can help you read an inspection report. It cannot pay a closing cost. A cash gift might meet that cost while leaving a recipient without anyone to explain the continuing obligations. When we name which problem a resource solves, we can see what is still needed.
 
-“Why did you keep this one?” Camille asked.
+## Applying the Law
 
-“Because I paid for thinking a bucket was a repair,” Ora said. “And she lived with the bucket.”
+Inventory what you can use, teach, lend or transfer. A family might set aside emergency savings and make an index of its important records. A business owner could pay a trainee to attend an orientation and share a written explanation of how to apply. Consult the people you hope to help about whether the resource arrives in a form they can use.
 
-Camille volunteered at a library workshop where people brought leases, receipts and repair questions. She took the folder home first and stripped out the personal information. The workshop made a one-page sheet showing how to keep a repair record, with room to note when the problem began and when it was resolved.
+**Build a budget around when money arrives.** Start with take-home pay and the dates money reaches you. List essential bills, debt payments and unavoidable irregular costs. If income varies, build your basic plan around a lower-income month and decide in advance where extra money will go. Review actual spending before changing the plan. A gap after essentials can call for negotiating a due date, finding benefits or increasing income. Arithmetic can identify the problem even when cutting costs cannot solve it.
 
-One participant was a man who had done building maintenance for thirty years. He added a column for photographs. Camille had arrived believing she was bringing something to the room. She went home with a better document and the number of someone willing to help read an inspection report.
+**Give checking and savings different jobs.** Checking can handle bills and ordinary transactions. Savings can hold emergency money and planned expenses such as a car repair or school fees. Compare monthly charges, minimums, overdraft terms, withdrawal access and insurance before opening an account. At an FDIC-insured bank, eligible deposits are protected within applicable limits, generally $250,000 per depositor, per insured bank, per ownership category. Investment losses are outside that protection. [15]
 
-## The Reality
+**Read the 401(k) plan before choosing a contribution.** A 401(k) is a U.S. employer-sponsored retirement plan. Check whether the employer contributes a match, how much of the match you can keep when leaving, what the plan charges and how its investments work. Traditional employee contributions generally defer federal income tax until withdrawal. Designated Roth contributions are made after tax, and qualified distributions are generally tax-free. Check the plan rules and current IRS guidance before acting. Confirm how contributions will be invested. In a plan with a default investment, review what the default holds and what it costs. [16]
 
-Family resources take many forms. Cash can meet a closing cost immediately. Reliable child care can make a training program possible. Tools, references and knowledge can save time or prevent a costly error. The forms matter because they solve different problems. A person with an experienced relative can still be short of the money a lender requires.
+**Match investment risk to the purpose of the money.** If you expect to need cash soon, ask what happens if its value drops right before the bill is due. Money set aside for retirement has a different time horizon. Diversification spreads exposure across investments. It can reduce certain risks and still leave you exposed to broad declines. Compare fees, consider which investments you already hold and be skeptical of any promise of high returns with little risk. Financial literacy includes knowing whose responsibility it is to explain a product and how that person gets paid. [17]
 
-American housing history offers a reason to ask where family resources came from and who could acquire them. The University of Richmond's *Mapping Inequality* project preserves federal Home Owners' Loan Corporation maps and area descriptions produced in the 1930s. The records show race explicitly entering some neighborhood assessments. You can read the language for the neighborhood itself and see what the assessment treated as a risk. Those records document a federal practice within a larger history of discriminatory housing policy. A map gives evidence of the practice. A particular family's property history requires its own records.
+## The Community Connection
 
-## The Lesson
-
-Having inherited something valuable puts a question in your hands. Who can get at what you know? If the answer is your children alone, consider what part you could share through a union hall, library, school or neighborhood organization. The participant who improved Camille's worksheet could offer knowledge without owning the building. Over time, sharing a method can help people negotiate with whoever does.
-
-Keep the financial realities visible. Knowledge can make an appraisal easier to understand without making the price affordable. A community group might share its expertise while also paying stipends for apprentices, pooling funds for equipment, or advocating for a fairer source of credit. People in different positions can contribute different things.
-
-## The Groove
-
-Write three lists. Record resources you can use now, knowledge you could teach and opportunities you could make available to someone else. Choose a concrete transfer. You might give a student two hours to practice on equipment, walk a new tenant through a repair log, or document how to apply for a training grant. Ask the recipient what would make the resource usable. Get permission before sharing other people's papers or contacts.
+A library can host repair and budgeting workshops. A union can make entry dates public. A neighborhood group can combine shared knowledge with paid stipends or access to equipment. If you keep a relative's records, ask what they want shared and remove private details when adapting an example.
 
 ## The Final Word
 
-Miss Ora's folder held the expense, the mistake and the lesson together. Camille could carry the lesson farther because her aunt had bothered to keep all three.
+Measure an inheritance partly by what it makes possible for the person who receives it.
+
+## Food for Thought
+
+Which resource other than money changed a decision you were able to make?
+
+What knowledge or equipment could your community make easier for new people to access?
+
+How should researchers connect historical lending records to present wealth without overstating what the records establish?

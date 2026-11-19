@@ -1,3 +1,3 @@
 # Law 07
 
-The draft limits its historical claim to the maps and area descriptions. The monetary and nonmonetary resources have distinct effects.
+Revised to practical nonfiction. Financial content distinguishes account uses, deposit insurance and investment risk.
