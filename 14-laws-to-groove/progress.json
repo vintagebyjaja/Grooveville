@@ -105,6 +105,14 @@
       "review_status": "editorial review recorded; founder review pending",
       "pdf": "exports/chapters/law-13-mothers-child.pdf",
       "commit": "17d5f6be29943933d6c7d6e745d22475e1332117"
+    },
+    "14": {
+      "title": "MENTAL AWARENESS",
+      "words": 387,
+      "status": "drafted",
+      "review_status": "editorial review recorded; founder review pending",
+      "pdf": "exports/chapters/law-14-mental-awareness.pdf",
+      "commit": "055f3395c6f3f96dbee11a15221a135686ef4d0e"
     }
   }
 }
