@@ -12,11 +12,11 @@
     },
     "02": {
       "title": "PHONE DOWN",
-      "words": 472,
+      "words": 493,
       "status": "drafted",
       "review_status": "editorial review recorded; founder review pending",
       "pdf": "exports/chapters/law-02-phone-down.pdf",
-      "commit": "6919c75d0ae161c1b053249bbe058d155d82d40d"
+      "commit": "252f6ff1bf46782a0846229252277ef42ee52400"
     },
     "03": {
       "title": "SCOUT",
