@@ -1,5 +1,13 @@
 # LAW 06 — PEERS AREN'T DEARS
 
+## Opening questions
+
+Who are the people you trust the most, and why?
+
+Have you ever laughed at something someone said about you, even though it bothered you?
+
+What does respect look like in your friendships?
+
 ## Understanding the Law
 
 Familiarity does not excuse disrespect. A friendship can include teasing, disagreements and hard truths. Its health depends on whether people can object to name-calling, degrading comments or public embarrassment without having to surrender their place in the group.
@@ -24,10 +32,10 @@ Friends can interrupt a pile-on without repeating the insult. They can call the 
 
 There are people who can hear “that hurt” and keep treating you as a friend. Pay attention to how they respond.
 
-## Food for Thought
+## Closing questions
 
-What makes it easier for you to tell a friend a joke crossed a line?
+Does everyone you've given your trust to still deserve it?
 
-How can a group intervene when its most popular member humiliates somebody?
+Have you ever mistaken disrespect for friendship?
 
-What evidence should a school or youth group consider when deciding how to respond to repeated public teasing?
+Are you giving others the same respect you expect to receive?
