@@ -4,11 +4,11 @@
   "chapters": {
     "01": {
       "title": "REFLECTION",
-      "words": 3156,
+      "words": 522,
       "status": "drafted",
       "review_status": "editorial review recorded; founder review pending",
       "pdf": "exports/chapters/law-01-reflection.pdf",
-      "commit": "1a50dcf60013a57940673e018c5b019e9ad39070"
+      "commit": "c6b514d9b7c6e259c5cbf09c9f9e7f07fb0205cd"
     },
     "02": {
       "title": "PHONE DOWN",
