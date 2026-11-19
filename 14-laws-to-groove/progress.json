@@ -100,11 +100,11 @@
     },
     "13": {
       "title": "MOTHER'S CHILD",
-      "words": 441,
+      "words": 2184,
       "status": "drafted",
       "review_status": "editorial review recorded; founder review pending",
       "pdf": "exports/chapters/law-13-mothers-child.pdf",
-      "commit": "ad79e13229e2f84619f87602ea3a10a400e36430"
+      "commit": "4d1f3969301661370ebd5a30d073500fe3bf7892"
     },
     "14": {
       "title": "MENTAL AWARENESS",
