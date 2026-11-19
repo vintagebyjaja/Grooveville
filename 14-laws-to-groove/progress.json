@@ -33,6 +33,14 @@
       "review_status": "editorial review recorded; founder review pending",
       "pdf": "exports/chapters/law-04-branding.pdf",
       "commit": "aee22e7ce1ae47ac2a497bb0629c180416fde450"
+    },
+    "05": {
+      "title": "I SAY = I WILL",
+      "words": 620,
+      "status": "drafted",
+      "review_status": "editorial review recorded; founder review pending",
+      "pdf": "exports/chapters/law-05-i-say-i-will.pdf",
+      "commit": "d5b8233799fbf56af2ae5aae07c0c2783d60a5c9"
     }
   }
 }
