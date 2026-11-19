@@ -1,5 +1,13 @@
 # LAW 07 — ENDOWMENT
 
+## Opening questions
+
+What have people passed down to you that you still use?
+
+How do you usually decide what money to spend and what to set aside?
+
+Who taught you how to handle your first financial decisions?
+
 ## Understanding the Law
 
 Endowment includes inherited resources and the resources you acquire and can pass on. Property, savings and paid time solve different problems from advice, practical skills, reliable care and professional introductions. To understand unequal starting points, ask what each resource lets someone do and who can get it when it matters.
@@ -32,10 +40,10 @@ A library can host repair and budgeting workshops. A union can make entry dates 
 
 Measure an inheritance partly by what it makes possible for the person who receives it.
 
-## Food for Thought
+## Closing questions
 
-Which resource other than money changed a decision you were able to make?
+What opportunity might you be able to pass on, and what would make it usable?
 
-What knowledge or equipment could your community make easier for new people to access?
+Which part of your money plan could use a clearer purpose?
 
-How should researchers connect historical lending records to present wealth without overstating what the records establish?
+What could your community share that individual families might struggle to provide on their own?
