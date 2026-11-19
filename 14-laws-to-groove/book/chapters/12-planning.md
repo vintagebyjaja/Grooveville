@@ -1,5 +1,13 @@
 # LAW 12 — PLANNING
 
+## Opening questions
+
+What are you getting ready for at the moment?
+
+Which part of a plan do you usually leave until the last minute?
+
+When plans change, who do you tend to call?
+
 ## Understanding the Law
 
 **Proper Pre-Planning Prevents Piss Poor Performance. Piss Poor Performance Promotes Pain.**
@@ -26,10 +34,10 @@ Before announcing a community event, check accessibility, weather, permission, t
 
 The person who inherits a problem should have a chance to help prevent it.
 
-## Food for Thought
+## Closing questions
 
-Which assumption in an upcoming plan would cost you the most if it failed?
+Which person is depending on a step you have yet to confirm?
 
-How can a family or group fairly share the work of preparing for disruptions?
+What would tell you it is time to use your backup plan?
 
-When do formal planning requirements improve outcomes, and when can they burden small groups?
+How could you make one upcoming handoff easier for both people?
