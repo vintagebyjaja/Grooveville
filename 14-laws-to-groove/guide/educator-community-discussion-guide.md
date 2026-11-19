@@ -57,7 +57,7 @@ Use a routine dispute about a missed handoff. Write what could be verified, what
 
 ## Suggested sources
 
-Bertrand, Marianne, and Sendhil Mullainathan. 2004. “Are Emily and Greg More Employable Than Lakisha and Jamal? A Field Experiment on Labor Market Discrimination.” American Economic Review 94 (4), 991–1013. https://www.nber.org/papers/w9873
+Bertrand, Marianne, and Sendhil Mullainathan. (2004). “Are Emily and Greg More Employable Than Lakisha and Jamal? A Field Experiment on Labor Market Discrimination.” *American Economic Review*, 94 (4), 991–1013.
 
 ## Optional group activity
 
@@ -101,7 +101,9 @@ Plan a short conversation using an agreed interruption rule. Ask both participan
 
 ## Suggested sources
 
-Dwyer, Ryan J., Kostadin Kushlev, and Elizabeth W. Dunn. 2018. “Smartphone Use Undermines Enjoyment of Face-to-Face Social Interactions.” Journal of Experimental Social Psychology 78, 233–239. https://doi.org/10.1016/j.jesp.2017.10.007
+Dwyer, Ryan J., Kostadin Kushlev, and Elizabeth W. Dunn. (2018). “Smartphone Use Undermines Enjoyment of Face-to-Face Social Interactions.” *Journal of Experimental Social Psychology*, 78, 233–239.
+
+Kushlev, Kostadin, and Elizabeth W. Dunn. (2015). “Checking Email Less Frequently Reduces Stress.” *Computers in Human Behavior*, 43, 220–228.
 
 ## Optional group activity
 
@@ -145,7 +147,7 @@ Use public materials to compare two training options. Record one fact, estimate 
 
 ## Suggested sources
 
-U.S. Department of Labor. “What Is a Registered Apprenticeship Program?” Apprenticeship.gov. https://www.apprenticeship.gov/employers/registered-apprenticeship-program
+U.S. Department of Labor. (n.d.). “What Is a Registered Apprenticeship Program?”
 
 ## Optional group activity
 
@@ -189,9 +191,9 @@ Rewrite a fictional performance review using observable job behavior. Identify w
 
 ## Suggested sources
 
-U.S. Equal Employment Opportunity Commission. “Section 15 Race and Color Discrimination.” Compliance Manual. https://www.eeoc.gov/laws/guidance/section-15-race-and-color-discrimination
+U.S. Equal Employment Opportunity Commission. (2006). “Section 15 Race and Color Discrimination.” Compliance Manual.
 
-Bertrand, Marianne, and Sendhil Mullainathan. 2004. “Are Emily and Greg More Employable Than Lakisha and Jamal? A Field Experiment on Labor Market Discrimination.” American Economic Review 94 (4), 991–1013. https://www.nber.org/papers/w9873
+Bertrand, Marianne, and Sendhil Mullainathan. (2004). “Are Emily and Greg More Employable Than Lakisha and Jamal? A Field Experiment on Labor Market Discrimination.” *American Economic Review*, 94 (4), 991–1013.
 
 ## Optional group activity
 
@@ -235,7 +237,7 @@ Rewrite a vague commitment to include an action, date and a next update. Exchang
 
 ## Suggested sources
 
-Simons, Tony, Hannes Leroy, and Lisa H. Nishii. 2022. “Revisiting Behavioral Integrity: Progress and New Directions After 20 Years.” Annual Review of Organizational Psychology and Organizational Behavior 9, 365–389. https://doi.org/10.1146/annurev-orgpsych-012420-062016
+Simons, Tony, Hannes Leroy, and Lisa H. Nishii. (2022). “Revisiting Behavioral Integrity: Progress and New Directions After 20 Years.” *Annual Review of Organizational Psychology and Organizational Behavior*, 9, 365–389.
 
 ## Optional group activity
 
@@ -245,7 +247,7 @@ Model a missed opening shift with a paper calendar. Trace the effect of the same
 
 ## Learning objectives
 
-Identify degrading behavior, a breach of confidentiality and a workable boundary. Explain what bystanders can do.
+Identify degrading behavior, a breach of confidentiality and a workable boundary. Explain what bystanders can do. Describe how a father, coach or mentor can respond firmly without humiliating someone.
 
 ## Key terms
 
@@ -261,7 +263,7 @@ A boundary identifies conduct you will accept and how you will respond. Confiden
 
 4. When might distancing yourself be more useful than another conversation?
 
-5. How can a bystander help without taking control of the response?
+5. How could a father, coach or mentor intervene without taking control or adding to the humiliation?
 
 ## Argumentative essay prompts
 
@@ -279,7 +281,7 @@ Write a boundary and a respectful response to it for a fictional peer dispute. A
 
 ## Suggested sources
 
-U.S. Department of Health and Human Services. “What Is Bullying.” StopBullying.gov. https://www.stopbullying.gov/bullying/what-is-bullying
+U.S. Department of Health and Human Services. (n.d.). “What Is Bullying.”
 
 ## Optional group activity
 
@@ -289,23 +291,23 @@ Give small groups a fictional group-chat exchange. Ask them to write a bystander
 
 ## Learning objectives
 
-Compare financial and nonfinancial resources. Interpret redlining records and describe basic U.S. account and investment choices.
+Compare financial and nonfinancial resources. Explain credit and local circulation. Interpret historical housing records and investigate a current civic decision.
 
 ## Key terms
 
-Endowment is a resource received or developed that can create an opportunity. A budget plans inflows and outflows. A 401(k) is a U.S. employer-sponsored retirement plan. Diversification spreads exposure across investments.
+Endowment is a resource received or developed that can create an opportunity. A budget plans inflows and outflows. A 401(k) is a U.S. employer-sponsored retirement plan. Diversification spreads exposure across investments. Utilization compares revolving balances with limits. Displacement is the loss of a place a resident could otherwise use or remain in.
 
 ## Discussion questions
 
-1. What does a helpful contact make possible that cash alone might not?
+1. What could you measure to test whether a local purchase supports local jobs?
 
 2. What do historical maps show about the assumptions of federal appraisers?
 
-3. How could two households with the same income have different savings options?
+3. How might a business respond fairly to a customer who questions the price?
 
-4. Which money belongs within easy reach, and why?
+4. What can a credit report tell you that a score cannot?
 
-5. Who should teach people about investment fees and risk?
+5. Which record would help you distinguish a redevelopment proposal from an approved project?
 
 ## Argumentative essay prompts
 
@@ -315,7 +317,7 @@ Endowment is a resource received or developed that can create an opportunity. A 
 
 ## Research paper prompt
 
-Examine a historical area description and later local housing records. Explain which inferences each source supports and where the chain of evidence stops.
+Compare a historical area description, Federal Reserve wealth data and local housing records. Distinguish what each source can establish. Then trace a proposed redevelopment through notices, hearing minutes and the authority’s final decision.
 
 ## Real-world application
 
@@ -323,19 +325,31 @@ Use fictional figures to prepare a pay-date budget, assign transactions to check
 
 ## Suggested sources
 
-Digital Scholarship Lab, University of Richmond, and partners. Mapping Inequality: Redlining in New Deal America. https://dsl.richmond.edu/panorama/redlining/
+Digital Scholarship Lab, University of Richmond, and partners. (n.d.). Mapping Inequality: Redlining in New Deal America.
 
-Consumer Financial Protection Bureau. “An Essential Guide to Building an Emergency Fund.” https://www.consumerfinance.gov/an-essential-guide-to-building-an-emergency-fund/
+Consumer Financial Protection Bureau. (n.d.). “An Essential Guide to Building an Emergency Fund.”
 
-Federal Deposit Insurance Corporation. Electronic Deposit Insurance Estimator. https://edie.fdic.gov/
+Federal Deposit Insurance Corporation. (n.d.). Electronic Deposit Insurance Estimator.
 
-Internal Revenue Service. “401(k) Plans.” https://www.irs.gov/retirement-plans/401k-plans
+Internal Revenue Service. (n.d.). “401(k) Plans.”
 
-U.S. Securities and Exchange Commission. “Asset Allocation, Diversification, and Rebalancing.” Investor.gov. https://www.investor.gov/introduction-investing/getting-started/asset-allocation
+U.S. Securities and Exchange Commission. (n.d.). “Asset Allocation, Diversification, and Rebalancing.”
+
+Board of Governors of the Federal Reserve System. (2023). *Changes in U.S. Family Finances from 2019 to 2022: Evidence from the Survey of Consumer Finances.*
+
+Brummet, Quentin, and Davin Reed. (2019). *The Effects of Gentrification on the Well-Being and Opportunity of Original Resident Adults and Children.* Working Paper 19-30. Federal Reserve Bank of Philadelphia.
+
+Bureau of Economic Analysis. (n.d.). *Regional Input-Output Modeling System (RIMS II) User’s Guide.* U.S. Department of Commerce.
+
+Consumer Financial Protection Bureau. (n.d.). *Credit Reports and Scores.*
+
+Consumer Financial Protection Bureau. (n.d.). *Equal Credit Opportunity Act (Regulation B).* 12 C.F.R. Part 1002.
+
+Madison, Brookie. (2015). “Does a Dollar Spent in the Black Community Really Stay There for Only Six Hours?” *Truth Be Told*, Howard University.
 
 ## Optional group activity
 
-Give teams different sets of household resources and identical incomes. Compare the opportunities they can realistically accept.
+Give teams different sets of household resources and identical incomes. Compare the opportunities they can realistically accept. Ask which adult could teach a useful next step or make an introduction without making the choice for the household.
 
 # LAW 08 — RISKY REWARDS
 
@@ -375,7 +389,9 @@ Evaluate a fictional job change using favorable, ordinary and adverse scenarios.
 
 ## Suggested sources
 
-Consumer Financial Protection Bureau. “An Essential Guide to Building an Emergency Fund.” https://www.consumerfinance.gov/an-essential-guide-to-building-an-emergency-fund/
+Consumer Financial Protection Bureau. (n.d.). “An Essential Guide to Building an Emergency Fund.”
+
+Kahneman, Daniel, and Amos Tversky. (1979). “Prospect Theory: An Analysis of Decision under Risk.” *Econometrica*, 47 (2), 263–291.
 
 ## Optional group activity
 
@@ -419,7 +435,7 @@ Write a pause-and-return message for a fictional scheduling disagreement. Identi
 
 ## Suggested sources
 
-National Domestic Violence Hotline. “Create Your Personal Safety Plan.” https://www.thehotline.org/plan-for-safety/
+National Domestic Violence Hotline. (n.d.). “Create Your Personal Safety Plan.”
 
 ## Optional group activity
 
@@ -463,7 +479,7 @@ Map who controls a single local decision and what information would allow them t
 
 ## Suggested sources
 
-Federal Highway Administration. “Safe Transportation for Every Pedestrian.” https://highways.dot.gov/safety/pedestrian-bicyclist/step
+Federal Highway Administration. (n.d.). “Safe Transportation for Every Pedestrian.”
 
 ## Optional group activity
 
@@ -507,7 +523,9 @@ Construct a realistic weekday from a fictional schedule. Include travel, sleep, 
 
 ## Suggested sources
 
-U.S. Bureau of Labor Statistics. American Time Use Survey. https://www.bls.gov/tus/
+U.S. Bureau of Labor Statistics. (n.d.). American Time Use Survey.
+
+Schneider, Daniel, and Kristen Harknett. (2019). “Consequences of Routine Work-Schedule Instability for Worker Health and Well-Being.” *American Sociological Review*, 84 (1), 82–114.
 
 ## Optional group activity
 
@@ -551,7 +569,9 @@ Build a two-week plan for a fictional event. Assign ownership, verify premises a
 
 ## Suggested sources
 
-U.S. Government Accountability Office. 2015. Schedule Assessment Guide: Best Practices for Project Schedules. GAO-16-89G. https://www.gao.gov/products/gao-16-89g
+U.S. Government Accountability Office. (2015). Schedule Assessment Guide: Best Practices for Project Schedules. GAO-16-89G.
+
+Buehler, Roger, Dale Griffin, and Michael Ross. (1994). “Exploring the Planning Fallacy: Why People Underestimate Their Task Completion Times.” *Journal of Personality and Social Psychology*, 67 (3), 366–381.
 
 ## Optional group activity
 
@@ -561,7 +581,7 @@ Hand each team a last-minute problem with an event. Compare which prior decision
 
 ## Learning objectives
 
-Distinguish authenticity from performing a fixed identity. Analyze how roles, family and culture influence personal narrative.
+Distinguish authenticity from performing a fixed identity. Analyze how roles, family and culture influence personal narrative. Explain how adult caregivers can model accountability.
 
 ## Key terms
 
@@ -571,7 +591,7 @@ Narrative identity is the evolving account through which someone connects life e
 
 1. When can changing your presentation preserve something important about you?
 
-2. How can family memories inform a story without owning it?
+2. What might a young person learn when a father, older relative or mentor repairs a mistake?
 
 3. What can a title change, and what remains a matter of character?
 
@@ -595,7 +615,7 @@ Use a public speech or fictional biography to identify three values and one acti
 
 ## Suggested sources
 
-McAdams, Dan P., and Kate C. McLean. 2013. “Narrative Identity.” Current Directions in Psychological Science 22 (3), 233–238. https://doi.org/10.1177/0963721413475622
+McAdams, Dan P., and Kate C. McLean. (2013). “Narrative Identity.” *Current Directions in Psychological Science*, 22 (3), 233–238.
 
 ## Optional group activity
 
@@ -639,7 +659,7 @@ Create a resource map for a fictional resident that includes routine practical s
 
 ## Suggested sources
 
-National Institute of Mental Health. “Caring for Your Mental Health.” https://www.nimh.nih.gov/health/topics/caring-for-your-mental-health
+National Institute of Mental Health. (n.d.). “Caring for Your Mental Health.”
 
 ## Optional group activity
 
