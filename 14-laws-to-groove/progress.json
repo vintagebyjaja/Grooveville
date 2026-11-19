@@ -25,6 +25,14 @@
       "review_status": "editorial review recorded; founder review pending",
       "pdf": "exports/chapters/law-03-scout.pdf",
       "commit": "c74aa88f6c698da19b383c2fb5daa9189704fe74"
+    },
+    "04": {
+      "title": "BRANDING",
+      "words": 678,
+      "status": "drafted",
+      "review_status": "editorial review recorded; founder review pending",
+      "pdf": "exports/chapters/law-04-branding.pdf",
+      "commit": "aee22e7ce1ae47ac2a497bb0629c180416fde450"
     }
   }
 }
