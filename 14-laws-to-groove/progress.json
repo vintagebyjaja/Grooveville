@@ -60,11 +60,11 @@
     },
     "08": {
       "title": "RISKY REWARDS",
-      "words": 375,
+      "words": 2091,
       "status": "drafted",
       "review_status": "editorial review recorded; founder review pending",
       "pdf": "exports/chapters/law-08-risky-rewards.pdf",
-      "commit": "b298ad7bc8538d113e83a21c08b89240fc700fb4"
+      "commit": "65e5599892249354d9d3e9285c4975f8da1653f2"
     },
     "09": {
       "title": "DISENGAGEMENT",
