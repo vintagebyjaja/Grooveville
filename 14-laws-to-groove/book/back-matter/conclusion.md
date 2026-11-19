@@ -30,4 +30,12 @@ Choose one decision to write down before you know how it will turn out. Include 
 
 Return to the note when you have more information. What did you know at the time? Which problem turned out to be different from the one you prepared for? If someone gave you help you can use again, tell them which part mattered. You may find that one law gave you a better question and a different law gave you a way to act. You can also find an idea that does not serve you well in your circumstances. Keep enough detail that you can explain why.
 
+## What the Laws Ask of Us Together
+
+Reflection and Phone Down help us hear an account clearly enough to reconsider our own. Scout and Branding lead from that attention to the institutions and judgments that shape an opportunity. Once we know how a decision is made and whose work can be seen, we can ask what fairness requires from the people with authority. We can also decide how to show up and what we are prepared to change about our own conduct.
+
+I Say = I Will and Peers Aren't Dears ask what people can count on from us and what they should be free to question. Endowment asks what our commitments make available beyond the immediate relationship. A person can keep a promise to teach a skill, protect a confidence while helping someone find support, or leave instructions that somebody can use without having a connection in the right room. These actions give a value practical consequences.
+
+Risky Rewards, Disengagement and Strategy apply when the way forward is uncertain. Consider who bears a loss, when an exchange has ceased to help, and where effort can influence a decision. Time and Planning give those choices a schedule and put responsibility in view. Mother's Child asks which values we carry through a change in role. Mental Awareness asks what it takes to live with those choices and to recognize when help is needed. The laws come together whenever we can turn an individual lesson into something another person can use. The next generation inherits what we make available, including how clearly we explain it and how much room we give them to improve upon it.
+
 The next twenty pages belong to you. Use them to keep track of a decision, work through a question or put instructions in a form you can give to someone who needs them. A finished entry might contain a small account of what happened and what you wish someone had told you before it did. The act of recording it can make both pieces of knowledge easier for somebody else to use.

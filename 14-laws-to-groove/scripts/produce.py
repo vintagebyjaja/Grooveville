@@ -15,7 +15,7 @@ from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.platypus import (
     BaseDocTemplate, Flowable, Frame, Image, NextPageTemplate, PageBreak, PageTemplate,
-    Paragraph, Spacer,
+    Paragraph, Spacer, Table, TableStyle,
 )
 from reportlab.platypus.tableofcontents import TableOfContents
 
@@ -75,8 +75,24 @@ def style(name, font, size, leading, after=0, before=0):
     )
 
 
-def flow(text):
-    for block in re.split(r"\n\s*\n", text.strip()):
+def flow(text, publisher=False):
+    blocks = re.split(r"\n\s*\n", text.strip())
+    if publisher:
+        title, subtitle, *blocks = blocks
+        mark = ROOT / "assets/publisher/grooveville-black.png"
+        banner = Table([[
+            [Paragraph(escape(title[2:]), style("PublisherTitle", "SerifBold", 20, 26, 4)),
+             Paragraph(escape(subtitle[3:]), style("PublisherSubtitle", "SerifItalic", 11, 15))],
+            Image(str(mark), width=52, height=52),
+        ]], colWidths=[290, 58], style=TableStyle([
+            ("FONTNAME", (0, 0), (-1, -1), "Serif"),
+            ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
+            ("LEFTPADDING", (0, 0), (-1, -1), 0),
+            ("RIGHTPADDING", (0, 0), (-1, -1), 0),
+        ]))
+        yield banner
+        yield Spacer(1, 7)
+    for block in blocks:
         block = block.strip()
         if block.startswith("# "):
             yield Spacer(1, 24)
@@ -93,16 +109,18 @@ def flow(text):
             inline = escape(" ".join(block.splitlines()))
             inline = re.sub(r"\*\*(.+?)\*\*", r"<b>\1</b>", inline)
             inline = re.sub(r"\*(.+?)\*", r"<i>\1</i>", inline)
-            yield Paragraph(inline, style("Body", "Serif", 10.5, 14.5, 6))
+            yield Paragraph(inline, style("Body", "Serif", 10.5, 13.1 if publisher else 14.5, 4 if publisher else 6))
 
 
 class ReviewDocument(BaseDocTemplate):
-    def __init__(self, path, title, has_cover):
-        super().__init__(str(path), pagesize=PAGE, title=title, author="Jabari Jaja", invariant=1, initialFontName="Serif")
+    def __init__(self, path, title, has_cover, digital=False):
+        super().__init__(str(path), pagesize=PAGE, title=title, author="JABARI JAJA", creator="Grooveville LLC",
+                         invariant=1, initialFontName="Serif")
         self.has_cover = has_cover
+        self.digital = digital
 
-        def frame(left):
-            return Frame(left, 49, PAGE[0] - 106, PAGE[1] - 104, leftPadding=0,
+        def frame(left, width=PAGE[0] - 106):
+            return Frame(left, 49, width, PAGE[1] - 104, leftPadding=0,
                          rightPadding=0, topPadding=0, bottomPadding=0)
 
         covers = [PageTemplate("cover", [Frame(0, 0, *PAGE, leftPadding=0,
@@ -110,11 +128,14 @@ class ReviewDocument(BaseDocTemplate):
         self.addPageTemplates(covers + [
             PageTemplate("right", [frame(59)], onPage=self.furniture, autoNextPageTemplate="left"),
             PageTemplate("left", [frame(47)], onPage=self.furniture, autoNextPageTemplate="right"),
+            PageTemplate("publisher", [frame(42, 348)], onPage=self.furniture, autoNextPageTemplate="right"),
         ])
 
     def furniture(self, pdf, doc):
         number = doc.page - self.has_cover
         right = bool(number % 2)
+        if self.digital and number == 1:
+            pdf.showOutline()
         pdf.saveState()
         pdf.setFillColor(ACCENT)
         pdf.setFont("Serif", 8)
@@ -128,7 +149,7 @@ class ReviewDocument(BaseDocTemplate):
     def afterFlowable(self, item):
         if isinstance(item, Paragraph) and item.style.name == "Chapter":
             title = item.getPlainText()
-            if title not in {"The 14 Laws to Groove", "Copyright", "Contents"}:
+            if title not in {"THE 14 LAWS TO GROOVE", "Contents"}:
                 key = re.sub(r"[^\w]+", "-", title).strip("-").lower()
                 self.canv.bookmarkPage(key)
                 self.canv.addOutlineEntry(title, key)
@@ -179,7 +200,7 @@ def verify(pdf, texts):
         remaining = remaining[start + len(expected):]
 
 
-CHAPTER_PAGES = (9, 9, 9, 9, 9, 8, 11, 9, 9, 9, 9, 9, 9, 9)
+CHAPTER_PAGES = (9, 9, 9, 9, 9, 8, 12, 9, 9, 9, 9, 9, 9, 9)
 INTERIOR_PAGES = 162
 WEB_ADDRESS = re.compile(
     r"https?://|www\.|\bdoi\s*:|\b10\.\d{4,9}/|"
@@ -211,7 +232,7 @@ def verify_print_layout(pdf, expected_pages, writing_pages, has_cover=False):
 
 def book_writing_pages():
     writing_pages = {}
-    end = 3 + 5
+    end = 3 + 6
     for number, length in enumerate(CHAPTER_PAGES, 1):
         end += length
         writing_pages[end] = f"Law {number:02d} Reflection"
@@ -219,14 +240,17 @@ def book_writing_pages():
 
 
 def build(path, texts, title, toc=False, cover=None, journal_pages=0, reflections=False,
-          expected_pages=None, writing_pages=None):
+          expected_pages=None, writing_pages=None, digital=False):
     register_fonts()
     story = []
     if cover:
         story.extend([Image(str(cover), width=PAGE[0], height=PAGE[1], kind="proportional"),
                       NextPageTemplate("right"), PageBreak()])
     for index, text in enumerate(texts):
+        publisher = text.startswith("# GROOVEVILLE LLC\n")
         if index:
+            if publisher:
+                story.append(NextPageTemplate("publisher"))
             story.append(PageBreak())
         if toc and index == 2:
             story.extend(flow("# Contents"))
@@ -234,7 +258,7 @@ def build(path, texts, title, toc=False, cover=None, journal_pages=0, reflection
             contents.levelStyles = [style("Entry", "Serif", 10, 17, 3)]
             contents.tableStyle.add("FONTNAME", (0, 0), (-1, -1), "Serif")
             story.extend([contents, PageBreak()])
-        story.extend(flow(text))
+        story.extend(flow(text, publisher=publisher))
         chapter_match = re.match(r"# LAW (\d{2}) —", text)
         if reflections and chapter_match:
             story.extend([PageBreak(), LinedPage(f"Law {chapter_match[1]} Reflection")])
@@ -243,7 +267,7 @@ def build(path, texts, title, toc=False, cover=None, journal_pages=0, reflection
     path.parent.mkdir(parents=True, exist_ok=True)
     with tempfile.TemporaryDirectory(dir=path.parent) as folder:
         candidate = Path(folder) / path.name
-        doc = ReviewDocument(candidate, title, bool(cover))
+        doc = ReviewDocument(candidate, title, bool(cover), digital=digital)
         doc.multiBuild(story)
         verify(candidate, texts)
         if expected_pages is not None:
@@ -265,22 +289,20 @@ def book():
     front = ROOT / "book/front-matter"
     back = ROOT / "book/back-matter"
     texts = [(front / name).read_text() for name in
-             ("title-page.md", "copyright.md", "introduction.md")]
+             ("title-page.md", "publisher.md", "introduction.md")]
     for number in range(1, 15):
         source, pdf = chapter_paths(number)
         text = source.read_text()
         validate_source(number, text)
         verify(pdf, [text])
         texts.append(text)
-    texts.extend((back / name).read_text() for name in ("conclusion.md", "references.md"))
+    texts.append((back / "conclusion.md").read_text())
     folder = ROOT / "exports/complete-book"
-    build(folder / "the-14-laws-to-groove-review.pdf", texts, "The 14 Laws to Groove", toc=True, journal_pages=20, reflections=True,
-          expected_pages=INTERIOR_PAGES, writing_pages=book_writing_pages())
-    cover = ROOT / "assets/cover/approved-cover.png"
-    if cover.is_file():
-        build(folder / "the-14-laws-to-groove-cover-review.pdf", texts,
-              "The 14 Laws to Groove", toc=True, cover=cover, journal_pages=20, reflections=True,
-              expected_pages=INTERIOR_PAGES, writing_pages=book_writing_pages())
+    for edition in ("Print", "Digital"):
+        build(folder / f"The_14_Laws_to_Groove_FINAL_{edition}.pdf", texts,
+              "THE 14 LAWS TO GROOVE: Lessons for a Stronger Tomorrow", toc=True,
+              journal_pages=20, reflections=True, expected_pages=INTERIOR_PAGES,
+              writing_pages=book_writing_pages(), digital=edition == "Digital")
 
 
 def guide():

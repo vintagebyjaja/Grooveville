@@ -106,6 +106,12 @@ Consistent, loving, responsible adults matter, and men have a meaningful role in
 
 Make your care reliable at a scale you can sustain. Leave room in a regular call for the young person to bring up whatever they need to discuss. Ask whether they want you to listen, help them think, or take an action you both understand. If you agree to help with a bill or an application, follow through and explain anything you cannot do. A young person may remember the money you gave them and carry the conversation for the rest of their life.
 
+**Leave knowledge someone can use independently.** Choose an ordinary document and read it together. On a pay stub, trace gross pay, deductions and take-home pay. On a credit offer, find the rate, fees and conditions. On a hearing notice, find the project identifier, the deadline and the body authorized to decide. Explain why those details matter and ask the other person to show you where they would confirm them next time. Let them decide how much of their own financial or family information they want to share. The lesson can use a sample.
+
+A father or mentor can make this kind of teaching part of a relationship that continues after the first conversation. Say what you know from experience, explain which rule may have changed and be willing to look up an answer together. If you offer an introduction, explain why you think it might help and ask permission on both sides. Follow up at an agreed time. A young person who knows how to ask a better question can act when you are unavailable and help somebody else learn the method.
+
+Community investment can supply the conditions for that learning to continue. A local business might pay someone for time spent learning to read estimates or track inventory. A neighborhood group could make a planning notice understandable and give residents a way to check the original. Judge the investment by the access it creates. Ask who can use the information afterward, whether people can find it without knowing the person who shared it, and what barriers still require money, time or a decision from an institution.
+
 **Being a strong man isn't only about what you can withstand. It's also about what people can safely bring to you.**
 
 ## The Final Word
