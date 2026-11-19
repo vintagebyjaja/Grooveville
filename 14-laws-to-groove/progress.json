@@ -65,6 +65,14 @@
       "review_status": "editorial review recorded; founder review pending",
       "pdf": "exports/chapters/law-08-risky-rewards.pdf",
       "commit": "9ade68565912ae6a9ea04c48e9da8288315d8c27"
+    },
+    "09": {
+      "title": "DISENGAGEMENT",
+      "words": 332,
+      "status": "drafted",
+      "review_status": "editorial review recorded; founder review pending",
+      "pdf": "exports/chapters/law-09-disengagement.pdf",
+      "commit": "6b80fddd80dcd9815d25d9427192deb21e65d9a0"
     }
   }
 }
