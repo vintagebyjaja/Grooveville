@@ -1,5 +1,13 @@
 # LAW 09 — DISENGAGEMENT
 
+## Opening questions
+
+When an argument goes in circles, what usually keeps you in it?
+
+When are you most tempted to end a difficult conversation?
+
+Whose judgment do you trust when a situation feels hard to read?
+
 ## Understanding the Law
 
 Disengagement is the decision to end your participation in an exchange or situation. It can preserve safety, dignity, attention and the ability to act later. The useful question is what leaving now makes possible and what responsibilities or dangers will remain.
@@ -24,10 +32,10 @@ Friends can help someone leave an unsafe setting by listening, respecting their 
 
 You can end a conversation and still take the problem seriously.
 
-## Food for Thought
+## Closing questions
 
-When has stepping away helped you return with greater clarity?
+How would you tell the difference between taking a helpful pause and putting off an answer you owe?
 
-What resources make leaving a harmful environment possible for people in your community?
+What kind of support could make stepping away safer or more practical?
 
-How should an institution distinguish using a pause to de-escalate from using it to avoid accountability?
+What might be worth returning to once you have had some distance?
