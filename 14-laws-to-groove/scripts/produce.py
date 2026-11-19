@@ -160,6 +160,7 @@ def build(path, texts, title, toc=False, cover=None):
             story.extend(flow("# Contents"))
             contents = TableOfContents()
             contents.levelStyles = [style("Entry", "Serif", 10, 17, 3)]
+            contents.tableStyle.add("FONTNAME", (0, 0), (-1, -1), "Serif")
             story.extend([contents, PageBreak()])
         story.extend(flow(text))
     path.parent.mkdir(parents=True, exist_ok=True)
