@@ -4,7 +4,8 @@ from pathlib import Path
 import re
 from xml.sax.saxutils import escape
 
-from reportlab.lib.colors import HexColor
+from reportlab.lib.colors import Color, HexColor
+from reportlab.lib.utils import ImageReader
 from reportlab.pdfgen.canvas import Canvas
 from reportlab.platypus import Paragraph
 
@@ -39,7 +40,7 @@ def paragraph(pdf, text, x, y, w, size, leading, color, bold=False):
     return y - height
 
 
-def proof(destination):
+def proof(destination, front):
     register_fonts()
     pdf = Canvas(str(destination), pagesize=(W, H), invariant=1, initialFontName="Serif")
     pdf.setTitle("The 14 Laws to Groove — Hardcover Wrap Design Proof")
@@ -48,7 +49,9 @@ def proof(destination):
     pdf.rect(0, 0, W, H, fill=1, stroke=0)
     pdf.setFillColor(PLUM)
     pdf.rect(PANEL, 0, SPINE, H, fill=1, stroke=0)
-    pdf.setFillColor(CREAM)
+    art = ImageReader(str(front))
+    pixels = art.getRGBData()
+    pdf.setFillColor(Color(*(channel / 255 for channel in pixels[:3])))
     pdf.rect(PANEL + SPINE, 0, PANEL, H, fill=1, stroke=0)
 
     pdf.setStrokeColor(GOLD)
@@ -72,7 +75,6 @@ def proof(destination):
     centered(pdf, "G R O O V E V I L L E   L L C", 150, 116, "SerifBold", 8, SOFT)
     pdf.setFillColor(CREAM)
     pdf.rect(PANEL - 173, 108, 116, 70, stroke=0, fill=1)
-    centered(pdf, "BARCODE AREA", PANEL - 115, 140, "Serif", 7, DEEP)
 
     pdf.saveState()
     pdf.translate(PANEL + SPINE / 2 + 5, H / 2)
@@ -81,14 +83,10 @@ def proof(destination):
     centered(pdf, "JABARI JAJA", 155, 0, "Serif", 10, GOLD)
     pdf.restoreState()
 
-    # Reserve a centered 6 × 9 inch front-art area in the reference layout.
+    # Keep the entire front artwork visible within the 6 × 9 inch review panel.
     front_center = PANEL + SPINE + PANEL / 2
-    pdf.setStrokeColor(HexColor("#c2a8b9"))
-    pdf.setDash(4, 4)
-    pdf.rect(front_center - 216, (H - 648) / 2, 432, 648, stroke=1, fill=0)
-    centered(pdf, "APPROVED FRONT COVER", front_center, H / 2 + 10, "SerifBold", 17, PLUM)
-    centered(pdf, "Artwork placement area", front_center, H / 2 - 16, "SerifItalic", 12, PLUM)
-    centered(pdf, "DESIGN PROOF", front_center, 27, "SerifBold", 8, PLUM)
+    pdf.drawImage(art, front_center - 216, (H - 648) / 2, width=432, height=648,
+                  preserveAspectRatio=True, anchor="c")
     pdf.showPage()
     pdf.save()
 
@@ -96,4 +94,4 @@ def proof(destination):
 if __name__ == "__main__":
     out = ROOT / "exports/cover/the-14-laws-to-groove-hardcover-wrap-proof.pdf"
     out.parent.mkdir(parents=True, exist_ok=True)
-    proof(out)
+    proof(out, ROOT / "assets/cover/recreated-front.png")
