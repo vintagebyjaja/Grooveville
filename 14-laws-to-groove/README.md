@@ -4,6 +4,7 @@ Lessons for a Stronger Tomorrow
 Jabari Jaja
 
 This directory holds the manuscript and review editions. Work from the dedicated `migration-14-laws-to-groove` branch. Jabari Jaja has final editorial authority.
+ Follow [the current editorial direction](EDITORIAL.md) when drafting or reviewing chapters.
 
 ## Production
 

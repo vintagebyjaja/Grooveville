@@ -27,7 +27,8 @@ TITLES = (
     "PEERS AREN'T DEARS", "ENDOWMENT", "RISKY REWARDS", "DISENGAGEMENT",
     "STRATEGY", "TIME", "PLANNING", "MOTHER'S CHILD", "MENTAL AWARENESS",
 )
-SECTIONS = ("The Law", "The Story", "The Reality", "The Lesson", "The Groove", "The Final Word")
+SECTIONS = ("Understanding the Law", "The Reality Behind It", "Where We Go Wrong",
+            "Applying the Law", "The Community Connection", "The Final Word")
 INK = colors.HexColor("#211824")
 ACCENT = colors.HexColor("#663d63")
 
@@ -80,6 +81,7 @@ def flow(text):
         else:
             inline = escape(" ".join(block.splitlines()))
             inline = re.sub(r"\*\*(.+?)\*\*", r"<b>\1</b>", inline)
+            inline = re.sub(r"\*(.+?)\*", r"<i>\1</i>", inline)
             yield Paragraph(inline, style("Body", "Serif", 10.5, 15.5, 8))
 
 
