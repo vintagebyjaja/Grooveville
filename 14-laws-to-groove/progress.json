@@ -52,11 +52,11 @@
     },
     "07": {
       "title": "ENDOWMENT",
-      "words": 721,
+      "words": 2736,
       "status": "drafted",
       "review_status": "editorial review recorded; founder review pending",
       "pdf": "exports/chapters/law-07-endowment.pdf",
-      "commit": "8d7280c6373bbd0421f20db1d2f201785b87f859"
+      "commit": "d44818fedc700f7d5d5fac792088230bf74192e6"
     },
     "08": {
       "title": "RISKY REWARDS",
