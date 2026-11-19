@@ -10,7 +10,7 @@ The numbered references correspond to the citations in the chapters.
 
 [4] U.S. Equal Employment Opportunity Commission. “Section 15 Race and Color Discrimination.” Compliance Manual. https://www.eeoc.gov/laws/guidance/section-15-race-and-color-discrimination
 
-[5] Simons, Tony, Hannes Leroy, and Masaki Nishii. 2022. “Revisiting Behavioral Integrity: Progress and New Directions After 20 Years.” Annual Review of Organizational Psychology and Organizational Behavior 9, 365–389. https://doi.org/10.1146/annurev-orgpsych-012420-062016
+[5] Simons, Tony, Hannes Leroy, and Lisa H. Nishii. 2022. “Revisiting Behavioral Integrity: Progress and New Directions After 20 Years.” Annual Review of Organizational Psychology and Organizational Behavior 9, 365–389. https://doi.org/10.1146/annurev-orgpsych-012420-062016
 
 [6] U.S. Department of Health and Human Services. “What Is Bullying.” StopBullying.gov. https://www.stopbullying.gov/bullying/what-is-bullying
 
@@ -30,8 +30,8 @@ The numbered references correspond to the citations in the chapters.
 
 [14] National Institute of Mental Health. “Caring for Your Mental Health.” https://www.nimh.nih.gov/health/topics/caring-for-your-mental-health
 
-[15] Federal Deposit Insurance Corporation. “Deposit Insurance.” https://www.fdic.gov/resources/deposit-insurance/
+[15] Federal Deposit Insurance Corporation. Electronic Deposit Insurance Estimator. https://edie.fdic.gov/
 
 [16] Internal Revenue Service. “401(k) Plans.” https://www.irs.gov/retirement-plans/401k-plans
 
-[17] U.S. Securities and Exchange Commission. “Asset Allocation, Diversification, and Rebalancing.” Investor.gov. https://www.investor.gov/introduction-investing/investing-basics/asset-allocation
+[17] U.S. Securities and Exchange Commission. “Asset Allocation, Diversification, and Rebalancing.” Investor.gov. https://www.investor.gov/introduction-investing/getting-started/asset-allocation

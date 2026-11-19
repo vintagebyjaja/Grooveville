@@ -157,9 +157,9 @@ def verify(pdf, texts):
         re.sub(r"^THE 14 LAWS TO GROOVE\n[0-9]+\n", "", page)
         for page in extracted.split("\f")
     )
-    remaining = " ".join(tokens(cleaned))
+    remaining = "".join(tokens(cleaned))
     for text in texts:
-        expected = " ".join(tokens(text))
+        expected = "".join(tokens(text))
         start = remaining.find(expected)
         if start < 0:
             raise ValueError(f"PDF text mismatch near {text[:70]!r}")
@@ -242,8 +242,9 @@ def checkpoint(number):
     stem = source.stem
     review = ROOT / f"reviews/{stem}.md"
     outline = ROOT / f"outlines/{stem}.md"
-    commit = run("git", "log", "-1", "--format=%H", "--", str(source)).strip()
-    for file in (source, pdf, review, outline):
+    files = (source, pdf, review, outline)
+    commit = run("git", "log", "-1", "--format=%H", "--", *(str(file) for file in files)).strip()
+    for file in files:
         relative = file.relative_to(ROOT.parent)
         committed = subprocess.check_output(["git", "show", f"{commit}:{relative}"], cwd=ROOT)
         if committed != file.read_bytes():
