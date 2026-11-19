@@ -17,6 +17,14 @@
       "review_status": "editorial review recorded; founder review pending",
       "pdf": "exports/chapters/law-02-phone-down.pdf",
       "commit": "98d1c4e90f3f46248027ee6c680dc54aadeb3a96"
+    },
+    "03": {
+      "title": "SCOUT",
+      "words": 802,
+      "status": "drafted",
+      "review_status": "editorial review recorded; founder review pending",
+      "pdf": "exports/chapters/law-03-scout.pdf",
+      "commit": "c74aa88f6c698da19b383c2fb5daa9189704fe74"
     }
   }
 }
