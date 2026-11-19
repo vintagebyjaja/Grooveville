@@ -1,3 +1,3 @@
 # Law 04
 
-Show a safety report described through a stereotype. Move from labels to evidence and evaluator responsibility.
+Distinguish character, reputation and power. Incorporate internal worth, public confidence and fair evaluation.

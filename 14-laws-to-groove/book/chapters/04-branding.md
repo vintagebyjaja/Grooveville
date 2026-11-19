@@ -1,39 +1,35 @@
 # LAW 04 — BRANDING
 
-## The Law
+## Understanding the Law
 
-Decide what you want your work to stand for, and pay attention to who has the power to describe it.
+Branding concerns the relationship between character, reputation and power. Character describes what you practice. Reputation describes what other people have heard or observed. Power determines whose description reaches the person making a decision. You can make your work easier to recognize while asking institutions to judge it fairly.
 
-## The Story
+Know your worth and expect respect. Think of internal net worth as the value you recognize in yourself, without putting a price on it. That recognition can shape how your confidence comes across in public. It can help you speak clearly about what you contribute, acknowledge what you are still learning and set a boundary without asking the room to vote on your dignity. Confidence can be quiet. People deserve respect on the days they cannot project it, too.
 
-Fictional illustration.
+## The Reality Behind It
 
-Imani had filed two complaints about the ventilation in a rehearsal room before the season began. At the production meeting she brought photographs of the windows and copies of the requests. The director called her intense. An hour later, she heard him thank Evan for being thorough about an electrical fault.
+Black workers may have to confront labels placed on patterns of speech, appearance or behavior. The Equal Employment Opportunity Commission's race and color guidance discusses employment decisions linked to racial characteristics and stereotypes. It describes the agency's interpretation and enforcement framework. A particular dispute depends on its facts and applicable law. [4]
 
-She asked Evan to let her see his write-up. His report was shorter than hers and easier to scan. It also contained a conclusion that he had reached after exactly the kind of direct questioning she had used. Both things were worth knowing.
+## Where We Go Wrong
 
-For the next meeting, Imani condensed her account to a page. She kept the dates. She asked the director to tell her where questions about safety should go and which rule governed a decision to move rehearsal. He started to answer about her tone. She asked for an example and the decision it had affected. The room became quiet enough for the stage manager to ask the same question.
+Vague praise and vague criticism are both difficult to use. When someone calls you “leadership material,” they may be offering an opportunity or referring to a style they happen to recognize. When another person calls you “intense,” ask when that description affected the work. Treat the answer as evidence you can examine. Your right to fair treatment is already yours.
 
-A few months later, the stage manager recommended Imani for paid work in another space. Her note said Imani noticed problems early and kept clear records. Imani asked for permission to keep the note. Someone had finally put into a sentence what she wanted her work to be known for.
+## Applying the Law
 
-## The Reality
+Choose one quality you want people to associate with your work. Identify a behavior that makes it visible. To build trust in your estimates, explain how you arrived at the range and tell colleagues when the underlying facts change. When you receive a vague evaluation, ask for a specific example, the standard that applied and how improvement will be assessed. Preserve relevant records and seek qualified advice if discriminatory treatment is a concern.
 
-Reputation has authors. A customer writes a review. A supervisor picks the adjective that enters an annual evaluation. A relative tells a story long after the person in it has changed. Social categories affect the stories some people find plausible. A Black woman can be direct and have that directness described as aggression. A younger colleague may be treated as unreliable until someone with standing repeats their observations. In any one case it helps to look at specific words, behavior and decisions. Over several cases, a comparison may show who receives room to make mistakes, whose style gets praised and whose style keeps becoming a discussion.
+## The Community Connection
 
-Making your work legible is one way to act in that environment. Imani could improve the format of her report and still ask whether the standard applied evenly. Leaders can help by asking for examples tied to the job and comparing how they describe similar behavior. When a description can change someone's pay or future assignments, “fit” by itself gives the person very little to understand or respond to.
-
-## The Lesson
-
-There is a difference between choosing how to introduce yourself and submitting your identity for review. At a new job, you may use the first two minutes of a meeting to explain your responsibility clearly. You can also decide which private details belong in your life outside that meeting. Learning the conventions of a room is sometimes useful. If a convention depends on someone swallowing an insult, the room has work of its own to do.
-
-A sustainable reputation has evidence behind it. If you want people to trust your estimates, give them an honest range and tell them early when it changes. If you want to be known as a person who develops others, give someone an assignment they can own and make sure their name travels with the result. Branding becomes less exhausting when the work can carry some of the weight.
-
-## The Groove
-
-Pick one adjective you would want a former colleague to use about you. Write a sentence they could say that establishes it through a specific action. Then ask whether your current habits supply enough examples. When you receive a vague evaluation, ask when the person observed the behavior, what it affected and how you can tell whether their expectation has been met. Keep the response with your own records.
-
-If you supervise others, look at the last two written evaluations you gave. Compare the evidence you required for a compliment or criticism. Find one label you can replace with a description of the work.
+If you supervise, compare evaluations for people who performed similar work. Ask how each adjective was earned and whether you applied the same standard. A coworker can help by crediting the person responsible for an idea in the same room where that credit has value.
 
 ## The Final Word
 
-Imani kept the recommendation because it gave the reader something to look for the next time they worked beside her.
+Give people evidence of your character. Ask them to take responsibility for the way they describe it.
+
+## Food for Thought
+
+Which part of your reputation reflects evidence you could point to today?
+
+How could a workplace make it easier to challenge an unfair description without exposing people to unnecessary risk?
+
+What should count as evidence when comparing how reviewers label the same behavior?
