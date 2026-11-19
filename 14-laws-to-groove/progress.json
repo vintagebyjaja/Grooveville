@@ -89,6 +89,14 @@
       "review_status": "editorial review recorded; founder review pending",
       "pdf": "exports/chapters/law-11-time.pdf",
       "commit": "2ca15dcf93f444be8e9052a6ff436b349317a5f4"
+    },
+    "12": {
+      "title": "PLANNING",
+      "words": 348,
+      "status": "drafted",
+      "review_status": "editorial review recorded; founder review pending",
+      "pdf": "exports/chapters/law-12-planning.pdf",
+      "commit": "e4373d4458796b11b645e1d5b23c8f3ff5298df8"
     }
   }
 }
