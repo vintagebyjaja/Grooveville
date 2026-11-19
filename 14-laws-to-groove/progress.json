@@ -108,11 +108,11 @@
     },
     "14": {
       "title": "MENTAL AWARENESS",
-      "words": 415,
+      "words": 2087,
       "status": "drafted",
       "review_status": "editorial review recorded; founder review pending",
       "pdf": "exports/chapters/law-14-mental-awareness.pdf",
-      "commit": "1f23a38dd54cbdd7c09314f9da02bb53f471e7f4"
+      "commit": "8ece883ca3d0c34e1ef46221735337c9a1a6bd83"
     }
   }
 }
