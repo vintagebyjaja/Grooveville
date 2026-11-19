@@ -1,5 +1,13 @@
 # LAW 10 — STRATEGY
 
+## Opening questions
+
+What are you trying to change that you cannot decide on by yourself?
+
+When you want people to help, what do you usually ask of them?
+
+Which part of a long project do you tend to start with?
+
 ## Understanding the Law
 
 Strategy means choosing a sequence of actions that advances a purpose under real conditions. Start by naming what you are trying to change, who can decide it and what each person needs to act. An effective sequence gives the next step somewhere to land.
@@ -24,10 +32,10 @@ Invite people affected by a decision to help define the demand. They may identif
 
 A strategy is ready to use when the people doing the work understand where their part leads.
 
-## Food for Thought
+## Closing questions
 
-Where are you investing effort without knowing who can decide the outcome?
+Which step would make more sense if you worked backward from the decision?
 
-How can a coalition balance speed with meaningful participation by people affected?
+Who should have a say before you ask others to support your plan?
 
-When should a public body give priority to local experience over standardized outcome measures?
+What would tell you that your effort is moving things forward?
