@@ -1,3 +1,3 @@
 # Law 05
 
-The fictional conflict gives a reason for both the paid shift and the pantry opening. The recommended repair can be observed on the calendar.
+Revised to a teaching chapter. Separates personal responsibility from conditions that discourage honest refusal.
