@@ -79,7 +79,7 @@ def flow(text):
     for block in re.split(r"\n\s*\n", text.strip()):
         block = block.strip()
         if block.startswith("# "):
-            yield Spacer(1, 35)
+            yield Spacer(1, 24)
             yield Paragraph(escape(block[2:]), style("Chapter", "SerifBold", 22, 29, 19))
         elif block.startswith("## "):
             heading = block[3:]
@@ -87,11 +87,13 @@ def flow(text):
                 yield Paragraph(escape(heading), style("Section", "SerifItalic", 10, 14, 5, 7))
             else:
                 yield Paragraph(escape(heading), style("Section", "SerifBold", 12, 17, 7, 10))
+        elif block.startswith("### "):
+            yield Paragraph(escape(block[4:]), style("Section", "SerifBold", 11, 15, 6, 8))
         else:
             inline = escape(" ".join(block.splitlines()))
             inline = re.sub(r"\*\*(.+?)\*\*", r"<b>\1</b>", inline)
             inline = re.sub(r"\*(.+?)\*", r"<i>\1</i>", inline)
-            yield Paragraph(inline, style("Body", "Serif", 10.5, 15.5, 8))
+            yield Paragraph(inline, style("Body", "Serif", 10.5, 14.5, 6))
 
 
 class ReviewDocument(BaseDocTemplate):
@@ -130,7 +132,7 @@ class ReviewDocument(BaseDocTemplate):
                 key = re.sub(r"[^\w]+", "-", title).strip("-").lower()
                 self.canv.bookmarkPage(key)
                 self.canv.addOutlineEntry(title, key)
-                self.notify("TOCEntry", (0, title, self.page - self.has_cover, key))
+                self.notify("TOCEntry", (0, title, self.page - self.has_cover))
 
 
 class LinedPage(Flowable):
@@ -162,6 +164,8 @@ def verify(pdf, texts):
     if not fonts or any(font.split()[-5] != "yes" for font in fonts):
         raise ValueError("PDF fonts are not embedded")
     extracted = run("pdftotext", "-raw", str(pdf), "-")
+    if WEB_ADDRESS.search(extracted) or WEB_ADDRESS.search("\n".join(texts)):
+        raise ValueError("A web address or DOI appears in a print edition")
     cleaned = "\n".join(
         re.sub(r"^THE 14 LAWS TO GROOVE\n[0-9]+\n", "", page)
         for page in extracted.split("\f")
@@ -175,7 +179,47 @@ def verify(pdf, texts):
         remaining = remaining[start + len(expected):]
 
 
-def build(path, texts, title, toc=False, cover=None, journal_pages=0, reflections=False):
+CHAPTER_PAGES = (9, 9, 9, 9, 9, 8, 11, 9, 9, 9, 9, 9, 9, 9)
+INTERIOR_PAGES = 162
+WEB_ADDRESS = re.compile(
+    r"https?://|www\.|\bdoi\s*:|\b10\.\d{4,9}/|"
+    r"\b[\w-]+\.(?:com|org|gov|edu|net)\b", re.I,
+)
+
+
+def verify_print_layout(pdf, expected_pages, writing_pages, has_cover=False):
+    """Check numbered interior pages and their exclusive writing-page locations."""
+    info = run("pdfinfo", str(pdf))
+    physical_pages = int(re.search(r"^Pages:\s+(\d+)$", info, re.M)[1])
+    if physical_pages != expected_pages + int(has_cover):
+        raise ValueError(f"Expected {expected_pages} numbered interior pages, got {physical_pages - int(has_cover)}")
+    raw = run("pdftotext", "-raw", str(pdf), "-")
+    pages = raw.split("\f")[:physical_pages]
+    interior = pages[int(has_cover):]
+    writing_titles = re.compile(r"Law \d{2} Reflection|Journal")
+    for number, page in enumerate(interior, 1):
+        lines = page.strip().splitlines()
+        if lines[:2] != ["THE 14 LAWS TO GROOVE", str(number)]:
+            raise ValueError(f"Interior page {number} has incorrect numbering")
+        body = lines[2:]
+        if number in writing_pages:
+            if body != [writing_pages[number]]:
+                raise ValueError(f"Interior writing page {number} contains unexpected content")
+        elif not body or writing_titles.fullmatch(body[0]):
+            raise ValueError(f"Unexpected blank or writing page at interior page {number}")
+
+
+def book_writing_pages():
+    writing_pages = {}
+    end = 3 + 5
+    for number, length in enumerate(CHAPTER_PAGES, 1):
+        end += length
+        writing_pages[end] = f"Law {number:02d} Reflection"
+    return writing_pages | {n: "Journal" for n in range(INTERIOR_PAGES - 19, INTERIOR_PAGES + 1)}
+
+
+def build(path, texts, title, toc=False, cover=None, journal_pages=0, reflections=False,
+          expected_pages=None, writing_pages=None):
     register_fonts()
     story = []
     if cover:
@@ -202,6 +246,8 @@ def build(path, texts, title, toc=False, cover=None, journal_pages=0, reflection
         doc = ReviewDocument(candidate, title, bool(cover))
         doc.multiBuild(story)
         verify(candidate, texts)
+        if expected_pages is not None:
+            verify_print_layout(candidate, expected_pages, writing_pages, bool(cover))
         candidate.replace(path)
     print(path.relative_to(ROOT))
 
@@ -210,7 +256,9 @@ def chapter(number):
     source, pdf = chapter_paths(number)
     text = source.read_text()
     validate_source(number, text)
-    build(pdf, [text], f"Law {number:02d} — {TITLES[number - 1]}", reflections=True)
+    length = CHAPTER_PAGES[number - 1]
+    build(pdf, [text], f"Law {number:02d} — {TITLES[number - 1]}", reflections=True,
+          expected_pages=length, writing_pages={length: f"Law {number:02d} Reflection"})
 
 
 def book():
@@ -226,11 +274,13 @@ def book():
         texts.append(text)
     texts.extend((back / name).read_text() for name in ("conclusion.md", "references.md"))
     folder = ROOT / "exports/complete-book"
-    build(folder / "the-14-laws-to-groove-review.pdf", texts, "The 14 Laws to Groove", toc=True, journal_pages=20, reflections=True)
+    build(folder / "the-14-laws-to-groove-review.pdf", texts, "The 14 Laws to Groove", toc=True, journal_pages=20, reflections=True,
+          expected_pages=INTERIOR_PAGES, writing_pages=book_writing_pages())
     cover = ROOT / "assets/cover/approved-cover.png"
     if cover.is_file():
         build(folder / "the-14-laws-to-groove-cover-review.pdf", texts,
-              "The 14 Laws to Groove", toc=True, cover=cover, journal_pages=20, reflections=True)
+              "The 14 Laws to Groove", toc=True, cover=cover, journal_pages=20, reflections=True,
+              expected_pages=INTERIOR_PAGES, writing_pages=book_writing_pages())
 
 
 def guide():

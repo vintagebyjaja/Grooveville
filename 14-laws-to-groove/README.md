@@ -3,7 +3,7 @@
 Lessons for a Stronger Tomorrow  
 Jabari Jaja
 
-This directory holds the manuscript and review editions. Work from the dedicated `migration-14-laws-to-groove` branch. Jabari Jaja has final editorial authority.
+This directory holds the manuscript and review editions. Review the print edition on the `migration` branch. The prior 87-page edition remains in Git history. Jabari Jaja has final editorial authority.
  Follow [the current editorial direction](EDITORIAL.md) when drafting or reviewing chapters.
 
 ## Production
@@ -25,4 +25,4 @@ The approved cover is visible in the founder's brief. The exact image file is pe
 
 ## Review editions
 
-The main review PDF includes one lined reflection page after every law and 20 lined journal pages after the references. The educator and community discussion guide is independently editable in `guide/` and has its own review PDF. Each chapter PDF also includes its reflection page.
+The 6 × 9-inch main review PDF has exactly 162 numbered interior pages and includes one lined reflection page after every law and 20 lined journal pages after the references. The educator and community discussion guide is independently editable in `guide/` and has its own review PDF. Each chapter PDF also includes its reflection page.
