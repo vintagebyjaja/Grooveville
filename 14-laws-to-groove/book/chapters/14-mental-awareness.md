@@ -1,5 +1,13 @@
 # LAW 14 — MENTAL AWARENESS
 
+## Opening questions
+
+How do you usually notice that a hard week is turning into something longer?
+
+What helps you talk about how you are doing?
+
+Where in your life do you feel pressure to say you are fine?
+
 ## Understanding the Law
 
 Mental Awareness means learning to notice your emotions, limits and needs while there is still room to respond. External achievements can make life more stable. Attending to your internal life helps you decide whether the way you are achieving them is sustainable.
@@ -24,10 +32,10 @@ Community support can be as ordinary as a ride, regular meal or invitation that 
 
 Pay attention to the person who has to live inside the life you are building.
 
-## Food for Thought
+## Closing questions
 
-What change in your behavior tells you it is time to ask for help?
+What is a kind of help you could ask for more specifically now?
 
-How can a community make support easier to seek while protecting people's privacy?
+Which demand could change if somebody shared responsibility for it?
 
-Which policies could improve access to mental health support in your setting, and how would you assess their effects?
+What would you consider a sign of growth even if nobody else could see it?
