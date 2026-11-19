@@ -76,11 +76,11 @@
     },
     "10": {
       "title": "STRATEGY",
-      "words": 361,
+      "words": 2022,
       "status": "drafted",
       "review_status": "editorial review recorded; founder review pending",
       "pdf": "exports/chapters/law-10-strategy.pdf",
-      "commit": "63ca656b649bf821b8c04fc4d81a4c4c742256eb"
+      "commit": "b3e5f3eda3c0e62c905c4be482d8784d211e50d5"
     },
     "11": {
       "title": "TIME",
