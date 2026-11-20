@@ -14,7 +14,7 @@ EXPORT = ROOT / "exports/complete-book/The_14_Laws_to_Groove_Illustrated.docx"
 FONT = "DejaVu Serif"
 PURPLE = RGBColor.from_string("592260")
 # Cached page numbers from the current Word layout. The PAGEREF fields can refresh after edits.
-WORD_CHAPTER_STARTS = (9, 18, 27, 36, 45, 54, 62, 74, 83, 92, 101, 110, 119, 128)
+WORD_CHAPTER_STARTS = (9, 17, 25, 33, 41, 49, 56, 67, 75, 83, 91, 98, 106, 114)
 
 
 def element(tag, **attributes):
@@ -89,18 +89,6 @@ def source(document, path, target=None, illustration=None, illustration_before=N
         image(document, illustration, 3.05)
 
 
-def writing_page(document, title):
-    heading = document.add_paragraph(title, style="Writing Page")
-    heading.paragraph_format.page_break_before = True
-    for _ in range(22):
-        paragraph = document.add_paragraph(style="Writing Line")
-        paragraph.add_run("\u00a0")
-        borders = element("pBdr")
-        borders.append(element("bottom", val="single", sz=3, space=0, color="B9ACBB"))
-        borders.append(element("between", val="single", sz=3, space=0, color="B9ACBB"))
-        paragraph._p.get_or_add_pPr().append(borders)
-
-
 def configure(document):
     section = document.sections[0]
     section.page_width = Inches(6)
@@ -124,11 +112,6 @@ def configure(document):
         heading.font.color.rgb = PURPLE
         heading.paragraph_format.space_after = Pt(6)
     styles = document.styles
-    title = styles.add_style("Writing Page", normal.type)
-    title.base_style = normal
-    title.font.bold = True
-    title.font.size = Pt(16)
-    title.paragraph_format.space_after = Pt(12)
     front = styles.add_style("Front Text", normal.type)
     front.base_style = normal
     front.font.size = Pt(10)
@@ -136,12 +119,6 @@ def configure(document):
     front.paragraph_format.left_indent = Inches(-0.18)
     front.paragraph_format.right_indent = Inches(-0.18)
     front.paragraph_format.space_after = Pt(1)
-    line = styles.add_style("Writing Line", normal.type)
-    line.base_style = normal
-    line.paragraph_format.line_spacing = Pt(18)
-    line.paragraph_format.space_after = Pt(0)
-    line.paragraph_format.widow_control = False
-
     header = section.header.paragraphs[0]
     header.alignment = WD_ALIGN_PARAGRAPH.CENTER
     label = header.add_run("THE 14 LAWS TO GROOVE")
@@ -168,7 +145,7 @@ def export():
     contents_link(document, "Introduction", "Introduction", 4)
     for n, (title, start) in enumerate(zip(TITLES, WORD_CHAPTER_STARTS, strict=True), 1):
         contents_link(document, f"Law{n:02}", f"LAW {n:02} — {title}", start)
-    contents_link(document, "Conclusion", "Conclusion", 137)
+    contents_link(document, "Conclusion", "Conclusion", 122)
     source(document, front / "introduction.md", target=("Introduction", 0))
 
     for n in range(1, 15):
@@ -177,11 +154,8 @@ def export():
         before = {1: "### Examine the Habit Before You Explain It", 6: "### Make the New Standard Easy to Recognize"}
         source(document, chapter, target=(f"Law{n:02}", n), illustration=sketch,
                illustration_before=before.get(n))
-        writing_page(document, f"Law {n:02} Reflection")
 
     source(document, ROOT / "book/back-matter/conclusion.md", target=("Conclusion", 15))
-    for _ in range(20):
-        writing_page(document, "Journal")
     document.save(EXPORT)
 
 
