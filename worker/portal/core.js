@@ -121,15 +121,36 @@ const BUSINESS_FINANCE_SCHEMA = [
 `CREATE INDEX IF NOT EXISTS business_finance_business ON business_finance_entries(business_id, entry_date)`
 ];
 const GROOVE_READS_FINANCE = "INSERT OR IGNORE INTO finance_businesses (id,name) VALUES ('reads','Groove Reads')";
+const SUPPORT_SCHEMA = [
+`CREATE TABLE IF NOT EXISTS portal_support_threads (
+  id TEXT PRIMARY KEY, uid TEXT NOT NULL, subject TEXT NOT NULL, updated TEXT NOT NULL
+)`,
+`CREATE INDEX IF NOT EXISTS portal_support_threads_uid ON portal_support_threads(uid, updated)`,
+`CREATE TABLE IF NOT EXISTS portal_support_replies (
+  seq INTEGER PRIMARY KEY AUTOINCREMENT,
+  thread_id TEXT NOT NULL REFERENCES portal_support_threads(id),
+  author TEXT NOT NULL CHECK(author IN ('customer','team')),
+  body TEXT NOT NULL, created TEXT NOT NULL
+)`,
+`CREATE INDEX IF NOT EXISTS portal_support_replies_thread ON portal_support_replies(thread_id, seq)`,
+`INSERT OR IGNORE INTO portal_support_threads (id,uid,subject,updated)
+SELECT 'legacy-' || id, actor, COALESCE(NULLIF(json_extract(data,'$.subject'), ''), 'Message from the portal'), at
+FROM audit WHERE action='support_message' AND actor <> '' AND json_valid(data)`,
+`INSERT INTO portal_support_replies (thread_id,author,body,created)
+SELECT t.id,'customer',COALESCE(json_extract(a.data,'$.message'), ''),a.at
+FROM audit a JOIN portal_support_threads t ON t.id='legacy-' || a.id
+WHERE a.action='support_message' AND json_valid(a.data)
+AND NOT EXISTS (SELECT 1 FROM portal_support_replies r WHERE r.thread_id=t.id)`
+];
 let READY = null;
 export async function db(env) {
   if (!env.PORTAL_DB) throw Object.assign(new Error("The portal database (D1 binding PORTAL_DB) isn't connected yet."), { status: 503 });
   if (!READY) READY = (async () => {
     const D = env.PORTAL_DB;
     const current = await D.prepare("SELECT MAX(v) AS v FROM schema_version").first().catch(() => null);
-    if (current?.v >= 7) return;
+    if (current?.v >= 8) return;
     const schema = current?.v >= 1 ? [] : SCHEMA;
-    await D.batch([...schema, ...(current?.v >= 2 ? [] : [MANUAL_HOST_PAYMENTS]), ...(current?.v >= 3 ? [] : SPECIAL_INVITES_SCHEMA), ...(current?.v >= 4 ? [] : PROFILE_SCHEMA), ...(current?.v >= 5 ? [] : [BUYER_PROCESSING_SCHEMA]), ...(current?.v >= 6 ? [] : BUSINESS_FINANCE_SCHEMA), GROOVE_READS_FINANCE, "INSERT INTO schema_version (v) SELECT 7 WHERE NOT EXISTS (SELECT 1 FROM schema_version WHERE v >= 7)"].map(sql => D.prepare(sql)));
+    await D.batch([...schema, ...(current?.v >= 2 ? [] : [MANUAL_HOST_PAYMENTS]), ...(current?.v >= 3 ? [] : SPECIAL_INVITES_SCHEMA), ...(current?.v >= 4 ? [] : PROFILE_SCHEMA), ...(current?.v >= 5 ? [] : [BUYER_PROCESSING_SCHEMA]), ...(current?.v >= 6 ? [] : BUSINESS_FINANCE_SCHEMA), ...(current?.v >= 7 ? [] : [GROOVE_READS_FINANCE]), ...SUPPORT_SCHEMA, "INSERT INTO schema_version (v) SELECT 8 WHERE NOT EXISTS (SELECT 1 FROM schema_version WHERE v >= 8)"].map(sql => D.prepare(sql)));
   })().catch(e => { READY = null; throw e });
   await READY; return env.PORTAL_DB;
 }

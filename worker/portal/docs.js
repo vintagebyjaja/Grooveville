@@ -36,7 +36,13 @@ export async function docsApi(C) {
   if (p === "/api/p/docs/mine") return J({ docs: await all(D, "SELECT d.id, d.title, d.status, d.division, d.sent_at, d.completed_at, s.status AS my_status, s.role FROM doc_signers s JOIN documents d ON d.id = s.doc_id WHERE s.uid = ? AND d.status != 'draft' ORDER BY d.sent_at DESC", u.uid) });
   if (p === "/api/p/doc" && req.method === "GET") {
     const d = await one(D, "SELECT * FROM documents WHERE id = ?", url.searchParams.get("id") || ""); if (!d) return J({ error: "Not found" }, 404);
-    const me = await mySigner(D, u, d.id); if (!me && !u.admin) return J({ error: "You don't have access to this document" }, 403); if (d.status === "draft" && !u.admin) return J({ error: "Not available" }, 403);
+    if (d.status === "draft" && !u.admin) return J({ error: "Not available" }, 403);
+    const me = await mySigner(D, u, d.id);
+    if (!me && !u.admin) {
+      const pending = !u.email_verified && u.email && await one(D, "SELECT id FROM doc_signers WHERE doc_id = ? AND uid IS NULL AND lower(email) = lower(?)", d.id, u.email);
+      if (pending) return J({ error: "Verify your email address to open this document", code: "verify" }, 403);
+      return J({ error: "You don't have access to this document" }, 403);
+    }
     if (me) { const last = await one(D, "SELECT at FROM doc_events WHERE doc_id = ? AND actor = ? AND event = 'viewed' ORDER BY id DESC LIMIT 1", d.id, u.uid); if (!last || Date.now() - Date.parse(last.at) > 36e5) await ev(D, C, d.id, u.uid, "viewed", { signer: me.id }) }
     const pr = await one(D, "SELECT first, middle, last, name_verified, esign_consent_at, esign_version FROM profiles WHERE uid = ?", u.uid);
     const blocked = me ? (await one(D, "SELECT COUNT(*) AS n FROM doc_signers WHERE doc_id = ? AND ord < ? AND status != 'signed'", d.id, me.ord)).n : 0;

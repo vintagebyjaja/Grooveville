@@ -1,6 +1,7 @@
 /* /api/p/* : Grooveville Portals router. Rentals, Entertainment and Administration share this backend,
    but every handler checks who is asking on the server: customers only ever see their own records. */
-import { J, db, who, settings, pj, one, all, run, now, rid, ipOf, uaOf, signLink, checkLink, FILE_RE, stripeMode, stripeVerify, sha256, clean, limited, audit, notify } from "./core.js";
+import { J, db, who, settings, pj, one, all, run, now, rid, ipOf, uaOf, signLink, checkLink, FILE_RE, stripeMode, stripeVerify, sha256, clean, limited, audit } from "./core.js";
+import { supportApi } from "./support.js";
 import { rentalsApi, rentalsCron } from "./rentals.js";
 import { docsCron } from "./docs.js";
 import { docsApi } from "./docs.js";
@@ -99,14 +100,8 @@ export async function portalApi(req, env, ctx, h) {
       await run(D, "UPDATE profiles SET esign_consent_at = ?, esign_version = ? WHERE uid = ?", now(), String(b.version || "1"), u.uid); await audit(D, u.uid, "esign_disclosure_accepted", "profile", u.uid, { version: b.version || "1", ip: C.ip, ua: C.ua }); return J({ ok: true });
     }
     if (p === "/api/p/me/esign-withdraw" && req.method === "POST") { if (!u) return J({ error: "Sign in" }, 401); await run(D, "UPDATE profiles SET esign_consent_at = NULL WHERE uid = ?", u.uid); await audit(D, u.uid, "esign_consent_withdrawn", "profile", u.uid, { ip: C.ip }); return J({ ok: true }) }
+    if (p === "/api/p/support" || p === "/api/p/admin/support") return await supportApi(C);
     /* document verification (anyone): does this PDF match a completed Grooveville record? */
-    if (p === "/api/p/support" && req.method === "POST") {
-      if (!u) return J({ error: "Sign in first" }, 401); if (await limited(D, "sup:" + u.uid, 6, 3600)) return J({ error: "Too many messages. Try again later." }, 429);
-      const msg = clean(b.message, 3000), subj = clean(b.subject, 120) || "Message from the portal"; if (!msg) return J({ error: "Write a message first" }, 400);
-      await audit(D, u.uid, "support_message", "profile", u.uid, { subject: subj, message: msg });
-      for (const a of new Set((await all(D, "SELECT DISTINCT uid FROM roles WHERE role = 'admin'")).map(x => x.uid).concat(S.founder_uid ? [S.founder_uid] : []))) await notify(env, D, a, "support", subj, msg.slice(0, 300) + " (" + (u.email || u.uid) + ")", "#team-portals/customers");
-      return J({ ok: true });
-    }
     if (p === "/api/p/verify" && req.method === "POST") {
       if (await limited(D, "vf:" + C.ip, 30, 3600)) return J({ error: "Too many checks" }, 429);
       const hsh = String(b.sha256 || "").toLowerCase(); if (!/^[0-9a-f]{64}$/.test(hsh)) return J({ error: "Bad hash" }, 400);
