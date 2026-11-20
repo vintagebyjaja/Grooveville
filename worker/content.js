@@ -23,7 +23,7 @@ export const PRICE = {
   image: { low: { "1024x1024": 0.011, "1024x1536": 0.016, "1536x1024": 0.016 }, medium: { "1024x1024": 0.042, "1024x1536": 0.063, "1536x1024": 0.063 }, high: { "1024x1024": 0.167, "1024x1536": 0.25, "1536x1024": 0.25 } },
   search: 0.01                                                                                                                                          // per web search call
 };
-const SAFE_KEY = /^content\/(brand|tmp|keep|final|upload)\/[A-Za-z0-9._\/-]{3,180}$/;
+const SAFE_KEY = /^content\/(brand|tmp|keep|final|upload|refs)\/[A-Za-z0-9._\/-]{3,180}$/;
 const IMG_TYPES = /^image\/(png|jpeg|webp|svg\+xml)$/;
 const month = () => new Date().toISOString().slice(0, 7);
 export async function readJson(env, key, dflt) { try { const o = await env.STUDIO_BUCKET.get(key); return o ? await o.json() : dflt } catch (e) { return dflt } }
@@ -37,12 +37,11 @@ export async function budgetOk(env, est) { const cfg = await readJson(env, "cont
 function textCost(env, usage, searches, model) { const p = PRICE.text[model || TEXT_MODEL(env)] || PRICE.text["gpt-5-mini"]; return ((usage && usage.input_tokens) || 0) / 1e6 * p[0] + ((usage && usage.output_tokens) || 0) / 1e6 * p[1] + (searches || 0) * PRICE.search }
 
 /* ---------- OpenAI ---------- */
-export async function openaiJSON(env, sys, user, opts, fetcher) {
+/* one Responses API call, trying the next model if this account can't use the configured one */
+export async function respond(env, body, fetcher) {
   let r, j, used = "";
   for (const model of TEXT_MODELS(env)) {
-    const body = { model, input: [{ role: "system", content: sys + " Answer in JSON." }, { role: "user", content: user }], text: { format: { type: "json_object" } } };
-    if (opts && opts.search) { body.tools = [{ type: "web_search" }]; body.tool_choice = "auto" }
-    r = await (fetcher || fetch)("https://api.openai.com/v1/responses", { method: "POST", headers: { "content-type": "application/json", authorization: "Bearer " + env.OPENAI_API_KEY }, body: JSON.stringify(body) });
+    r = await (fetcher || fetch)("https://api.openai.com/v1/responses", { method: "POST", headers: { "content-type": "application/json", authorization: "Bearer " + env.OPENAI_API_KEY }, body: JSON.stringify(Object.assign({ model }, body)) });
     j = await r.json().catch(() => ({})); used = model;
     if (r.ok || !modelProblem(r.status, j)) break;
   }
@@ -53,9 +52,93 @@ export async function openaiJSON(env, sys, user, opts, fetcher) {
     if (it.type === "message") for (const c of it.content || []) if (c.type === "output_text") { text += c.text || ""; for (const a of c.annotations || []) if (a.type === "url_citation" && a.url) cites.push({ url: a.url, title: a.title || "" }) }
   }
   if (!text && typeof j.output_text === "string") text = j.output_text;
-  let data; try { data = JSON.parse(text) } catch (e) { const m = /\{[\s\S]*\}/.exec(text); try { data = m ? JSON.parse(m[0]) : null } catch (e2) { data = null } }
-  if (!data) throw new Error("The AI answer couldn't be read. Try again.");
-  return { data, cites, cost: textCost(env, j.usage, searches, used), usage: j.usage || {}, model: used };
+  return { text, cites, searches, usage: j.usage || {}, model: used, cost: textCost(env, j.usage, searches, used) };
+}
+function parseJSON(text) { try { return JSON.parse(text) } catch (e) { const m = /\{[\s\S]*\}/.exec(text || ""); try { return m ? JSON.parse(m[0]) : null } catch (e2) { return null } } }
+/* Web search can't be combined with JSON mode, so searching is two steps:
+   1) research with web search, answered as plain-text notes that keep every source URL and date;
+   2) a separate JSON-mode request turns only those notes into the requested structure (no new facts allowed). */
+export async function openaiJSON(env, sys, user, opts, fetcher) {
+  if (opts && opts.search) {
+    const a = await respond(env, { input: [{ role: "system", content: sys + " Answer as plain-text research notes, one item per paragraph. For every item give the exact source page URL and that page's publication date. Do not include anything you could not find a source for." }, { role: "user", content: user }], tools: [{ type: "web_search" }], tool_choice: "auto" }, fetcher);
+    if (!a.text.trim()) throw new Error("The web search came back empty. Try again later.");
+    const src = a.cites.map(c => "- " + c.url + (c.title ? " (" + c.title + ")" : "")).join("\n") || "(none)";
+    const b = await respond(env, { input: [{ role: "system", content: "You convert research notes into JSON exactly in the requested shape. Use only facts, URLs and dates that appear in the notes or the source list. Never add items, dates or numbers that are not there. Answer in JSON." }, { role: "user", content: "Requested output (follow its JSON shape):\n" + user + "\n\nResearch notes:\n" + a.text.slice(0, 60000) + "\n\nSource pages the search actually returned:\n" + src }], text: { format: { type: "json_object" } } }, fetcher);
+    const data = parseJSON(b.text); if (!data) throw new Error("The research results couldn't be read. Try again.");
+    return { data, cites: a.cites, cost: a.cost + b.cost, usage: { input_tokens: (a.usage.input_tokens || 0) + (b.usage.input_tokens || 0), output_tokens: (a.usage.output_tokens || 0) + (b.usage.output_tokens || 0) }, model: b.model, notes: a.text };
+  }
+  const r = await respond(env, { input: [{ role: "system", content: sys + " Answer in JSON." }, { role: "user", content: user }], text: { format: { type: "json_object" } } }, fetcher);
+  const data = parseJSON(r.text); if (!data) throw new Error("The AI answer couldn't be read. Try again.");
+  return { data, cites: r.cites, cost: r.cost, usage: r.usage, model: r.model };
+}
+/* ---------- poster artwork: one shared pipeline for Generate Post and Autopilot ----------
+   The image model paints the photograph and (optionally) the stylized title lettering. A vision check then reads the
+   picture back: if the title isn't spelled exactly, or any other text/logo appeared, it tries once more and finally
+   falls back to a clean photo with the title set in real type. Logos, dates, times and venues are never painted. */
+export const LETTER_STYLES = { trending: "bold glowing peach-gold metallic lettering", halloween: "molten fiery orange horror lettering with subtle drips and embers", homecoming: "polished gold metallic varsity lettering with an elegant script accent", voting: "bold patriotic brush lettering in cream and red", concert: "huge gold stage-lit lettering with lens flare", newmusic: "electric neon-blue chrome lettering", party: "hot-pink neon tube lettering with glow", brunch: "warm retro lettering in peach and coral", birthday: "gold balloon-foil lettering with sparkle", motivation: "bold carved cream lettering with warm rim light", holiday: "elegant festive gold and red lettering" };
+const REF_MODES = { close: "Follow the reference images closely for typography style, lighting, color grading, composition and visual treatment, but create completely new, original artwork: a new scene, new people and a new title. Never copy the reference's text, logos, people or exact layout.",
+  inspired: "Use the reference images as inspiration for the overall aesthetic, mood, lighting and production quality, with creative freedom in the composition. Create new, original artwork; never copy the reference's text, logos, people or exact layout.",
+  remix: "Blend the visual languages of the reference images into a fresh new direction that still feels on-brand. Create new, original artwork; never copy any reference's text, logos, people or exact layout." };
+export function artPrompt(o, lettered) {
+  const L = (o.letter && o.letter.lines || []).map(s => String(s).toUpperCase().trim()).filter(Boolean).slice(0, 3), sc = o.letter && String(o.letter.script || "").trim();
+  const refs = (o.refs || []).length;
+  return (refs ? "Create a NEW promotional poster artwork. " + (REF_MODES[o.refMode] || REF_MODES.inspired) + (refs > 1 ? " Reference image 1 has the highest priority; later references matter less." : "") + (o.variant ? " This is variation " + o.variant + ": use a clearly different composition, camera angle and scene from the other variations." : "") + " " : "") +
+    (o.styleText ? "Visual style to follow: " + String(o.styleText).slice(0, 700) + ". " : "") +
+    "Photorealistic, cinematic promotional poster artwork for a premium social media flyer. Scene: " + String(o.scene || "").slice(0, 1200) +
+    (o.visual ? " Visual direction for this brand: " + String(o.visual).slice(0, 400) + "." : "") + (o.palette ? " Color palette and lighting accents: " + String(o.palette).slice(0, 200) + "." : "") +
+    " Dramatic lighting, rich depth of field, high-end advertising photography, sharp focus, real people and places look natural." +
+    (lettered && L.length ? " Render ONLY this title, spelled exactly, letter for letter: \"" + L.join(" / ") + "\"" + (sc ? " with the word \"" + sc + "\" in a flowing script beneath it" : "") +
+      ", as large premium 3D " + (o.letter.style || "bold cinematic") + ", centered horizontally between 25% and 60% of the image height, integrated with the scene. The top 15% of the image must stay dark and empty (a logo goes there). The bottom 35% must be darker, calm and completely free of text (event details go there). No other words, letters, numbers, signs, logos, watermarks or brand names anywhere."
+      : " Leave the top 15% and the bottom 35% darker and calm for text overlays. Absolutely no text, letters, numbers, signs, logos, watermarks, brand names or readable screens anywhere.");
+}
+async function checkArt(env, b64, o, lettered, fetcher) {
+  const want = (o.letter && o.letter.lines || []).map(s => String(s).toUpperCase().trim()).filter(Boolean).join(" ") + (lettered && o.letter.script ? " " + o.letter.script : "");
+  const r = await respond(env, { input: [{ role: "user", content: [{ type: "input_text", text: "You are a strict print proofreader. Look at this poster artwork. " + (lettered ? "The ONLY text allowed is the title \"" + want + "\" (case and line breaks don't matter)." : "No text of any kind is allowed.") + " Answer in JSON: {\"title_read\": exactly what the title says or \"\", \"title_exact\": true only if every letter matches, \"other_text\": true if any other letters/numbers/signs are visible, \"logo\": true if any logo or brand mark is visible, \"problems\": [short notes about distorted faces, hands or obvious artifacts]}." }, { type: "input_image", image_url: "data:image/" + (o.format === "jpeg" ? "jpeg" : "png") + ";base64," + b64, detail: "low" }] }], text: { format: { type: "json_object" } } }, fetcher);
+  let j = {}; try { j = JSON.parse(r.text) } catch (e) { }
+  const ok = (lettered ? !!j.title_exact : true) && !j.other_text && !j.logo;
+  return { ok, read: String(j.title_read || ""), otherText: !!j.other_text, logo: !!j.logo, problems: (j.problems || []).map(String).slice(0, 5), cost: r.cost };
+}
+export async function paintArt(env, o, fetcher) {
+  const size = ["1024x1024", "1024x1536", "1536x1024"].includes(o.size) ? o.size : "1024x1536", q = ["low", "medium", "high"].includes(o.quality) ? o.quality : "medium";
+  const wantLetters = !!(o.letter && (o.letter.lines || []).filter(Boolean).length && o.lettering !== false), log = [];
+  let cost = 0, last = null, usedRefs = false; const refBlobs = [], missing = [];
+  for (const k of (o.refs || []).slice(0, 6)) { if (!/^content\/(refs|final|keep|brand)\/[A-Za-z0-9._\/-]{3,180}$/.test(String(k)) || String(k).includes("..")) continue; const ob = await env.STUDIO_BUCKET.get(k); if (!ob) { missing.push(k); continue }
+    const ct = (ob.httpMetadata && ob.httpMetadata.contentType) || (/\.png$/.test(k) ? "image/png" : "image/jpeg"); if (!/^image\/(png|jpeg|webp)$/.test(ct)) { missing.push(k); continue } refBlobs.push({ blob: new Blob([await ob.arrayBuffer()], { type: ct }), ext: ct.split("/")[1] === "jpeg" ? "jpg" : ct.split("/")[1], key: k }) }
+  const attempts = wantLetters ? [true, true, false] : [false, false];
+  for (let i = 0; i < attempts.length; i++) {
+    const lettered = attempts[i]; if (i && !(await budgetOk(env, PRICE.image[q][size])).ok) break;
+    const prompt = artPrompt(Object.assign({}, o, { refs: refBlobs.length ? refBlobs : [] }), lettered); let r, j, used = "";
+    for (const model of IMAGE_MODELS(env).filter(m => !/^dall-e/.test(m))) {
+      const fmt = o.format === "jpeg" ? { output_format: "jpeg", output_compression: 88 } : {};
+      if (refBlobs.length && /^gpt-image/.test(model)) { const fd = new FormData(); fd.append("model", model); fd.append("prompt", prompt); fd.append("size", size); fd.append("quality", q); fd.append("n", "1"); if (/^gpt-image-1$/.test(model)) fd.append("input_fidelity", o.refMode === "close" ? "high" : "low"); if (fmt.output_format) { fd.append("output_format", "jpeg"); fd.append("output_compression", "88") }
+        refBlobs.forEach((x, k) => fd.append("image[]", x.blob, "ref" + (k + 1) + "." + x.ext));
+        r = await (fetcher || fetch)("https://api.openai.com/v1/images/edits", { method: "POST", headers: { authorization: "Bearer " + env.OPENAI_API_KEY }, body: fd }); usedRefs = true }
+      else r = await (fetcher || fetch)("https://api.openai.com/v1/images/generations", { method: "POST", headers: { "content-type": "application/json", authorization: "Bearer " + env.OPENAI_API_KEY }, body: JSON.stringify(Object.assign({ model, prompt, size, quality: q, n: 1 }, fmt)) });
+      j = await r.json().catch(() => ({})); used = model; if (r.ok || !modelProblem(r.status, j)) break;
+    }
+    if (!r.ok) throw Object.assign(new Error(openaiErr(r.status, j)), { status: r.status });
+    const b64 = j.data && j.data[0] && j.data[0].b64_json; if (!b64) throw new Error("The image model returned no picture");
+    cost += (/mini/.test(used) ? PRICE.image[q][size] * .3 : PRICE.image[q][size]) + (usedRefs ? refBlobs.length * (o.refMode === "close" ? .03 : .01) : 0);
+    let qc = { ok: true, skipped: true }; if (o.check !== false) { try { qc = await checkArt(env, b64, o, lettered, fetcher); cost += qc.cost } catch (e) { qc = { ok: true, skipped: true, note: "Proofread unavailable: " + e.message } } }
+    log.push({ lettered, ok: qc.ok, read: qc.read || "", otherText: !!qc.otherText, logo: !!qc.logo });
+    last = { b64, lettered, model: used, qc };
+    if (qc.ok) break;
+  }
+  if (!last) throw new Error("Monthly AI budget reached");
+  const key = "content/tmp/" + (o.id ? String(o.id).replace(/[^A-Za-z0-9_-]/g, "").slice(0, 60) + "-" : "") + Date.now().toString(36) + "-" + crypto.randomUUID().slice(0, 6) + (o.format === "jpeg" ? ".jpg" : "") + ".b64";
+  await env.STUDIO_BUCKET.put(key, last.b64, { httpMetadata: { contentType: "text/plain" }, customMetadata: { by: o.by || "", at: new Date().toISOString() } });
+  return { key, cost: Math.round(cost * 10000) / 10000, model: last.model, lettered: last.lettered && last.qc.ok, qc: last.qc, attempts: log, size, quality: q, refsUsed: usedRefs ? refBlobs.map(x => x.key) : [], refsMissing: missing };
+}
+/* display fonts for posters (SIL Open Font License / Apache, from Google Fonts' public repository), cached in R2 */
+export const POSTER_FONTS = { anton: "ofl/anton/Anton-Regular.ttf", bebas: "ofl/bebasneue/BebasNeue-Regular.ttf", kaushan: "ofl/kaushanscript/KaushanScript-Regular.ttf", marker: "apache/permanentmarker/PermanentMarker-Regular.ttf", creepster: "ofl/creepster/Creepster-Regular.ttf", greatvibes: "ofl/greatvibes/GreatVibes-Regular.ttf", abril: "ofl/abrilfatface/AbrilFatface-Regular.ttf", archivo: "ofl/archivoblack/ArchivoBlack-Regular.ttf", pacifico: "ofl/pacifico/Pacifico-Regular.ttf", alfa: "ofl/alfaslabone/AlfaSlabOne-Regular.ttf" };
+export async function posterFont(env, id, fetcher) {
+  const path = POSTER_FONTS[id]; if (!path) return null; const key = "content/fonts/" + id + ".ttf";
+  const o = await env.STUDIO_BUCKET.get(key); if (o) return new Uint8Array(await o.arrayBuffer());
+  for (const base of ["https://raw.githubusercontent.com/google/fonts/main/", "https://cdn.jsdelivr.net/gh/google/fonts@main/", "https://github.com/google/fonts/raw/main/"]) {
+    try { const r = await (fetcher || fetch)(base + path); if (!r.ok) continue; const u = new Uint8Array(await r.arrayBuffer()); const sig = (u[0] << 24 | u[1] << 16 | u[2] << 8 | u[3]) >>> 0; if (u.length < 5000 || (sig !== 0x00010000 && sig !== 0x74727565)) continue;
+      await env.STUDIO_BUCKET.put(key, u, { httpMetadata: { contentType: "font/ttf" } }); return u } catch (e) { }
+  }
+  return null;
 }
 export function openaiErr(status, j) {
   const m = (j && j.error && (j.error.message || j.error.code)) || "";
@@ -77,17 +160,23 @@ export function brandBrief(b) {
     b.location ? "This post's location: " + [b.location.name, b.location.address, b.location.website].filter(Boolean).join(", ") : "", b.website ? "Website: " + b.website : "", (b.hashtags || []).length ? "Default hashtags: " + b.hashtags.join(" ") : "",
     (b.ctas || []).length ? "Preferred calls to action: " + b.ctas.join(" | ") : "", b.restrictions ? "Never do: " + b.restrictions : "", b.guidelines ? "Guidelines: " + b.guidelines : "",
     ...(b.intel ? [b.intel.purpose ? "Purpose: " + b.intel.purpose : "", b.intel.industry ? "Industry: " + b.intel.industry : "", (b.intel.markets || []).length ? "Markets: " + b.intel.markets.join(", ") : "", b.intel.personality ? "Personality: " + b.intel.personality : "",
-      (b.intel.products || []).length ? "Products, services and features (only these exist): " + b.intel.products.join("; ") : "", (b.intel.avoid || []).length ? "Topics to avoid completely: " + b.intel.avoid.join(", ") : "", b.intel.rules ? "Brand rules: " + b.intel.rules : ""] : [])].filter(Boolean).join("\n");
+      (b.intel.products || []).length ? "Products, services and features (only these exist): " + b.intel.products.join("; ") : "", (b.intel.avoid || []).length ? "Topics to avoid completely: " + b.intel.avoid.join(", ") : "", b.intel.rules ? "Brand rules: " + b.intel.rules : "", b.intel.visual ? "Visual direction for imagery: " + b.intel.visual : ""] : [])].filter(Boolean).join("\n");
 }
 const POST_SHAPE = `Each post object: {"angle": short label, "kicker": up to 3 short lines for the top-right corner joined with \\n (e.g. "REAL JOBS.\\nREAL PEOPLE."), "tagline": spaced-caps line under the logo like "FOOD • FRIENDS • PLANS • VIBES",
 "headline": array of 2-4 SHORT punchy lines (max 14 characters each, the last one is the accent line), "subline": 1-3 short lines in caps, "features": array of 3-5 {"icon": one of [${FEATURE_ICONS}], "title": max 22 chars, "text": max 40 chars},
 "cta": button text max 18 chars, "url": short web address to show, "caption": the social caption (no hashtags inside), "hashtags": array of 3-8, "variants": {"instagram","facebook","tiktok","youtube","linkedin","x"} platform-tuned captions (x under 260 chars),
-"imagePrompt": a vivid description of a BACKGROUND photo/illustration for the graphic (scene, lighting, mood, colors) with absolutely no text, letters, logos or brand names, "suggestedDate": YYYY-MM-DD or ""}`;
+"imagePrompt": a specific photorealistic, cinematic scene for the background that shows what this brand actually does (following its visual direction): subject, setting, lighting, mood, camera angle; absolutely no text, letters, logos or brand names, "suggestedDate": YYYY-MM-DD or ""}`;
+const POSTER_SHAPE = `Each post object: {"angle": short label for this concept, "title": array of 1-3 SHORT poster title lines (max 14 characters each, punchy, e.g. ["TRICK OR","TEMPTATIONS"]), "script": optional short accent word in script under the title (max 12 chars, e.g. "Weekend") or "",
+"kicker": host/venue line for the top ONLY if given in the brief, else "", "when": [] (dates are filled in from the planner; only add a time line like "9PM – 2AM" if the brief states it), "lineup": performers ONLY if named in the brief (joined with " | "), else "", "where": venue/address ONLY if given, else "", "details": one short extra line only from the brief (e.g. "21+", "Free before 11") or "",
+"cta": max 18 chars, "url": short web address (the brand's own), "caption": social caption (no hashtags inside), "hashtags": array of 3-8, "variants": {"instagram","facebook","tiktok","youtube","x"} platform-tuned captions (x under 260 chars),
+"imagePrompt": one vivid photorealistic, cinematic scene for the poster photo that fits the theme and the brand's visual direction (subjects, setting, wardrobe, lighting, color, camera); stylish Black American nightlife and culture where it fits the brand; no text, letters or logos, "palette": 2-3 color words or hex values for lighting accents, "titleStyle": 4-10 words describing premium lettering that fits (e.g. "molten orange horror lettering with embers")}`;
 const RULES = `Rules: write in the brand's voice. Use only facts given to you; never invent dates, prices, statistics, partners, quotes or announcements. If something isn't confirmed, keep it general ("coming soon"). Keep it fresh: don't repeat the avoided headlines. Return JSON only.`;
 
 export async function contentApi(req, env, ctx, h) {
   const { p, url, verifyIdToken, fsField } = h, fetcher = h.fetcher || fetch;
   if (!env.STUDIO_BUCKET) return J({ error: "The STUDIO_BUCKET R2 binding is missing" }, 503);
+  const fontM = /^\/api\/content\/font\/([a-z]+)\.ttf$/.exec(p);
+  if (fontM && req.method === "GET") { const u = await posterFont(env, fontM[1], fetcher); if (!u) return J({ error: "Font unavailable" }, 404); return new Response(u, { headers: { "content-type": "font/ttf", "cache-control": "public, max-age=2592000", "access-control-allow-origin": "*" } }) }
   let user;
   try { user = await verifyIdToken((req.headers.get("authorization") || "").replace(/^Bearer\s+/i, ""), env.FIREBASE_PROJECT_ID) } catch (e) { return J({ error: "Sign in again" }, 401) }
   const role = String(await fsField(env, "access/" + user.uid, user, "role", fetcher) || "").toLowerCase().trim();
@@ -122,7 +211,7 @@ export async function contentApi(req, env, ctx, h) {
   }
   if (p === "/api/content/delete" && req.method === "POST") {
     const keys = (Array.isArray(b.keys) ? b.keys : []).filter(k => SAFE_KEY.test(k) && !k.includes("..")).slice(0, 200);
-    let n = 0; for (const k of keys) { if (k.startsWith("content/brand/") && !(founder && b.brandKit === true)) continue; await env.STUDIO_BUCKET.delete(k); n++ }
+    let n = 0; for (const k of keys) { if (k.startsWith("content/brand/") && !(founder && b.brandKit === true)) continue; if (k.startsWith("content/refs/") && !founder) continue; await env.STUDIO_BUCKET.delete(k); n++ }
     return J({ ok: true, deleted: n });
   }
   if (p === "/api/content/storage") {
@@ -218,11 +307,35 @@ export async function contentApi(req, env, ctx, h) {
     await charge(env, "image", cost, by, used + " " + size + " " + q);
     return J({ key, cost, size, quality: q, model: used });
   }
+  if (p === "/api/content/style/analyze" && req.method === "POST") {
+    const na = needAI(); if (na) return na; const bud = await budgetOk(env, 0.02); if (!bud.ok) return J({ error: "Monthly AI budget reached." }, 402);
+    const imgs = (Array.isArray(b.images) ? b.images : []).filter(u => /^data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+\/=]+$/.test(String(u)) && u.length < 400000).slice(0, 8); if (!imgs.length) return J({ error: "Add at least one reference image" }, 400);
+    try { const r = await respond(env, { input: [{ role: "user", content: [{ type: "input_text", text: "You are a senior art director. Study these " + imgs.length + " reference graphics" + (b.brand ? " for the brand " + String(b.brand).slice(0, 80) : "") + (b.name ? " (style collection: " + String(b.name).slice(0, 80) + ")" : "") + ". Describe only their shared VISUAL LANGUAGE so a designer can make new, original graphics in the same direction (never describe the specific text, people or logos). Answer in JSON: {\"profile\": 1-2 sentences summarizing the visual style, \"palette\": [3-6 hex colors], \"typography\": string, \"hierarchy\": string, \"composition\": string, \"lighting\": string, \"photography\": string, \"subject\": string (subject placement), \"depth\": string, \"background\": string, \"logo\": string (logo positioning), \"effects\": string (effects and textures), \"aesthetic\": string, \"tags\": [3-8 short lowercase tags], \"category\": one of [nightlife, live music, new music, homecoming, holiday, brunch, birthday, civic, motivation, food, travel, tech, books, general]}." }].concat(imgs.map(u => ({ type: "input_image", image_url: u, detail: "low" }))) }], text: { format: { type: "json_object" } } }, fetcher);
+      let a = {}; try { a = JSON.parse(r.text) } catch (e) { } await charge(env, "style analysis", r.cost, by, String(b.name || "").slice(0, 60));
+      return J({ analysis: { profile: String(a.profile || "").slice(0, 600), palette: (a.palette || []).map(String).filter(c => /^#?[0-9a-f]{6}$/i.test(c)).slice(0, 6), typography: String(a.typography || ""), hierarchy: String(a.hierarchy || ""), composition: String(a.composition || ""), lighting: String(a.lighting || ""), photography: String(a.photography || ""), subject: String(a.subject || ""), depth: String(a.depth || ""), background: String(a.background || ""), logo: String(a.logo || ""), effects: String(a.effects || ""), aesthetic: String(a.aesthetic || ""), tags: (a.tags || []).map(t => String(t).toLowerCase().slice(0, 24)).slice(0, 8), category: String(a.category || "general") }, cost: r.cost }) }
+    catch (e) { return J({ error: e.message }, 502) }
+  }
+  if (p === "/api/content/art" && req.method === "POST") {
+    const na = needAI(); if (na) return na;
+    const size = ["1024x1024", "1024x1536", "1536x1024"].includes(b.size) ? b.size : "1024x1536", cfg = await readJson(env, "content/config.json", {}), q = ["low", "medium", "high"].includes(b.quality) ? b.quality : (cfg.imageQuality || "medium");
+    const bud = await budgetOk(env, PRICE.image[q][size] + 0.01); if (!bud.ok) return J({ error: "Monthly AI budget reached ($" + bud.total.toFixed(2) + " of $" + bud.limit + "). Raise it in Content Studio › Settings." }, 402);
+    try { const r = await paintArt(env, { scene: b.scene, visual: b.visual, palette: b.palette, size, quality: q, letter: b.letter, lettering: b.lettering !== false, by, id: b.id, refs: Array.isArray(b.refs) ? b.refs.slice(0, 6) : [], refMode: ["close", "inspired", "remix"].includes(b.refMode) ? b.refMode : "inspired", styleText: String(b.styleText || "").slice(0, 700), variant: Number(b.variant) || 0 }, fetcher); await charge(env, "poster art", r.cost, by, r.model + " " + size + " " + q + (r.lettered ? " lettered" : "")); return J(r) }
+    catch (e) { return J({ error: e.message }, e.status === 429 ? 429 : 502) }
+  }
   if (p.startsWith("/api/content/autopilot/")) return autopilotApi(req, env, ctx, { p, url, founder, by, b, fetcher });
   return J({ error: "Not found" }, 404);
 }
 export async function genPosts(env, b, fetcher) {
-  const n = Math.max(1, Math.min(4, Number(b.count) || 1));
+  const poster = b.layout === "poster", n = Math.max(1, Math.min(poster ? 10 : 4, Number(b.count) || 1));
+  if (poster) {
+    const r = await openaiJSON(env, "You are Grooveville's in-house creative agency making premium promotional flyers and social posts. " + RULES,
+      brandBrief(b.brand) + "\n\nContent type: " + (b.kind || "flyer") + "\nTopic / event: " + String(b.brief || "Evergreen brand post").slice(0, 1500) + (b.direction ? "\nStyle / vibe: " + String(b.direction).slice(0, 300) : "") +
+      (b.theme ? "\nTheme: " + String(b.theme).slice(0, 80) : "") + (b.holiday ? "\nHoliday to reference: " + String(b.holiday).slice(0, 80) : "") + (b.date ? "\nPlanned date: " + b.date : "") + "\nPlatforms: " + (b.platforms || ["instagram"]).join(", ") +
+      ((b.events || []).length ? "\nConfirmed upcoming events you may reference: " + JSON.stringify(b.events).slice(0, 1500) : "") + ((b.avoid || []).length ? "\nAvoid repeating these recent titles: " + b.avoid.slice(0, 40).join(" | ") : "") +
+      "\n\nWrite " + n + " clearly different concepts (different titles, scenes and angles). Return JSON {\"posts\":[...]}.\n" + POSTER_SHAPE, null, fetcher);
+    const posts = ((r.data && r.data.posts) || []).slice(0, n); if (!posts.length) throw new Error("The AI didn't return any concepts. Try again.");
+    return { posts, cost: r.cost };
+  }
   const r = await openaiJSON(env, "You are Grooveville's in-house creative agency writing branded social media posts and flyer copy. " + RULES,
     brandBrief(b.brand) + "\n\nBrief: " + String(b.brief || "Evergreen brand post").slice(0, 2000) + (b.direction ? "\nCreative direction: " + String(b.direction).slice(0, 500) : "") +
     "\nPlatforms: " + (b.platforms || ["instagram"]).join(", ") + "\nFormat: " + (b.format || "portrait") + (b.date ? "\nPlanned date: " + b.date : "") +

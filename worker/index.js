@@ -1,6 +1,7 @@
 import { musicApi, fsPublic } from "./music.js";
 import { siteApi } from "./site.js";
 import { guideApi } from "./guide.js";
+import { guideAccess, guidePath, privateGuideResponse } from "./guide-access.js";
 import { contentApi, contentCron } from "./content.js";
 import { autopilotQueue } from "./autopilot.js";
 import { portalApi, portalCron, portalShare } from "./portal/api.js";
@@ -258,7 +259,7 @@ async function api(req, env, ctx) {
   if (p.startsWith("/api/content/")) return contentApi(req, env, ctx, { p, url, verifyIdToken, fsField });
   if (p.startsWith("/api/gen/")) return genApi(req, env, ctx, { p, url, verifyIdToken });
   if (p.startsWith("/api/creative/") || p.startsWith("/api/reads/")) return creativeApi(req, env, ctx, { p, url, verifyIdToken });
-  if (p.startsWith("/api/guide/")) return guideApi(req, env, ctx, { p, url });
+
   if (p.startsWith("/api/site/")) return siteApi(req, env, ctx, { p, url, verifyIdToken, fsField });
   if (/^\/api\/(music|tv|songrate)\//.test(p)) return musicApi(req, env, ctx, { p, url, verifyIdToken, fsField, presignR2: r2Link, yt, isoDur });
   const SH = await getShows(env);
@@ -343,14 +344,28 @@ async function songShare(env, id, url) {
 export default {
   async fetch(req, env, ctx) {
     const url = new URL(req.url);
+    const guide = guidePath(url.pathname);
+    if (guide) {
+      const gate = await guideAccess(req, env, guide, { verifyIdToken, fsField });
+      if (gate) return gate;
+      try {
+        const response = guide.startsWith("/api/")
+          ? await guideApi(req, env, ctx, { p: guide, url })
+          : await env.ASSETS.fetch(req);
+        return env.GUIDE_PUBLIC === "true" ? response : privateGuideResponse(response);
+      } catch {
+        return privateGuideResponse(json({ error: "Guide unavailable" }, 503));
+      }
+    }
     const am = /^\/artist\/([a-z0-9-]{1,60})\/?$/.exec(url.pathname);
     if (am) return artistShare(env, am[1], url);
     const sm = /^\/song\/([A-Za-z0-9_-]{2,64})\/?$/.exec(url.pathname);
     if (sm) return songShare(env, sm[1], url);
     const pm = /^\/entertainment\/(events|hosts)\/([a-z0-9-]{1,80})\/?$/.exec(url.pathname);
     if (pm) return portalShare(req, env, pm[1] === "events" ? "e" : "h", pm[2]);
-    const PR = { "/rentals": "/#rentals", "/entertainment": "/#entertainment", "/account": "/#account", "/admin": "/#team-portals", "/host": "/#host", "/checkin": "/#checkin" };
-    const pr = PR[url.pathname.replace(/\/$/, "")]; if (pr) return Response.redirect(url.origin + pr, 302);
+    const PR = { "/rentals": "/#rentals", "/events": "/#events", "/entertainment": "/#entertainment", "/account": "/#account", "/admin": "/#team-portals", "/host": "/#host", "/checkin": "/#checkin" };
+    const pretty = url.pathname.replace(/\/$/, "");
+    if (Object.hasOwn(PR, pretty)) return Response.redirect(url.origin + PR[pretty] + url.search, 302);
     if (url.pathname.startsWith("/api/p/")) return portalApi(req, env, ctx, { verifyIdToken });
     if (url.pathname.startsWith("/api/")) {
       try { return await api(req, env, ctx) } catch (e) { return json({ error: "Server error" }, 500) }

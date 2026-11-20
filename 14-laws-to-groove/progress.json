@@ -1,0 +1,118 @@
+{
+  "title": "The 14 Laws to Groove",
+  "author": "Jabari Jaja",
+  "chapters": {
+    "01": {
+      "title": "REFLECTION",
+      "words": 1993,
+      "status": "drafted",
+      "review_status": "editorial review recorded; founder review pending",
+      "pdf": "exports/chapters/law-01-reflection.pdf",
+      "commit": "03fff01adfba0b4f1949c8b9ed3b6d52ed30ecf6"
+    },
+    "02": {
+      "title": "PHONE DOWN",
+      "words": 2101,
+      "status": "drafted",
+      "review_status": "editorial review recorded; founder review pending",
+      "pdf": "exports/chapters/law-02-phone-down.pdf",
+      "commit": "056e26acff9dad66452f5e5a86d4b442470a9f07"
+    },
+    "03": {
+      "title": "SCOUT",
+      "words": 1979,
+      "status": "drafted",
+      "review_status": "editorial review recorded; founder review pending",
+      "pdf": "exports/chapters/law-03-scout.pdf",
+      "commit": "71a1bbe4b5a4b3cefd40bb7fa51943404bd47ebc"
+    },
+    "04": {
+      "title": "BRANDING",
+      "words": 1987,
+      "status": "drafted",
+      "review_status": "editorial review recorded; founder review pending",
+      "pdf": "exports/chapters/law-04-branding.pdf",
+      "commit": "486ab839f7afbf4bfbca2556324aa121459efc2a"
+    },
+    "05": {
+      "title": "I SAY = I WILL",
+      "words": 2078,
+      "status": "drafted",
+      "review_status": "editorial review recorded; founder review pending",
+      "pdf": "exports/chapters/law-05-i-say-i-will.pdf",
+      "commit": "19346d236d7cbc1a87f60cb4f333fc77bec64942"
+    },
+    "06": {
+      "title": "PEERS AREN'T DEARS",
+      "words": 1826,
+      "status": "drafted",
+      "review_status": "editorial review recorded; founder review pending",
+      "pdf": "exports/chapters/law-06-peers-arent-dears.pdf",
+      "commit": "c91d6abaf7b4c11ff6e096db0f5bcaa5b7ace4c4"
+    },
+    "07": {
+      "title": "ENDOWMENT",
+      "words": 3003,
+      "status": "drafted",
+      "review_status": "editorial review recorded; founder review pending",
+      "pdf": "exports/chapters/law-07-endowment.pdf",
+      "commit": "fc93634a1009104b7169571eada5524fe5457397"
+    },
+    "08": {
+      "title": "RISKY REWARDS",
+      "words": 2091,
+      "status": "drafted",
+      "review_status": "editorial review recorded; founder review pending",
+      "pdf": "exports/chapters/law-08-risky-rewards.pdf",
+      "commit": "65e5599892249354d9d3e9285c4975f8da1653f2"
+    },
+    "09": {
+      "title": "DISENGAGEMENT",
+      "words": 2024,
+      "status": "drafted",
+      "review_status": "editorial review recorded; founder review pending",
+      "pdf": "exports/chapters/law-09-disengagement.pdf",
+      "commit": "e53a94a0d5222eef06084988b8197a257b75758b"
+    },
+    "10": {
+      "title": "STRATEGY",
+      "words": 2022,
+      "status": "drafted",
+      "review_status": "editorial review recorded; founder review pending",
+      "pdf": "exports/chapters/law-10-strategy.pdf",
+      "commit": "b3e5f3eda3c0e62c905c4be482d8784d211e50d5"
+    },
+    "11": {
+      "title": "TIME",
+      "words": 2082,
+      "status": "drafted",
+      "review_status": "editorial review recorded; founder review pending",
+      "pdf": "exports/chapters/law-11-time.pdf",
+      "commit": "cbded1d4bace19cc3111ba092541ac3552b51d67"
+    },
+    "12": {
+      "title": "PLANNING",
+      "words": 2090,
+      "status": "drafted",
+      "review_status": "editorial review recorded; founder review pending",
+      "pdf": "exports/chapters/law-12-planning.pdf",
+      "commit": "9004849b91e18a6c290e24442ab823ec33e4a8b8"
+    },
+    "13": {
+      "title": "MOTHER'S CHILD",
+      "words": 2184,
+      "status": "drafted",
+      "review_status": "editorial review recorded; founder review pending",
+      "pdf": "exports/chapters/law-13-mothers-child.pdf",
+      "commit": "4d1f3969301661370ebd5a30d073500fe3bf7892"
+    },
+    "14": {
+      "title": "MENTAL AWARENESS",
+      "words": 2087,
+      "status": "drafted",
+      "review_status": "editorial review recorded; founder review pending",
+      "pdf": "exports/chapters/law-14-mental-awareness.pdf",
+      "commit": "8ece883ca3d0c34e1ef46221735337c9a1a6bd83"
+    }
+  }
+}

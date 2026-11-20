@@ -1,0 +1,15 @@
+worker
+wrangler.jsonc
+.assetsignore
+*.md
+clip-worker
+firestore.rules
+firebase.json
+.gitignore
+scripts
+gpu-worker
+migrations
+
+.git
+.wrangler
+14-laws-to-groove

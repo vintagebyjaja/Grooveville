@@ -13,11 +13,41 @@ const entHero = (title, sub) => ({ kick: "Grooveville Entertainment", title, sub
 const pubShell = (hero, body) => PV.shell({ sec: "ENTERTAINMENT", hero }, body);
 const when = s => PV.dt(s);
 /* ---------- public listing ---------- */
+const eventCard = e => '<a class="pvcardx" href="#e/' + E(e.slug) + '"><div class="pvcimg">' + img(e.flyer, e.title) + '</div><div class="pvcb"><small class="pvlbl">' + E(when(e.start)) + '</small><b>' + E(e.title) + '</b><small>' + E(e.venue || "") + '</small><small>' + E(e.host.name) + ' ' + PV.badge(e.host) + '</small><span class="pvprice">' + (e.status === "sales_closed" ? "Sales closed" : e.from == null ? "" : e.from === 0 ? "Free" : "From " + $m(e.from)) + '</span></div></a>';
+PV.views.events = async () => {
+  const result = await PV.api("events").catch(() => null);
+  const events = result?.events || [];
+  const slugs = [...new Set(events.filter(e => e.host?.verified).map(e => e.host.slug))].slice(0, 6);
+  const profiles = await Promise.allSettled(slugs.map(slug => PV.api("hostpage?slug=" + encodeURIComponent(slug))));
+  const hosts = profiles.flatMap(p => p.status === "fulfilled" && p.value.host?.verified ? [p.value.host] : []);
+  const eventsBody = events.length ? '<div class="pvcards">' + events.map(eventCard).join("") + '</div>'
+    : '<p class="pvempty">' + (!result ? "Event listings are temporarily unavailable." : result.closed ? "Ticketing opens soon." : "No public events are currently listed.") + '</p>';
+  const hostBody = hosts.length ? '<div class="pvcards">' + hosts.map(h =>
+    '<a class="pvcardx" href="#h/' + E(h.slug) + '"><div class="pvcb"><b>' + E(h.name) + ' ' + PV.badge(h) + '</b></div></a>'
+  ).join("") + '</div>' : '<p class="pvempty">No verified hosts with upcoming public events are currently featured.</p>';
+  const hosting = '<a class="pvbtn lg" href="#host">' + (PV.me.signedIn ? "Host dashboard" : "Host an event") + '</a>' +
+    (PV.me.signedIn ? "" : '<button class="pvbtn lg" data-act="pv-host-signin">Host sign in</button>');
+  return PV.publicLanding({
+    kind: "events",
+    section: "Grooveville Events",
+    title: "The experience starts here.",
+    intro: "Discover events, find verified hosts, and get tickets. Bring your own event to life with Grooveville Entertainment.",
+    browse: "Explore events",
+    actions: hosting,
+    content: PV.publicSection("Upcoming events", eventsBody, true) +
+      PV.publicSection("Featured hosts", hostBody) +
+      PV.publicInfo([
+        ["ticket", "Secure ticketing", "Buy tickets as a guest. Keep your digital ticket and show its QR code at the door."],
+        ["users", "Create your event", "Set up a host profile, submit events for review, and manage ticket sales and check-in from the host dashboard."],
+      ]) + PV.publicSection("Host access", '<div class="pvrow">' + hosting + '</div>'),
+  });
+};
+PV.acts["pv-host-signin"] = () => PV.signin("in", () => PV.go("#host"));
 PV.views.ent = async () => {
   const j = await PV.api("events");
   if (j.closed) return pubShell(entHero("Grooveville Entertainment", "Events, tickets and verified hosts. Opening soon."), '<div class="pvbanner tl">Ticketing opens soon. Hosts can already set up a profile.</div><div class="pvrow" style="margin-top:16px"><a class="pvbtn pk" href="#host">Become a host</a></div>');
   const L = j.events || [];
-  return pubShell(entHero("Upcoming events", "Tickets for events by Grooveville and Peach Verified hosts."), (L.length ? '<div class="pvcards">' + L.map(e => '<a class="pvcardx" href="#e/' + E(e.slug) + '"><div class="pvcimg">' + img(e.flyer, e.title) + '</div><div class="pvcb"><small class="pvlbl">' + E(when(e.start)) + '</small><b>' + E(e.title) + '</b><small>' + E(e.venue || "") + '</small><small>' + E(e.host.name) + ' ' + PV.badge(e.host) + '</small><span class="pvprice">' + (e.status === "sales_closed" ? "Sales closed" : e.from == null ? "" : e.from === 0 ? "Free" : "From " + $m(e.from)) + '</span></div></a>').join("") + '</div>' : '<div class="pvempty">No public events right now. Check back soon.</div>') +
+  return pubShell(entHero("Upcoming events", "Tickets for events by Grooveville and Peach Verified hosts."), (L.length ? '<div class="pvcards">' + L.map(eventCard).join("") + '</div>' : '<div class="pvempty">No public events right now. Check back soon.</div>') +
     '<div class="pvpanel" style="margin-top:26px"><div class="pvph"><div><h3>Host with Grooveville</h3><p class="muted">Create events, sell tickets, check guests in at the door, and get settled after the show.</p></div><a class="pvbtn pk" href="#host">Become a host</a></div></div>');
 };
 /* ---------- event page + checkout ---------- */
