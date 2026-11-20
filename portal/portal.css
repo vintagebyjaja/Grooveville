@@ -394,3 +394,47 @@
   .pv-public-events .pv-public-copy{grid-template-columns:1fr}
   .pv-event-art{aspect-ratio:2/1}
 }
+
+/* Back Office › Rentals & Events */
+.pv.pv-admin{
+  --pv-bg:#f2f2f4;--pv-panel:#fff;--pv-panel2:#f8f7f8;
+  --pv-line:#dedce0;--pv-line2:#c9c4cb;--pv-cream:#201c22;
+  --pv-ink:#262129;--pv-text:#352e37;--pv-muted:#605861;
+  border-color:var(--pv-line);box-shadow:0 20px 50px -38px #1b1426;
+}
+.pv-admin .pvtop{
+  background:linear-gradient(112deg,#fff 20%,#eeedf0 75%,#fff4ed);
+  border-color:var(--pv-line);
+}
+.pv-admin .pvbrand{color:var(--pv-ink)}
+.pv-admin .pvside{background:#faf9fa;border-color:var(--pv-line)}
+.pv-admin .pvcard0{background:#fff;border-color:var(--pv-line)}
+.pv-admin .pvnav.on{background:#fce5d8;border-color:#ebbb9f}
+.pv-admin .pvhero{
+  min-height:246px;padding-block:clamp(30px,4vw,60px);
+  border-color:var(--pv-line);
+}
+.pv-admin .pvhero::before{background:linear-gradient(110deg,#f7f6f8,#e4e0e6)}
+.pv-admin .pvhero .pvart{width:55%;mask-image:linear-gradient(90deg,transparent,#000 42%)}
+.pv-admin .pvhero .pvart img{object-position:70% center}
+.pv-admin .pvhero h1{max-width:14ch;font-size:clamp(2.2rem,4.3vw,3.6rem);letter-spacing:-.05em}
+.pv-admin .pvhero h1 span{color:#a95330}
+.pv-admin .pvhero p{color:var(--pv-text);max-width:42ch}
+.pv-admin .pvpanel{border-color:var(--pv-line);box-shadow:0 8px 22px -18px #40374766}
+.pv-admin-overview>.pvpanel:first-child{background:linear-gradient(145deg,#fff 45%,#fff2e9)}
+.pv-admin-heading{display:flex;align-items:center;gap:10px}
+.pv-admin-heading svg{width:23px;height:23px;flex:none;fill:none;stroke:#a95330;stroke-width:1.7}
+.pv-admin-connections{gap:6px;margin-top:14px}
+.pv-admin-connections .pvli{
+  grid-template-columns:minmax(0,1fr) auto;gap:8px;
+  padding:10px 12px;border:1px solid var(--pv-line);border-radius:9px;background:#f8f7f9;
+}
+.pv-admin-connections .pvpill{justify-self:end;grid-column:2}
+.pv-admin .pvsw1{grid-template-columns:minmax(0,1fr) auto}
+.pv-admin .pvtog{justify-self:end;background:#655d68}
+.pv-admin .pvtog:checked{background:#a95330}
+.pv-admin :focus-visible{outline-color:#a95330}
+@media (max-width:860px){
+  .pv-admin .pvhero{min-height:0}
+  .pv-admin .pvhero .pvart{width:100%;opacity:.2}
+}

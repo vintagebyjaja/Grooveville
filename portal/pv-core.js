@@ -44,8 +44,8 @@ PV.cityArt = () => '<svg viewBox="0 0 240 120"><defs><linearGradient id="pvcg" x
 /* o: {sec:"RENTALS", key, nav:[[route,label,icon,badge]], card:[title,sub,icon], art:true|false, hero:{kick,title,sub,art}} */
 /* the approved logo published on the website (Website Studio › brand), else the Grooveville LLC logo */
 PV.logo = sec => { const g = window.GV && GV.brandLogo, id = sec === "RENTALS" ? "rentals" : sec === "ENTERTAINMENT" ? "ent" : "hq"; const src = (g && (g(id) || g("hq"))) || "/logo.webp"; return '<img class="pvlogo" src="' + E(src) + '" alt="" width="34" height="34">' };
-const LIGHT = ['ACCOUNT', 'AGREEMENTS', 'VERIFY'];
-PV.isLight = r => /^(account|sign\/|verify)/.test(String(r || ''));
+const LIGHT = ['ADMINISTRATION', 'ACCOUNT', 'AGREEMENTS', 'VERIFY'];
+PV.isLight = r => /^(account|sign\/|verify|team-portals)/.test(String(r || ''));
 PV.shell = function (o, body) {
   PV.rentalRecords = o.records || [];
   const light = o.light != null ? o.light : LIGHT.includes(o.sec);
