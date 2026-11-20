@@ -137,7 +137,7 @@ PV.signin = function (mode, then) {
     '<label class="f">Email<input class="i" type="email" name="email" autocomplete="email" required></label><label class="f">Password<input class="i" type="password" name="pass" autocomplete="' + (mode === "up" ? "new-password" : "current-password") + '" minlength="6" required></label><p class="small" id="pvauthmsg" role="alert" style="color:#c0392b;min-height:1em"></p>' +
     '<div class="row"><button type="button" class="btn ghost" data-act="pv-google">Continue with Google</button><button class="btn olive">' + (mode === "up" ? "Create account" : "Sign in") + '</button></div><p class="small" style="margin-top:10px">' + (mode === "up" ? '<a href="#" data-act="pv-signin">I already have an account</a>' : '<a href="#" data-act="pv-signup">Create an account</a> · <a href="#" data-act="pv-reset">Forgot password?</a>') + '</p></form>',
     el => el.querySelector("#pvauth").addEventListener("submit", async ev => { ev.preventDefault(); const F = new FormData(ev.target), msg = el.querySelector("#pvauthmsg");
-      try { if (mode === "up") { const c = await firebase.auth().createUserWithEmailAndPassword(String(F.get("email")).trim(), String(F.get("pass"))); try { await c.user.sendEmailVerification() } catch (e) { } GV.closeModal(); PV.meAt = 0; await PV.loadMe(true); try { await PV.api("me", { first: String(F.get("first")).trim(), last: String(F.get("last")).trim() }) } catch (e) { } PV.toast("Account created. Check your email to verify it.") }
+      try { if (mode === "up") { await firebase.auth().createUserWithEmailAndPassword(String(F.get("email")).trim(), String(F.get("pass"))); GV.closeModal(); PV.meAt = 0; await PV.loadMe(true); try { await PV.api("me", { first: String(F.get("first")).trim(), last: String(F.get("last")).trim() }) } catch (e) { } PV.toast("Account created. You’re signed in.") }
         else { await firebase.auth().signInWithEmailAndPassword(String(F.get("email")).trim(), String(F.get("pass"))); GV.closeModal() } PV.meAt = 0; setTimeout(() => { PV.authNext = null; if (then) then(); else PV.refresh() }, 400) }
       catch (e) { msg.textContent = ({ "auth/invalid-credential": "Wrong email or password.", "auth/wrong-password": "Wrong email or password.", "auth/user-not-found": "No account with that email.", "auth/email-already-in-use": "That email already has an account. Sign in instead.", "auth/weak-password": "Use at least 6 characters.", "auth/invalid-email": "Check the email address." })[e.code] || e.message } }));
 };
@@ -150,7 +150,30 @@ window.pvAct = function (a, t, ev) {
 };
 PV.acts["pv-signin"] = () => PV.signin("in"); PV.acts["pv-signup"] = () => PV.signin("up");
 PV.acts["pv-google"] = async () => { const p = new firebase.auth.GoogleAuthProvider(); await firebase.auth().signInWithPopup(p); GV.closeModal(); PV.meAt = 0; const next = PV.authNext; PV.authNext = null; setTimeout(next || PV.refresh, 400) };
-PV.acts["pv-reset"] = async () => { const em = document.querySelector('#pvauth [name=email]'); if (!em || !em.value) { document.getElementById("pvauthmsg").textContent = "Type your email first."; return } await firebase.auth().sendPasswordResetEmail(em.value.trim()); document.getElementById("pvauthmsg").textContent = "Check your email for a reset link." };
+PV.acts["pv-reset"] = () => {
+  const email = document.querySelector('#pvauth [name=email]')?.value || "";
+  const next = PV.authNext;
+  GV.openModal('<form id="pvreset" class="pvauth"><h3>Reset your password</h3><p class="muted small">Grooveville will send a reset link to the email on your account.</p>' +
+    '<label class="f">Email<input class="i" type="email" name="email" autocomplete="email" required value="' + E(email) + '"></label><p role="status" class="small"></p>' +
+    '<div class="row"><button class="btn olive">Send reset link</button><button type="button" class="btn ghost" data-act="pv-reset-back">Back to sign in</button></div></form>', root => {
+      const form = root.querySelector("#pvreset");
+      form.addEventListener("submit", async e => {
+        e.preventDefault();
+        const button = form.querySelector('button:not([type])'), status = form.querySelector('[role="status"]');
+        if (button.disabled) return;
+        button.disabled = true;
+        try {
+          await firebase.auth().sendPasswordResetEmail(new FormData(form).get("email").trim());
+          status.textContent = "If this email has an account, check your inbox and spam folder for a reset link.";
+        } catch (e) {
+          status.textContent = e.code === "auth/user-not-found" ? "If this email has an account, check your inbox and spam folder for a reset link." : "The reset link couldn’t be sent right now. Try again shortly.";
+        } finally { button.disabled = false; }
+      });
+    });
+  PV.authNext = next;
+};
+PV.acts["pv-reset-back"] = () => PV.signin("in", PV.authNext);
+
 PV.acts["pv-signout"] = async () => { await firebase.auth().signOut() };
 PV.acts["pv-rental-search"] = () => {
   const records = PV.rentalRecords;
@@ -171,7 +194,43 @@ PV.acts["pv-rental-search"] = () => {
 };
 PV.acts["pv-notes"] = async () => { const N = (PV.me && PV.me.notifications) || []; GV.openModal('<h3>Notifications</h3><div class="pvnotes">' + (N.length ? N.map(n => '<a class="pvnote1' + (n.seen ? "" : " new") + '" href="' + E(n.link || "#account") + '" data-act="close-modal"><b>' + E(n.title) + '</b><small>' + E(n.body || "") + ' · ' + PV.ago(n.at) + '</small></a>').join("") : '<p class="muted">Nothing yet.</p>') + '</div><div class="row"><button class="btn ghost" data-act="close-modal">Close</button></div>'); if (N.some(n => !n.seen)) { await PV.api("me/seen", {}); N.forEach(n => n.seen = 1) } };
 PV.acts["pv-verify-email"] = async () => { const u = fb(); if (!u) return; await u.sendEmailVerification(); PV.toast("Verification email sent to " + u.email) };
-PV.acts["pv-reload-user"] = async () => { const u = fb(); if (u) { await u.reload(); await u.getIdToken(true) } PV.refresh() };
+PV.acts["pv-reload-user"] = async () => {
+  const user = fb();
+  if (!user) return;
+  await user.reload();
+  await user.getIdToken(true);
+  if (identityLoad?.uid === user.uid) await identityLoad.promise;
+  await PV.refresh();
+  PV.toast(PV.me?.emailVerified ? "Email verified." : "Verification is still pending. Open the link for this account and try again.");
+};
+/* ---------- portal conversations ---------- */
+PV.support = async (qs, team = false) => {
+  const endpoint = team ? "admin/support" : "support";
+  const base = team ? "#team-portals/support" : "#rentals/support";
+  const id = qs.get("id");
+  const result = await PV.api(endpoint + (id ? "?id=" + encodeURIComponent(id) : ""));
+  const messageForm = '<form class="pvform" id="pvsup" onsubmit="return false">' +
+    (id ? '' : '<label class="pvf"><span>Subject</span><input class="pvin" name="subject" maxlength="120"></label>') +
+    '<label class="pvf"><span>' + (id ? "Reply" : "Message") + '</span><textarea name="message" maxlength="3000" required></textarea></label>' +
+    '<div><button class="pvbtn pk" data-act="pv-support-send" data-id="' + E(id) + '" data-team="' + (team ? "yes" : "no") + '">Send ' + (id ? "reply" : "message") + '</button></div></form>';
+  if (id) return '<div class="pvpanel"><a href="' + base + '">‹ All messages</a><h2>' + E(result.thread.subject) + '</h2><div class="pvlist" style="margin:16px 0">' +
+    result.replies.map(r => '<article class="pvpanel"><b>' + (r.author === "team" ? "Grooveville team" : team ? "Customer" : "You") + '</b> <small class="pvnote">' + E(PV.dt(r.created)) + '</small><p style="white-space:pre-wrap;overflow-wrap:anywhere;margin-top:6px">' + E(r.body) + '</p></article>').join("") +
+    '</div>' + messageForm + '</div>';
+  const threads = result.threads.map(t => '<a class="pvq" href="' + base + '?id=' + E(t.id) + '"><span><b>' + E(t.subject) + '</b><small>' + (t.email ? E(t.email) + ' · ' : '') + E(PV.dt(t.updated)) + '</small></span></a>').join("");
+  return '<div class="pvpanel"><h2>' + (team ? "Customer messages" : "Messages") + '</h2>' + (threads || '<p class="pvnote">No conversations yet.</p>') + '</div>' +
+    (team ? '' : '<div class="pvpanel" style="margin-top:16px"><h3>New message</h3><p class="pvnote" style="margin-bottom:12px">Grooveville will reply here. Keep card numbers and passwords out of messages.</p>' + messageForm +
+      '<p class="pvnote" style="margin-top:16px">Questions about a charge or receipt? <a href="mailto:jaja+grooveville-billing@vybr8.live">Email Grooveville Billing</a>.</p></div>');
+};
+PV.acts["pv-support-send"] = async button => {
+  const form = document.getElementById("pvsup");
+  if (!form.reportValidity()) return;
+  const team = button.dataset.team === "yes";
+  const data = Object.fromEntries(new FormData(form));
+  const r = await PV.api(team ? "admin/support" : "support", { ...data, id: button.dataset.id });
+  PV.toast("Message sent.");
+  await PV.go((team ? "#team-portals/support" : "#rentals/support") + "?id=" + r.id);
+};
+
 /* ---------- account ---------- */
 PV.views.account = async () => {
   const me = PV.me; if (!me.signedIn) return PV.shell({ sec: "ACCOUNT" }, '<div class="pvpanel" style="max-width:560px"><h3>Your Grooveville account</h3><p class="muted" style="margin-bottom:16px">One sign-in for Grooveville Rentals, Entertainment and your agreements.</p><div class="pvrow"><button class="pvbtn pk" data-act="pv-signin">Sign in</button><button class="pvbtn" data-act="pv-signup">Create account</button></div></div>');
@@ -193,10 +252,9 @@ PV.views.account = async () => {
     (me.hasPhoto ? '<button class="pvbtn" data-act="pv-account-photo-remove">Remove photo</button>' : '') + '</div></form>';
   const links = [["#rentals", "Grooveville Rentals", "home"], ["#entertainment", "Grooveville Entertainment", "music"], me.host ? ["#host", "Host dashboard", "star"] : ["#host", "Become a host", "star"]].concat((me.staffEvents || []).length || me.host ? [["#checkin", "Door check-in", "scan"]] : []).concat(me.admin || me.finance ? [["#team-portals", "Grooveville administration", "gear"]] : []);
   return PV.shell({ sec: "ACCOUNT", nav: [["#account", "Profile & Settings", "user"], ["#rentals", "Rentals", "home"], ["#host", "Host", "star"]], card: ["My Account", me.email || "", "user"], hero: { kick: "Grooveville", title: "Profile &amp; Settings", sub: "Your legal name, signature, verification and documents." } },
-    (me.emailVerified ? '' : '<div class="pvbanner">Verify your email (' + E(me.email) + ') before signing documents. <button class="pvbtn sm" data-act="pv-verify-email">Send verification email</button> <button class="pvbtn sm" data-act="pv-reload-user">I verified it</button></div>') +
     (p.name_request ? '<div class="pvbanner tl">Your name change request is waiting for Grooveville to review it.</div>' : '') +
     '<div class="pvgrid pvg2"><div class="pvpanel"><h3>Legal name</h3><p class="pvnote" style="margin-bottom:12px">Used for your typed electronic signature. ' + (p.name_verified ? 'Your name has been verified, so changes go to Grooveville for review.' : 'Enter it exactly as on your ID.') + '</p><form class="pvform c3" id="pvname" onsubmit="return false"><label class="pvf"><span>First name</span><input class="pvin" name="first" value="' + E(p.first) + '" autocomplete="given-name"></label><label class="pvf"><span>Middle initial (optional)</span><input class="pvin" name="middle" value="' + E(p.middle) + '" maxlength="1"></label><label class="pvf"><span>Last name</span><input class="pvin" name="last" value="' + E(p.last) + '" autocomplete="family-name"></label><label class="pvf full"><span>Phone</span><input class="pvin" name="phone" value="' + E(p.phone) + '" autocomplete="tel"></label>' + (p.name_verified ? '<label class="pvf full"><span>Reason for the change (e.g. marriage)</span><input class="pvin" name="reason"></label>' : '') + '<div class="full pvrow"><button class="pvbtn pk" data-act="pv-save-name">Save</button></div></form></div>' +
-    '<div class="pvpanel"><div class="pvph"><h3>Your signature</h3>' + (p.name_verified || me.emailVerified ? '<span class="pvpill ok">' + PV.ic("check") + (p.name_verified ? "Name verified" : "Email verified") + '</span>' : '<span class="pvpill warn">Not verified</span>') + '</div>' + PV.sigBlock(p) + '<p class="pvnote" style="margin-top:12px">This is how your typed electronic signature appears on agreements. It’s applied only when you press <b>Agree &amp; Sign</b> on a document.</p>' +
+    '<div class="pvpanel"><div class="pvph"><h3>Your signature</h3>' + (p.name_verified || me.emailVerified ? '<span class="pvpill ok">' + PV.ic("check") + (p.name_verified ? "Name verified" : "Email verified") + '</span>' : '<span class="pvpill warn">Signature preview</span>') + '</div>' + PV.sigBlock(p) + '<p class="pvnote" style="margin-top:12px">This is how your typed electronic signature appears on agreements. It’s applied only when you press <b>Agree &amp; Sign</b> on a document.</p>' +
     '<p class="pvnote" style="margin-top:10px">Electronic records consent: ' + (p.esign_consent_at ? 'given ' + PV.date(p.esign_consent_at) + ' <button class="pvbtn sm" data-act="pv-esign-withdraw">Withdraw consent</button>' : 'not given yet (you’ll be asked before your first signature)') + '</p></div></div>' +
     photoPanel +
     '<div class="pvgrid pvg2" style="margin-top:18px"><div class="pvpanel"><h3>Documents</h3>' + (docs.length ? '<div class="pvlist">' + docs.map(d => '<div class="pvli">' + PV.ic("doc") + '<div><b>' + E(d.title) + '</b><small>' + E(d.division) + ' · ' + (d.completed_at ? 'completed ' + PV.date(d.completed_at) : 'sent ' + PV.date(d.sent_at)) + '</small></div><a class="pvbtn sm' + (d.my_status === "pending" && d.status !== "completed" ? " pk" : "") + '" href="#sign/' + E(d.id) + '">' + (d.my_status === "pending" && !["completed", "canceled", "expired", "superseded"].includes(d.status) ? "Review &amp; sign" : "Open") + '</a></div>').join("") + '</div>' : '<p class="muted">No documents yet.</p>') + '</div>' +

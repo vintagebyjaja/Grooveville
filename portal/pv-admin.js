@@ -10,7 +10,7 @@ const toC = v => { const n = Number(String(v == null ? "" : v).replace(/[$,\s]/g
 const d$ = c => c ? (c / 100).toFixed(2) : "";
 function nav(o) {
   if (PV.me.rentalsStaff && !PV.me.admin && !PV.me.finance) return [["#team-portals/rentals", "Rentals", "home"]];
-  const c = (o && o.counts) || {}; return [["#team-portals", "Overview", "grid"], ["#team-portals/rentals", "Rentals", "home", c.requests], ["#team-portals/customers", "Customers & billing", "users", c.nameRequests], ["#team-portals/docs", "Agreements", "sign", c.docsToFinalize], ["#team-portals/hosts", "Hosts & verification", "star", c.verifications], ["#team-portals/locations", "Locations & pricing", "building"], ["#team-portals/events", "Event approvals", "cal", c.events], ["#team-portals/finance", "Finance & settlements", "cash"], ["#team-portals/settings", "Settings", "gear"], ...(PV.me.founder ? [["#team-portals/businesses", "Business Finance", "chart"], ["#team-portals/invites", "Special Invites", "link"]] : [])] }
+  const c = (o && o.counts) || {}; return [["#team-portals", "Overview", "grid"], ["#team-portals/rentals", "Rentals", "home", c.requests], ["#team-portals/customers", "Customers & billing", "users", c.nameRequests], ...(PV.me.admin ? [["#team-portals/support", "Customer messages", "chat"]] : []), ["#team-portals/docs", "Agreements", "sign", c.docsToFinalize], ["#team-portals/hosts", "Hosts & verification", "star", c.verifications], ["#team-portals/locations", "Locations & pricing", "building"], ["#team-portals/events", "Event approvals", "cal", c.events], ["#team-portals/finance", "Finance & settlements", "cash"], ["#team-portals/settings", "Settings", "gear"], ...(PV.me.founder ? [["#team-portals/businesses", "Business Finance", "chart"], ["#team-portals/invites", "Special Invites", "link"]] : [])] }
 const shell = (body, hero, data) => PV.shell({ sec: "ADMINISTRATION", theme: "pv-admin", nav: nav(data), card: ["Grooveville LLC", PV.me.founder ? "Founder" : PV.me.admin ? "Administrator" : PV.me.finance ? "Finance" : "Rentals Staff", "shield"], hero, art: false }, body);
 PV.views.admin = async ({ parts, qs, r }) => {
   if (PV.me.error) throw new Error(PV.me.error);
@@ -25,6 +25,7 @@ PV.views.admin = async ({ parts, qs, r }) => {
   }
   if (s === "rentals") return view(await rentals());
   if (s === "listing") return view(await listingForm(id));
+  if (s === "support") return view(PV.me.admin ? await PV.support(qs, true) : '<p class="pvbanner">Customer messages are for Grooveville administrators.</p>');
   if (s === "customers") return view(await customers());
   if (s === "docs" && id) return view('<a class="pvprice" href="#team-portals/docs" style="text-decoration:none">‹ Agreements</a><div style="height:12px"></div>' + await ES.editor(id));
   if (s === "docs") return view(await docs(qs));

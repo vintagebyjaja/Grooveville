@@ -213,7 +213,7 @@ export async function verifyIdToken(token, projectId, jwksFetch) {
   if (!ok) throw new Error("signature");
   if (body.aud !== projectId || body.iss !== "https://securetoken.google.com/" + projectId) throw new Error("audience");
   if (!body.sub || body.exp < now || body.iat > now + 300) throw new Error("expired");
-  return { uid: body.sub, email: body.email || "", token };
+  return { uid: body.sub, email: body.email || "", email_verified: body.email_verified === true, firebase: body.firebase, token };
 }
 /* Reads a Firestore document AS the signed-in person, so Firestore security rules decide what they can see. */
 async function fsField(env, path, user, field, fetcher) {

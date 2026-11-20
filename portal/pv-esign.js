@@ -38,9 +38,16 @@ ES.disclosure = () => { const em = (PV.status && PV.status.support) || ""; retur
   '<li>You need a current web browser, an email address, and a way to open, save or print PDF files. Keep your email address up to date.</li>' +
   '<li>Grooveville keeps a record of your signature: your sign-in, the time, your IP address and browser, and a fingerprint (SHA-256) of the exact document you signed.</li></ul></details>' };
 /* ---------- signer view ---------- */
+const verifyPanel = message => '<div class="pvpanel"><h3>Verify your email first</h3><p class="pvnote" style="margin-bottom:12px">' + E(message) + '</p><div class="pvrow"><button class="pvbtn pk" data-act="pv-verify-email">Send verification email</button><button class="pvbtn" data-act="pv-reload-user">I verified it</button></div></div>';
 PV.views.sign = async ({ parts }) => {
   const id = parts[1] || ""; if (!PV.me.signedIn) return PV.shell({ sec: "AGREEMENTS" }, '<div class="pvpanel" style="max-width:560px"><h3>Sign in to view this document</h3><p class="muted" style="margin:6px 0 16px">Use the email address the document was sent to.</p><div class="pvrow"><button class="pvbtn pk" data-act="pv-signin">Sign in</button><button class="pvbtn" data-act="pv-signup">Create account</button></div></div>');
-  const j = await PV.api("doc?id=" + encodeURIComponent(id)), d = j.doc, me = j.me, mine = me ? d.signers.find(s => s.id === me.id) : null, myOrd = mine ? mine.ord : -1;
+  let j;
+  try { j = await PV.api("doc?id=" + encodeURIComponent(id)) }
+  catch (err) {
+    if (err.j?.code !== "verify") throw err;
+    return PV.shell({ sec: "AGREEMENTS" }, verifyPanel(err.message));
+  }
+  const d = j.doc, me = j.me, mine = me ? d.signers.find(s => s.id === me.id) : null, myOrd = mine ? mine.ord : -1;
   const open = ["sent", "partially_signed"].includes(d.status), canSign = open && me && me.status === "pending" && !me.waiting, p = j.profile || {}, name = PV.fullName(p);
   const myText = d.fields.filter(f => f.signer === myOrd && f.type === "text");
   ES.cur = { d, me, myOrd, name, j };
@@ -55,7 +62,7 @@ PV.views.sign = async ({ parts }) => {
   else if (!open) act = '<div class="pvpanel"><p class="muted">This document is ' + E((DST[d.status] || [d.status])[0].toLowerCase()) + ' and can’t be signed.</p></div>';
   else if (me.waiting) act = '<div class="pvpanel"><h3>Not your turn yet</h3><p class="pvnote">Another party signs first. We’ll notify you when it’s ready for you.</p></div>';
   else if (!name) act = '<div class="pvpanel"><h3>Add your legal name</h3><p class="pvnote" style="margin-bottom:12px">Your signature is your legal name. Add it in Profile &amp; Settings.</p><a class="pvbtn pk" href="#account">Open Profile &amp; Settings</a></div>';
-  else if (!j.emailVerified && !p.name_verified) act = '<div class="pvpanel"><h3>Verify your email first</h3><p class="pvnote" style="margin-bottom:12px">Before you sign, confirm the email address on your account.</p><div class="pvrow"><button class="pvbtn pk" data-act="pv-verify-email">Send verification email</button><button class="pvbtn" data-act="pv-reload-user">I verified it</button></div></div>';
+  else if (!j.emailVerified && !p.name_verified) act = verifyPanel("Before you sign, confirm the email address on your account.");
   else act = '<form class="pvpanel" id="pvsignf" onsubmit="return false"><h3>Review and sign</h3><p class="pvnote" style="margin:4px 0 14px">Read every page. Fields marked for you are highlighted.</p>' +
     myText.map(f => '<label class="pvf"><span>' + E(f.label || "Text") + (f.required ? " *" : "") + '</span><input class="pvin" name="t_' + E(f.id) + '" maxlength="200"></label>').join("") +
     (p.esign_consent_at ? '' : ES.disclosure() + '<label class="pvchk" style="margin-top:10px"><input type="checkbox" name="esign"><span>I’ve read the disclosure and agree to use electronic records and signatures.</span></label>') +
