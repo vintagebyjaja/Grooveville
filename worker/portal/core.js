@@ -195,8 +195,39 @@ export async function stripe(env, method, path, form, opts) {
   for (const [k, v] of Object.entries(form || {})) add(k, v);
   const headers = { authorization: "Bearer " + env.STRIPE_SECRET_KEY }; if (method === "POST") headers["content-type"] = "application/x-www-form-urlencoded"; if (opts.idem) headers["idempotency-key"] = opts.idem; if (opts.account) headers["stripe-account"] = opts.account;
   const url = "https://api.stripe.com/v1/" + path + (method === "GET" && body.toString() ? "?" + body : "");
-  const r = await (opts.fetcher || fetch)(url, { method, headers, body: method === "POST" ? body : undefined });
-  const j = await r.json().catch(() => ({})); if (!r.ok) throw Object.assign(new Error((j.error && j.error.message) || "Stripe error (" + r.status + ")"), { status: 502, stripe: j.error }); return j;
+  const send = async () => {
+    const r = await (opts.fetcher || fetch)(url, { method, headers, body: method === "POST" ? body : undefined });
+    return { r, j: await r.json().catch(() => ({})) };
+  };
+  const hostedCheckout = method === "POST" && path === "checkout/sessions" && (!form?.ui_mode || form.ui_mode === "hosted");
+  let result;
+  if (hostedCheckout) {
+    const settings = {
+      display_name: "Grooveville LLC",
+      background_color: "#FFF9F4",
+      button_color: "#F4A987",
+      border_style: "rounded",
+      font_family: "inter",
+      logo: { type: "url", url: "https://" + (env.SITE_HOST || "grooveville.org") + "/media/checkout-logo.png" },
+    };
+    add("branding_settings", settings);
+    headers["stripe-version"] = "2026-11-18.endive";
+    result = await send();
+    // Stripe does not execute requests it rejects at parameter validation.
+    // Preserve the existing route and key if Stripe rejects the visual settings.
+    const param = result.j.error?.param;
+    if (result.r.status === 400 && /^branding_settings(?:$|[.\[])/.test(param || "")) {
+      console.warn("stripe_checkout_branding_rejected", { requestId: result.r.headers.get("request-id"), param, code: result.j.error?.code });
+      for (const key of [...body.keys()]) if (key.startsWith("branding_settings[")) body.delete(key);
+      delete headers["stripe-version"];
+      result = await send();
+    }
+  } else result = await send();
+  const { r, j } = result;
+  if (!r.ok) throw Object.assign(new Error(j.error?.message || "Stripe error (" + r.status + ")"), {
+    status: 502, stripeStatus: r.status, stripe: j.error, requestId: r.headers.get("request-id"),
+  });
+  return j;
 }
 export async function stripeVerify(secret, payload, header) {
   const parts = Object.fromEntries(String(header || "").split(",").map(x => x.split("=")).filter(x => x.length === 2).map(([k, v]) => [k.trim(), v.trim()]));
