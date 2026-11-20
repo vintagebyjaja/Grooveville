@@ -2357,11 +2357,12 @@ function authCard(){
   }
   return '<div class="card" style="display:flex;flex-direction:column;gap:10px"><div class="eyebrow">Team sign in</div><h3 style="font-size:22px">Sign in with Claude</h3><p class="muted">The team portal uses your Claude account. Open this page signed in to Claude. On the team? Ask the founder to share it with you as a Contributor (“Can use”), then reload.</p></div>';
 }
+const grooveTeamEmail = "jaja+grooveville-team@vybr8.live";
 function viewGroove(){
   const cards=BRANDS.slice(1).map(b0=>{const b=brandInfo(b0.id);return '<a class="branch" href="#b-'+b.id+'" style="'+cvar(b.id)+'">'+(b.logo?'<img class="blogo" src="'+esc(b.logo)+'" alt="">':'<div class="mark">'+esc(b.short.slice(0,3))+'</div>')+'<h3>'+esc(b.name)+'</h3>'+(b.developing?'<span class="pill high" style="align-self:flex-start">In development</span>':'')+'<p>'+esc(b.tagline)+'</p><span class="go">Company page →</span></a>'}).join("");
   return '<section class="teamhead"><div class="wrap"><div class="eyebrow">Grooveville LLC · DrawUp Headquarters</div><h1>Groove Team</h1><p class="muted" style="margin-top:8px;max-width:64ch">The people behind the nine companies on the Groove Vine. Team members sign in here to log time, money spent and money in, and to join a company team.</p></div></section>'+
     '<section class="tsec"><div class="wrap cols2"><div style="min-width:0"><h2 style="font-size:22px;margin-bottom:12px">Our nine companies</h2><div class="branches" style="grid-template-columns:repeat(auto-fill,minmax(220px,1fr))">'+cards+'</div></div>'+
-    '<aside style="min-width:0;display:flex;flex-direction:column;gap:14px;align-self:start;position:sticky;top:90px">'+authCard()+'<p class="muted" style="font-size:13px">New to the team? Create an account, then pick the company you work with. The company head or the founder approves you.</p></aside></div></section>';
+    '<aside style="min-width:0;display:flex;flex-direction:column;gap:14px;align-self:start;position:sticky;top:90px">'+authCard()+'<p class="muted" style="font-size:13px">New to the team? Create an account, then pick the company you work with. The company head or the founder approves you.</p><a href="mailto:' + grooveTeamEmail + '">Email Groove Team support</a></aside></div></section>';
 }
 function viewPortal(){
   if(!isMember())return viewSignin();
@@ -3002,7 +3003,7 @@ function fillFooter(){
   g.innerHTML='<div><img src="'+LOGO+'" alt="" width="48" height="48" style="border-radius:50%"><p style="margin-top:14px;max-width:30ch">The Creative House. Different worlds, one Groove, rooted in Charlotte, NC.</p><div style="display:flex;gap:14px;margin-top:12px"><a href="https://www.instagram.com/grooveville.ent/" target="_blank" rel="noopener">Instagram ↗</a></div></div>'+
     '<div><h4>Companies</h4>'+VENTURES().filter(b=>!brandInfo(b.id).hidden).map(b=>'<a href="#b-'+b.id+'">'+esc(brandInfo(b.id).name)+'</a>').join("")+'</div>'+
     '<div><h4>Explore</h4><a href="#home">Home</a><a href="#vine">Companies</a><a href="#calendar">Calendar</a><a href="#collab">Collaborate</a><a href="#b-ent/radio">Grooveville Radio</a><a href="#story">Our story</a></div>'+
-    '<div><h4>Groove Team</h4><a href="#groove">Sign in</a><a href="#join">Join a team</a>'+(S.isAdmin?'<a href="#team">Back office</a>':'')+'<a href="mailto:'+esc(pub().contactEmail||"")+'"'+(pub().contactEmail?'':' hidden')+'>Contact</a></div>';
+    '<div><h4>Groove Team</h4><a href="#groove">Sign in</a><a href="#join">Join a team</a><a href="mailto:'+grooveTeamEmail+'">Team support</a>'+(S.isAdmin?'<a href="#team">Back office</a>':'')+'<a href="mailto:'+esc(pub().contactEmail||"")+'"'+(pub().contactEmail?'':' hidden')+'>Contact</a></div>';
 }
 
 /* ---------- sound ---------- */
