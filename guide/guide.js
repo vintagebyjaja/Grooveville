@@ -43,6 +43,8 @@ function initAuth(){
 
 /* ---------- units & formatting ---------- */
 const MI=1609.344;
+const PHONEQ=window.matchMedia?matchMedia("(max-width:760px),(max-height:500px) and (pointer:coarse)"):null;
+function isPhone(){return PHONEQ?PHONEQ.matches:innerWidth<=760}
 function fmtDist(m){if(m==null||!isFinite(m))return "—";if(D.settings.units==="metric")return m<950?Math.round(m/10)*10+" m":(m/1000).toFixed(m<10000?1:0)+" km";const mi=m/MI;return mi<0.19?Math.round(m*3.28084/50)*50+" ft":mi.toFixed(mi<10?1:0)+" mi"}
 function fmtDur(s){if(s==null||!isFinite(s))return "—";s=Math.max(0,Math.round(s));const h=Math.floor(s/3600),m=Math.round((s%3600)/60);return h?h+" hr "+(m?m+" min":""):Math.max(1,m)+" min"}
 function fmtTime(d,tz){try{return new Date(d).toLocaleTimeString("en-US",{hour:"numeric",minute:"2-digit",timeZone:tz||undefined})}catch(e){return new Date(d).toLocaleTimeString("en-US",{hour:"numeric",minute:"2-digit"})}}
@@ -72,6 +74,7 @@ const G={page:"",pos:null,acc:null,heading:null,speed:null,watch:null,dest:null,
 
 /* ---------- icons ---------- */
 const IP={
+  down:'<path d="m6 9 6 6 6-6"/>',
   navigate:'<path d="M20 4 4 11l7 2 2 7z"/>',explore:'<circle cx="11" cy="11" r="6.5"/><path d="m20 20-4.2-4.2"/>',immersive:'<path d="m12 3 9 5-9 5-9-5z"/><path d="m3 13 9 5 9-5"/>',
   saved:'<path d="M6.5 3.5h11v17l-5.5-4-5.5 4z"/>',trips:'<path d="M9 4 3.5 6v14L9 18l6 2 5.5-2V4L15 6z"/><path d="M9 4v14M15 6v14"/>',
   settings:'<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/>',
@@ -111,18 +114,18 @@ const PAGES=["","navigate","explore","immersive","trips","saved","settings"];
 function pageFromPath(){let p=location.pathname;if(BASE&&p.startsWith(BASE))p=p.slice(BASE.length);p=p.replace(/^\/+|\/+$/g,"");return PAGES.includes(p)?p:""}
 function href(pg){return BASE+"/"+(pg?pg+"/":"")}
 function go(pg,replace){if(pg===G.page&&!replace){route();return}const u=href(pg)+location.search;if(replace)history.replaceState({},"",u);else history.pushState({},"",u);route()}
-addEventListener("popstate",route);
+addEventListener("popstate",()=>{if(typeof UIX!=="undefined"&&UIX.onPop())return;route();if(typeof paintReturn==="function")paintReturn()});
 function shell(){
   const root=$("#gg");root.className="gg "+THEME.cur;
   root.innerHTML='<header class="ghd"><a class="gbrand" href="'+href("")+'" data-go="" aria-label="Groove Guide home"><span class="gpinlogo" aria-hidden="true"><svg viewBox="0 0 32 40" width="30" height="38"><defs><linearGradient id="gpl" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffc3a1"/><stop offset="1" stop-color="#e98457"/></linearGradient></defs><path d="M16 1C7.7 1 1 7.6 1 15.8 1 26.6 16 39 16 39s15-12.4 15-23.2C31 7.6 24.3 1 16 1z" fill="url(#gpl)"/><circle cx="16" cy="15.5" r="5.6" fill="#0b0b0d"/></svg></span><span class="gbt"><b><em>groove</em> guide<i>.</i></b><small>BY GROOVEVILLE</small></span></a>'+
-    '<div class="gsearch" role="search"><span class="gsi">'+ico("explore",20)+'</span><input id="gq" type="search" placeholder="Where we headed?" autocomplete="off" spellcheck="false" aria-label="Search for a place" aria-autocomplete="list" aria-controls="gsug"><button class="gmic" data-a="voice" aria-label="Search by voice" hidden>'+ico("mic",20)+'</button><div class="gsug" id="gsug" role="listbox" hidden></div></div>'+
+    '<div class="gsearch" role="search"><span class="gsi">'+ico("explore",20)+'</span><input id="gq" type="search" placeholder="Where we headed?" autocomplete="off" spellcheck="false" aria-label="Search for a place" aria-autocomplete="list" aria-controls="gsug"><button class="gmic" data-a="voice" aria-label="Search by voice" hidden>'+ico("mic",20)+'</button><button class="gsx" data-a="search-cancel" aria-label="Cancel search">'+ico("x",18)+'</button><div class="gsug" id="gsug" role="listbox" hidden></div></div><button class="gdest" id="gdest" data-a="sheet" data-v="full" aria-label="Trip details" hidden></button>'+
     '<nav class="gchips" aria-label="Quick places">'+[["home","Home"],["work","Work"],["school","School"],["fav","Favorites"],["recent","Recent"]].map(([k,l])=>'<button class="gchip c-'+k+'" data-a="chip" data-k="'+k+'">'+ico({home:"home",work:"work",school:"school",fav:"heart",recent:"clock"}[k],19)+'<span>'+l+'</span></button>').join("")+'</nav>'+
     '<div class="gthm" role="group" aria-label="Appearance"><button data-a="theme" data-v="light" aria-label="Light mode">'+ico("sun",19)+'</button><button data-a="theme" data-v="dark" aria-label="Dark mode">'+ico("moon",19)+'</button></div>'+
     '<a class="gicon" href="'+esc(CFG.homeUrl)+'" title="Back to Grooveville" aria-label="Back to Grooveville">'+ico("grid",20)+'</a><div class="gacct" id="gacct"></div></header>'+
     '<nav class="gside" aria-label="Groove Guide">'+SIDE.map(([k,l,i])=>'<a href="'+href(k)+'" data-go="'+k+'">'+ico(i,24)+'<span>'+l+'</span></a>').join("")+'<a class="gback" href="'+esc(CFG.homeUrl)+'">'+ico("back",20)+'<span>Grooveville</span></a></nav>'+
     '<main class="gmain"><section id="dash" class="dash"></section><section id="gpage" class="gpage" hidden></section></main>'+
     '<nav class="gtabs" aria-label="Groove Guide">'+[["navigate","Navigate","navigate"],["explore","Explore","explore"],["saved","Saved","saved"],["trips","Trips","trips"],["more","More","more"]].map(([k,l,i])=>k==="more"?'<button data-a="more">'+ico(i,23)+'<span>'+l+'</span></button>':'<a href="'+href(k)+'" data-go="'+k+'">'+ico(i,23)+'<span>'+l+'</span></a>').join("")+'</nav>'+
-    '<div id="gmodal"></div><div id="gtoast" role="status" aria-live="polite"></div>';
+    '<button class="gret gl" id="gret" data-go="navigate" hidden>'+ico("navigate",18)+'<span>Back to your trip</span></button><div id="gmodal"></div><div id="gtoast" role="status" aria-live="polite"></div>';
   if(window.SpeechRecognition||window.webkitSpeechRecognition)$(".gmic").hidden=false;
   paintAccount();paintThemeBtn();
 }
@@ -154,9 +157,9 @@ function route(){
   const dashPage=G.page===""||G.page==="navigate";paintRoot();
   $("#dash").hidden=!dashPage;$("#gpage").hidden=dashPage;
   document.title=(G.page?{navigate:"Navigate",explore:"Explore",immersive:"Immersive",trips:"Trips",saved:"Saved",settings:"Settings"}[G.page]+" · ":"")+"Groove Guide";
-  if(dashPage){if(!$("#gmap"))dashShell();MAP.ensure();paintAll();if(G.page==="navigate"&&!G.route)setTimeout(()=>{const q=$("#gq");if(q&&innerWidth>760)q.focus()},50)}
+  if(dashPage){if(!$("#gmap"))dashShell();MAP.ensure();paintAll();if(G.page==="navigate"&&!G.route)setTimeout(()=>{const q=$("#gq");if(q&&!isPhone())q.focus()},50)}
   else{IMM.stop();renderPage()}
-  $(".gmain").scrollTop=0;
+  $(".gmain").scrollTop=0;if(typeof paintReturn==="function")paintReturn();
 }
 function rerender(){if(G.page===""||G.page==="navigate")paintAll();else renderPage()}
 
@@ -268,7 +271,7 @@ const MAP={map:null,failed:"",loading:false,lines:[],marks:[],veh:null,dest:null
   zoom(d){if(CITY.on)return CITY.zoom(d);if(MAP.map)MAP.map.moveCamera({zoom:(MAP.map.getZoom()||14)+d})},
   north(){if(CITY.on)return CITY.north();if(MAP.map)MAP.map.moveCamera({heading:0})},
   fit(){if(!MAP.map||!G.route||!G.route.path)return;if(CITY.on)CITY.overview();const b=new google.maps.LatLngBounds();G.route.path.forEach(p=>b.extend(p));MAP.map.moveCamera({tilt:0,heading:0});
-    let pad={top:120,bottom:90,left:60,right:60};if(innerWidth<=760){const tc=$("#tripcard"),tb=$("#tbar");const bot=G.nav?(tb?tb.offsetHeight:100):(tc&&tc.offsetParent?tc.offsetHeight:220);pad={top:G.nav?130:40,bottom:bot+30,left:36,right:70}}
+    let pad={top:120,bottom:90,left:60,right:60};if(isPhone()){const tc=$("#tripcard"),tb=$("#tbar");const bot=G.nav?(tb?tb.offsetHeight:100):(tc&&tc.offsetParent?tc.offsetHeight:220);pad={top:G.nav?130:40,bottom:bot+30,left:36,right:70}}
     MAP.map.fitBounds(b,pad);if(MAP.view==="aerial"){const t=()=>MAP.map&&MAP.map.moveCamera({tilt:45});if(google.maps.event&&google.maps.event.addListenerOnce)google.maps.event.addListenerOnce(MAP.map,"idle",t);else setTimeout(t,400)}},
   /* smooth camera moves between views (instant with reduced motion) */
   anim(to,ms){return new Promise(res=>{if(!MAP.map){res();return}const id=MAP._an=(MAP._an||0)+1;if(REDUCED||!ms){MAP.map.moveCamera(to);res();return}
@@ -307,11 +310,11 @@ function paintMapFallback(){const f=$("#mapfb");if(!f)return;
   f.innerHTML='<div><span class="fbk">'+ico("info",20)+'</span><b>'+esc(d[0])+'</b><p>'+d[1]+'</p>'+(d[2]?'<p class="fbfix">'+d[2]+'</p>':'')+'<div class="fbb"><button class="gbtn" data-a="retry-map">Try again</button></div><small>Error code: '+esc(MAP.failed)+'</small></div>'}
 function paintMapTools(){const vt=$("#vtog"),a3=MAP.view==="aerial";if(vt){vt.textContent=a3?"3D":"2D";vt.classList.toggle("on",a3);vt.setAttribute("aria-label",a3?"3D view on. Switch to flat 2D map":"Flat 2D map. Switch to 3D view");vt.title=a3?"Switch to 2D":"Switch to 3D"}const gg=$("#gg");if(gg)gg.classList.toggle("v3d",a3);$$(".modesw button").forEach(b=>b.classList.toggle("on",b.dataset.v===G.mode))}
 function paintRecenter(){const b=$("#mrec");if(b)b.hidden=!(G.nav&&!MAP.follow);if(CITY.on)CITY.vehicle()}
-function paintAll(){const d=$("#dash");if(d){d.classList.toggle("navving",!!G.nav);d.classList.toggle("hasroute",!!G.route);if(G.nav)d.classList.remove("sheet-open")}paintRoot();paintTrip();paintNext();paintDrive();paintTbar();paintMapTools();paintRecenter();paintChips();requestAnimationFrame(sizeBottom)}
+function paintAll(){const d=$("#dash");if(d){d.classList.toggle("navving",!!G.nav);d.classList.toggle("hasroute",!!G.route)}if(typeof paintDestPill==="function")paintDestPill();paintRoot();paintTrip();paintNext();paintDrive();paintTbar();paintMapTools();paintRecenter();paintChips();requestAnimationFrame(sizeBottom)}
 /* phone: hide the header chips while a route is up, and the whole header + tab bar while navigating, so the map has room */
 function paintRoot(){const gg=$("#gg");if(!gg)return;const dp=G.page===""||G.page==="navigate";gg.classList.toggle("rt",dp&&!!G.dest);gg.classList.toggle("nv",dp&&!!G.nav)}
 function sizeBottom(){const d=$("#dash");if(!d)return;const gg=$("#gg"),tc=$("#tripcard"),tb=$("#tbar");let h=96;
-  if(innerWidth<=760){if(gg&&gg.classList.contains("rt")&&!G.nav&&tc&&tc.offsetParent)h=tc.offsetHeight+10;else if(tb&&tb.offsetParent)h=Math.min(tb.offsetHeight,160)}
+  if(isPhone()){if(gg&&gg.classList.contains("rt")&&!G.nav&&tc&&tc.offsetParent)h=tc.offsetHeight+10;else if(tb&&tb.offsetParent)h=Math.min(tb.offsetHeight,160)}
   d.style.setProperty("--bot",h+"px")}
 function paintChips(){$$(".gchip").forEach(b=>{const k=b.dataset.k;if(k==="home"||k==="work"||k==="school"){const s=savedOf(k);b.classList.toggle("set",!!s);b.title=s?s.name+" · "+(s.addr||""):"Set your "+k}})}
 function originLabel(){return G.pos?(G.posSrc==="map"?"Map center":"Your location"):"Location off"}
@@ -321,9 +324,9 @@ function paintTrip(){const c=$("#tripcard");if(!c)return;const r=G.route;
     '<div class="gfeat"><button data-a="focus-search">'+ico("navigate",22)+'<b>Real-time navigation</b><small>Smarter routes. Less stress.</small></button><button data-a="feat-weather">'+ico("cloud",22)+'<b>Weather &amp; time</b><small>Know what to expect.</small></button><a href="'+href("settings")+'" data-go="settings">'+ico("car",22)+'<b>Personalized drive</b><small>Your vehicle. Your style.</small></a><a href="'+href("explore")+'" data-go="explore">'+ico("pin",22)+'<b>Discover more</b><small>Great places. Your next move.</small></a></div>'+
     '<div class="gstat">'+ico("locate",16)+'<span>'+(G.geoErr?esc(G.geoErr):G.pos?"Starting from your location":"Allow location to start from where you are")+'</span>'+(!G.pos?'<button class="gbtn sm" data-a="locate">Use my location</button>':'')+'</div></div>';return}
   c.innerHTML='<div class="tc">'+ico("pin",22)+'<div class="tct"><b>'+esc(originLabel())+'</b><b class="to">→ '+esc(G.dest.name)+'</b>'+(G.stops.length?'<small>'+G.stops.length+' stop'+(G.stops.length>1?'s':'')+' added</small>':'')+
-    (G.busy?'<small>Finding the best route…</small>':G.err?'<small class="warn">'+esc(G.err)+'</small>':r?'<small>'+fmtDur(r.durationSec)+' · '+fmtDist(r.distanceM)+' · arrive '+fmtTime(arrival())+(r.trafficLevel?' · '+r.trafficLevel:'')+'</small>':'')+'</div><button class="tcx" data-a="clear" aria-label="Clear destination">'+ico("x",18)+'</button></div>'+
+    (G.busy?'<small>Finding the best route…</small>':G.err?'<small class="warn">'+esc(G.err)+'</small><button class="gbtn sm retry" data-a="retry-route">Try again</button>':r?'<small>'+fmtDur(r.durationSec)+' · '+fmtDist(r.distanceM)+' · arrive '+fmtTime(arrival())+(r.trafficLevel?' · '+r.trafficLevel:'')+'</small>':'')+'</div><button class="tcx" data-a="clear" aria-label="Clear destination">'+ico("x",18)+'</button></div>'+
     (G.routes.length>1&&!G.nav?'<div class="alts">'+G.routes.map((x,i)=>'<button class="'+(i===G.sel?"on":"")+'" data-a="alt" data-i="'+i+'"><b>'+fmtDur(x.durationSec)+'</b><small>'+(i===0?"Best":x.description?"via "+esc(x.description):"Option "+(i+1))+(x.toll?" · tolls":"")+'</small></button>').join("")+'</div>':'')+
-    (r&&!G.busy?'<div class="tcb">'+(G.nav?'<button class="gbtn ghost" data-a="end">'+ico("stop",16)+' End</button>':'<button class="gbtn" data-a="start">'+ico("navigate",16)+' Start</button>')+'<button class="gbtn ghost icon" data-a="savedest" aria-label="Save this place">'+ico("star",16)+'</button><button class="gbtn ghost icon tcdet" data-a="sheet" aria-label="Trip details: weather, time, stops">'+ico("info",16)+'</button></div>':'')+
+    (r&&!G.busy?'<div class="tcb">'+(G.nav?'<button class="gbtn ghost'+(G.endArm?' confirm':'')+'" data-a="end">'+ico("stop",16)+(G.endArm?' Tap again to end':' End')+'</button>':'<button class="gbtn" data-a="start">'+ico("navigate",16)+' Start</button>')+'<button class="gbtn ghost icon" data-a="savedest" aria-label="Save this place">'+ico("star",16)+'</button><button class="gbtn ghost icon tcdet" data-a="sheet" aria-label="Trip details: weather, time, stops">'+ico("info",16)+'</button></div>':'')+
     (G.sim?'<div class="simtag">Simulation · not your real position</div>':'');
 }
 function nextInfo(){const n=G.nav;if(!n||!G.route)return null;const st=G.route.steps;const k=n.step;const nx=st[k+1];
@@ -352,14 +355,14 @@ const LANES={provider:null,get(step){return this.provider?this.provider(step):nu
 function laneHtml(ni){const l=ni&&LANES.get(ni);const dc=$("#drivecol");if(dc)dc.classList.toggle("haslanes",!!(l&&l.lanes));if(l&&l.lanes)return l.lanes.map(x=>'<span class="ln'+(x.ok?" ok":"")+'">'+manIco(x.dir,26)+'</span>').join("");
   return '<span class="ln ok">'+manIco(ni?ni.man:"STRAIGHT",28)+'</span><small class="lnn">Lane data unavailable. Follow the arrow.</small>'}
 function arrival(){const r=G.route;if(!r)return null;const left=G.nav?G.nav.leftSec:r.durationSec;return Date.now()+left*1000}
-function paintTbar(){const t=$("#tbin");if(!t)return;const r=G.route,di=G.intel.dest,oi=G.intel.origin;
+function paintTbar(){const t=$("#tbin");if(!t)return;if(isPhone()&&typeof tbarPhone==="function"){t.innerHTML=tbarPhone();SHEET.sync();return}const r=G.route,di=G.intel.dest,oi=G.intel.origin;
   if(!r){t.innerHTML='<div class="tbe">'+ico("info",20)+'<span>Arrival time, traffic, weather and local time appear here once you pick a destination.</span></div>'+tools(false);return}
   const arr=arrival(),tz=di&&di.tz&&!di.tz.error?di.tz.id:"",left=G.nav?G.nav.leftSec:r.durationSec,leftM=G.nav?Math.max(0,r.len-G.nav.s):r.distanceM;
   const wAt=di&&di.weather&&!di.weather.error?weatherAt(di.weather,arr):null;
   const diff=tz&&oi&&oi.tz&&!oi.tz.error?Math.round((di.tz.offsetSec-oi.tz.offsetSec)/3600):null;
   t.innerHTML='<div class="tbi">'+ico("flag",26)+'<div><small>Arrival</small><b>'+fmtTime(arr,tz||undefined)+'</b><span>'+(tz?esc(tzAbbr(arr,tz))+' · ':'')+esc(G.dest.city||G.dest.name)+'</span></div></div>'+
     '<div class="tbi">'+ico("clock",26)+'<div><small>Remaining</small><b>'+fmtDur(left)+'</b><span>'+fmtDist(leftM)+'</span></div></div>'+
-    (G.nav?'<button class="gbtn tbend" data-a="end">'+ico("stop",16)+' End</button>':'')+'<div class="tbi eta">'+ico(G.mode==="WALK"?"walk":"car",26)+'<div><small>'+(G.mode==="WALK"?"Walking":"ETA details")+'</small><b>'+(G.mode==="WALK"?(G.walkStats||"On foot"):r.delaySec>120?"+"+fmtDur(r.delaySec)+" delay":"On time")+'</b><span>'+(G.mode==="WALK"?"Pace shown while you walk":r.trafficLevel||"Live traffic")+'</span></div></div>'+
+    (G.nav?'<button class="gbtn tbend'+(G.endArm?' confirm':'')+'" data-a="end">'+ico("stop",16)+(G.endArm?' Tap again to end':' End')+'</button>':'')+'<div class="tbi eta">'+ico(G.mode==="WALK"?"walk":"car",26)+'<div><small>'+(G.mode==="WALK"?"Walking":"ETA details")+'</small><b>'+(G.mode==="WALK"?(G.walkStats||"On foot"):r.delaySec>120?"+"+fmtDur(r.delaySec)+" delay":"On time")+'</b><span>'+(G.mode==="WALK"?"Pace shown while you walk":r.trafficLevel||"Live traffic")+'</span></div></div>'+
     '<button class="tbi wx" data-a="weather">'+(wAt&&wAt.icon?'<img src="'+esc(wAt.icon+(THEME.cur==="dark"?"_dark":"")+".svg")+'" alt="" width="34" height="34">':ico("cloud",26))+'<div><small>Weather at destination</small><b>'+(wAt&&wAt.temp!=null?wAt.temp+"°":"—")+'</b><span>'+(wAt?esc(wAt.text||""):di&&di.weather&&di.weather.error?"Unavailable":di?"…":"Loading…")+'</span></div>'+ico("back",16).replace('class="ic"','class="ic chev"')+'</button>'+
     '<div class="tbi dtz">'+ico("clock",26)+'<div><small>Destination time</small><b>'+(tz?fmtTime(Date.now(),tz):"—")+'</b><span>'+(tz?esc(tzAbbr(Date.now(),tz))+(diff?" ("+(diff>0?"+":"")+diff+" hr)":diff===0?" · same time":""):di&&di.tz&&di.tz.error?"Unavailable":"…")+'</span></div></div>'+tools(true);
 }
@@ -415,7 +418,7 @@ const CITY={on:false,ok:null,el:null,lib:null,items:[],veh:null,alt:{},
 };
 
 /* ---------- server calls ---------- */
-async function api(path,o){o=o||{};const r=await fetch(CFG.apiBase+path,{method:o.method||"GET",headers:o.body?{"content-type":"application/json"}:{},body:o.body?JSON.stringify(o.body):undefined,credentials:"same-origin"});
+async function api(path,o){o=o||{};const ac=typeof AbortController!=="undefined"?new AbortController():null,tm=ac&&setTimeout(()=>ac.abort(),o.timeout||20000);let r;try{r=await fetch(CFG.apiBase+path,{signal:ac?ac.signal:undefined,method:o.method||"GET",headers:o.body?{"content-type":"application/json"}:{},body:o.body?JSON.stringify(o.body):undefined,credentials:"same-origin"})}catch(e){throw new Error(e&&e.name==="AbortError"?"That took too long. Check your connection and try again.":"You seem to be offline. Check your connection and try again.")}finally{if(tm)clearTimeout(tm)}
   let j={};try{j=await r.json()}catch(e){}if(!r.ok)throw new Error(j.error||"Something went wrong ("+r.status+")");return j}
 
 /* ---------- location ---------- */
@@ -489,7 +492,7 @@ async function planRoute(keep){if(!G.dest)return;
     avoid:{tolls:D.settings.avoidTolls,highways:D.settings.avoidHighways,ferries:D.settings.avoidFerries},alternatives:!keep};
   try{const j=await api("/route",{method:"POST",body});G.routes=j.routes.map(prepRoute);G.sel=0;G.route=G.routes[0];G.routeAt=Date.now();if(G.nav){G.nav.i=0;G.nav.s=0;G.nav.step=0;G.nav.off=0}}
   catch(e){G.err=e.message;if(!keep){G.routes=[];G.route=null}}
-  G.busy=false;MAP.draw();paintAll();if(!keep)requestAnimationFrame(()=>MAP.fit());if(G.route&&D3.ok&&(innerWidth>760||G.nav))D3.prefetch(G.route);if(G.route)loadIntel();
+  G.busy=false;MAP.draw();paintAll();if(!keep)requestAnimationFrame(()=>MAP.fit());if(G.route&&D3.ok&&(!isPhone()||G.nav))D3.prefetch(G.route);if(G.route)loadIntel();
 }
 function pickRoute(i){if(G.nav||!G.routes[i])return;G.sel=i;G.route=G.routes[i];MAP.draw();paintAll();loadIntel()}
 async function loadIntel(){const r=G.route;if(!r)return;const end=(r.legs[r.legs.length-1]||{}).end||G.dest;const arr=arrival();
@@ -511,11 +514,11 @@ async function startNav(){if(!G.route)return;stopSim();
 function beginNav(sim){G.nav={s:0,i:0,step:0,off:0,leftSec:G.route.durationSec,heading:G.route.path.length>1?bearing(G.route.path[0],G.route.path[1]):0,snapPos:G.route.path[0],spoken:{},startedAt:Date.now(),traveled:0,last:null,lastRe:0,sim};
   MAP.follow=true;if(G.page!=="navigate")go("navigate");MAP.recenter();
   /* phones open the driving view when you start; tap the car button for the map (that choice is remembered) */
-  if(innerWidth<=760&&D.settings.driveView!==false&&G.mode==="DRIVE"){const d=$("#dash");if(d){d.classList.add("drive-open");DRIVE.resize()}}if(D3.ok)D3.prefetch(G.route);D3.sDisp=null;
+  if(isPhone()&&D.settings.driveView===true&&G.mode==="DRIVE"){const d=$("#dash");if(d){d.classList.add("drive-open");DRIVE.resize()}}if(D3.ok)D3.prefetch(G.route);D3.sDisp=null;
   if(!sim)try{navigator.wakeLock&&navigator.wakeLock.request("screen").then(w=>WAKE=w).catch(()=>{})}catch(e){}
   speak((G.mode==="WALK"?"Starting walk to ":"Starting route to ")+(G.dest?G.dest.name:"your destination")+". "+fmtDur(G.route.durationSec).replace("hr","hour").replace("min","minutes")+".");
-  paintAll()}
-function endNav(quiet){stopSim();G.nav=null;LIM.v=null;LIM.s=-1e9;G.walkStats="";if(WAKE){try{WAKE.release()}catch(e){}WAKE=null}MAP.follow=true;if(!quiet)paintAll();if(MAP.map&&!quiet)requestAnimationFrame(()=>MAP.fit())}
+  if(typeof SHEET!=="undefined")SHEET.set("peek");paintAll()}
+function endNav(quiet){stopSim();G.nav=null;if(typeof SHEET!=="undefined")SHEET.set("peek",true);const _dd=$("#dash");if(_dd&&isPhone())_dd.classList.remove("drive-open");LIM.v=null;LIM.s=-1e9;G.walkStats="";if(WAKE){try{WAKE.release()}catch(e){}WAKE=null}MAP.follow=true;if(!quiet)paintAll();if(MAP.map&&!quiet)requestAnimationFrame(()=>MAP.fit())}
 function navUpdate(p){const n=G.nav,r=G.route;if(!n||!r)return;
   const sn=snap(r.path,r.cum,p,n.i);n.i=sn.i;n.s=sn.s;
   const a=r.path[sn.i],b=r.path[Math.min(sn.i+1,r.path.length-1)];n.snapPos=sn.d<40?{lat:a.lat+(b.lat-a.lat)*sn.t,lng:a.lng+(b.lng-a.lng)*sn.t}:p;
@@ -868,7 +871,7 @@ function exploreBody(){if(!EXP.cat)return '<div class="empty">Pick a category to
   if(EXP.loading)return '<div class="empty">Looking around…</div>';if(EXP.err)return '<div class="empty">'+esc(EXP.err)+'</div>';
   const L=EXP.items||[];if(EXP.cat==="live")return '<p class="muted" style="margin-bottom:12px">'+esc(C[4])+'</p>'+liveBody(L);return (C[4]?'<p class="muted" style="margin-bottom:12px">'+esc(C[4])+'</p>':'')+(L.length?'<div class="plist grid">'+L.map((x,i)=>'<div class="pcard gl">'+(x.photo?'<img src="'+esc(x.photo)+'" alt="" loading="lazy">':'<span class="pph" style="--pc:'+C[5]+'">'+ico(C[2],30)+'</span>')+'<div class="pcb"><b>'+esc(x.name)+'</b><small>'+esc([x.type,x.rating?"★ "+x.rating+(x.count?" ("+x.count+")":""):"",x.dist!=null?fmtDist(x.dist):""].filter(Boolean).join(" · "))+'</small><small class="muted">'+esc(x.addr||"")+'</small>'+(x.attr?'<small class="attr">Photo: '+esc(x.attr)+'</small>':'')+
     '<div class="row l"><button class="gbtn sm" data-a="exgo" data-i="'+i+'">'+ico("navigate",15)+' Go</button><button class="gbtn ghost sm" data-a="exsave" data-i="'+i+'">'+ico("star",15)+' Save</button></div></div></div>').join("")+'</div>'+(L.some(x=>x.google)?'<p class="attr">Places data © Google</p>':''):'<div class="empty">Nothing found nearby.</div>')}
-async function exploreLoad(k){EXP.cat=k;EXP.items=null;EXP.err="";EXP.loading=true;const r=$("#exr");if(r)r.innerHTML=exploreBody();if(r&&innerWidth<=760)setTimeout(()=>r.scrollIntoView({behavior:REDUCED?"auto":"smooth",block:"start"}),60);$$(".cat").forEach(b=>b.classList.toggle("on",b.dataset.k===k));
+async function exploreLoad(k){EXP.cat=k;EXP.items=null;EXP.err="";EXP.loading=true;const r=$("#exr");if(r)r.innerHTML=exploreBody();if(r&&isPhone())setTimeout(()=>r.scrollIntoView({behavior:REDUCED?"auto":"smooth",block:"start"}),60);$$(".cat").forEach(b=>b.classList.toggle("on",b.dataset.k===k));
   const C=CATS.find(c=>c[0]===k),center=G.pos||CFG.defaultCenter;
   try{
     if(k==="live"){EXP.items=await liveEvents();MAP.load().catch(()=>{}).then(()=>{EXP.loading=false;const rr=$("#exr");if(rr&&EXP.cat==="live"){rr.innerHTML=exploreBody();liveImages(EXP.items)}});}
@@ -1039,11 +1042,77 @@ function pSettings(){const s=D.settings,v=D.vehicle,tg=(id,on,l,d)=>'<label clas
   '<div class="row l"><button class="gbtn ghost sm" data-a="export">Download my data</button><button class="gbtn ghost sm" data-a="wipe">Delete my Groove Guide data</button></div></div>'+
   '<div class="gl card"><h3>About</h3><p class="muted small">Groove Guide by Grooveville. Maps, places, routes, weather and time zones by Google. Speed limits and lane-by-lane guidance need a verified lane data provider and aren’t shown until one is connected. Phone browsers can pause navigation when the screen locks.</p></div></div>'}
 
+/* ---------- phones: one interaction controller for the sheet, panels and the Back button ----------
+   Root causes this replaces: the trip panel had only "closed" and a fixed 70%-height "open" state toggled by a 20px strip,
+   the driving view opened itself over most of the map, the header disappeared while navigating, and the browser Back
+   button left the page instead of closing what was open. */
+const UIX={stack:[],
+  /* opening a panel adds a history entry so Back closes it; closing it by hand just retires the entry (no history.back race) */
+  push(k){if(this.stack.includes(k))return;this.stack.push(k);try{history.pushState(Object.assign({},history.state||{},{gx:k}),"")}catch(e){}},
+  drop(k){const i=this.stack.lastIndexOf(k);if(i>=0)this.stack.splice(i,1)},
+  onPop(){const k=this.stack.pop();if(!k)return false;if(k==="modal")_gCloseModal();else if(k==="sheet")SHEET.set("peek",true);else if(k==="drive"){const d=$("#dash");if(d){d.classList.remove("drive-open");DRIVE.resize()}}return true}};
+/* every dialog gets a close button and joins the Back-button stack; only one dialog exists at a time */
+const _gModal=modal,_gCloseModal=closeModal;
+modal=function(html,mount){const had=!!$("#gmodal").innerHTML;sugOpen(false);const el=_gModal(html,mount);if(el&&!el.querySelector(".gmx")){const x=document.createElement("button");x.className="gmx";x.setAttribute("data-a","close");x.setAttribute("aria-label","Close");x.innerHTML=ico("x",18);el.prepend(x)}if(!had)UIX.push("modal");return el};
+closeModal=function(){const had=!!$("#gmodal").innerHTML;_gCloseModal();if(had)UIX.drop("modal")};
+/* ---------- the trip sheet: peek (default while navigating) · half · full ---------- */
+const SHEET={state:"peek",h:0,drag:null,
+  el(){return $("#tbar")},
+  visible(){return isPhone()&&!!G.route&&(G.nav||this.state!=="peek")&&(G.page===""||G.page==="navigate")},
+  sizes(){const d=$("#dash"),H=d?d.clientHeight:600,pk=$(".tpeek"),peek=Math.min(132,Math.max(64,(pk?pk.offsetHeight:64)+30));return {peek,half:Math.max(peek+120,Math.round(H*.5)),full:Math.max(peek+160,H-10)}},
+  set(s,fromBack){const prev=this.state;this.state=s;if(s!=="peek"&&prev==="peek"&&!fromBack)UIX.push("sheet");if(s==="peek"&&prev!=="peek"&&!fromBack)UIX.drop("sheet");this.sync()},
+  tap(v){if(Date.now()-(this.dragAt||0)<450)return;if(!isPhone()){$("#dash").classList.toggle("sheet-open");requestAnimationFrame(sizeBottom);return}
+    if(v==="peek"||v==="half"||v==="full")return this.set(v===this.state&&v!=="peek"?"peek":v);this.set({peek:"half",half:"full",full:"peek"}[this.state])},
+  sync(h){const t=this.el(),d=$("#dash");if(!t||!d)return;if(!isPhone()){t.style.height="";t.hidden=false;d.classList.remove("sheet-open");t.classList.remove("s-peek","s-half","s-full");return}
+    const vis=this.visible();t.hidden=!vis;d.classList.toggle("sheet-open",vis&&this.state!=="peek");["peek","half","full"].forEach(k=>t.classList.toggle("s-"+k,this.state===k));
+    if(vis){const S=this.sizes();this.h=h!=null?h:S[this.state];t.style.height=this.h+"px"}else this.h=0;
+    const g=t.querySelector(".tgrab");if(g){g.setAttribute("aria-expanded",this.state!=="peek");g.setAttribute("aria-label",this.state==="peek"?"Show trip details":this.state==="half"?"Show the full trip":"Collapse trip details")}
+    sizeBottom()},
+  /* drag: handle and summary row always; the scrolling content only when it's already at the top and you pull down */
+  start(y,src){const t=this.el();if(!t||!this.visible())return false;this.drag={y0:y,h0:this.h,t0:performance.now(),y:y,src,moved:false};t.classList.add("dragging");return true},
+  move(y){const D2=this.drag;if(!D2)return;const dy=D2.y0-y;if(Math.abs(dy)>6)D2.moved=true;const S=this.sizes(),h=Math.max(S.peek-24,Math.min(S.full,D2.h0+dy));D2.v=(D2.y-y)/Math.max(1,performance.now()-(D2.tl||D2.t0));D2.y=y;D2.tl=performance.now();this.el().style.height=h+"px";this.h=h},
+  end(){const D2=this.drag;this.drag=null;const t=this.el();if(t)t.classList.remove("dragging");if(!D2)return;if(D2.moved)this.dragAt=Date.now();if(!D2.moved){/* a plain tap on the handle is handled by its click; tapping the summary row opens the details */if(D2.src==="peek"&&this.state==="peek")this.set("half");return}
+    const S=this.sizes(),order=["peek","half","full"],v=D2.v||0,h=this.h;let idx=order.reduce((a,k,i)=>Math.abs(S[k]-h)<Math.abs(S[order[a]]-h)?i:a,0);
+    if(v>.45){const up=order.findIndex(k=>S[k]>h+4);idx=up<0?2:up}else if(v<-.45){let dn=0;order.forEach((k,i)=>{if(S[k]<h-4)dn=i});idx=dn}const target=order[idx];this.set(target)}};
+(function(){let touchId=null;
+  document.addEventListener("pointerdown",e=>{if(!isPhone())return;const g=e.target.closest(".tgrab,.tpeek,.tmh");if(!g||e.target.closest("button:not(.tgrab),a"))return;if(e.pointerType==="mouse"&&e.button!==0)return;
+    if(SHEET.start(e.clientY,g.classList.contains("tgrab")?"grab":g.classList.contains("tpeek")?"peek":"head")){touchId=e.pointerId;try{g.setPointerCapture(e.pointerId)}catch(x){}}},{passive:true});
+  document.addEventListener("pointermove",e=>{if(SHEET.drag&&e.pointerId===touchId)SHEET.move(e.clientY)},{passive:true});
+  const up=e=>{if(SHEET.drag&&e.pointerId===touchId){touchId=null;SHEET.end()}};document.addEventListener("pointerup",up);document.addEventListener("pointercancel",up);
+  /* pull-down on the scrolled-to-top content collapses the sheet (touch events: the browser owns vertical scrolling otherwise) */
+  let ts=null;document.addEventListener("touchstart",e=>{const c=e.target.closest(".tbar .tbin");if(!c||!isPhone()||SHEET.state==="peek"||e.target.closest(".tpeek"))return;ts={y:e.touches[0].clientY,c,on:false}},{passive:true});
+  document.addEventListener("touchmove",e=>{if(!ts)return;const y=e.touches[0].clientY;if(!ts.on){if(ts.c.scrollTop<=0&&y-ts.y>10){ts.on=SHEET.start(ts.y,"content")}else if(Math.abs(y-ts.y)>10){ts=null;return}}if(ts&&ts.on){e.preventDefault();SHEET.move(y)}},{passive:false});
+  document.addEventListener("touchend",()=>{if(ts&&ts.on)SHEET.end();ts=null},{passive:true});document.addEventListener("touchcancel",()=>{if(ts&&ts.on)SHEET.end();ts=null},{passive:true});
+  addEventListener("resize",()=>SHEET.sync());addEventListener("orientationchange",()=>setTimeout(()=>{SHEET.sync();paintAll()},250));
+  if(window.visualViewport)visualViewport.addEventListener("resize",()=>{const kb=innerHeight-visualViewport.height>140;document.documentElement.classList.toggle("kbd",kb)});
+  /* leaving the page mid-trip asks first (the browser shows its own wording) */
+  addEventListener("beforeunload",e=>{if(G.nav&&!G.nav.sim){e.preventDefault();e.returnValue=""}});
+})();
+/* bottom of the map stays clear of whatever is open, so map buttons never hide behind a panel */
+sizeBottom=function(){const d=$("#dash");if(!d)return;let h=96;
+  if(isPhone()){const tc=$("#tripcard");if(SHEET.visible())h=Math.min(SHEET.h||SHEET.sizes().peek,SHEET.sizes().half);else if(G.dest&&!G.nav&&tc&&tc.offsetParent)h=tc.offsetHeight+10;else h=16}
+  d.style.setProperty("--bot",h+"px")};
+/* ---------- phone sheet content ---------- */
+function tbarPhone(){const r=G.route;if(!r)return "";const di=G.intel.dest,oi=G.intel.origin,arr=arrival(),tz=di&&di.tz&&!di.tz.error?di.tz.id:"",left=G.nav?G.nav.leftSec:r.durationSec,leftM=G.nav?Math.max(0,r.len-G.nav.s):r.distanceM,ni=nextInfo();
+  const wAt=di&&di.weather&&!di.weather.error?weatherAt(di.weather,arr):null,diff=tz&&oi&&oi.tz&&!oi.tz.error?Math.round((di.tz.offsetSec-oi.tz.offsetSec)/3600):null,end=G.endArm?" Tap again to end":" End";
+  const peek='<div class="tpeek">'+(G.nav&&ni&&!$("#nextturn:not([hidden])")?'<div class="tpk tturn"><span class="ttico">'+manIco(ni.man,24)+'</span><b>'+fmtDist(ni.dist)+'</b></div>':'')+'<div class="tpk"><small>Remaining</small><b>'+fmtDur(left)+'</b><span>'+fmtDist(leftM)+'</span></div><div class="tpk"><small>Arrive</small><b>'+fmtTime(arr,tz||undefined)+'</b><span>'+(tz?esc(tzAbbr(arr,tz)):"")+'</span></div>'+
+    (G.nav?'<button class="gbtn tbend'+(G.endArm?' confirm':'')+'" data-a="end">'+ico("stop",16)+'<span>'+end+'</span></button>':'<button class="gbtn ghost sm" data-a="sheet" data-v="peek" aria-label="Close trip details">'+ico("x",16)+'</button>')+'</div>';
+  const steps=r.steps||[],from=G.nav?G.nav.step+1:0,rows=steps.slice(from,from+40);
+  return peek+'<div class="tmore"><div class="tmh"><b>Trip details</b><button class="gbtn ghost sm" data-a="sheet" data-v="peek">'+ico("down",16)+' Collapse</button></div>'+
+    '<div class="tgrid"><div class="tbi eta"><small>'+(G.mode==="WALK"?"Walking":"Traffic")+'</small><b>'+(G.mode==="WALK"?(G.walkStats||"On foot"):r.delaySec>120?"+"+fmtDur(r.delaySec)+" delay":"On time")+'</b><span>'+(G.mode==="WALK"?"Pace shown while you walk":esc(r.trafficLevel||"Live traffic"))+'</span></div>'+
+    '<button class="tbi wx" data-a="weather"><small>Weather at destination</small><b>'+(wAt&&wAt.temp!=null?wAt.temp+"°":"—")+'</b><span>'+(wAt?esc(wAt.text||""):di&&di.weather&&di.weather.error?"Unavailable":"Loading…")+'</span></button>'+
+    '<div class="tbi dtz"><small>Destination time</small><b>'+(tz?fmtTime(Date.now(),tz):"—")+'</b><span>'+(tz?esc(tzAbbr(Date.now(),tz))+(diff?" ("+(diff>0?"+":"")+diff+" hr)":diff===0?" · same time":""):di&&di.tz&&di.tz.error?"Unavailable":"…")+'</span></div></div>'+
+    (!G.nav&&G.routes.length>1?'<div class="alts">'+G.routes.map((x,i)=>'<button class="'+(i===G.sel?"on":"")+'" data-a="alt" data-i="'+i+'"><b>'+fmtDur(x.durationSec)+'</b><small>'+(i===0?"Best":x.description?"via "+esc(x.description):"Option "+(i+1))+'</small></button>').join("")+'</div>':'')+
+    tools(true)+(rows.length?'<div class="tsteps"><b>Turn by turn</b><ol>'+rows.map(s=>'<li><span class="tsi">'+manIco(s.maneuver,22)+'</span><span>'+esc(shortInstr(s.instr))+'</span><small>'+fmtDist(s.distanceM)+'</small></li>').join("")+'</ol></div>':'')+'</div>'}
+/* header: while navigating the search field turns into a compact destination control */
+function paintDestPill(){const p=$("#gdest");if(!p)return;const on=!!G.nav&&!!G.dest;p.hidden=!on;if(on)p.innerHTML=ico("flag",16)+'<span>'+esc(G.dest.name)+'</span>'}
+function paintReturn(){const b=$("#gret");if(!b)return;b.hidden=!(G.nav&&G.page!==""&&G.page!=="navigate")}
+
 /* ---------- detail sheets ---------- */
 function weatherModal(){const di=G.intel.dest,w=di&&di.weather;if(!w||w.error){toast("Weather isn’t available for this place right now");return}const tz=di.tz&&!di.tz.error?di.tz.id:undefined,arr=arrival(),at=weatherAt(w,arr),n=w.now||{},sun=(w.sun||[])[0]||{};
   const ic=x=>x&&x.icon?'<img src="'+esc(x.icon+(THEME.cur==="dark"?"_dark":"")+".svg")+'" alt="" width="30" height="30">':ico("cloud",22);
   modal('<h3>Weather at '+esc(G.dest.name)+'</h3><div class="stats"><div class="pk"><small>Now</small><b>'+(n.temp!=null?n.temp+"°":"—")+'</b><span>'+esc(n.text||"")+'</span></div><div class="pk"><small>When you arrive · '+fmtTime(arr,tz)+'</small><b>'+(at&&at.temp!=null?at.temp+"°":"—")+'</b><span>'+esc(at?at.text:"")+'</span></div>'+
-    '<div class="pk"><small>Rain chance</small><b>'+(at&&at.rain!=null?at.rain+"%":"—")+'</b></div><div class="pk"><small>Wind</small><b>'+(at&&at.wind!=null?Math.round(at.wind)+" mph":"—")+'</b><span>'+esc(at?at.windDir.replace(/_/g," ").toLowerCase():"")+'</span></div>'+
+    '<div class="pk"><small>Rain chance</small><b>'+(at&&at.rain!=null?at.rain+"%":"—")+'</b></div><div class="pk"><small>Wind</small><b>'+(at&&at.wind!=null?Math.round(at.wind)+" mph":"—")+'</b><span>'+esc(at&&at.windDir?String(at.windDir).replace(/_/g," ").toLowerCase():"")+'</span></div>'+
     '<div class="pk"><small>Sunrise</small><b>'+(sun.rise?fmtTime(sun.rise,tz):"—")+'</b></div><div class="pk"><small>Sunset</small><b>'+(sun.set?fmtTime(sun.set,tz):"—")+'</b></div></div>'+
     '<div class="hours">'+(w.hours||[]).slice(0,16).map(h=>'<div><small>'+fmtTime(h.t,tz).replace(":00","")+'</small>'+ic(h)+'<b>'+(h.temp!=null?h.temp+"°":"")+'</b><small>'+(h.rain!=null?h.rain+"%":"")+'</small></div>').join("")+'</div>'+
     '<p class="attr">Weather data: Google · times shown in '+(tz?esc(tzAbbr(Date.now(),tz)):"local time")+'</p><div class="row"><button class="gbtn" data-a="close">Close</button></div>')}
@@ -1090,19 +1159,21 @@ document.addEventListener("click",e=>{
   if(a==="alt")return pickRoute(i);
   if(a==="clear")return clearRoute();
   if(a==="start")return startNav();
-  if(a==="end"){endNav();toast("Navigation ended");return}
+  if(a==="end"){if(G.nav&&!(G.endArm&&Date.now()-G.endArm<4000)){G.endArm=Date.now();paintAll();clearTimeout(G.endT);G.endT=setTimeout(()=>{G.endArm=0;if(G.nav)paintAll()},4000);return}G.endArm=0;endNav();toast("Navigation ended");return}
   if(a==="sim")return startSim();
   if(a==="savedest"){if(G.dest)addSaved(Object.assign({},G.dest));return}
   if(a==="voice-toggle"){D.settings.voice=!D.settings.voice;save();if(!D.settings.voice&&window.speechSynthesis)speechSynthesis.cancel();paintNext();return}
   if(a==="weather")return weatherModal();
-  if(a==="addstop"){if(G.stops.length>=5){toast("Up to 5 stops");return}return searchFor("stop","Search for a stop to add")}
+  if(a==="addstop"){if(G.stops.length>=5){toast("Up to 5 stops");return}if(isPhone())SHEET.set("peek");return searchFor("stop","Search for a stop to add")}
   if(a==="share")return shareEta();
   if(a==="options")return optionsModal();
   if(a==="optmode"){G.mode=t.dataset.v;$$('[data-a="optmode"]').forEach(b=>b.classList.toggle("on",b===t));return}
   if(a==="rmstop"){G.stops.splice(i,1);optionsModal();return}
   if(a==="optapply"){$$("[data-opt]").forEach(c=>D.settings[c.dataset.opt]=c.checked);save();closeModal();paintMapTools();if(G.dest)planRoute(!!G.nav);return}
   if(a==="drivetoggle"){const on=$("#dash").classList.toggle("drive-open");if(G.nav){D.settings.driveView=on;save()}DRIVE.resize();if(on&&D3.ok&&G.route)D3.prefetch(G.route);return}
-  if(a==="sheet"){$("#dash").classList.toggle("sheet-open");requestAnimationFrame(sizeBottom);return}
+  if(a==="sheet"){SHEET.tap(t.dataset.v);return}
+  if(a==="search-cancel"){G.searchFor=null;const gs=$(".gsearch");gs.classList.remove("for");const q=$("#gq");q.value="";q.placeholder="Where we headed?";q.blur();sugOpen(false);return}
+  if(a==="retry-route"){G.err="";planRoute();return}
   if(a==="more")return moreSheet();
   if(a==="acct")return modal('<h3>Your account</h3><p class="muted">Signed in as <b>'+esc(STORE.email)+'</b>.</p><p class="muted small">'+(STORE.cloud==="blocked"?"Account sync is waiting for the latest Firestore rules. Your data is safe on this device.":"Your saved places, trips, walks and car sync to this account on every device.")+'</p><div class="row"><button class="gbtn ghost" data-a="signout">Sign out</button><button class="gbtn" data-a="close">Close</button></div>');
   /* explore */
@@ -1166,7 +1237,7 @@ async function deepLink(){const q=new URLSearchParams(location.search);const to=
 function boot(){THEME.cur=resolveTheme();shell();applyTheme();initAuth();route();
   try{navigator.permissions&&navigator.permissions.query({name:"geolocation"}).then(s=>{if(s.state==="granted")startGeo()}).catch(()=>{})}catch(e){}
   addEventListener("resize",()=>DRIVE.resize());deepLink();
-  window.__gg={G,D:()=>D,MAP,route,planRoute,navUpdate,startSim};
+  window.__gg={G,D:()=>D,MAP,route,planRoute,navUpdate,startSim,SHEET,isPhone,paintRecenter};
 }
 if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",boot);else boot();
 })();

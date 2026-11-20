@@ -165,6 +165,89 @@ async function renderPost(P,brand,assets){const F=FORMATS[P.format]||FORMATS.por
   /* readability: contrast of headline text against what's behind it */
   if(boxes.headline){const bgL=cv.avgLum(boxes.headline.x,boxes.headline.y,boxes.headline.w,boxes.headline.h),c=parseColor(ink),L=x=>x<=.03928?x/12.92:Math.pow((x+.055)/1.055,2.4),tL=.2126*L(c[0])+.7152*L(c[1])+.0722*L(c[2]),ratio=(Math.max(bgL,tL)+.05)/(Math.min(bgL,tL)+.05);boxes.headline.contrast=Math.round(ratio*10)/10;if(ratio<3)warn.push("Low contrast behind the headline ("+ratio.toFixed(1)+":1)")}
   const rgba=cv.toRGBA();for(let i=3;i<rgba.length;i+=4)rgba[i]=255;const png=await encodePNG(W,H,rgba,true);return {png,w:W,h:H,warnings:warn,boxes,rgba}}
-return {Canvas,Font,decodePNG,encodePNG,renderPost,svgPath,measure,parseColor,FORMATS,rasterize}})();
+/* ---------- poster layout: cinematic event flyers and social posts ----------
+   The photo (and, when the AI lettered it, the title) comes from the background art. Everything that must be exact
+   (logo, dates, times, venue, lineup, web address) is drawn here from the real data, so it is always spelled right. */
+const STYLES={
+  brand:{l:"Brand look",title:"anton",script:"kaushan",info:"bebas"},
+  trending:{l:"Trending",title:"anton",script:"kaushan",info:"bebas",fill:["#FFF4E6","#F4A987","#B5532A"],glow:"#F4A987",edge:"#1a0d07"},
+  halloween:{l:"Halloween",title:"creepster",script:"kaushan",info:"bebas",fill:["#FFE29A","#FF7A00","#7A1500"],glow:"#FF5A00",edge:"#140400"},
+  homecoming:{l:"Homecoming",title:"anton",script:"greatvibes",info:"bebas",fill:["#FFF8DC","#F2C14E","#8C5E10"],glow:"#F2C14E",edge:"#1c1204"},
+  voting:{l:"Voting",title:"anton",script:"marker",info:"bebas",fill:["#FFFFFF","#F3E9DC","#B9A58C"],glow:"#E63946",edge:"#0d0d14"},
+  concert:{l:"Concert / Tour",title:"bebas",script:"kaushan",info:"bebas",fill:["#FFF6E0","#FFC46B","#A8641A"],glow:"#FFB347",edge:"#140b02"},
+  newmusic:{l:"New Music",title:"archivo",script:"marker",info:"bebas",fill:["#E8FAFF","#5CC8FF","#1A4FB5"],glow:"#29B6F6",edge:"#020a18"},
+  party:{l:"Party / Club",title:"bebas",script:"pacifico",info:"bebas",fill:["#FFE6F6","#FF5CC0","#8E1766"],glow:"#FF2FA8",edge:"#16020f"},
+  brunch:{l:"Brunch / Day Party",title:"abril",script:"pacifico",info:"bebas",fill:["#FFF3E3","#FFB48A","#D9573A"],glow:"#FF9F6E",edge:"#1a0904"},
+  birthday:{l:"Birthday",title:"abril",script:"greatvibes",info:"bebas",fill:["#FFFBEA","#F5CF6B","#9E7414"],glow:"#FFD27A",edge:"#160f02"},
+  motivation:{l:"Motivation",title:"anton",script:"kaushan",info:"bebas",fill:["#FFFFFF","#F7E7CE","#C9A96E"],glow:"#F4A987",edge:"#0e0b07"},
+  holiday:{l:"Holidays & seasonal",title:"abril",script:"greatvibes",info:"bebas",fill:["#FFF8E7","#E8C872","#A31F24"],glow:"#E8C872",edge:"#140404"}};
+function styleFor(P,b){const s=Object.assign({},STYLES[P.style]||STYLES.brand),c=Object.assign({primary:"#F4A987",secondary:"#f3eee6",accent:"#F4A987",text:"#f7f2ea"},(b&&b.colors)||{});
+  if(!s.fill)s.fill=[c.text||"#fff",c.accent||c.primary,c.primary];if(!s.glow)s.glow=c.accent||c.primary;if(!s.edge)s.edge="#0b0907";s.ink=c.text||"#f7f2ea";s.accent=s.fill[1];return s}
+function shape(font,str,x,y,size,o){o=o||{};str=String(str||"");const sp=o.sp||0,sx=o.sx||1,w=measure(font,str,size,sp)*sx;let cx=o.align==="right"?x-w:o.align==="center"?x-w/2:x;const s=size/font.upm,all=[];let prev=0;
+  const rot=o.rotate||0,cs=Math.cos(rot),sn=Math.sin(rot),ox=o.ox!=null?o.ox:x,oy=o.oy!=null?o.oy:y,sk=o.skew||0;
+  for(const ch of str){const g=font.gid(ch.codePointAt(0));if(prev)cx+=(font.kern.get(prev*65536+g)||0)*s*sx;const gx=cx;
+    for(const c of font.contours(g,(fx,fy)=>{let px=gx+(fx*s+fy*s*sk)*sx,py=y-fy*s;if(!rot)return [px,py];const dx=px-ox,dy=py-oy;return [ox+dx*cs-dy*sn,oy+dx*sn+dy*cs]}))all.push(c);cx+=(font.adv(g)*s+sp)*sx;prev=g}
+  return {c:all,w}}
+/* layered display type: shadow, glow, 3D extrusion, outline, gradient face */
+function fancy(cv,sh,size,st,o){o=o||{};if(!sh.c.length)return;const r=rasterize(sh.c);if(!r)return;const U=size/100;
+  const sb=blurMask(r,10*U);cv.blendMask(sb.m,sb.x+6*U|0,sb.y+12*U|0,sb.w,sb.h,solid([0,0,0,.75]));
+  if(o.glow!==false){const g=blurMask(r,26*U);cv.blendMask(g.m,g.x,g.y,g.w,g.h,solid(hexA(st.glow,.55)));const g2=blurMask(r,8*U);cv.blendMask(g2.m,g2.x,g2.y,g2.w,g2.h,solid(hexA(st.glow,.45)))}
+  const depth=Math.max(2,Math.round((o.depth==null?7:o.depth)*U)),dk=parseColor(st.fill[2]);for(let i=depth;i>=1;i--){const t=i/depth;cv.blendMask(r.m,r.x+Math.round(i*.35),r.y+i,r.w,r.h,solid([dk[0]*(1-t*.6),dk[1]*(1-t*.6),dk[2]*(1-t*.6),1]))}
+  const ow=blurMask(r,Math.max(2,3.2*U));for(let i=0;i<ow.m.length;i++)ow.m[i]=Math.min(1,ow.m[i]*3.2);cv.blendMask(ow.m,ow.x,ow.y,ow.w,ow.h,solid(st.edge));
+  cv.blendMask(r.m,r.x,r.y,r.w,r.h,linear(0,r.y,0,r.y+r.h,[[0,st.fill[0]],[.48,st.fill[1]],[1,st.fill[2]]]));
+  const hl=new Float32Array(r.m.length);for(let y=0;y<r.h;y++)for(let x=0;x<r.w;x++){const i=y*r.w+x,up=y>2?r.m[i-3*r.w]:0;hl[i]=Math.max(0,r.m[i]-up)*.55}cv.blendMask(hl,r.x,r.y,r.w,r.h,solid([1,1,1,.8]))}
+function plain(cv,sh,paint,shadow){if(!sh.c.length)return;const r=rasterize(sh.c);if(!r)return;if(shadow){const s=blurMask(r,shadow);cv.blendMask(s.m,s.x,s.y+2,s.w,s.h,solid([0,0,0,.8]))}cv.blendMask(r.m,r.x,r.y,r.w,r.h,paint)}
+const DAYS=["SUNDAY","MONDAY","TUESDAY","WEDNESDAY","THURSDAY","FRIDAY","SATURDAY"],MONS=["JAN","FEB","MAR","APR","MAY","JUN","JUL","AUG","SEP","OCT","NOV","DEC"];
+function whenLines(P){const W=(Array.isArray(P.when)?P.when:[]).filter(Boolean).map(s=>String(s).toUpperCase());if(!/^\d{4}-\d{2}-\d{2}$/.test(P.eventDate||""))return W.concat(P.eventTime?[String(P.eventTime).toUpperCase()]:[]).slice(0,3);
+  const d=new Date(P.eventDate+"T12:00:00Z"),out=[DAYS[d.getUTCDay()],MONS[d.getUTCMonth()]+" "+d.getUTCDate()],t=P.eventTime||W.find(x=>/\d/.test(x)&&!/\b(JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|OCT|NOV|DEC)\b/.test(x));if(t)out.push(String(t).toUpperCase());return out}
+async function renderPoster(P,brand,assets){const F=FORMATS[P.format]||FORMATS.portrait,W=F.w,H=F.h,cv=new Canvas(W,H),warn=[],boxes={},b=brand||{},st=styleFor(P,b),fo=assets.fonts||{};
+  const fT=fo.title||fo.display,fS=fo.script||fo.display,fI=fo.info||fo.bodyBold||fo.display,fB=fo.bodyBold||fo.display,fM=fo.bodyMedium||fo.body||fB,condI=fo.info&&!fo.infoFallback?1:.8,condT=fo.title&&!fo.titleFallback?1:.86;
+  const wide=W>H*1.2,U=Math.min(W,H)/1080,m=Math.round((wide?.05:.06)*Math.min(W,H)),al=wide?"left":"center",cx=wide?m:W/2,colW=wide?W*.56:W-2*m,aiTitle=P.titleMode==="ai";
+  cv.fillRect(0,0,W,H,solid("#08080a"));
+  if(assets.bg){const im=assets.bg,z=Math.max(1,Number(P.bgZoom)||1),s=Math.max(W/im.w,H/im.h)*z,dw=im.w*s,dh=im.h*s,fx=(P.bgX==null?50:Number(P.bgX))/100,fy=(P.bgY==null?50:Number(P.bgY))/100;cv.drawImage(im,(W-dw)*fx,(H-dh)*fy,dw,dh)}
+  else{cv.fillRect(0,0,W,H,radial(W*.5,H*.38,Math.max(W,H)*.75,[[0,hexA(st.glow,.55)],[.5,hexA(st.fill[2],.25)],[1,[0,0,0,0]]]));warn.push("No background photo yet")}
+  cv.fillRect(0,0,W,H,radial(W/2,H*.45,Math.hypot(W,H)*.62,[[.55,[0,0,0,0]],[1,[0,0,0,.55]]]));
+  cv.fillRect(0,0,W,H*.22,linear(0,0,0,H*.22,[[0,[0,0,0,.62]],[1,[0,0,0,0]]]));
+  const sy=H*(wide?.42:.5);cv.fillRect(0,sy,W,H-sy,linear(0,sy,0,H,[[0,[0,0,0,0]],[.45,[0,0,0,.62]],[1,[0,0,0,.92]]]));
+  if(wide)cv.fillRect(0,0,W*.7,H,linear(0,0,W*.7,0,[[0,[0,0,0,.6]],[1,[0,0,0,0]]]));
+  /* top: official logo (original pixels, scaled only) and the host line */
+  let top=m*.8;const lbW=wide?W*.24:W*.44,lbH=H*(wide?.13:P.format==="story"?.06:.075);
+  if(assets.logo){const im=assets.logo,s=Math.min(lbW/im.w,lbH/im.h),lw=Math.round(im.w*s),lh=Math.round(im.h*s),lx=Math.round(wide?m:(W-lw)/2);const sh=rasterize([[lx,top,lx+lw,top,lx+lw,top+lh,lx,top+lh]]);if(sh){const g=blurMask(sh,30*U);cv.blendMask(g.m,g.x,g.y,g.w,g.h,solid([0,0,0,.35]))}cv.drawImage(im,lx,top,lw,lh);boxes.logo={x:lx,y:top,w:lw,h:lh,scale:s};top+=lh}
+  else{const ns=Math.round(40*U);plain(cv,shape(fI,String(b.name||"Grooveville").toUpperCase(),cx,top+ns,ns,{align:al,sp:4*U,sx:condI}),solid(st.accent),4*U);top+=ns+8*U;warn.push("No logo PNG for "+(b.name||"this brand")+"; the name was set in type. Add a logo in Brand Kits.")}
+  if(P.kicker){top+=30*U;String(P.kicker).split("\n").slice(0,2).forEach((l,i)=>{plain(cv,shape(fM,l.toUpperCase(),cx,top+i*28*U,Math.round(20*U),{align:al,sp:7*U}),solid(hexA(st.ink,.92)),3*U)});top+=(String(P.kicker).split("\n").slice(0,2).length-1)*28*U}
+  /* bottom up: web address, venue, lineup bar, date block, details */
+  const when=whenLines(P),lineup=String(P.lineup||"").trim(),where=String(P.where||"").trim(),details=String(P.details||"").trim(),url=String(P.url||"").trim(),cta=String(P.cta||"").trim();
+  let k=1;const minInfoTop=aiTitle?H*(wide?.5:.63):0;let plan;
+  for(let tries=0;tries<8;tries++){let y=H-m*.85;const items=[];
+    if(url||cta){const s=Math.round(19*U*k);items.push({t:"url",y,s});y-=s+22*U*k}
+    if(where){const s=Math.round(23*U*k);items.push({t:"where",y,s});y-=s+20*U*k}
+    if(lineup){const s=Math.round(30*U*k);y-=10*U*k;items.push({t:"lineup",y,s});y-=s+36*U*k}
+    if(when.length){const big=Math.round((wide?78:96)*U*k),sm=Math.round(34*U*k);const L=when.slice();const h=(L.length>2?sm+8*U*k:0)+big+(L.length>1?sm+12*U*k:0);items.push({t:"when",y,big,sm,L});y-=h+18*U*k}
+    if(details){const s=Math.round(24*U*k);items.push({t:"details",y,s});y-=s+18*U*k}
+    plan={items,top:y};if(y>=minInfoTop||k<.62)break;k*=.92}
+  if(plan.top<minInfoTop)warn.push("Event details may touch the title area; shorten them");
+  /* title (set in type unless the artwork already carries the lettering) */
+  const zoneT=top+(wide?40:54)*U,zoneB=plan.top-(wide?20:28)*U,lines=(P.headline||[]).map(s=>String(s||"").trim()).filter(Boolean).slice(0,4);
+  if(!aiTitle&&lines.length){const scr=String(P.script||"").trim();let size=Math.round((P.format==="story"?210:wide?150:190)*U);const fit=()=>{const hw=Math.max(...lines.map(l=>measure(fT,l.toUpperCase(),size)*condT));const scH=scr?size*.62:0;return hw<=colW&&lines.length*size*.9+scH<=Math.max(120*U,zoneB-zoneT)};
+    while(size>40*U&&!fit())size-=4;if(size<70*U)warn.push("The title is long; it was set small");const scH=scr?size*.62:0,blockH=lines.length*size*.9+scH,y0=zoneT+Math.max(0,(zoneB-zoneT-blockH)*(wide?.5:.62));
+    let y=y0;lines.forEach((l,i)=>{y+=size*.9;fancy(cv,shape(fT,l.toUpperCase(),cx,y,size,{align:al,sx:condT}),size,st)});
+    if(scr){let ss=Math.round(size*.8);while(ss>30*U&&measure(fS,scr,ss)>colW*.9)ss-=4;const sy2=y+ss*.74;fancy(cv,shape(fS,scr,wide?cx+20*U:cx+30*U,sy2,ss,{align:al,rotate:-.07,ox:cx,oy:sy2}),ss*.7,Object.assign({},st,{fill:[st.ink,st.ink,st.fill[1]]}),{depth:2});y=sy2}
+    boxes.title={x:wide?m:(W-colW)/2,y:y0,w:colW,h:y-y0+size*.2,size}}
+  else if(aiTitle)boxes.title={ai:true,y:zoneT,h:zoneB-zoneT};
+  else warn.push("No title text");
+  for(const it of plan.items){
+    if(it.t==="url"){const txt=(url||"").toUpperCase();if(cta&&P.showCta){const ts=it.s,tw=measure(fB,cta.toUpperCase(),ts,4*U),pw=tw+60*U,ph=ts+30*U,px=wide?m:(W-pw)/2,py=it.y-ph+8*U;cv.fillContours(roundRect(px,py,pw,ph,ph/2),solid(st.accent));plain(cv,shape(fB,cta.toUpperCase(),px+pw/2,py+ph/2+ts*.36,ts,{align:"center",sp:4*U}),solid("#140c08"))}
+      else if(txt){plain(cv,shape(fM,txt,cx,it.y,it.s,{align:al,sp:8*U}),solid(hexA(st.ink,.85)),3*U)}}
+    if(it.t==="where"){const ip=assets.icons&&assets.icons.pin,tw=measure(fB,where.toUpperCase(),it.s,4*U),x0=wide?m+34*U:W/2-tw/2+17*U;if(ip){const isz=it.s*1.15;cv.stroke(svgPath(ip,(px,py)=>[x0-34*U+px*isz/24,it.y-it.s*.95+py*isz/24]),2*isz/24,solid(st.accent))}plain(cv,shape(fB,where.toUpperCase().slice(0,60),x0,it.y,it.s,{sp:4*U}),solid(st.ink),3*U)}
+    if(it.t==="lineup"){const parts=lineup.split(/\s*[|•·,]\s*/).filter(Boolean).slice(0,5).map(s=>s.toUpperCase()),sep="   |   ";let s=it.s;while(s>14*U&&measure(fI,parts.join(sep),s,2*U)*condI>colW-50*U)s-=2;
+      const tw=measure(fI,parts.join(sep),s,2*U)*condI,bw=Math.min(colW,tw+70*U),bx=wide?m:(W-bw)/2,by=it.y-s-12*U,bh=s+30*U;cv.fillRect(bx,by,bw,bh,solid([0,0,0,.45]));
+      [[bx,by,bw,2*U],[bx,by+bh-2*U,bw,2*U],[bx,by,2*U,bh],[bx+bw-2*U,by,2*U,bh]].forEach(([a,c,d,e])=>cv.fillRect(a,c,d,e,solid(hexA(st.accent,.9))));
+      plain(cv,shape(fI,parts.join(sep),bx+bw/2,it.y+2*U,s,{align:"center",sp:2*U,sx:condI}),solid(st.ink))}
+    if(it.t==="when"){const L=it.L;let y=it.y;const rows=[];if(L.length>1)rows.unshift({t:L[L.length-1],s:it.sm,c:st.ink});rows.unshift({t:L.length>1?L[L.length-2]:L[0],s:it.big,c:"big"});if(L.length>2)rows.unshift({t:L[0],s:it.sm,c:st.accent});
+      const hs=rows.map(r=>r.s+(r.c==="big"?6*U:10*U));let yy=y-hs.reduce((a,c)=>a+c,0);for(const r of rows){yy+=r.s+(r.c==="big"?0:4*U);if(r.c==="big")fancy(cv,shape(fI,r.t,cx,yy,r.s,{align:al,sp:3*U,sx:condI}),r.s*.55,st,{depth:3});else plain(cv,shape(fI,r.t,cx,yy,r.s,{align:al,sp:6*U,sx:condI}),solid(r.c),3*U);yy+=r.c==="big"?6*U:6*U}}
+    if(it.t==="details"){plain(cv,shape(fB,details.toUpperCase().slice(0,70),cx,it.y,it.s,{align:al,sp:5*U}),solid(st.accent),3*U)}}
+  const rgba=cv.toRGBA();for(let i=3;i<rgba.length;i+=4)rgba[i]=255;const png=assets.noPng?null:await encodePNG(W,H,rgba,true);return {png,w:W,h:H,warnings:warn,boxes,rgba}}
+function render(P,brand,assets){return P.layout==="poster"?renderPoster(P,brand,assets):renderPost(P,brand,assets)}
+return {Canvas,Font,decodePNG,encodePNG,renderPost,renderPoster,render,STYLES,styleFor,whenLines,svgPath,measure,parseColor,FORMATS,rasterize}})();
 
 export { GVR };

@@ -15,6 +15,9 @@ The website for **Grooveville LLC** and the nine companies on the Groove Vine: G
 | `firebase-config.js` | Your public Firebase web config |
 | `firestore.rules` | Security rules. **Publish these in Firebase every time they change** |
 | `_headers` | Security and cache headers for Cloudflare |
+| `worker/`, `wrangler.jsonc` | Cloudflare Worker: YouTube live/archive sync and private Studio file links |
+| `STUDIO-SETUP.md` | Step-by-step setup for Grooveville LIVE and the Studio |
+| `clip-worker/` | Notes for the future AI clip processing computer |
 
 ## 1. Update the site on GitHub
 
@@ -35,14 +38,33 @@ In Firebase: **Authentication › Settings › Authorized domains** should list 
 
 ## 4. What's new
 
-- **Cinematic entry:** first visit each session opens a built-in animated drive toward the Charlotte skyline with **LET'S GROOVE**, **Skip intro** and **SOUND ON/OFF** (sound starts off). Add a licensed film in **Back office › Website › Media library › Entry film** to replace the animation.
-- **Homepage:** hero, the original **Groove Vine** (hover a grape cluster for details, tap twice on phones), featured company gallery, upcoming events from the calendar, Collaborate, Our Story.
+- **Cinematic entry:** first visit each session opens a letterboxed, game-style title sequence on the Charlotte drive picture (bars open, light and motion effects, GROOVEVILLE title card, then **LET'S GROOVE**). **Skip intro** and **SOUND ON/OFF** (starts off) are always there. Replace the picture or add a licensed film in **Back office › Website › Media library › Cinematic entry**.
+- **Separate pages instead of one long scroll:** Home (hero), Companies (the original **Groove Vine**; hover a grape cluster for details, tap twice on phones) › Explore the brands, Calendar (upcoming events, then the calendar), Collaborate (photo + request form), Our Story. The Grooveville LLC page's website button returns to the home page.
 - **AELIO** replaces MUSIC on the vine (same spot, same lime color) and has its own page with the six personalities and a link to https://aelio.live/.
 - **Entertainment** now has **Overview · Music · Grooveville Radio · Featured Artists · Events**. Old Music links (`#b-music`) forward to Entertainment › Music. Music's timesheet slot and data are unchanged.
 - **Grooveville Radio:** a mini-player that stays open while you move around the site. Set a Spotify playlist link (or a stream you own or license) in **Back office › Website › Music & Radio**.
 - **Back office › Website:** Media library (replace any image, focal point, zoom, alt text, publish/unpublish, restore previous, back to default), Companies (order, featured, published), AELIO page text and personalities, Music & Radio lists (featured, trending with source labels, artists, playlists, releases).
 
 **Image storage:** images are resized in the browser and stored in Firestore (the free plan has no file storage). Videos and audio are added as links to files you host (for example a `media/` folder in this repo, or Cloudflare R2).
+
+
+## Grooveville LIVE + Entertainment Studio
+
+**Set up first:** follow `STUDIO-SETUP.md` (R2 bucket, YouTube API key, Worker secrets) **before** uploading this version.
+
+- **Watch Live** (`#live`): The Unc & Neph Show's live YouTube stream plays on Grooveville automatically, with a LIVE badge only when YouTube confirms it. When off air it shows the next scheduled show. Below it: **Watch & follow us everywhere** (YouTube, Twitch, Instagram, Facebook, TikTok) and **Previous episodes** (every completed livestream, newest first, each card opens that episode on YouTube, Load more).
+- **Radio hand-off:** starting the live player pauses Grooveville Radio; stopping it resumes the radio only if it was playing and you didn't pause it yourself.
+- **Back Office › Ent. Studio** (also **Studio** in the menu for invited team members): Live Control, AI Clip Studio, Episode Library, Content Calendar, Publishing Queue, Team Management, Analytics, Show Settings. Add more shows with **+ New show**; each show has its own YouTube channel and social links.
+- **Server code:** `worker/index.js` + `wrangler.jsonc` (Cloudflare Worker). It checks YouTube every 2 minutes and keeps the API key secret.
+- **AI clipping** needs a processing computer later: see `clip-worker/README.md`. Jobs wait safely in the queue until then.
+
+
+## Grooveville Music, Radio, TV, Song Rate and Charts
+
+- **Public:** `#music` (Music · Artists · Albums · Playlists · TV · Charts), `#artist/<id>` (share as `grooveville.org/artist/<id>`), `#album/<id>`, `#playlist/<id>`, `#tv` and `#tv/<category>`, `#charts`, `#songrate`.
+- **Grooveville Radio / Sound On** play exclusive Grooveville songs: your published Originals in the Sound On rotation. One shared player at the bottom keeps playing across pages; videos and live shows pause it.
+- **Back office › Entertainment:** Dashboard, Music Library, Upload Song (MP3 → R2), Artists, Albums & EPs, Playlists, Sound On / Radio, Grooveville TV, TV Categories, Song Rate, Charts, Verification. Founder/HNIC only.
+- Song Rate and public Charts are **off** until you switch them on. Setup notes are at the end of `STUDIO-SETUP.md`.
 
 ## 5. Make yourself the founder
 
