@@ -60,10 +60,38 @@ export const SCHEMA = [
 `CREATE TABLE IF NOT EXISTS payouts (id TEXT PRIMARY KEY, settlement_id TEXT, host_id TEXT, amount_cents INTEGER, status TEXT, stripe_transfer TEXT, note TEXT, by TEXT, at TEXT, updated TEXT)`,
 `CREATE TABLE IF NOT EXISTS schema_version (v INTEGER)`
 ];
+const MANUAL_HOST_PAYMENTS = `CREATE TABLE IF NOT EXISTS manual_host_payments (
+  payout_id TEXT PRIMARY KEY REFERENCES payouts(id), paid_on TEXT NOT NULL, method TEXT NOT NULL, reference TEXT
+)`;
+const SPECIAL_INVITES_SCHEMA = `CREATE TABLE IF NOT EXISTS special_invites (
+  token TEXT PRIMARY KEY, event_id TEXT NOT NULL, host_id TEXT NOT NULL, visibility TEXT NOT NULL,
+  template TEXT NOT NULL, theme TEXT NOT NULL, guest TEXT NOT NULL, message TEXT NOT NULL,
+  destination TEXT NOT NULL, created TEXT NOT NULL, revoked TEXT
+);
+CREATE INDEX IF NOT EXISTS special_invites_event ON special_invites(event_id);
+CREATE TABLE IF NOT EXISTS special_invite_engagement (
+  token TEXT NOT NULL, visitor TEXT NOT NULL, opened INTEGER NOT NULL DEFAULT 0,
+  revealed INTEGER NOT NULL DEFAULT 0, PRIMARY KEY(token,visitor)
+);
+CREATE TABLE IF NOT EXISTS special_invite_orders (order_id TEXT PRIMARY KEY, token TEXT NOT NULL);
+CREATE INDEX IF NOT EXISTS special_invite_orders_token ON special_invite_orders(token);
+CREATE TABLE IF NOT EXISTS special_invite_upgrades (
+  id TEXT PRIMARY KEY, event_id TEXT NOT NULL, host_id TEXT NOT NULL, status TEXT NOT NULL,
+  checkout_session TEXT UNIQUE, checkout_url TEXT, payment_intent TEXT UNIQUE, paid_at TEXT,
+  refunded_cents INTEGER NOT NULL DEFAULT 0, expires INTEGER NOT NULL, created TEXT NOT NULL
+);
+CREATE UNIQUE INDEX IF NOT EXISTS special_invite_upgrade_active ON special_invite_upgrades(event_id)
+  WHERE status IN ('pending','paid','revoked');`.split(";").map(sql => sql.trim()).filter(Boolean);
 let READY = null;
 export async function db(env) {
   if (!env.PORTAL_DB) throw Object.assign(new Error("The portal database (D1 binding PORTAL_DB) isn't connected yet."), { status: 503 });
-  if (!READY) READY = (async () => { const v = await env.PORTAL_DB.prepare("SELECT v FROM schema_version").first().catch(() => null); if (!v || v.v < 1) { await env.PORTAL_DB.batch(SCHEMA.map(s => env.PORTAL_DB.prepare(s))); await env.PORTAL_DB.prepare("INSERT INTO schema_version (v) VALUES (1)").run() } })().catch(e => { READY = null; throw e });
+  if (!READY) READY = (async () => {
+    const D = env.PORTAL_DB;
+    const current = await D.prepare("SELECT MAX(v) AS v FROM schema_version").first().catch(() => null);
+    if (current?.v >= 3) return;
+    const schema = current?.v >= 1 ? [] : SCHEMA;
+    await D.batch([...schema, ...(current?.v >= 2 ? [] : [MANUAL_HOST_PAYMENTS]), ...SPECIAL_INVITES_SCHEMA, "INSERT INTO schema_version (v) SELECT 3 WHERE NOT EXISTS (SELECT 1 FROM schema_version WHERE v >= 3)"].map(sql => D.prepare(sql)));
+  })().catch(e => { READY = null; throw e });
   await READY; return env.PORTAL_DB;
 }
 export const q = (D, sql, ...a) => D.prepare(sql).bind(...a);
@@ -73,7 +101,7 @@ export const run = (D, sql, ...a) => q(D, sql, ...a).run();
 export const pj = (s, d) => { try { return s ? JSON.parse(s) : d } catch (e) { return d } };
 
 /* ---------- settings (founder switches) ---------- */
-export const DEF_SETTINGS = { rentals_open: false, ent_open: false, payments_live: false, payouts_on: false, esign_live: false, platform_fee_bps: 500, platform_fee_cents: 0, support_email: "", hold_minutes: 15 };
+export const DEF_SETTINGS = { rentals_open: false, ent_open: false, payments_live: false, esign_live: false, platform_fee_bps: 500, platform_fee_cents: 0, support_email: "", hold_minutes: 15 };
 export async function settings(D) { const rows = await all(D, "SELECT k, v FROM settings"); const o = Object.assign({}, DEF_SETTINGS); for (const r of rows) o[r.k] = pj(r.v, r.v); return o }
 export async function setSetting(D, k, v) { await run(D, "INSERT INTO settings (k, v) VALUES (?, ?) ON CONFLICT(k) DO UPDATE SET v = excluded.v", k, JSON.stringify(v)) }
 

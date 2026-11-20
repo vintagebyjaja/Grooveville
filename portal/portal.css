@@ -305,7 +305,6 @@
 .pv-public-image,.pv-public-hero::after{position:absolute;inset:0;width:100%;height:100%;z-index:-1}
 .pv-public-image{object-fit:cover;object-position:65% 51%}
 .pv-public-hero::after{content:"";background:linear-gradient(90deg,#101011f5 4%,#101011d9 34%,#10101128 83%),linear-gradient(0deg,#101011 0%,transparent 32%)}
-.pv-public-events .pv-public-image{object-position:center}
 .pv-public-copy{padding:clamp(24px,6vw,98px);max-width:790px}
 .pv-public-copy .pvkick{margin-bottom:12px}
 .pv-public-copy h1{font-size:clamp(2.5rem,5.4vw,5.25rem);line-height:1.02;letter-spacing:-.055em}
@@ -370,3 +369,72 @@
   .nav #links{overflow:visible;flex-wrap:wrap}
 }
 .pv-public-hero{padding:0}
+
+/* Events puts the flyers in their own row so type never covers the artwork. */
+.pv-public-events .pv-public-hero{display:block;min-height:0;background:#171419}
+.pv-public-events .pv-public-hero::after{content:none}
+.pv-public-events .pv-public-copy{
+  display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);align-items:end;
+  gap:clamp(18px,4vw,60px);max-width:none;padding:clamp(24px,4.6vw,72px);
+}
+.pv-public-events .pv-public-copy h1{font-size:clamp(2.55rem,5.6vw,5.5rem);max-width:15ch}
+.pv-public-events .pv-public-copy p{margin:0 0 16px}
+.pv-event-art{display:block;width:100%;height:auto;aspect-ratio:3/1;object-fit:cover}
+.pv-event-flyers{
+  display:grid;grid-auto-flow:column;grid-auto-columns:clamp(145px,20%,260px);
+  gap:12px;margin:0;padding:6px clamp(16px,4.6vw,72px) 16px;list-style:none;
+  overflow-x:auto;scroll-snap-type:x proximity;scroll-padding-inline:clamp(16px,4.6vw,72px);
+}
+.pv-event-flyers li{min-width:0;scroll-snap-align:start}
+.pv-event-flyers a{display:block;text-decoration:none;font-weight:600}
+.pv-event-flyers img{display:block;width:100%;aspect-ratio:4/5;object-fit:contain;background:#100e12;border-radius:8px}
+.pv-event-flyers span{display:block;margin-top:8px;overflow-wrap:anywhere}
+.pv-public-events .pv-public-content{padding-top:24px}
+@media (max-width:760px){
+  .pv-public-events .pv-public-copy{grid-template-columns:1fr}
+  .pv-event-art{aspect-ratio:2/1}
+}
+
+/* Back Office › Rentals & Events */
+.pv.pv-admin{
+  --pv-bg:#f2f2f4;--pv-panel:#fff;--pv-panel2:#f8f7f8;
+  --pv-line:#dedce0;--pv-line2:#c9c4cb;--pv-cream:#201c22;
+  --pv-ink:#262129;--pv-text:#352e37;--pv-muted:#605861;
+  border-color:var(--pv-line);box-shadow:0 20px 50px -38px #1b1426;
+}
+.pv-admin .pvtop{
+  background:linear-gradient(112deg,#fff 20%,#eeedf0 75%,#fff4ed);
+  border-color:var(--pv-line);
+}
+.pv-admin .pvbrand{color:var(--pv-ink)}
+.pv-admin .pvside{background:#faf9fa;border-color:var(--pv-line)}
+.pv-admin .pvcard0{background:#fff;border-color:var(--pv-line)}
+.pv-admin .pvnav.on{background:#fce5d8;border-color:#ebbb9f}
+.pv-admin .pvhero{
+  min-height:246px;padding-block:clamp(30px,4vw,60px);
+  border-color:var(--pv-line);
+}
+.pv-admin .pvhero::before{background:linear-gradient(110deg,#f7f6f8,#e4e0e6)}
+.pv-admin .pvhero .pvart{width:55%;mask-image:linear-gradient(90deg,transparent,#000 42%)}
+.pv-admin .pvhero .pvart img{object-position:70% center}
+.pv-admin .pvhero h1{max-width:14ch;font-size:clamp(2.2rem,4.3vw,3.6rem);letter-spacing:-.05em}
+.pv-admin .pvhero h1 span{color:#a95330}
+.pv-admin .pvhero p{color:var(--pv-text);max-width:42ch}
+.pv-admin .pvpanel{border-color:var(--pv-line);box-shadow:0 8px 22px -18px #40374766}
+.pv-admin-overview>.pvpanel:first-child{background:linear-gradient(145deg,#fff 45%,#fff2e9)}
+.pv-admin-heading{display:flex;align-items:center;gap:10px}
+.pv-admin-heading svg{width:23px;height:23px;flex:none;fill:none;stroke:#a95330;stroke-width:1.7}
+.pv-admin-connections{gap:6px;margin-top:14px}
+.pv-admin-connections .pvli{
+  grid-template-columns:minmax(0,1fr) auto;gap:8px;
+  padding:10px 12px;border:1px solid var(--pv-line);border-radius:9px;background:#f8f7f9;
+}
+.pv-admin-connections .pvpill{justify-self:end;grid-column:2}
+.pv-admin .pvsw1{grid-template-columns:minmax(0,1fr) auto}
+.pv-admin .pvtog{justify-self:end;background:#655d68}
+.pv-admin .pvtog:checked{background:#a95330}
+.pv-admin :focus-visible{outline-color:#a95330}
+@media (max-width:860px){
+  .pv-admin .pvhero{min-height:0}
+  .pv-admin .pvhero .pvart{width:100%;opacity:.2}
+}

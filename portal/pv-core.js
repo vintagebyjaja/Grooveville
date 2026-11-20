@@ -44,8 +44,8 @@ PV.cityArt = () => '<svg viewBox="0 0 240 120"><defs><linearGradient id="pvcg" x
 /* o: {sec:"RENTALS", key, nav:[[route,label,icon,badge]], card:[title,sub,icon], art:true|false, hero:{kick,title,sub,art}} */
 /* the approved logo published on the website (Website Studio › brand), else the Grooveville LLC logo */
 PV.logo = sec => { const g = window.GV && GV.brandLogo, id = sec === "RENTALS" ? "rentals" : sec === "ENTERTAINMENT" ? "ent" : "hq"; const src = (g && (g(id) || g("hq"))) || "/logo.webp"; return '<img class="pvlogo" src="' + E(src) + '" alt="" width="34" height="34">' };
-const LIGHT = ['ACCOUNT', 'AGREEMENTS', 'VERIFY'];
-PV.isLight = r => /^(account|sign\/|verify)/.test(String(r || ''));
+const LIGHT = ['ADMINISTRATION', 'ACCOUNT', 'AGREEMENTS', 'VERIFY'];
+PV.isLight = r => /^(account|sign\/|verify|team-portals)/.test(String(r || ''));
 PV.shell = function (o, body) {
   PV.rentalRecords = o.records || [];
   const light = o.light != null ? o.light : LIGHT.includes(o.sec);
@@ -68,7 +68,7 @@ PV.sigBlock = (p, opts) => { opts = opts || {}; const name = PV.fullName(p); ret
 PV.loading = t => '<div class="pv' + (window.GV && PV.isLight(GV.S.route) ? ' pvl' : '') + '"><div class="pvbody" style="grid-template-columns:1fr"><main class="pvmain"><p class="muted pvloading" role="status">' + E(t || "Loading…") + '</p></main></div></div>';
 PV.err = (msg, setup) => setup === "d1" ? '<div class="pvbanner">The portal database isn’t connected yet. See PORTALS-SETUP.md (create the D1 database <b>grooveville-portal</b>).</div>' : '<div class="pvbanner bad">' + E(msg) + '</div>';
 /* ---------- routing ---------- */
-const ROUTES = [[/^rentals(\/|$)/, "rentals"], [/^entertainment$/, "ent"], [/^events$/, "events"], [/^e\//, "event"], [/^h\//, "hostpage"], [/^host(\/|$)/, "host"], [/^account$/, "account"], [/^sign\//, "sign"], [/^order\//, "order"], [/^t\//, "ticket"], [/^checkin(\/|$)/, "checkin"], [/^verify$/, "verify"], [/^team-portals(\/|$)/, "admin"]];
+const ROUTES = [[/^rentals(\/|$)/, "rentals"], [/^entertainment$/, "ent"], [/^events$/, "events"], [/^invite\//, "invite"], [/^e\//, "event"], [/^h\//, "hostpage"], [/^host(\/|$)/, "host"], [/^account$/, "account"], [/^sign\//, "sign"], [/^order\//, "order"], [/^t\//, "ticket"], [/^checkin(\/|$)/, "checkin"], [/^verify$/, "verify"], [/^team-portals(\/|$)/, "admin"]];
 window.pvRoute = function (r) {
   const path = r.split("?")[0], hit = ROUTES.find(([re]) => re.test(path)); if (!hit) return null;
   if (hit[1] === "admin" && !GV.S.isAdmin && !(PV.me && (PV.me.admin || PV.me.finance))) { setTimeout(pvMount, 0); const inner = '<div id="pvroot" data-r="' + E(r) + '">' + ((PV.html[r]?.uid === (fb()?.uid || null) && PV.html[r]?.body) || PV.loading()) + '</div>'; return '<div class="wrap">' + inner + '</div>' }

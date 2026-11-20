@@ -1,0 +1,94 @@
+.si-surface{--si-accent:#f6b38b;max-width:860px;background:#141217;min-height:0}
+.si-experience{--si-accent:#f6b38b;--si-paper:#fff4e7;position:relative;padding:clamp(18px,4vw,48px);text-align:center}
+.si-champagne{--si-accent:#e6c48b;--si-paper:#fff6dc}
+.si-silver{--si-accent:#c1c9df;--si-paper:#edf2ff}
+.si-charcoal{--si-accent:#c1a1b2;--si-paper:#ede5ef}
+.si-brand{display:flex;align-items:center;justify-content:center;gap:10px;text-transform:uppercase;letter-spacing:.14em;font-size:.78rem;font-weight:700;color:var(--si-accent);margin-bottom:18px}
+.si-brand img{border-radius:50%;object-fit:contain}
+.si-stage{position:relative;isolation:isolate;display:grid;place-items:center;overflow:hidden;min-height:230px;aspect-ratio:2.7/1;border-radius:15px;background:radial-gradient(ellipse at 50% 60%,#362c38,#17141c 72%);border:1px solid #ffffff25;perspective:650px}
+.si-template .si-stage{min-height:116px;aspect-ratio:1.7/1;margin-bottom:12px}
+.si-template{display:grid;align-content:start;gap:6px;min-width:0}
+.si-template .pvrow{margin-top:8px}
+.si-template-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(190px,100%),1fr));gap:12px}
+.si-host .pvpanel>.pvrow,.si-host .pvpanel>button,.si-host .pvpanel>p+button{margin-top:12px}
+.si-controls{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin-top:16px}
+.si-card{color:#292129;background:var(--si-paper);padding:clamp(18px,4vw,36px);border:1px solid var(--si-accent);border-radius:16px;margin-top:16px;box-shadow:0 20px 36px -24px #0008}
+.si-card[hidden],.si-controls [hidden]{display:none}
+.si-card h1{color:#241e27;font-size:clamp(1.8rem,5vw,3rem);line-height:1.1;overflow-wrap:anywhere}
+.si-card p{margin-top:.6rem}
+.si-card .muted{color:#51434d}
+.si-card .pvbtn:not(.pk){background:#fff9f2;color:#302530;border-color:#aa9092}
+.si-greeting{font-weight:650}
+.si-message{white-space:pre-wrap;overflow-wrap:anywhere}
+.si-flyer{max-height:220px;max-width:100%;object-fit:contain;margin:14px auto 0;border-radius:8px}
+.si-modal{margin:0 auto;width:100%;border-radius:14px;color:#f4ece1}
+.si-modal .si-experience{padding:14px}
+.si-modal .si-stage{min-height:150px}
+.si-experience[data-phase="open"] .si-stage{min-height:0;max-height:86px;aspect-ratio:auto;opacity:.64}
+.si-experience[data-phase="open"] .si-card{animation:si-card-in .35s ease-out both}
+.si-experience[data-phase="open"] .si-controls:empty{display:none}
+
+/* Letter and embossed seal */
+.si-envelope{position:relative;width:47%;max-width:300px;aspect-ratio:1.65/1;border-radius:5px;
+  background:linear-gradient(30deg,#c5987c,var(--si-paper) 66%);box-shadow:0 19px 30px #0008;transform:rotate(-4deg);transform-style:preserve-3d}
+.si-envelope::after{content:"";position:absolute;inset:0;background:linear-gradient(151deg,#e1c6b0,var(--si-paper));
+  clip-path:polygon(0 17%,50% 62%,100% 17%,100% 100%,0 100%);border-radius:5px}
+.si-paper{position:absolute;inset:9% 9% 18%;background:var(--si-paper);border:2px solid var(--si-accent);border-radius:3px}
+.si-flap{position:absolute;inset:0 0 36%;z-index:1;transform-origin:top;
+  background:linear-gradient(172deg,var(--si-paper),#c8a88d);clip-path:polygon(0 0,100% 0,50% 100%)}
+.si-seal{display:grid;place-items:center;position:absolute;z-index:2;left:50%;top:53%;width:20%;aspect-ratio:1;transform:translateX(-50%);border-radius:50%;
+  background:radial-gradient(circle at 34% 25%,#fac3a4,#975439 70%);color:#fff1dc;font:italic 700 clamp(.65rem,2.6vw,1.8rem)/1 Georgia,serif;box-shadow:0 3px 6px #0005}
+[data-phase="opening"] .si-flap{animation:si-flap .54s ease-out both}
+[data-phase="opening"] .si-seal{animation:si-burst .45s ease-out both}
+[data-phase="opening"] .si-paper{animation:si-letter .65s .09s ease-out both}
+
+/* Mirrored piñata */
+.si-stage-disco{background:radial-gradient(ellipse at 54% 55%,#553854,#1f1528 66%,#111017)}
+.si-mirror{position:relative;width:29%;max-width:160px;aspect-ratio:1;clip-path:polygon(26% 0,76% 0,100% 26%,100% 75%,73% 100%,25% 100%,0 75%,0 25%);
+  background:repeating-linear-gradient(0deg,#7b768233 0 2px,transparent 2px 12%),repeating-linear-gradient(90deg,#30283688 0 2px,transparent 2px 12px),
+  radial-gradient(circle at 33% 25%,#fff9ea 3%,#d7b5c5 26%,#5f566d 65%,#201a36)}
+.si-spotlight{position:absolute;inset:-30% -20%;background:conic-gradient(from 196deg at 58% 25%,transparent 0 3deg,#f7b6dc55 8deg,transparent 16deg 52deg,#f8cbad55 63deg,transparent 73deg);pointer-events:none}
+.si-confetti{position:absolute;inset:0;pointer-events:none}
+.si-confetti i{position:absolute;width:8px;height:4px;left:50%;top:50%;opacity:0;background:var(--si-accent);transform:rotate(calc(var(--position)*22.5deg))}
+.si-confetti i:nth-child(3n){background:#f3ecff}.si-confetti i:nth-child(3n+1){background:#bd88d0}
+[data-phase="sealed"] .si-mirror{animation:si-drop .55s ease-out both}
+[data-phase="opening"] .si-mirror{animation:si-burst .6s ease-in both}
+[data-phase="opening"] .si-confetti i{animation:si-confetti .65s .12s ease-out both}
+
+/* Night drive */
+.si-stage-burnout{background:linear-gradient(171deg,#272030,#131218 60%)}
+.si-road{position:absolute;inset:48% -20% -10%;background:repeating-linear-gradient(175deg,#ffffff08 0 1px,transparent 1px 12px),linear-gradient(159deg,#322b32,#09090c);transform:skew(-15deg)}
+.si-road::after{content:"";position:absolute;inset:48% -5% 26%;border-block:2px dashed #ddc4be40;transform:rotate(-8deg)}
+.si-car{position:relative;width:min(58%,390px);height:auto;object-fit:contain;filter:drop-shadow(0 8px 12px #000);transform:translateX(-5%)}
+.si-smoke{position:absolute;width:57%;height:33%;bottom:15%;left:8%;z-index:1;opacity:0;filter:blur(10px);background:radial-gradient(ellipse,#ddd5e6a0,transparent 70%)}
+.si-track-title{position:absolute;inset:auto 5% 10%;font-weight:900;font-style:italic;color:var(--si-accent);font-size:clamp(.9rem,3.6vw,2.3rem);opacity:0;overflow-wrap:anywhere;text-shadow:3px 3px #130d16}
+[data-phase="sealed"] .si-car{animation:si-arrive .65s ease-out both}
+[data-phase="opening"] .si-car{animation:si-drive .72s ease-in both}
+[data-phase="opening"] .si-smoke{animation:si-smoke .7s ease-out both}
+[data-phase="opening"] .si-track-title,[data-phase="open"] .si-track-title{animation:si-card-in .4s .24s both}
+
+/* Chrome vault */
+.si-stage-vault{background:radial-gradient(ellipse,#746168,#211b27 60%,#131117)}
+.si-vault{position:relative;width:43%;max-width:260px;aspect-ratio:1.6/1;border:6px solid #807982;border-radius:8px;overflow:hidden;box-shadow:0 8px 34px #0e0b16}
+.si-vault-glow{position:absolute;inset:0;background:radial-gradient(ellipse,var(--si-paper),var(--si-accent),#160f18)}
+.si-door{position:absolute;top:0;bottom:0;width:50%;background:linear-gradient(138deg,#34313d,#dad2d6 38%,#6a616e 65%,#a39aa4);border:1px solid #f2eafa66}
+.si-door.left{left:0}.si-door.right{right:0}
+.si-door span{position:absolute;top:32%;right:-19%;z-index:2;width:38%;aspect-ratio:1;border-radius:50%;background:repeating-conic-gradient(#504650 0 12deg,#c9c3d2 12deg 64deg);border:3px solid #827485}
+[data-phase="opening"] .si-door.left{animation:si-vault-left .52s .16s ease-in-out both}
+[data-phase="opening"] .si-door.right{animation:si-vault-right .52s .16s ease-in-out both}
+[data-phase="opening"] .si-door span{animation:si-lock .45s ease-in-out both}
+
+@keyframes si-card-in{from{opacity:0;transform:translateY(9px)}to{opacity:1;transform:none}}
+@keyframes si-flap{to{transform:rotateX(155deg)}}
+@keyframes si-letter{to{transform:translateY(-48%)}}
+@keyframes si-drop{from{opacity:0;transform:translateY(-95%) rotate(-22deg)}to{opacity:1;transform:none}}
+@keyframes si-burst{to{transform:rotate(58deg) scale(1.4);opacity:0}}
+@keyframes si-confetti{0%{opacity:0}24%{opacity:1}100%{opacity:0;transform:rotate(calc(var(--position)*22.5deg + 15deg)) translateX(clamp(65px,18vw,190px))}}
+@keyframes si-arrive{from{transform:translateX(-100%);opacity:.35}to{transform:translateX(-5%);opacity:1}}
+@keyframes si-drive{to{transform:translateX(150%) rotate(-4deg);opacity:.25}}
+@keyframes si-smoke{30%{opacity:.8}100%{opacity:0;transform:translateX(35%) scale(1.7)}}
+@keyframes si-vault-left{to{transform:translateX(-100%)}}
+@keyframes si-vault-right{to{transform:translateX(100%)}}
+@keyframes si-lock{to{transform:rotate(85deg)}}
+@media (max-width:600px){.si-stage{aspect-ratio:1.65/1;min-height:166px}.si-brand{font-size:.68rem}.si-template-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (prefers-reduced-motion:reduce){.si-experience *,.si-template *{animation:none!important;transition:none!important}.si-stage{max-height:180px}}

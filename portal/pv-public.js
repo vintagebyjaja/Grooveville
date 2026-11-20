@@ -2,13 +2,12 @@
 (function () {
   const E = PV.e;
 
-  PV.publicLanding = ({ kind, section, title, intro, actions, browse, content }) => {
-    const art = kind === "rentals" ? "/media/rentals-architecture.webp" : "/media/gv-ent.webp";
+  PV.publicLanding = ({ kind, section, title, intro, actions, browse, content, showcase }) => {
+    const background = showcase ? '' : '<img class="pv-public-image" src="/media/rentals-architecture.webp" alt="" fetchpriority="high">';
     return '<div class="pv pv-public pv-public-' + kind + '"><section class="pv-public-hero">' +
-      '<img class="pv-public-image" src="' + art + '" alt="" fetchpriority="high">' +
-      '<div class="pv-public-copy"><div class="pvkick">' + E(section) + '</div><h1>' + E(title) + '</h1><p>' + E(intro) + '</p>' +
-      '<div class="pvrow">' + PV.publicJump(browse) + actions + '</div></div></section>' +
-      '<div class="pv-public-content">' + content + '</div></div>';
+      background + '<div class="pv-public-copy"><header><div class="pvkick">' + E(section) + '</div><h1>' + E(title) + '</h1></header>' +
+      '<div class="pv-public-intro"><p>' + E(intro) + '</p><div class="pvrow">' + PV.publicJump(browse) + actions + '</div></div></div>' +
+      (showcase || '') + '</section><div class="pv-public-content">' + content + '</div></div>';
   };
 
   PV.publicJump = label => '<button class="pvbtn pk lg" data-act="pv-public-browse">' + E(label) + '</button>';
