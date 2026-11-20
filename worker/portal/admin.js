@@ -16,7 +16,7 @@ export async function adminApi(C) {
   }
   if (p === "/api/p/admin/settings" && POST) {
     founderOnly(); const S = await settings(D), ch = {};
-    for (const k of ["rentals_open", "ent_open", "payments_live", "payouts_on", "esign_live"]) if (k in b && !!b[k] !== !!S[k]) { await setSetting(D, k, !!b[k]); ch[k] = !!b[k] }
+    for (const k of ["rentals_open", "ent_open", "payments_live", "esign_live"]) if (k in b && !!b[k] !== !!S[k]) { await setSetting(D, k, !!b[k]); ch[k] = !!b[k] }
     for (const k of ["platform_fee_bps", "platform_fee_cents"]) if (k in b) { const v = Math.max(0, Math.min(k === "platform_fee_bps" ? 5000 : 100000, Math.round(Number(b[k]) || 0))); if (v !== S[k]) { await setSetting(D, k, v); ch[k] = v } }
     for (const k of ["support_email", "tz", "landlord_name"]) if (k in b) { await setSetting(D, k, clean(b[k], 120)); ch[k] = clean(b[k], 120) }
     await audit(D, u.uid, "settings_changed", "settings", "", ch); return J({ ok: true, settings: await settings(D) });
@@ -98,7 +98,7 @@ export async function adminApi(C) {
   }
   if (p === "/api/p/admin/location/test" && POST) { const L = await one(D, "SELECT * FROM locations WHERE id = ?", String(b.id || "")); if (!L) return J({ error: "Save the location first" }, 404); return J(quote(Object.assign({}, L, { pricing: b.pricing ? normPricing(b.pricing) : L.pricing }), b.event || {})) }
   /* ---------------- events ---------------- */
-  if (p === "/api/p/admin/events") { const E = await all(D, "SELECT e.*, h.name AS host_name, h.verified, h.grooveville, h.connect_status, l.name AS location_name, l.category AS location_category FROM events e JOIN hosts h ON h.id = e.host_id LEFT JOIN locations l ON l.id = e.location_id ORDER BY CASE e.status WHEN 'submitted' THEN 0 ELSE 1 END, e.start DESC LIMIT 300"); const A = await all(D, "SELECT * FROM event_agreements WHERE status NOT IN ('void')"); return J({ events: E.map(e => Object.assign(e, { password_hash: undefined, services: pj(e.services, []), agreement: (x => x && Object.assign({}, x, { terms: pj(x.terms, {}) }))(A.find(a => a.id === e.agreement_id)) })) }) }
+  if (p === "/api/p/admin/events") { const E = await all(D, "SELECT e.*, h.name AS host_name, h.verified, h.grooveville, l.name AS location_name, l.category AS location_category FROM events e JOIN hosts h ON h.id = e.host_id LEFT JOIN locations l ON l.id = e.location_id ORDER BY CASE e.status WHEN 'submitted' THEN 0 ELSE 1 END, e.start DESC LIMIT 300"); const A = await all(D, "SELECT * FROM event_agreements WHERE status NOT IN ('void')"); return J({ events: E.map(e => Object.assign(e, { password_hash: undefined, services: pj(e.services, []), agreement: (x => x && Object.assign({}, x, { terms: pj(x.terms, {}) }))(A.find(a => a.id === e.agreement_id)) })) }) }
   if (p === "/api/p/admin/event" && POST) {
     const e = await one(D, "SELECT * FROM events WHERE id = ?", String(b.id || "")); if (!e) return J({ error: "Not found" }, 404); const h = await one(D, "SELECT * FROM hosts WHERE id = ?", e.host_id); const act = b.action;
     if (act === "venue") { await run(D, "UPDATE events SET venue_authorized = ? WHERE id = ?", b.value ? 1 : 0, e.id); await audit(D, u.uid, "venue_authorization", "event", e.id, { value: !!b.value, note: clean(b.note, 300) }); return J({ ok: true }) }

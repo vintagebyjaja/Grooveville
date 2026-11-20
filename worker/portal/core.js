@@ -60,10 +60,19 @@ export const SCHEMA = [
 `CREATE TABLE IF NOT EXISTS payouts (id TEXT PRIMARY KEY, settlement_id TEXT, host_id TEXT, amount_cents INTEGER, status TEXT, stripe_transfer TEXT, note TEXT, by TEXT, at TEXT, updated TEXT)`,
 `CREATE TABLE IF NOT EXISTS schema_version (v INTEGER)`
 ];
+const MANUAL_HOST_PAYMENTS = `CREATE TABLE IF NOT EXISTS manual_host_payments (
+  payout_id TEXT PRIMARY KEY REFERENCES payouts(id), paid_on TEXT NOT NULL, method TEXT NOT NULL, reference TEXT
+)`;
 let READY = null;
 export async function db(env) {
   if (!env.PORTAL_DB) throw Object.assign(new Error("The portal database (D1 binding PORTAL_DB) isn't connected yet."), { status: 503 });
-  if (!READY) READY = (async () => { const v = await env.PORTAL_DB.prepare("SELECT v FROM schema_version").first().catch(() => null); if (!v || v.v < 1) { await env.PORTAL_DB.batch(SCHEMA.map(s => env.PORTAL_DB.prepare(s))); await env.PORTAL_DB.prepare("INSERT INTO schema_version (v) VALUES (1)").run() } })().catch(e => { READY = null; throw e });
+  if (!READY) READY = (async () => {
+    const D = env.PORTAL_DB;
+    const current = await D.prepare("SELECT MAX(v) AS v FROM schema_version").first().catch(() => null);
+    if (current?.v >= 2) return;
+    const schema = current?.v >= 1 ? [] : SCHEMA;
+    await D.batch([...schema, MANUAL_HOST_PAYMENTS, "INSERT INTO schema_version (v) SELECT 2 WHERE NOT EXISTS (SELECT 1 FROM schema_version WHERE v >= 2)"].map(sql => D.prepare(sql)));
+  })().catch(e => { READY = null; throw e });
   await READY; return env.PORTAL_DB;
 }
 export const q = (D, sql, ...a) => D.prepare(sql).bind(...a);
@@ -73,7 +82,7 @@ export const run = (D, sql, ...a) => q(D, sql, ...a).run();
 export const pj = (s, d) => { try { return s ? JSON.parse(s) : d } catch (e) { return d } };
 
 /* ---------- settings (founder switches) ---------- */
-export const DEF_SETTINGS = { rentals_open: false, ent_open: false, payments_live: false, payouts_on: false, esign_live: false, platform_fee_bps: 500, platform_fee_cents: 0, support_email: "", hold_minutes: 15 };
+export const DEF_SETTINGS = { rentals_open: false, ent_open: false, payments_live: false, esign_live: false, platform_fee_bps: 500, platform_fee_cents: 0, support_email: "", hold_minutes: 15 };
 export async function settings(D) { const rows = await all(D, "SELECT k, v FROM settings"); const o = Object.assign({}, DEF_SETTINGS); for (const r of rows) o[r.k] = pj(r.v, r.v); return o }
 export async function setSetting(D, k, v) { await run(D, "INSERT INTO settings (k, v) VALUES (?, ?) ON CONFLICT(k) DO UPDATE SET v = excluded.v", k, JSON.stringify(v)) }
 

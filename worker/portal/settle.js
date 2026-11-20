@@ -17,23 +17,22 @@ export function settle(terms, orders, adjustments, payouts, today) {
   else { groove = bpsOf(base, T.platformFeeBps) + T.perTicketCents * activeTickets; grooveLabel = "Ticketing fee " + (T.platformFeeBps / 100) + "%" + (T.perTicketCents ? " + " + (T.perTicketCents / 100).toFixed(2) + " × " + activeTickets + " tickets" : "") }
   const adj = (adjustments || []).filter(a => a && a.approved !== false); const charges = adj.filter(a => a.kind === "charge").reduce((s, a) => s + (a.cents | 0), 0), credits = adj.filter(a => a.kind === "credit").reduce((s, a) => s + (a.cents | 0), 0);
   const hostFees = T.processingBorneBy === "host" ? fees : 0;
-  const host = T.arrangement === "owned" ? 0 : base - groove - hostFees - charges + credits;
-  const paid = (payouts || []).filter(p => ["initiated", "paid", "pending_funds"].includes(p.status)).reduce((s, p) => s + (p.amount_cents | 0), 0);
+  const host = T.arrangement === "owned" ? 0 : netSales - groove - hostFees - charges + credits;
   const paidDone = (payouts || []).filter(p => p.status === "paid").reduce((s, p) => s + (p.amount_cents | 0), 0);
   const t = today || new Date().toISOString().slice(0, 10), pendingFunds = P.filter(o => !o.available_on || o.available_on > t).reduce((a, o) => a + (o.total_cents | 0) - (o.refunded_cents | 0), 0);
   const openDisputes = P.filter(o => o.status === "disputed").length;
-  return { terms: T, gross, tickets, activeTickets, refunds, chargebacks, fees, taxes: 0, netSales, base, grooveShare: groove, grooveLabel, grooveNet: groove + charges - credits - (T.processingBorneBy === "grooveville" ? fees : 0) + (T.arrangement === "owned" ? -fees : 0),
-    charges, credits, adjustments: adj, hostShare: host, previousPayouts: paid, paidOut: paidDone, outstanding: host - paid, pendingFunds, openDisputes, orders: P.length };
+  return { terms: T, gross, tickets, activeTickets, refunds, chargebacks, fees, taxes: 0, netSales, base, grooveShare: groove, grooveLabel, grooveNet: groove + charges - credits - (T.processingBorneBy === "grooveville" || T.arrangement === "owned" ? fees : 0),
+    charges, credits, adjustments: adj, hostShare: host, previousPayouts: paidDone, paidOut: paidDone, outstanding: host - paidDone, pendingFunds, openDisputes, orders: P.length };
 }
 /* state machine for a settlement record */
-export function settlementState(ev, calc, rec, payouts) {
+export function settlementState(ev, calc, rec) {
   const closed = ev.status === "sales_closed" || ev.status === "completed" || ev.status === "canceled" || (ev.sales_close && ev.sales_close <= new Date().toISOString().slice(0, 16));
   if (!closed) return "sales_active";
   if (calc.openDisputes) return "disputed";
   const st = rec && rec.state;
   if (st === "approved" || st === "partially_paid" || st === "paid") {
     if (rec.approved_amount !== calc.hostShare) return "adjusted";
-    if (calc.hostShare <= 0 || calc.outstanding <= 0) return (payouts || []).some(p => p.status === "pending_funds" || p.status === "initiated") ? "partially_paid" : "paid";
+    if (calc.hostShare <= 0 || calc.outstanding <= 0) return "paid";
     return calc.previousPayouts > 0 ? "partially_paid" : "approved";
   }
   if (st === "awaiting_approval" || st === "adjusted") return st;

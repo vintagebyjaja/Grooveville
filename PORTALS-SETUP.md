@@ -24,7 +24,9 @@ The existing handler forwards portal events, so no new secret is needed. (You ca
 
 **Getting money to your bank.** Stripe pays your balance to the bank account set in Stripe › Settings › Payouts (Business settings › Bank accounts and scheduling). Add or confirm your bank account there and choose the payout schedule. Grooveville never sees or stores bank details. Rent paid to a personal-residence listing still lands in the Grooveville Stripe account. It's tracked separately as personal residence income in reports, so ask your accountant how to move and record it.
 
-**Host payouts (Stripe Connect).** In Stripe › Connect, finish the platform profile to enable Express accounts. Hosts connect from Host › Earnings & payouts. Transfers only happen after you approve a settlement **and** turn on **Host payouts**. A transfer waits until enough funds are available in Stripe (Stripe holds new card payments for a few days), and the portal retries on its own.
+**Manual host settlements.** Paid tickets use Grooveville’s Stripe account. Free events and zero-dollar RSVPs issue tickets without a Stripe charge. Hosts can review their event earnings. In **Finance & settlements**, the founder approves the contractual amount, pays the host externally, and records the date, amount, method, and optional reference. Recording the payment creates a ledger entry and audit record. Legacy transfers remain in the history. Review pending legacy records against Stripe before recording an external payment for the same obligation.
+
+Confirm that Grooveville’s Stripe agreement and each host agreement permit this collection and external settlement model, including the seller shown to ticket buyers and who handles refunds and disputes. Stripe lists certain third-party payment aggregation as restricted. See https://stripe.com/legal/restricted-businesses.
 
 ## 3. Optional
 
@@ -40,7 +42,6 @@ Add these in Cloudflare › Workers › grooveville › Settings › Variables a
 | Rentals portal open | Customers can browse and request rentals |
 | Entertainment open | Public event pages and ticket sales for published events |
 | Live payments | Allows real charges with a live Stripe key |
-| Host payouts | Allows Stripe Connect transfers after you approve a settlement |
 | Production e-signing | Lets customers sign when live keys are in use (testers and admins can always sign) |
 
 Add testers in Settings › People & roles. They can preview closed portals.

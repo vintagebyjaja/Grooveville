@@ -5,7 +5,7 @@ import { rentalsApi, rentalsCron } from "./rentals.js";
 import { docsCron } from "./docs.js";
 import { docsApi } from "./docs.js";
 import { entApi, entCron, publicEventMeta } from "./ent.js";
-import { financeApi, stripeEvent, financeCron } from "./finance.js";
+import { financeApi, stripeEvent } from "./finance.js";
 import { adminApi } from "./admin.js";
 
 const MAX_UP = { pub: 12e6, verification: 15e6, doc: 25e6, final: 30e6, license: 15e6 };
@@ -36,7 +36,7 @@ export async function portalApi(req, env, ctx, h) {
     if (req.method === "POST" && ct.includes("application/json")) { const t = await req.text(); if (t.length > 400000) return J({ error: "Too much data" }, 413); try { b = JSON.parse(t || "{}") } catch (e) { return J({ error: "Bad request" }, 400) } }
     const C = { req, env, ctx, D, S, u, b, url, p, h, ip: ipOf(req), ua: uaOf(req), fetcher: h.fetcher, mode: stripeMode(env) };
 
-    if (p === "/api/p/status") return J({ ok: true, rentals_open: !!S.rentals_open, ent_open: !!S.ent_open, stripe: C.mode, payments_live: !!S.payments_live, payouts_on: !!S.payouts_on, signedIn: !!u, admin: !!(u && u.admin), founder: !!(u && u.founder), tester: !!(u && u.tester), email: !!(env.RESEND_API_KEY && env.MAIL_FROM) });
+    if (p === "/api/p/status") return J({ ok: true, rentals_open: !!S.rentals_open, ent_open: !!S.ent_open, stripe: C.mode, payments_live: !!S.payments_live, payouts_on: false, signedIn: !!u, admin: !!(u && u.admin), founder: !!(u && u.founder), tester: !!(u && u.tester), email: !!(env.RESEND_API_KEY && env.MAIL_FROM) });
 
     /* uploads: raw bytes, checked by purpose */
     if (p === "/api/p/upload" && req.method === "PUT") {
@@ -97,7 +97,7 @@ export async function portalApi(req, env, ctx, h) {
     return await entApi(C);
   } catch (e) { const msg = String(e && e.message || e); if (!/CHECK constraint/.test(msg) && !e.status) console.log("portal", p, e && e.stack); if (/CHECK constraint/.test(msg)) return J({ error: "Not enough availability left for that. Please refresh and try again.", code: "capacity" }, 409); return J({ error: e.status ? msg : "Something went wrong. Please try again.", detail: e.status ? undefined : msg.slice(0, 200) }, e.status || 500) }
 }
-export async function portalCron(env, fetcher) { if (!env.PORTAL_DB) return; const D = await db(env); const S = await settings(D); await rentalsCron(env, D, S, fetcher).catch(e => console.log("rentals cron", e)); await entCron(env, D, S, fetcher).catch(e => console.log("ent cron", e)); await financeCron(env, D, S, fetcher).catch(e => console.log("finance cron", e)); await docsCron(D).catch(() => { }) }
+export async function portalCron(env, fetcher) { if (!env.PORTAL_DB) return; const D = await db(env); const S = await settings(D); await rentalsCron(env, D, S, fetcher).catch(e => console.log("rentals cron", e)); await entCron(env, D, S, fetcher).catch(e => console.log("ent cron", e)); await docsCron(D).catch(() => { }) }
 export async function portalStripe(env, ev, fetcher) { const D = await db(env); return stripeEvent(env, D, ev, fetcher) }
 /* share pages for social previews: /entertainment/events/<slug>, /entertainment/hosts/<slug> */
 export async function portalShare(req, env, kind, slug) {
