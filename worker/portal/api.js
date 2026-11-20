@@ -7,6 +7,7 @@ import { docsApi } from "./docs.js";
 import { entApi, entCron, publicEventMeta } from "./ent.js";
 import { financeApi, stripeEvent } from "./finance.js";
 import { adminApi } from "./admin.js";
+import { inviteApi } from "./invites.js";
 
 const MAX_UP = { pub: 12e6, verification: 15e6, doc: 25e6, final: 30e6, license: 15e6 };
 const TYPES = { pub: /^image\/(png|jpeg|webp)$/, verification: /^(image\/(png|jpeg|webp)|application\/pdf)$/, license: /^(image\/(png|jpeg|webp)|application\/pdf)$/, doc: /^application\/pdf$/, final: /^application\/pdf$/ };
@@ -92,6 +93,7 @@ export async function portalApi(req, env, ctx, h) {
     }
     if (p.startsWith("/api/p/rentals")) return await rentalsApi(C);
     if (p.startsWith("/api/p/doc")) return await docsApi(C);
+    if (/^\/api\/p\/(?:invite(?:\/|$)|host\/invites(?:\/|$)|admin\/invites(?:\/|$))/.test(p)) return await inviteApi(C);
     if (p.startsWith("/api/p/admin")) return await adminApi(C);
     if (p.startsWith("/api/p/finance") || p.startsWith("/api/p/settlement") || p.startsWith("/api/p/pay")) return await financeApi(C);
     return await entApi(C);

@@ -59,3 +59,12 @@ Add testers in Settings › People & roles. They can preview closed portals.
 1. Upload this update to a new branch (for example `portals-preview`). Cloudflare builds a preview URL for it.
 2. Test there in Stripe test mode: card `4242 4242 4242 4242`, any future date, any CVC.
 3. When you're happy, merge into `cloudflare-migration` to deploy. Then turn the switches on one at a time.
+
+
+## Special Invites on a branch preview
+
+Set Stripe test credentials on that preview and provision an isolated D1 database. The collection uses the existing Stripe portal webhook. Subscribe to Checkout completion, async success/failure, expiry, and charge refund events. Stripe confirmation of exactly USD $5 unlocks one event. A partial refund reduces upgrade revenue and retains access. A full refund revokes premium access and disables its premium links. The free Private Letter stays available. A new verified purchase unlocks the collection again, including prior premium links the host has not revoked.
+
+A personalized link for a private event grants access to someone who holds the link. Hosts can revoke it. Password-protected events retain the standard password flow. Opens and reveals are engagement counts rather than RSVPs. Ticket revenue and RSVPs are attributed only after a linked order completes. The visitor estimate uses a separate random ID for each browser and invitation. If an upgrade remains pending after a network failure, the host can resume the same Stripe checkout. Review a stuck upgrade in Back Office and Stripe before starting a replacement.
+
+Confirm in Stripe test mode before offering the $5 upgrade to customers. This upgrade has its own revenue report under **Special Invites**.

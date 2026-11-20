@@ -2,6 +2,7 @@
    Authoritative amounts are computed here on the server from database records that only Stripe webhooks
    (signature-checked, processed once per event id) can mark as paid. */
 import { J, one, all, run, now, rid, pj, clean, audit, notify, stripe, fmt$ } from "./core.js";
+import { inviteStripeEvent } from "./invites.js";
 import { settle, settlementState } from "./settle.js";
 import { markOrderPaid, releaseOrder } from "./ent.js";
 import { adminUids } from "./rentals.js";
@@ -13,6 +14,8 @@ export async function stripeEvent(env, D, ev, fetcher) {
   const ins = await run(D, "INSERT OR IGNORE INTO stripe_events (id, type, at) VALUES (?,?,?)", ev.id, ev.type, now()); if (!(ins.meta && ins.meta.changes)) return { ok: true, duplicate: true };
   const o = (ev.data && ev.data.object) || {}, md = o.metadata || {}, base = "https://" + (env.SITE_HOST || "grooveville.org");
   try {
+    const inviteResult = await inviteStripeEvent(D, ev);
+    if (inviteResult) return inviteResult;
     if ((ev.type === "checkout.session.completed" || ev.type === "checkout.session.async_payment_succeeded") && o.payment_status === "paid") {
       if (md.gvp === "order") {
         const ord = await one(D, "SELECT * FROM orders WHERE id = ?", md.order || ""); if (!ord) return { ok: true, unknown: true };

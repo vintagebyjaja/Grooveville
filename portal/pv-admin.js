@@ -8,7 +8,7 @@ const pill = (m, k) => { const x = m[k] || [k, ""]; return '<span class="pvpill 
 const nm = x => [x.first, x.last].filter(Boolean).join(" ") || x.email || "";
 const toC = v => { const n = Number(String(v == null ? "" : v).replace(/[$,\s]/g, "")); return isFinite(n) ? Math.round(n * 100) : 0 };
 const d$ = c => c ? (c / 100).toFixed(2) : "";
-function nav(o) { const c = (o && o.counts) || {}; return [["#team-portals", "Overview", "grid"], ["#team-portals/rentals", "Rentals", "home", c.requests], ["#team-portals/customers", "Customers & billing", "users", c.nameRequests], ["#team-portals/docs", "Agreements", "sign", c.docsToFinalize], ["#team-portals/hosts", "Hosts & verification", "star", c.verifications], ["#team-portals/locations", "Locations & pricing", "building"], ["#team-portals/events", "Event approvals", "cal", c.events], ["#team-portals/finance", "Finance & settlements", "cash"], ["#team-portals/settings", "Settings", "gear"]] }
+function nav(o) { const c = (o && o.counts) || {}; return [["#team-portals", "Overview", "grid"], ["#team-portals/rentals", "Rentals", "home", c.requests], ["#team-portals/customers", "Customers & billing", "users", c.nameRequests], ["#team-portals/docs", "Agreements", "sign", c.docsToFinalize], ["#team-portals/hosts", "Hosts & verification", "star", c.verifications], ["#team-portals/locations", "Locations & pricing", "building"], ["#team-portals/events", "Event approvals", "cal", c.events], ["#team-portals/finance", "Finance & settlements", "cash"], ["#team-portals/settings", "Settings", "gear"], ...(PV.me.founder ? [["#team-portals/invites", "Special Invites", "link"]] : [])] }
 let OV = null;
 const shell = (body, hero) => PV.shell({ sec: "ADMINISTRATION", theme: "pv-admin", nav: nav(OV), card: ["Grooveville LLC", PV.me.founder ? "Founder" : PV.me.admin ? "Administrator" : "Finance", "shield"], hero, art: false }, body);
 PV.views.admin = async ({ parts, qs }) => {
@@ -27,6 +27,7 @@ PV.views.admin = async ({ parts, qs }) => {
   if (s === "events") return shell(await events());
   if (s === "finance" && id) return shell(await settlement(id));
   if (s === "finance") return shell(await finance(qs));
+  if (s === "invites") return shell(await PV.inviteAdmin());
   if (s === "settings") return shell(await settingsView());
   return shell(await overview(), { kick: "Grooveville LLC", title: 'Rentals <span>&amp;</span> Entertainment', sub: "Approvals, agreements, billing, settlements and founder settings.", art: '<img src="/media/admin-venue.webp" alt="" fetchpriority="high">' });
 };

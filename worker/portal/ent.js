@@ -2,6 +2,7 @@
    QR tickets and door check-in. Overselling is impossible by construction: ticket holds and sales are
    guarded by database CHECK constraints inside one transaction. */
 import { J, one, all, run, now, rid, pj, clean, audit, notify, stripe, sha256, slugify, limited, isDT, mail, signLink } from "./core.js";
+import { activeInvite } from "./invites.js";
 import { quote, normPricing } from "./pricing.js";
 import { adminUids } from "./rentals.js";
 export function localNow(tz) { const f = new Intl.DateTimeFormat("en-CA", { timeZone: tz || "America/New_York", year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", hourCycle: "h23" }).formatToParts(new Date()), g = t => (f.find(x => x.type === t) || {}).value; return g("year") + "-" + g("month") + "-" + g("day") + "T" + g("hour") + ":" + g("minute") }
@@ -75,9 +76,12 @@ export async function entApi(C) {
     const mins = await all(D, "SELECT event_id, MIN(price_cents) AS m FROM ticket_types WHERE status = 'active' GROUP BY event_id"); return J({ events: E.map(e => ({ slug: e.slug, title: e.title, start: e.start, flyer: e.flyer_key, venue: e.lname || e.venue_name, host: { name: e.hname, slug: e.hslug, verified: !!e.hver, official: !!e.hoff }, from: (mins.find(m => m.event_id === e.id) || {}).m, status: e.status, category: e.category })) }) }
   if (p === "/api/p/event") {
     const e = await one(D, "SELECT * FROM events WHERE slug = ?", url.searchParams.get("slug") || ""); if (!e) return J({ error: "Event not found" }, 404);
-    const v = await canSeeEvent(C, e, url.searchParams.get("k") || "", url.searchParams.get("pw") || ""); if (!v.ok) return J(v.password ? { locked: "password", title: e.title } : v.private ? { locked: "private" } : { error: v.closed ? "Grooveville Entertainment opens soon." : "Event not found" }, v.password || v.private ? 200 : 404);
+    const token = url.searchParams.get("invite");
+    const invite = token && S.ent_open && await activeInvite(D, S, token, e.id);
+    if (token && !invite) return J({ error: "This invitation is unavailable." }, 404);
+    const v = invite ? { ok: true } : await canSeeEvent(C, e, url.searchParams.get("k") || "", url.searchParams.get("pw") || ""); if (!v.ok) return J(v.password ? { locked: "password", title: e.title } : v.private ? { locked: "private" } : { error: v.closed ? "Grooveville Entertainment opens soon." : "Event not found" }, v.password || v.private ? 200 : 404);
     const h = await one(D, "SELECT * FROM hosts WHERE id = ?", e.host_id), loc = e.location_id ? await one(D, "SELECT * FROM locations WHERE id = ?", e.location_id) : null, T = await all(D, "SELECT * FROM ticket_types WHERE event_id = ? ORDER BY ord, price_cents", e.id);
-    return J({ event: eventPublic(e, h, loc, T, S), preview: !!v.owner && e.status !== "published", stripe: C.mode, live: C.mode === "live" && !!S.payments_live });
+    return J({ event: eventPublic(e, h, loc, invite?.destination === "rsvp" ? T.filter(t => !t.price_cents) : T, S), preview: !!v.owner && e.status !== "published", stripe: C.mode, live: C.mode === "live" && !!S.payments_live });
   }
   if (p === "/api/p/hostpage") {
     const h = await one(D, "SELECT * FROM hosts WHERE slug = ?", url.searchParams.get("slug") || ""); if (!h || h.status !== "active" || (!pubOpen && !(u && (u.admin || u.uid === h.uid)))) return J({ error: "Host not found" }, 404);
@@ -89,11 +93,14 @@ export async function entApi(C) {
   if (p === "/api/p/checkout" && req.method === "POST") {
     if (await limited(D, "co:" + C.ip, 40, 600)) return J({ error: "Too many attempts. Wait a few minutes and try again." }, 429);
     const e = await one(D, "SELECT * FROM events WHERE slug = ?", String(b.slug || "")); if (!e) return J({ error: "Event not found" }, 404);
-    const v = await canSeeEvent(C, e, String(b.k || ""), String(b.pw || "")); if (!v.ok || e.status !== "published") return J({ error: "Tickets aren't on sale for this event" }, 403);
+    const invite = b.invite && S.ent_open && await activeInvite(D, S, b.invite, e.id);
+    if (b.invite && !invite) return J({ error: "This invitation is unavailable." }, 404);
+    const v = invite ? { ok: true } : await canSeeEvent(C, e, String(b.k || ""), String(b.pw || "")); if (!v.ok || e.status !== "published") return J({ error: "Tickets aren't on sale for this event" }, 403);
     const ln = localNow(TZ(S)); if ((e.sales_open && e.sales_open > ln) || (e.sales_close && e.sales_close <= ln)) return J({ error: "Ticket sales are closed" }, 403);
     const name = clean(b.name, 80), email = clean(b.email, 200).toLowerCase(); if (name.length < 2) return J({ error: "Enter your name" }, 400); if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return J({ error: "Enter a valid email for your tickets" }, 400);
     const T = await all(D, "SELECT * FROM ticket_types WHERE event_id = ? AND status = 'active'", e.id); const items = []; let qty = 0, sub = 0;
     for (const it of (b.items || []).slice(0, 10)) { const q = Math.round(Number(it.qty) || 0); if (q <= 0) continue; const t = T.find(x => x.id === it.type); if (!t) return J({ error: "That ticket type isn't available" }, 400); if ((t.sales_start && t.sales_start > ln) || (t.sales_end && t.sales_end <= ln)) return J({ error: t.name + " isn't on sale right now" }, 400); if (q > (t.max_per_order || 10)) return J({ error: "Up to " + (t.max_per_order || 10) + " " + t.name + " per order" }, 400); items.push({ t, q }); qty += q; sub += q * t.price_cents }
+    if (invite?.destination === "rsvp" && sub > 0) return J({ error: "This invite is for free RSVPs." }, 400);
     if (!qty) return J({ error: "Choose at least one ticket" }, 400); if (qty > 20) return J({ error: "Up to 20 tickets per order" }, 400);
     let disc = 0, promo = ""; if (b.promo) { promo = String(b.promo).toUpperCase().trim().slice(0, 30); const pc = await one(D, "SELECT * FROM promo_codes WHERE event_id = ? AND code = ?", e.id, promo); if (!pc || (pc.expires && pc.expires < ln)) return J({ error: "That promo code isn't valid" }, 400); disc = pc.kind === "pct" ? Math.min(sub, Math.floor(sub * Math.min(10000, pc.value) / 10000)) : Math.min(sub, pc.value) }
     const total = sub - disc, free = total === 0;
@@ -104,6 +111,7 @@ export async function entApi(C) {
     stmts.push(D.prepare("UPDATE events SET reserved = reserved + ? WHERE id = ?").bind(qty, e.id));
     if (promo) stmts.push(D.prepare("UPDATE promo_codes SET used = used + 1 WHERE event_id = ? AND code = ?").bind(e.id, promo));
     stmts.push(D.prepare("INSERT INTO orders (id, event_id, email, name, uid, qty, subtotal_cents, discount_cents, total_cents, status, promo, hold_expires, attendees, view_token, created, paid_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)").bind(id, e.id, email, name, u ? u.uid : null, qty, sub, disc, total, free ? "paid" : "pending", promo, Date.now() + 31 * 60000, JSON.stringify(att), tok, now(), free ? now() : null));
+    if (invite) stmts.push(D.prepare("INSERT INTO special_invite_orders (order_id,token) VALUES (?,?)").bind(id, invite.token));
     for (const { t, q } of items) stmts.push(D.prepare("INSERT INTO order_items (order_id, ticket_type_id, qty, unit_cents) VALUES (?,?,?,?)").bind(id, t.id, q, t.price_cents));
     await D.batch(stmts); /* throws (CHECK constraint) if any ticket type, the event or the promo code would go over its limit */
     const o = await one(D, "SELECT * FROM orders WHERE id = ?", id);
@@ -113,7 +121,7 @@ export async function entApi(C) {
       const sess = await stripe(env, "POST", "checkout/sessions", { mode: "payment", customer_email: email, client_reference_id: id, expires_at: Math.floor(Date.now() / 1000) + 30 * 60 + 15,
         line_items: disc ? [{ quantity: 1, price_data: { currency: "usd", unit_amount: total, product_data: { name: e.title + " · " + qty + " ticket" + (qty > 1 ? "s" : "") + " (code " + promo + ")" } } }] : items.map(({ t, q }) => ({ quantity: q, price_data: { currency: "usd", unit_amount: t.price_cents, product_data: { name: e.title + " · " + t.name } } })),
         metadata: { gvp: "order", order: id, event: e.id }, payment_intent_data: { metadata: { gvp: "order", order: id, event: e.id }, description: "Tickets: " + e.title + (host && !host.grooveville ? " (hosted by " + host.name + ")" : "") },
-        success_url: base + "/#order/" + id + "." + tok + "?paid=1", cancel_url: base + "/#e/" + e.slug + "?cancel=" + id + "." + tok }, { idem: "order-" + id, fetcher: C.fetcher });
+        success_url: base + "/#order/" + id + "." + tok + "?paid=1", cancel_url: base + "/#e/" + e.slug + "?cancel=" + id + "." + tok + (invite ? "&invite=" + invite.token : "") }, { idem: "order-" + id, fetcher: C.fetcher });
       await run(D, "UPDATE orders SET stripe_session = ? WHERE id = ?", sess.id, id); await audit(D, u ? u.uid : "guest", "order_started", "order", id, { total, qty, session: sess.id });
       return J({ ok: true, url: sess.url, order: id });
     } catch (er) { await releaseOrder(D, o, "canceled"); throw er }
@@ -238,7 +246,7 @@ export async function entApi(C) {
     await run(D, "UPDATE events SET status = 'published', updated = ? WHERE id = ?", now(), e.id); await audit(D, u.uid, "event_published", "event", e.id, {}); return J({ ok: true, url: "/entertainment/events/" + e.slug, invite: e.invite_code });
   }
   if (p === "/api/p/host/event/close" && req.method === "POST") { const e = await ownEvent(C, b.id); if (!e || e.status !== "published") return J({ error: "Only published events can close sales" }, 409); await run(D, "UPDATE events SET status = 'sales_closed', updated = ? WHERE id = ?", now(), e.id); await audit(D, u.uid, "sales_closed", "event", e.id, {}); return J({ ok: true }) }
-  if (p === "/api/p/host/event/guests") { const e = await ownEvent(C, url.searchParams.get("id")); if (!e && !(await canStaff(C, url.searchParams.get("id")))) return J({ error: "Not found" }, 404); const id = url.searchParams.get("id");
+  if (p === "/api/p/host/event/guests") { const e = await ownEvent(C, url.searchParams.get("id")); if (!e) return J({ error: "Not found" }, 404); const id = url.searchParams.get("id");
     return J({ orders: await all(D, "SELECT id, name, email, qty, total_cents, refunded_cents, status, created, paid_at, promo FROM orders WHERE event_id = ? AND status != 'pending' ORDER BY created DESC", id), tickets: await all(D, "SELECT t.code, t.attendee, t.status, t.checked_in_at, y.name AS type, o.email FROM tickets t JOIN orders o ON o.id = t.order_id LEFT JOIN ticket_types y ON y.id = t.ticket_type_id WHERE t.event_id = ? ORDER BY t.attendee", id), staff: await all(D, "SELECT uid, email FROM event_staff WHERE event_id = ?", id), promos: await all(D, "SELECT code, kind, value, max_uses, used, expires FROM promo_codes WHERE event_id = ?", id), types: await all(D, "SELECT * FROM ticket_types WHERE event_id = ? ORDER BY ord", id) }) }
   if (p === "/api/p/host/event/staff" && req.method === "POST") { const e = await ownEvent(C, b.id); if (!e) return J({ error: "Event not found" }, 404); if (b.remove) { await run(D, "DELETE FROM event_staff WHERE event_id = ? AND uid = ?", e.id, String(b.remove)); return J({ ok: true }) } const pr = await one(D, "SELECT uid, email FROM profiles WHERE lower(email) = lower(?)", clean(b.email, 200)); if (!pr) return J({ error: "That person needs to sign in to Grooveville once first" }, 404); await run(D, "INSERT OR IGNORE INTO event_staff (event_id, uid, email) VALUES (?,?,?)", e.id, pr.uid, pr.email); await notify(env, D, pr.uid, "staff", "You're on the door team", e.title, "#checkin/" + e.id); return J({ ok: true }) }
   return J({ error: "Not found" }, 404);

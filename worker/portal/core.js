@@ -63,15 +63,34 @@ export const SCHEMA = [
 const MANUAL_HOST_PAYMENTS = `CREATE TABLE IF NOT EXISTS manual_host_payments (
   payout_id TEXT PRIMARY KEY REFERENCES payouts(id), paid_on TEXT NOT NULL, method TEXT NOT NULL, reference TEXT
 )`;
+const SPECIAL_INVITES_SCHEMA = `CREATE TABLE IF NOT EXISTS special_invites (
+  token TEXT PRIMARY KEY, event_id TEXT NOT NULL, host_id TEXT NOT NULL, visibility TEXT NOT NULL,
+  template TEXT NOT NULL, theme TEXT NOT NULL, guest TEXT NOT NULL, message TEXT NOT NULL,
+  destination TEXT NOT NULL, created TEXT NOT NULL, revoked TEXT
+);
+CREATE INDEX IF NOT EXISTS special_invites_event ON special_invites(event_id);
+CREATE TABLE IF NOT EXISTS special_invite_engagement (
+  token TEXT NOT NULL, visitor TEXT NOT NULL, opened INTEGER NOT NULL DEFAULT 0,
+  revealed INTEGER NOT NULL DEFAULT 0, PRIMARY KEY(token,visitor)
+);
+CREATE TABLE IF NOT EXISTS special_invite_orders (order_id TEXT PRIMARY KEY, token TEXT NOT NULL);
+CREATE INDEX IF NOT EXISTS special_invite_orders_token ON special_invite_orders(token);
+CREATE TABLE IF NOT EXISTS special_invite_upgrades (
+  id TEXT PRIMARY KEY, event_id TEXT NOT NULL, host_id TEXT NOT NULL, status TEXT NOT NULL,
+  checkout_session TEXT UNIQUE, checkout_url TEXT, payment_intent TEXT UNIQUE, paid_at TEXT,
+  refunded_cents INTEGER NOT NULL DEFAULT 0, expires INTEGER NOT NULL, created TEXT NOT NULL
+);
+CREATE UNIQUE INDEX IF NOT EXISTS special_invite_upgrade_active ON special_invite_upgrades(event_id)
+  WHERE status IN ('pending','paid','revoked');`.split(";").map(sql => sql.trim()).filter(Boolean);
 let READY = null;
 export async function db(env) {
   if (!env.PORTAL_DB) throw Object.assign(new Error("The portal database (D1 binding PORTAL_DB) isn't connected yet."), { status: 503 });
   if (!READY) READY = (async () => {
     const D = env.PORTAL_DB;
     const current = await D.prepare("SELECT MAX(v) AS v FROM schema_version").first().catch(() => null);
-    if (current?.v >= 2) return;
+    if (current?.v >= 3) return;
     const schema = current?.v >= 1 ? [] : SCHEMA;
-    await D.batch([...schema, MANUAL_HOST_PAYMENTS, "INSERT INTO schema_version (v) SELECT 2 WHERE NOT EXISTS (SELECT 1 FROM schema_version WHERE v >= 2)"].map(sql => D.prepare(sql)));
+    await D.batch([...schema, ...(current?.v >= 2 ? [] : [MANUAL_HOST_PAYMENTS]), ...SPECIAL_INVITES_SCHEMA, "INSERT INTO schema_version (v) SELECT 3 WHERE NOT EXISTS (SELECT 1 FROM schema_version WHERE v >= 3)"].map(sql => D.prepare(sql)));
   })().catch(e => { READY = null; throw e });
   await READY; return env.PORTAL_DB;
 }
