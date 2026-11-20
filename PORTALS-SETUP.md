@@ -67,4 +67,4 @@ Set Stripe test credentials on that preview and provision an isolated D1 databas
 
 A personalized link for a private event grants access to someone who holds the link. Hosts can revoke it. Password-protected events retain the standard password flow. Opens and reveals are engagement counts rather than RSVPs. Ticket revenue and RSVPs are attributed only after a linked order completes. The visitor estimate uses a separate random ID for each browser and invitation. If an upgrade remains pending after a network failure, the host can resume the same Stripe checkout. Review a stuck upgrade in Back Office and Stripe before starting a replacement.
 
-Confirm in Stripe test mode before offering the $5 upgrade to customers. This upgrade has its own revenue report under **Special Invites**.
+After verifying the upgrade in Stripe test mode and receiving launch approval, set SPECIAL_INVITES_LIVE_UPGRADES=true on the production Worker. The free template stays available while this switch is off. This upgrade has its own revenue report under **Special Invites**.

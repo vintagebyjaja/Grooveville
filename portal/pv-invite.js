@@ -126,8 +126,9 @@
       '<button type="button" data-act="pv-si-create" data-id="' + E(id) + '" class="pvbtn pk">Create shareable link</button></form>' : '';
     const purchase = !unlocked && data.templates.some(key => key !== "letter") && data.upgrade !== "revoked" ?
       '<div class="pvpanel"><h3>Special Invites Collection</h3><p class="pvnote">One purchase for this event. Share as many invites as you need.</p>' +
-      '<button class="pvbtn pk" data-act="pv-si-upgrade" data-id="' + E(id) + '">' +
-      (data.upgrade === "pending" ? "Resume $5 upgrade" : "Unlock All 4 Special Invites — $5 for This Event") + '</button></div>' : '';
+      (data.upgradeAvailable ? '<button class="pvbtn pk" data-act="pv-si-upgrade" data-id="' + E(id) + '">' +
+      (data.upgrade === "pending" ? "Resume $5 upgrade" : "Unlock All 4 Special Invites — $5 for This Event") + '</button>' :
+      '<p class="pvnote">The $5 collection is currently unavailable. The Private Letter is free.</p>') + '</div>' : '';
     const pagination = '<div class="pvrow">' +
       (data.page > 1 ? '<a class="pvbtn sm" href="' + E(pageUrl + "?page=" + (data.page - 1)) + '">Previous page</a>' : "") +
       (data.hasNext ? '<a class="pvbtn sm" href="' + E(pageUrl + "?page=" + (data.page + 1)) + '">Next page</a>' : "") + '</div>';

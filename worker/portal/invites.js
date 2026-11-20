@@ -6,6 +6,8 @@ const TEMPLATES = [FREE, "disco", "burnout", "vault"];
 const THEMES = ["peach", "champagne", "silver", "charcoal"];
 const OPEN = ["published", "sales_closed", "completed"];
 const validToken = token => /^[a-f0-9]{48}$/.test(token || "");
+const upgradePaymentsAvailable = C => C.mode === "test" ||
+  (C.mode === "live" && C.S.payments_live && C.env.SPECIAL_INVITES_LIVE_UPGRADES === "true");
 const enabled = (S, template) => S.special_invites !== false && !S.special_invite_disabled?.includes(template);
 const upgrade = (D, event) => one(D, "SELECT * FROM special_invite_upgrades WHERE event_id = ? AND status IN ('pending','paid','revoked')", event);
 const ownedEvent = (D, uid, id) => one(D, "SELECT e.*, h.status AS host_status FROM events e JOIN hosts h ON h.id=e.host_id WHERE e.id=? AND h.uid=?", id, uid);
@@ -40,7 +42,7 @@ async function startUpgrade(C, e) {
   let order = await upgrade(D, e.id);
   if (order?.status === "paid") return J({ status: "paid" });
   if (order?.status === "revoked") return J({ error: "This upgrade needs founder review." }, 409);
-  if (C.mode === "off" || (C.mode === "live" && !S.payments_live)) return J({ error: "Stripe upgrades are unavailable." }, 503);
+  if (!upgradePaymentsAvailable(C)) return J({ error: "Stripe upgrades are unavailable." }, 503);
   if (order?.checkout_session && order.expires <= Date.now()) {
     const previous = await stripe(env, "GET", "checkout/sessions/" + order.checkout_session, {}, { fetcher: C.fetcher });
     if (previous.status !== "expired") return J({ status: "pending" });
@@ -100,7 +102,7 @@ export async function inviteApi(C) {
     const rows = await all(D, inviteMetrics + " WHERE i.event_id=? AND i.host_id=? ORDER BY i.created DESC, i.token DESC LIMIT ? OFFSET ?", e.id, e.host_id, pageSize + 1, (number - 1) * pageSize);
     return J({ enabled: S.special_invites !== false, templates: TEMPLATES.filter(t => enabled(S, t)),
       event: { id: e.id, title: e.title, slug: e.slug, status: e.status, visibility: e.visibility, inviteCode: e.visibility === "private" ? e.invite_code : undefined },
-      upgrade: purchase?.status || "none", invites: rows.slice(0, pageSize), page: number, hasNext: rows.length > pageSize });
+      upgrade: purchase?.status || "none", upgradeAvailable: upgradePaymentsAvailable(C), invites: rows.slice(0, pageSize), page: number, hasNext: rows.length > pageSize });
   }
   if (p === "/api/p/host/invites/upgrade" && req.method === "POST") return startUpgrade(C, e);
   if (p === "/api/p/host/invites" && req.method === "POST") {
