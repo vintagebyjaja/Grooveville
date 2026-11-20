@@ -3916,6 +3916,30 @@ S.ent={q:"",f:"all",edit:null,sr:null,srF:"submitted",chart:"",tvList:null};
 async function muApi(path,body){const t=await idToken();const r=await fetch(path,{method:"POST",headers:{"content-type":"application/json",authorization:"Bearer "+t},body:JSON.stringify(body||{})});const j=await r.json().catch(()=>({}));if(!r.ok)throw new Error(j.error||("HTTP "+r.status));return j}
 async function xhrPut(url,blob,ct,onp){const tok=url.startsWith("/api/")?await idToken():"";return new Promise((res,rej)=>{const x=new XMLHttpRequest();x.open("PUT",url);x.setRequestHeader("content-type",ct);if(tok)x.setRequestHeader("authorization","Bearer "+tok);x.upload.onprogress=e=>{if(e.lengthComputable&&onp)onp(e.loaded/e.total)};x.onload=()=>{if(x.status<300)return res();let m="";try{m=JSON.parse(x.responseText).error}catch(_){}rej(new Error(m||"Upload failed ("+x.status+")"))};x.onerror=()=>rej(new Error("Upload failed. Check the R2 CORS setting in STUDIO-SETUP.md."));x.send(blob)})}
 async function privateUrl(key){const r=await muApi("/api/music/file",{key});if(!r.direct)return r.url;const t=await idToken();const res=await fetch(r.url,{headers:{authorization:"Bearer "+t}});if(!res.ok)throw new Error("Couldn't load the file");return URL.createObjectURL(await res.blob())}
+async function entDownloadSong(song, format) {
+  const token = await idToken();
+  const headers = { authorization: "Bearer " + token };
+  const filename = String(song.title || "Song").replace(/[<>:"/\\|?*\x00-\x1f]/g, "_").trim().slice(0, 120) || "Song";
+
+  if (format === "wav" && song.soundlabId) {
+    const release = (await S.db.collection("soundlabReleases").doc(song.soundlabId).get()).data();
+    if (release?.songId === song.id && release.mp3 === song.audioKey && /^soundlab\/[\w-]+\/release\/master-v[\w.-]+\.wav$/.test(release.master)) {
+      const master = await fetch("/api/creative/f/" + release.master, { headers });
+      if (master.ok) return cbDownload(await master.blob(), filename + ".wav");
+      if (master.status !== 404) throw new Error("Couldn't download the WAV master (" + master.status + ")");
+    }
+  }
+
+  const audio = await fetch("/api/music/raw?key=" + encodeURIComponent(song.audioKey), { headers });
+  if (!audio.ok) throw new Error("Couldn't download the song (" + audio.status + ")");
+  if (format === "mp3") return cbDownload(await audio.blob(), filename + ".mp3");
+
+  const AudioDecoder = window.OfflineAudioContext || window.webkitOfflineAudioContext;
+  if (!AudioDecoder) throw new Error("WAV conversion is unavailable in this browser. Download the MP3 instead.");
+  const decoder = new AudioDecoder(2, 1, 44100);
+  const decoded = await decoder.decodeAudioData(await audio.arrayBuffer());
+  cbDownload(slWav(decoded, 16), filename + " (from MP3).wav");
+}
 async function isMp3(file){const b=new Uint8Array(await file.slice(0,4).arrayBuffer());return (b[0]===0x49&&b[1]===0x44&&b[2]===0x33)||(b[0]===0xff&&(b[1]&0xe0)===0xe0)}
 function fileDuration(file){return new Promise(res=>{const a=new Audio(),u=URL.createObjectURL(file);a.preload="metadata";a.onloadedmetadata=()=>{const d=a.duration;URL.revokeObjectURL(u);res(isFinite(d)?Math.round(d):0)};a.onerror=()=>{URL.revokeObjectURL(u);res(0)};a.src=u})}
 async function upAudio(file,id,onp){if(file.size>100*1024*1024)throw new Error("MP3s can be up to 100 MB");if(!(/\.mp3$/i.test(file.name)||file.type==="audio/mpeg")||!(await isMp3(file)))throw new Error("That file isn't an MP3");
@@ -3945,7 +3969,7 @@ function entDash(){const s=Object.values(MU().songs),a=Object.values(MU().artist
 function entLibrary(){const q=S.ent.q.toLowerCase(),f=S.ent.f;
   const list=allSongs().filter(s=>(!q||(s.title+" "+artistName(s)+" "+(s.genre||"")).toLowerCase().includes(q))&&(f==="all"||(f==="published"&&s.published)||(f==="draft"&&!s.published)||(f==="soundon"&&s.soundOn)||(f==="featured"&&s.featured)||(f==="verified"&&s.verified)));
   return '<div class="toolbar"><input class="i" style="max-width:280px" id="entQ" placeholder="Search songs, artists, genres" value="'+esc(S.ent.q)+'"><div class="seg">'+[["all","All"],["published","Published"],["draft","Drafts"],["soundon","Sound On"],["featured","Featured"],["verified","Verified"]].map(([k,l])=>'<button class="'+(f===k?"on":"")+'" data-act="ent-f" data-v="'+k+'">'+l+'</button>').join("")+'</div><span class="sp"></span><a class="btn olive sm" href="#ent-upload">⬆ Upload song</a></div>'+
-  (list.length?'<div class="tablewrap"><table class="t"><thead><tr><th></th><th>Song</th><th>Artist</th><th>Status</th><th class="num">Length</th><th></th></tr></thead><tbody>'+list.map(s=>'<tr><td><button class="rowbtn" data-act="ent-preview" data-id="'+esc(s.id)+'" aria-label="Preview">▶</button></td><td><b>'+esc(s.title)+'</b>'+(s.verified?' '+vBadge("song"):'')+(s.explicit?' <span class="ex">E</span>':'')+'<div class="muted" style="font-size:12px">'+esc([(MU().albums[s.albumId]||{}).title,s.genre].filter(Boolean).join(" · "))+'</div></td><td>'+esc(artistName(s))+'</td><td style="white-space:nowrap">'+yes(s.published,s.published?"Published":"Draft")+' '+(s.soundOn?yes(1,"Sound On"):'')+' '+(s.featured?yes(1,"Featured"):'')+'</td><td class="num">'+fmtSec(s.duration)+'</td><td style="white-space:nowrap"><button class="rowbtn" data-act="ent-pub" data-id="'+esc(s.id)+'">'+(s.published?"Unpublish":"Publish")+'</button><button class="rowbtn" data-act="ent-son" data-id="'+esc(s.id)+'">'+(s.soundOn?"Remove from Sound On":"Add to Sound On")+'</button><button class="rowbtn" data-act="ent-edit" data-id="'+esc(s.id)+'">Edit</button><button class="rowbtn" data-act="ent-del" data-id="'+esc(s.id)+'">Delete</button></td></tr>').join("")+'</tbody></table></div>':'<div class="empty">'+(Object.keys(MU().songs).length?"No songs match.":"No songs yet. Upload your first Grooveville Original.")+'</div>');
+  (list.length?'<div class="tablewrap"><table class="t"><thead><tr><th></th><th>Song</th><th>Artist</th><th>Status</th><th class="num">Length</th><th></th></tr></thead><tbody>'+list.map(s=>'<tr><td><button class="rowbtn" data-act="ent-preview" data-id="'+esc(s.id)+'" aria-label="Preview">▶</button></td><td><b>'+esc(s.title)+'</b>'+(s.verified?' '+vBadge("song"):'')+(s.explicit?' <span class="ex">E</span>':'')+'<div class="muted" style="font-size:12px">'+esc([(MU().albums[s.albumId]||{}).title,s.genre].filter(Boolean).join(" · "))+'</div></td><td>'+esc(artistName(s))+'</td><td style="white-space:nowrap">'+yes(s.published,s.published?"Published":"Draft")+' '+(s.soundOn?yes(1,"Sound On"):'')+' '+(s.featured?yes(1,"Featured"):'')+'</td><td class="num">'+fmtSec(s.duration)+'</td><td style="white-space:nowrap"><button class="rowbtn" data-act="ent-pub" data-id="'+esc(s.id)+'">'+(s.published?"Unpublish":"Publish")+'</button><button class="rowbtn" data-act="ent-son" data-id="'+esc(s.id)+'">'+(s.soundOn?"Remove from Sound On":"Add to Sound On")+'</button><button class="rowbtn" data-act="ent-edit" data-id="'+esc(s.id)+'">Edit</button>'+ (s.audioKey ? '<button class="rowbtn" data-act="ent-download" data-format="mp3" data-id="'+esc(s.id)+'">Download MP3</button><button class="rowbtn" data-act="ent-download" data-format="wav" data-id="'+esc(s.id)+'">Download WAV</button>' : '') +'<button class="rowbtn" data-act="ent-del" data-id="'+esc(s.id)+'">Delete</button></td></tr>').join("")+'</tbody></table></div>':'<div class="empty">'+(Object.keys(MU().songs).length?"No songs match.":"No songs yet. Upload your first Grooveville Original.")+'</div>');
 }
 function entUpload(){const e=S.ent.edit||{},isE=!!e.id;
   const ck=(n,l,v)=>'<label style="display:flex;gap:8px;align-items:center;font-size:14px"><input type="checkbox" name="'+n+'"'+(v?" checked":"")+'> '+l+'</label>';
@@ -4101,6 +4125,14 @@ function entAct(a,t){
   if(!/^(ent-|so-|tv-|tvc-|sr-|ch-|ce-|vf$|flag$)/.test(a))return false;if(!S.isAdmin)return true;const id=t.dataset.id;
   if(a==="ent-f"){S.ent.f=t.dataset.v;render()}
   else if(a==="ent-preview"){mpPlay([id],0,"preview")}
+  else if(a==="ent-download"){
+    const song=MU().songs[id], format=t.dataset.format;
+    if(!song?.audioKey || !["mp3","wav"].includes(format) || t.disabled)return true;
+    const label=t.textContent;
+    t.disabled=true;
+    t.textContent="Preparing "+format.toUpperCase()+"…";
+    entDownloadSong(song,format).catch(e=>toast(e.message)).finally(()=>{t.disabled=false;t.textContent=label});
+  }
   else if(a==="ent-pub")flipDoc("musicSongs",id,"published");
   else if(a==="ent-son"){const s=MU().songs[id];if(s){const on=!s.soundOn;save("musicSongs",id,Object.assign(strip(s),{soundOn:on,updatedAt:nowISO()})).then(ok=>{if(ok){if(on)soundtrackAdd(id);else soSave({trackIds:(muSet("soundtrack").trackIds||[]).filter(x=>x!==id)});toast(on?"Added to Sound On":"Removed from Sound On")}})}}
   else if(a==="ent-edit"){S.ent.edit=Object.assign({},MU().songs[id]);S.entForce=true;if(location.hash==="#ent-upload")render();else location.hash="#ent-upload"}
