@@ -84,9 +84,12 @@ PV.shell = function (o, body) {
     : '<nav class="pvmnav" aria-label="' + E(o.sec) + ' sections">' + mnav + '</nav>';
   const search = o.records ? '<button class="pvicon" data-act="pv-rental-search" aria-label="Search your rental records">' + PV.ic("search") + '</button>' : "";
   const test = PV.status && PV.status.stripe === "test" ? '<span class="pvmode" title="Stripe test mode: no real charges">TEST MODE</span>' : "";
+  const portalSwitch = me.signedIn && (me.founder || me.rentalsStaff) && ["RENTALS", "ADMINISTRATION"].includes(o.sec)
+    ? '<div class="pv-portal-switch"><select class="pvin" aria-label="Switch portal" data-pv-portal><option value="#rentals"' + (o.sec === "RENTALS" ? ' selected' : '') + '>Tenant Portal</option><option value="' + (me.founder ? '#team-portals' : '#team-portals/rentals') + '"' + (o.sec === "ADMINISTRATION" ? ' selected' : '') + '>' + (me.founder ? 'Founder Portal' : 'Rentals Staff') + '</option></select></div>'
+    : "";
   return '<div class="pv' + (o.theme ? ' ' + o.theme : '') + (light ? ' pvl' : '') + '">' +
     '<div class="pvtop"><a class="pvbrand" href="#home">' + PV.logo(o.sec) + 'GROOVEVILLE <span>LLC</span></a><span class="pvdiv"></span><span class="pvsec">' + E(o.sec) + '</span>' +
-    '<div class="pvtopr">' + search + test + (me.founder && o.sec !== "ADMINISTRATION" ? '<a class="pvicon" href="/founder-portal" aria-label="Founder tools" title="Founder tools">' + PV.ic("shield") + '</a>' : '') + (me.signedIn ? '<button class="pvicon" data-act="pv-notes" aria-label="Notifications' + (unread ? ", " + unread + " unread" : "") + '">' + PV.ic("bell") + (unread ? '<span class="pvdot">' + unread + '</span>' : '') + '</button><a class="pvav" href="#account" aria-label="Account">' + E(PV.initials(me.profile)) + '</a>' : '<button class="pvbtn sm pk" data-act="pv-signin">Sign in</button>') + '</div></div>' +
+    '<div class="pvtopr">' + search + test + portalSwitch + (me.founder && o.sec !== "ADMINISTRATION" && o.sec !== "RENTALS" ? '<a class="pvicon" href="/founder-portal" aria-label="Founder tools" title="Founder tools">' + PV.ic("shield") + '</a>' : '') + (me.signedIn ? '<button class="pvicon" data-act="pv-notes" aria-label="Notifications' + (unread ? ", " + unread + " unread" : "") + '">' + PV.ic("bell") + (unread ? '<span class="pvdot">' + unread + '</span>' : '') + '</button><a class="pvav" href="#account" aria-label="Account">' + E(PV.initials(me.profile)) + '</a>' : '<button class="pvbtn sm pk" data-act="pv-signin">Sign in</button>') + '</div></div>' +
     (nav ? mobileNav : '') +
     '<div class="pvbody"' + (nav ? '' : ' style="grid-template-columns:1fr"') + '>' + (nav ? '<aside class="pvside"><div class="pvcard0">' + PV.ic(o.card[2] || "home") + '<div><b>' + E(o.card[0]) + '</b><small>' + E(o.card[1]) + '</small></div></div><nav aria-label="' + E(o.sec) + '">' + nav + '</nav>' + (o.art !== false ? '<div class="pvsideart">' + PV.cityArt() + '<b>GROOVEVILLE</b><small>— ' + E(o.sec) + ' —</small></div>' : '') + '</aside>' : '') +
     '<main class="pvmain">' + (o.hero ? '<section class="pvhero"' + (o.hero.bg ? ' style="--hero-bg:' + o.hero.bg + '"' : '') + '>' + (o.hero.art ? '<div class="pvart" aria-hidden="true">' + o.hero.art + '</div>' : '') + '<div class="pvkick">' + E(o.hero.kick) + '</div><h1>' + o.hero.title + '</h1>' + (o.hero.sub ? '<p>' + E(o.hero.sub) + '</p>' : '') + '<div class="pvrule"></div></section>' : '') + body + '</main></div></div>';
@@ -120,6 +123,9 @@ window.pvMount = async function (force) {
 };
 PV.refresh = () => { PV.meAt = 0; return pvMount(true) };
 PV.go = h => { if (location.hash === h) PV.refresh(); else location.hash = h };
+document.addEventListener("change", e => {
+  if (e.target.matches("[data-pv-portal]")) PV.go(e.target.value);
+});
 /* ---------- auth ---------- */
 PV.signin = function (mode, then) {
   if (publicPreview) { PV.toast("Return to founder tools to leave public preview."); return; }

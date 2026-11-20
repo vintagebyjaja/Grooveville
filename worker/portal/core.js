@@ -130,6 +130,7 @@ export async function who(req, env, h, D) {
   u.founder = role === "founder" || role === "hnic";
   const R = D ? await all(D, "SELECT role, scope FROM roles WHERE uid = ?", u.uid) : [];
   u.roles = R; u.admin = u.founder || R.some(x => x.role === "admin"); u.finance = u.founder || R.some(x => x.role === "finance");
+  u.rentalsStaff = R.some(x => x.role === "rentals");
   u.tester = u.admin || R.some(x => x.role === "tester");
   u.auth = "Firebase sign-in (" + (u.firebase && u.firebase.sign_in_provider || "password") + "), email " + (u.email_verified ? "verified" : "not verified");
   return u;
