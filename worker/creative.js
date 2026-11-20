@@ -115,7 +115,12 @@ async function stripe(env, path, form, fetcher) {
   const body = new URLSearchParams(); const add = (k, v) => { if (v === undefined || v === null) return; if (typeof v === "object") { for (const [kk, vv] of Object.entries(v)) add(k + "[" + kk + "]", vv) } else body.append(k, String(v)) };
   for (const [k, v] of Object.entries(form)) add(k, v);
   const r = await (fetcher || fetch)("https://api.stripe.com/v1/" + path, { method: "POST", headers: { authorization: "Bearer " + env.STRIPE_SECRET_KEY, "content-type": "application/x-www-form-urlencoded" }, body });
-  const j = await r.json().catch(() => ({})); if (!r.ok) throw new Error((j.error && j.error.message) || "Stripe error (" + r.status + ")"); return j;
+  const j = await r.json().catch(() => ({}));
+  if (!r.ok) throw Object.assign(new Error("Stripe checkout request failed"), {
+    status: r.status, code: j.error?.code, type: j.error?.type, param: j.error?.param,
+    requestId: r.headers.get("request-id"),
+  });
+  return j;
 }
 async function grant(env, uid, bookId, product, formats, ref) {
   const e = await rj(env, entKey(uid), { books: {} }); e.books = e.books || {}; const b = e.books[bookId] = e.books[bookId] || { grants: [] };
@@ -208,12 +213,26 @@ export async function creativeApi(req, env, ctx, h) {
       if (!user) return J({ error: "Sign in to buy", signin: true }, 401);
       const prod = String(body.product || "digital"), pr = ed.products && ed.products[prod];
       if (!pr || pr.enabled === false || !(pr.price > 0)) return J({ error: "That edition isn't for sale" }, 400);
-      const back = String(body.back || "/#reads/" + ed.id).replace(/[^A-Za-z0-9_\/#?=&.-]/g, "").slice(0, 200), origin = url.origin;
-      const s = await stripe(env, "checkout/sessions", { mode: "payment", success_url: origin + "/#reads/" + ed.id + "?paid={CHECKOUT_SESSION_ID}", cancel_url: origin + back, client_reference_id: user.uid, customer_email: user.email || undefined,
-        "line_items[0][quantity]": 1, "line_items[0][price_data][currency]": (pr.currency || "usd").toLowerCase(), "line_items[0][price_data][unit_amount]": Math.round(pr.price * 100),
-        "line_items[0][price_data][product_data][name]": ed.title + ({ digital: " (Digital book)", audio: " (Audiobook)", bundle: " (Book + audiobook)" }[prod] || ""),
-        metadata: { uid: user.uid, book: ed.id, product: prod }, payment_intent_data: { metadata: { uid: user.uid, book: ed.id, product: prod } } }, fetcher);
-      return J({ url: s.url });
+      // Keep the Stripe placeholder in the query string and the book route in the fragment.
+      const origin = url.origin, route = "/#reads/" + ed.id;
+      const errorId = crypto.randomUUID().slice(0, 8);
+      try {
+        const session = await stripe(env, "checkout/sessions", {
+          mode: "payment", success_url: origin + "/?paid={CHECKOUT_SESSION_ID}#reads/" + ed.id, cancel_url: origin + route,
+          client_reference_id: user.uid, customer_email: user.email || undefined,
+          "line_items[0][quantity]": 1, "line_items[0][price_data][currency]": (pr.currency || "usd").toLowerCase(),
+          "line_items[0][price_data][unit_amount]": Math.round(pr.price * 100),
+          "line_items[0][price_data][product_data][name]": ed.title + ({ digital: " (Digital book)", audio: " (Audiobook)", bundle: " (Book + audiobook)" }[prod] || ""),
+          metadata: { uid: user.uid, book: ed.id, product: prod }, payment_intent_data: { metadata: { uid: user.uid, book: ed.id, product: prod } },
+        }, fetcher);
+        const checkout = new URL(session.url);
+        if (checkout.protocol !== "https:" || checkout.hostname !== "checkout.stripe.com") throw new Error("Missing Stripe Checkout URL");
+        return J({ url: checkout.href });
+      } catch (e) {
+        const safe = v => typeof v === "string" ? v.replace(/[^\w[\].-]/g, "").slice(0, 120) : undefined;
+        console.error("groove_reads_checkout_failed", { errorId, book: ed.id, product: prod, stripeStatus: e.status, stripeCode: safe(e.code), stripeType: safe(e.type), stripeParam: safe(e.param), stripeRequest: safe(e.requestId) });
+        return J({ error: "Stripe checkout could not open. Please try again. Reference " + errorId + ".", reference: errorId }, 502);
+      }
     }
     if (p === "/api/reads/event" && req.method === "POST") {
       const t = String(body.type || ""); if (!["open", "chapter", "complete", "audio", "readalong", "preview_end"].includes(t)) return J({ ok: false });

@@ -1193,6 +1193,15 @@ img.missing{opacity:.2}
 .cascl{display:flex;flex-direction:column;gap:6px}.cacp,.cacap{font-size:13px;color:var(--muted)}.cadlg{white-space:pre-wrap;font:13px/1.5 var(--f-mono);background:var(--bg);border:1px solid var(--line);border-radius:var(--r-sm);padding:10px;max-height:40vh;overflow:auto}
 .caanim{display:flex;flex-direction:column;gap:10px;align-items:center}.caframe{position:relative;width:100%;max-width:880px;aspect-ratio:16/9;background:#000;border-radius:var(--r-sm);overflow:hidden}.caframe img{width:100%;height:100%;object-fit:contain}.caframe .cacap{position:absolute;left:0;right:0;bottom:0;padding:10px 14px;background:linear-gradient(transparent,#000c);color:#fff;font-size:15px}
 .caempty{border:1.5px dashed var(--line);border-radius:var(--r);padding:20px;text-align:center;color:var(--muted)}
+.gr-checkout-review{width:min(100%,480px);margin-inline:auto}
+.gr-checkout-review h1,.gr-checkout-review h3{margin-bottom:12px}
+.gr-checkout-item{display:flex;align-items:center;gap:16px;margin:20px 0}
+.gr-checkout-item img{width:62px;aspect-ratio:3/4;object-fit:cover;border-radius:6px}
+.gr-checkout-item small{display:block;margin-top:4px;opacity:.78}
+.gr-checkout-total{display:flex;justify-content:space-between;gap:12px;padding:14px 0;margin-bottom:16px;border-block:1px solid currentColor}
+.gr-checkout-error{color:#d8614c;margin:12px 0}
+.gr-checkout-review .row{flex-wrap:wrap;margin-top:12px}
+
 /* ===== Groove Reads (public) ===== */
 .gr{--gd:#e8c27a;--gp:#F4A987;--gbg:#0d0c11;--gs:#16141c;--gl:#2a2633;--gi:#f6efe3;--gm:#aaa2b4;background:radial-gradient(1200px 600px at 80% -10%,#2a1d2a 0,transparent 60%),var(--gbg);color:var(--gi);min-height:100vh;padding-bottom:60px}
 .gr.sc{--gd:#d9b45a;--gp:#c9a7ff;--gbg:#0a0716;--gs:#140f24;--gl:#2a2244}
@@ -7212,7 +7221,7 @@ function viewReads(){const p=S.route.split("?")[0].split("/");setTimeout(rdMount
     '<a class="grlib" href="#reads/library">'+'<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 4h4v16H5zM10 4h4v16h-4zM15.5 4.5l3.6-1 3.4 15.4-3.6 1z"/></svg> Library</a><label class="grsearch"><span class="sr">Search books</span><input type="search" id="grq" placeholder="Search books…" value="'+esc(GRD.q)+'"></label></header><div id="grmain" class="grmain"><div class="grload">Loading…</div></div></section>'}
 async function rdMount(){crNavH();const m=$("#grmain");if(!m||m.dataset.mounted===S.route)return;m.dataset.mounted=S.route;const p=S.route.split("?")[0].split("/"),q=$("#grq");
   if(q)q.oninput=()=>{GRD.q=q.value;if(p[1]&&p[1]!=="library"){location.hash="#reads";return}rdCatalog(m)};
-  try{if(!p[1])return rdCatalog(m);if(p[1]==="library")return rdLibrary(m);await rdOpen(p[1]);if(p[2]==="original")return rdOriginal(m);if(p[2]){GRD.mode=p[2]==="listen"?"listen":p[2]==="along"?"along":"read";return rdReader(m)}rdDetail(m)}catch(e){m.innerHTML='<div class="grempty"><h2>That book isn’t available</h2><p>'+esc(e.message)+'</p><a class="grbtn" href="#reads">Back to Groove Reads</a></div>'}}
+  try{if(!p[1])return rdCatalog(m);if(p[1]==="library")return rdLibrary(m);await rdOpen(p[1]);if(p[2]==="checkout-preview")return rdCheckoutPreview(m,p[3]||"digital");if(p[2]==="original")return rdOriginal(m);if(p[2]){GRD.mode=p[2]==="listen"?"listen":p[2]==="along"?"along":"read";return rdReader(m)}rdDetail(m)}catch(e){m.innerHTML='<div class="grempty"><h2>That book isn’t available</h2><p>'+esc(e.message)+'</p><a class="grbtn" href="#reads">Back to Groove Reads</a></div>'}}
 async function rdCat(){if(GRD.cat&&Date.now()-GRD.catAt<60000)return GRD.cat;const j=await rdApi("catalog");GRD.cat=j.books||[];GRD.catAt=Date.now();return GRD.cat}
 function rdCard(b,prog){return '<a class="grcard" href="#reads/'+esc(b.id)+'"><span class="grcov">'+(b.cover?'<img src="'+esc(b.cover)+'" alt="'+esc(b.title)+' cover" loading="lazy">':'<span class="grcovph">'+esc(b.title)+'</span>')+(prog?'<i class="grpg" style="width:'+Math.round(prog*100)+'%"></i>':'')+'</span><b>'+esc(b.title)+'</b><small>'+esc([b.series&&(b.series+(b.volume?" · Book "+b.volume:"")),b.author].filter(Boolean).join(" · "))+'</small><span class="grtags">'+(b.audio?'<i>Audiobook</i>':'')+(b.readalong?'<i>Read Along</i>':'')+(b.free?'<i>Free</i>':'')+'</span></a>'}
 async function rdCatalog(m){const L=await rdCat(),q=GRD.q.toLowerCase(),show=L.filter(b=>!q||(b.title+" "+b.author+" "+b.series+" "+(b.genres||[]).join(" ")+" "+b.desc).toLowerCase().includes(q));
@@ -7323,7 +7332,44 @@ function rdHighlight(q){$$("#grBook .hi").forEach(e=>e.classList.remove("hi"));c
 function rdSignin(){openModal('<form id="mf" class="grauth"><h3>Sign in to Groove Reads</h3><p class="muted small">Your library and reading progress follow your account on every device. Signing in here doesn’t give Back Office access.</p>'+crField("ga-email","Email","",{type:"email"})+crField("ga-pass","Password","",{type:"password"})+'<div class="row"><button type="button" class="btn ghost" data-act="rd-google">Continue with Google</button><button type="button" class="btn ghost" data-act="rd-create">Create account</button><button class="btn olive">Sign in</button></div><button type="button" class="grlink small" data-act="rd-reset">Forgot password?</button></form>',el=>el.querySelector("#mf").addEventListener("submit",async ev=>{ev.preventDefault();try{await firebase.auth().signInWithEmailAndPassword(el.querySelector("#ga-email").value.trim(),el.querySelector("#ga-pass").value);closeModal();rdAfterAuth()}catch(e){toast(rdAuthErr(e))}}))}
 const rdAuthErr=e=>({"auth/invalid-credential":"Wrong email or password","auth/user-not-found":"No account with that email","auth/wrong-password":"Wrong email or password","auth/email-already-in-use":"That email already has an account. Sign in instead.","auth/weak-password":"Use at least 6 characters","auth/popup-closed-by-user":"Sign-in window closed"})[e.code]||e.message;
 function rdAfterAuth(){GRD.openAt=0;GRD.catAt=0;const m=$("#grmain");if(m)m.dataset.mounted="";setTimeout(rdMount,300);if(GRD.pendingBuy){const p=GRD.pendingBuy;GRD.pendingBuy=null;setTimeout(()=>rdBuy(p),900)}}
-async function rdBuy(product){if(!rdUser()){GRD.pendingBuy=product;return rdSignin()}try{const j=await rdApi("checkout",{id:GRD.book.id,product,back:"/#reads/"+GRD.book.id});location.href=j.url}catch(e){if(e.j&&e.j.signin){GRD.pendingBuy=product;return rdSignin()}toast(e.message)}}
+const rdProductLabels = { digital: "Digital book", audio: "Audiobook", bundle: "Digital book + audiobook" };
+function rdCheckoutSummary(book, product) {
+  const price = rdMoney(book.products[product].price, book.products[product].currency);
+  return '<div class="gr-checkout-item">' + (book.cover ? '<img src="' + esc(book.cover) + '" alt="">' : '') +
+    '<div><strong>' + esc(book.title) + '</strong><small>' + esc(rdProductLabels[product]) + ' · Added to your Groove Reads library after payment</small></div></div>' +
+    '<div class="gr-checkout-total"><strong>Total</strong><strong>' + esc(price) + ' ' + esc((book.products[product].currency || "usd").toUpperCase()) + '</strong></div>';
+}
+function rdCheckoutPreview(m, product) {
+  const book = GRD.book;
+  if (!rdProductLabels[product] || !(book.products?.[product]?.price > 0)) throw new Error("This edition is not available");
+  m.innerHTML = '<section class="gr-checkout-review"><h1>Checkout preview</h1><p class="muted small">Preview of the Groove Reads order review. Stripe shows its secure payment form after you continue from a real order.</p>' +
+    rdCheckoutSummary(book, product) + '<button class="grbtn gold" disabled>Continue to Stripe</button> <a class="grbtn ghost" href="#reads/' + esc(book.id) + '">Back to book</a></section>';
+}
+function rdBuy(product) {
+  const book = GRD.book;
+  if (!book || !rdProductLabels[product] || !(book.products?.[product]?.price > 0)) return toast("This edition is not available");
+  openModal('<section class="gr-checkout-review"><h3>Review your order</h3>' + rdCheckoutSummary(book, product) +
+    '<p class="muted small">Payment takes place on Stripe.</p><p class="gr-checkout-error" role="alert" hidden></p><div class="row"><button type="button" class="grbtn gold" data-act="rd-pay" data-id="' +
+    esc(book.id) + '" data-v="' + esc(product) + '">' + (rdUser() ? "Continue to Stripe" : "Sign in to continue") + '</button><button type="button" class="grbtn ghost" data-act="close-modal">Cancel</button></div></section>');
+}
+async function rdPay(button, product) {
+  if (!rdUser()) { GRD.pendingBuy = product; return rdSignin(); }
+  if (button.disabled) return;
+  const alert = button.closest(".gr-checkout-review").querySelector("[role=alert]");
+  alert.hidden = true;
+  button.disabled = true;
+  button.textContent = "Opening Stripe…";
+  try {
+    const j = await rdApi("checkout", { id: button.dataset.id, product });
+    location.assign(j.url);
+  } catch (e) {
+    if (e.j?.signin) { GRD.pendingBuy = product; return rdSignin(); }
+    alert.textContent = e.message;
+    alert.hidden = false;
+  } finally {
+    if (button.isConnected) { button.disabled = false; button.textContent = "Continue to Stripe"; }
+  }
+}
 function rdAct(a,t){if(!/^rd-/.test(a))return false;const v=t.dataset.v;(async()=>{
   if(a==="rd-mode"){const id=(S.route.split("/")[1]||"");if(!id||id==="library")return;GRD.mode=v;location.hash="#reads/"+id+"/"+(v==="along"?"along":v==="listen"?"listen":"read");return}
   if(a==="rd-begin"){GRD.fromStart=true;return}
@@ -7338,6 +7384,7 @@ function rdAct(a,t){if(!/^rd-/.test(a))return false;const v=t.dataset.v;(async()
   if(a==="rd-a"){const au=GRD.audio;if(!au)return;if(v==="play"){if(GRD.set.self){GRD.set.self=false;const s=$("#grSelf");if(s)s.checked=false}return au.paused?au.play().catch(()=>{}):au.pause()}if(v==="back")au.currentTime=Math.max(0,au.currentTime-15);if(v==="fwd")au.currentTime+=30;if(v==="prevch")rdLoadCh(Math.max(0,GRD.cur-1),0,!au.paused);if(v==="nextch")rdLoadCh(Math.min(GRD.chapters.length-1,GRD.cur+1),0,!au.paused);
     const al=(GRD.chapters[GRD.cur]||{}).align||[];if(v==="resent"&&GRD.hiOn){au.currentTime=GRD.hiOn.t;au.play()}if(v==="repage"){const src=rdSrcPage(),f=al.find(q=>q.p>=src);if(f){au.currentTime=f.t;au.play()}}return}
   if(a==="rd-buy")return rdBuy(v);
+  if(a==="rd-pay")return rdPay(t,v);
   if(a==="rd-physical"){const P=GRD.book.physical||{},opts=[["paperback","Paperback"],["hardcover","Hardcover"]].filter(([k])=>/^https:\/\//.test(P[k]||""));if(opts.length===1)return window.open(P[opts[0][0]],"_blank","noopener");openModal('<div><h3>Buy the physical book</h3><p class="muted">Opens '+esc(P.retailer||"the retailer")+' in a new tab. A physical copy doesn’t include the digital edition.</p><div class="row">'+opts.map(([k,l])=>'<a class="btn olive" href="'+esc(P[k])+'" target="_blank" rel="noopener">'+l+' ↗</a>').join("")+'<button class="btn ghost" data-act="close-modal">Cancel</button></div></div>');return}
   if(a==="rd-dl"){const j=await rdApi("download",{id:GRD.book.id,format:v});location.href=j.url;return}
   if(a==="rd-signin")return rdSignin();
