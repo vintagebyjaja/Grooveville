@@ -2,6 +2,7 @@
    Authoritative amounts are computed here on the server from database records that only Stripe webhooks
    (signature-checked, processed once per event id) can mark as paid. */
 import { J, one, all, run, now, rid, pj, clean, audit, notify, stripe, fmt$ } from "./core.js";
+import { businessFinance } from "./business-finance.js";
 import { inviteStripeEvent } from "./invites.js";
 import { settle, settlementState } from "./settle.js";
 import { markOrderPaid, releaseOrder } from "./ent.js";
@@ -61,6 +62,7 @@ async function slog(D, sid, actor, action, data) { await run(D, "INSERT INTO set
 export async function financeApi(C) {
   const { D, S, u, b, p, url, req, env } = C, base = "https://" + url.host;
   if (!u) return J({ error: "Sign in to continue" }, 401);
+  if (/^\/api\/p\/finance\/businesses(?:\/|$)/.test(p)) return businessFinance(C, settlementFor);
   /* customer pays a charge (rent, deposit, equipment, venue rental…) */
   if (p === "/api/p/pay" && req.method === "POST") {
     const c = await one(D, "SELECT * FROM charges WHERE id = ? AND uid = ?", String(b.charge || ""), u.uid); if (!c) return J({ error: "Not found" }, 404); if (!["open", "failed"].includes(c.status)) return J({ error: "This is already paid" }, 409);

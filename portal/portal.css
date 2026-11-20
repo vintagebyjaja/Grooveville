@@ -494,3 +494,9 @@
   .pvtop:has(.pv-portal-switch) .pvtopr{flex:0 0 100%;justify-content:flex-end;gap:8px}
   .pv-portal-switch{margin-right:auto}
 }
+
+.pv-business-grid{grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr))}
+.pv-business-card>.pvph{margin-bottom:12px}
+.pv-business-records{margin-top:16px}
+.pv-business-records summary{cursor:pointer;font-weight:600}
+.pv-business-records .pvli{overflow-wrap:anywhere}

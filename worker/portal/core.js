@@ -102,15 +102,33 @@ const BUYER_PROCESSING_SCHEMA = `CREATE TABLE IF NOT EXISTS order_processing_fee
   order_id TEXT PRIMARY KEY REFERENCES orders(id) ON DELETE CASCADE,
   cents INTEGER NOT NULL CHECK(cents > 0)
 )`;
+const BUSINESS_FINANCE_SCHEMA = [
+`CREATE TABLE IF NOT EXISTS finance_businesses (
+  id TEXT PRIMARY KEY, name TEXT NOT NULL
+)`,
+`INSERT OR IGNORE INTO finance_businesses (id,name) VALUES
+  ('hq','Grooveville LLC'),('rentals','Grooveville Rentals'),('ent','Grooveville Entertainment'),
+  ('music','Grooveville Music'),('aelio','AELIO'),('vybr8','Vybr8'),('pathd','Pathd'),
+  ('w4w','W4W'),('aec','DrawUp AEC'),('scu','Shadow Crown Universe'),('wit','What If Tomorrow')`,
+`CREATE TABLE IF NOT EXISTS business_finance_entries (
+  id TEXT PRIMARY KEY, business_id TEXT NOT NULL REFERENCES finance_businesses(id),
+  kind TEXT NOT NULL CHECK(kind IN ('income','ai','bill','stripe')),
+  name TEXT NOT NULL, amount_cents INTEGER NOT NULL CHECK(amount_cents >= 0),
+  fees_cents INTEGER NOT NULL DEFAULT 0, refunded_cents INTEGER NOT NULL DEFAULT 0,
+  status TEXT NOT NULL CHECK(status IN ('open','settled')), credit_units INTEGER NOT NULL DEFAULT 0,
+  entry_date TEXT NOT NULL, created TEXT NOT NULL
+)`,
+`CREATE INDEX IF NOT EXISTS business_finance_business ON business_finance_entries(business_id, entry_date)`
+];
 let READY = null;
 export async function db(env) {
   if (!env.PORTAL_DB) throw Object.assign(new Error("The portal database (D1 binding PORTAL_DB) isn't connected yet."), { status: 503 });
   if (!READY) READY = (async () => {
     const D = env.PORTAL_DB;
     const current = await D.prepare("SELECT MAX(v) AS v FROM schema_version").first().catch(() => null);
-    if (current?.v >= 5) return;
+    if (current?.v >= 6) return;
     const schema = current?.v >= 1 ? [] : SCHEMA;
-    await D.batch([...schema, ...(current?.v >= 2 ? [] : [MANUAL_HOST_PAYMENTS]), ...(current?.v >= 3 ? [] : SPECIAL_INVITES_SCHEMA), ...(current?.v >= 4 ? [] : PROFILE_SCHEMA), BUYER_PROCESSING_SCHEMA, "INSERT INTO schema_version (v) SELECT 5 WHERE NOT EXISTS (SELECT 1 FROM schema_version WHERE v >= 5)"].map(sql => D.prepare(sql)));
+    await D.batch([...schema, ...(current?.v >= 2 ? [] : [MANUAL_HOST_PAYMENTS]), ...(current?.v >= 3 ? [] : SPECIAL_INVITES_SCHEMA), ...(current?.v >= 4 ? [] : PROFILE_SCHEMA), ...(current?.v >= 5 ? [] : [BUYER_PROCESSING_SCHEMA]), ...BUSINESS_FINANCE_SCHEMA, "INSERT INTO schema_version (v) SELECT 6 WHERE NOT EXISTS (SELECT 1 FROM schema_version WHERE v >= 6)"].map(sql => D.prepare(sql)));
   })().catch(e => { READY = null; throw e });
   await READY; return env.PORTAL_DB;
 }
