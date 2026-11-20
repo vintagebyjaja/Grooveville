@@ -9,6 +9,9 @@ export function localNow(tz) { const f = new Intl.DateTimeFormat("en-CA", { time
 const TZ = S => S.tz || "America/New_York";
 const fmtWhen = s => { try { const d = new Date(s.slice(0, 16) + ":00Z"); return d.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric", timeZone: "UTC" }) + " · " + d.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", timeZone: "UTC" }) } catch (e) { return s } };
 const hostCard = h => h && { id: h.id, slug: h.slug, name: h.name, photo: h.photo_key || "", verified: !!h.verified, official: !!h.official, location: h.location };
+const orgCard = o => o && { id: o.id, slug: o.slug, name: o.name, bio: o.bio, photo: o.photo_key, accent: o.accent };
+const ownedPublicPhoto = async (env, key, uid) => typeof key === "string" && key.startsWith("portal/pub/") &&
+  (await env.STUDIO_BUCKET.head(key))?.customMetadata?.by === uid;
 export async function publicEventMeta(D, slug) { const e = await one(D, "SELECT e.title, e.start, e.flyer_key, e.venue_name, e.status, e.visibility, l.name AS lname FROM events e LEFT JOIN locations l ON l.id = e.location_id WHERE e.slug = ?", slug); if (!e || !["published", "sales_closed", "completed"].includes(e.status) || e.visibility === "private" || e.visibility === "password") return null; return { title: e.title, when: fmtWhen(e.start), venue: e.lname || e.venue_name, flyer: e.flyer_key } }
 async function pwHash(salt, pw) { return sha256("gvev|" + salt + "|" + pw) }
 function eventPublic(e, h, loc, types, S) {
@@ -72,8 +75,8 @@ export async function entApi(C) {
   const { D, S, u, b, p, url, req, env } = C, base = "https://" + url.host;
   const pubOpen = S.ent_open || (u && u.tester);
   /* ---------------- public ---------------- */
-  if (p === "/api/p/events") { if (!pubOpen) return J({ closed: true, events: [] }); const ln = localNow(TZ(S)); const E = await all(D, "SELECT e.*, l.name AS lname, l.address AS laddr, h.name AS hname, h.slug AS hslug, h.verified AS hver, h.official AS hoff FROM events e LEFT JOIN locations l ON l.id = e.location_id JOIN hosts h ON h.id = e.host_id WHERE e.status IN ('published','sales_closed') AND e.visibility = 'public' AND e.end > ? ORDER BY e.start LIMIT 100", ln);
-    const mins = await all(D, "SELECT event_id, MIN(price_cents) AS m FROM ticket_types WHERE status = 'active' GROUP BY event_id"); return J({ events: E.map(e => ({ slug: e.slug, title: e.title, start: e.start, flyer: e.flyer_key, venue: e.lname || e.venue_name, host: { name: e.hname, slug: e.hslug, verified: !!e.hver, official: !!e.hoff }, from: (mins.find(m => m.event_id === e.id) || {}).m, status: e.status, category: e.category })) }) }
+  if (p === "/api/p/events") { if (!pubOpen) return J({ closed: true, events: [] }); const ln = localNow(TZ(S)); const E = await all(D, "SELECT e.*, l.name AS lname, l.address AS laddr, h.name AS hname, h.slug AS hslug, h.verified AS hver, h.official AS hoff, o.name AS oname, o.slug AS oslug FROM events e LEFT JOIN event_organizations eo ON eo.event_id = e.id LEFT JOIN host_organizations o ON o.id = eo.organization_id AND o.host_id = e.host_id LEFT JOIN locations l ON l.id = e.location_id JOIN hosts h ON h.id = e.host_id WHERE e.status IN ('published','sales_closed') AND e.visibility = 'public' AND e.end > ? ORDER BY e.start LIMIT 100", ln);
+    const mins = await all(D, "SELECT event_id, MIN(price_cents) AS m FROM ticket_types WHERE status = 'active' GROUP BY event_id"); return J({ events: E.map(e => ({ slug: e.slug, title: e.title, start: e.start, flyer: e.flyer_key, venue: e.lname || e.venue_name, host: { name: e.hname, slug: e.hslug, verified: !!e.hver, official: !!e.hoff }, organization: e.oslug ? { name: e.oname, slug: e.oslug } : null, from: (mins.find(m => m.event_id === e.id) || {}).m, status: e.status, category: e.category })) }) }
   if (p === "/api/p/event") {
     const e = await one(D, "SELECT * FROM events WHERE slug = ?", url.searchParams.get("slug") || ""); if (!e) return J({ error: "Event not found" }, 404);
     const token = url.searchParams.get("invite");
@@ -81,13 +84,21 @@ export async function entApi(C) {
     if (token && !invite) return J({ error: "This invitation is unavailable." }, 404);
     const v = invite ? { ok: true } : await canSeeEvent(C, e, url.searchParams.get("k") || "", url.searchParams.get("pw") || ""); if (!v.ok) return J(v.password ? { locked: "password", title: e.title } : v.private ? { locked: "private" } : { error: v.closed ? "Grooveville Entertainment opens soon." : "Event not found" }, v.password || v.private ? 200 : 404);
     const h = await one(D, "SELECT * FROM hosts WHERE id = ?", e.host_id), loc = e.location_id ? await one(D, "SELECT * FROM locations WHERE id = ?", e.location_id) : null, T = await all(D, "SELECT * FROM ticket_types WHERE event_id = ? ORDER BY ord, price_cents", e.id);
-    return J({ event: eventPublic(e, h, loc, invite?.destination === "rsvp" ? T.filter(t => !t.price_cents) : T, S), preview: !!v.owner && e.status !== "published", stripe: C.mode, live: C.mode === "live" && !!S.payments_live });
+    const org = await one(D, "SELECT o.* FROM event_organizations eo JOIN host_organizations o ON o.id = eo.organization_id WHERE eo.event_id = ? AND o.host_id = ?", e.id, e.host_id);
+    return J({ event: { ...eventPublic(e, h, loc, invite?.destination === "rsvp" ? T.filter(t => !t.price_cents) : T, S), organization: orgCard(org) }, preview: !!v.owner && e.status !== "published", stripe: C.mode, live: C.mode === "live" && !!S.payments_live });
   }
   if (p === "/api/p/hostpage") {
-    const h = await one(D, "SELECT * FROM hosts WHERE slug = ?", url.searchParams.get("slug") || ""); if (!h || h.status !== "active" || (!pubOpen && !(u && (u.admin || u.uid === h.uid)))) return J({ error: "Host not found" }, 404);
-    const ln = localNow(TZ(S)), E = await all(D, "SELECT e.slug, e.title, e.start, e.end, e.flyer_key, e.status, e.venue_name, l.name AS lname FROM events e LEFT JOIN locations l ON l.id = e.location_id WHERE e.host_id = ? AND e.status IN ('published','sales_closed','completed') AND e.visibility = 'public' ORDER BY e.start DESC LIMIT 60", h.id);
-    const G = await all(D, "SELECT key, caption, event_id FROM host_gallery WHERE host_id = ? ORDER BY created DESC LIMIT 60", h.id);
-    return J({ host: Object.assign(hostCard(h), { bio: h.bio, socials: pj(h.socials, {}) }), upcoming: E.filter(e => e.end > ln).reverse().map(e => ({ slug: e.slug, title: e.title, start: e.start, flyer: e.flyer_key, venue: e.lname || e.venue_name })), past: E.filter(e => e.end <= ln).map(e => ({ slug: e.slug, title: e.title, start: e.start, flyer: e.flyer_key, venue: e.lname || e.venue_name })), gallery: G });
+    const orgSlug = url.searchParams.get("org");
+    const org = orgSlug ? await one(D, "SELECT * FROM host_organizations WHERE slug = ?", orgSlug) : null;
+    const h = orgSlug ? org && await one(D, "SELECT * FROM hosts WHERE id = ?", org.host_id) : await one(D, "SELECT * FROM hosts WHERE slug = ?", url.searchParams.get("slug") || "");
+    if (!h || h.status !== "active" || (!pubOpen && !(u && (u.admin || u.uid === h.uid)))) return J({ error: orgSlug ? "Organization not found" : "Host not found" }, 404);
+    const ln = localNow(TZ(S));
+    const [events, gallery, organizations] = await Promise.all([
+      all(D, "SELECT e.slug, e.title, e.start, e.end, e.flyer_key AS flyer, COALESCE(l.name, e.venue_name) AS venue FROM events e LEFT JOIN locations l ON l.id = e.location_id LEFT JOIN event_organizations eo ON eo.event_id = e.id WHERE e.host_id = ? AND e.status IN ('published','sales_closed','completed') AND e.visibility = 'public' AND (? IS NULL OR eo.organization_id = ?) ORDER BY e.start DESC LIMIT 60", h.id, org?.id || null, org?.id || null),
+      org ? [] : all(D, "SELECT key, caption, event_id FROM host_gallery WHERE host_id = ? ORDER BY created DESC LIMIT 60", h.id),
+      org ? [] : all(D, "SELECT * FROM host_organizations WHERE host_id = ? ORDER BY name", h.id),
+    ]);
+    return J({ host: { ...hostCard(h), bio: h.bio, socials: pj(h.socials, {}) }, organization: orgCard(org), organizations: organizations.map(orgCard), upcoming: events.filter(e => e.end > ln).reverse(), past: events.filter(e => e.end <= ln), gallery });
   }
   if (p === "/api/p/promo/check" && req.method === "POST") { const e = await one(D, "SELECT id FROM events WHERE slug = ?", String(b.slug || "")); if (!e) return J({ valid: false }); const pc = await one(D, "SELECT * FROM promo_codes WHERE event_id = ? AND code = ?", e.id, String(b.code || "").toUpperCase().trim()); if (!pc || (pc.max_uses && pc.used >= pc.max_uses) || (pc.expires && pc.expires < localNow(TZ(S)))) return J({ valid: false }); return J({ valid: true, kind: pc.kind, value: pc.value }) }
   if (p === "/api/p/checkout" && req.method === "POST") {
@@ -158,17 +169,28 @@ export async function entApi(C) {
   const H = await one(D, "SELECT id, uid, slug, name, bio, photo_key, location, socials, status, verified, official, grooveville FROM hosts WHERE uid = ?", u.uid);
   if (p === "/api/p/host/me") {
     if (!H) return J({ host: null });
-    const E = await all(D, "SELECT e.*, l.name AS lname FROM events e LEFT JOIN locations l ON l.id = e.location_id WHERE e.host_id = ? ORDER BY e.start DESC", H.id);
+    const E = await all(D, "SELECT e.*, l.name AS lname, eo.organization_id FROM events e LEFT JOIN locations l ON l.id = e.location_id LEFT JOIN event_organizations eo ON eo.event_id = e.id WHERE e.host_id = ? ORDER BY e.start DESC", H.id);
     const sales = await all(D, "SELECT event_id, SUM(qty) AS tickets, SUM(total_cents) AS gross, SUM(refunded_cents) AS refunds FROM orders WHERE event_id IN (SELECT id FROM events WHERE host_id = ?) AND status IN ('paid','partially_refunded','refunded','disputed') GROUP BY event_id", H.id);
     const A = await all(D, "SELECT * FROM event_agreements WHERE host_id = ? ORDER BY created DESC", H.id), V = await one(D, "SELECT status, decision_note, created, decided_at FROM host_verifications WHERE host_id = ? ORDER BY created DESC LIMIT 1", H.id);
     const ch = await all(D, "SELECT id, kind, description, amount_cents, paid_cents, status, due_date, request_id FROM charges WHERE uid = ? AND kind IN ('venue_rental','deposit') AND status != 'void'", u.uid);
     const G = await all(D, "SELECT id, key, caption, event_id FROM host_gallery WHERE host_id = ? ORDER BY created DESC", H.id);
-    return J({ host: Object.assign({}, H, { socials: pj(H.socials, {}) }), events: E.map(e => Object.assign(e, { services: pj(e.services, []), password_hash: undefined, sales: sales.find(s => s.event_id === e.id) || null, agreement: A.find(a => a.event_id === e.id && a.status !== "void" && a.status !== "amended") || null })), verification: V, charges: ch, gallery: G });
+    const organizations = await all(D, "SELECT * FROM host_organizations WHERE host_id = ? ORDER BY name", H.id);
+    return J({ organizations: organizations.map(orgCard), host: Object.assign({}, H, { socials: pj(H.socials, {}) }), events: E.map(e => Object.assign(e, { services: pj(e.services, []), password_hash: undefined, sales: sales.find(s => s.event_id === e.id) || null, agreement: A.find(a => a.event_id === e.id && a.status !== "void" && a.status !== "amended") || null })), verification: V, charges: ch, gallery: G });
   }
   if (p === "/api/p/host/profile" && req.method === "POST") {
     const name = clean(b.name, 80); if (name.length < 2) return J({ error: "Add your host name" }, 400); let slug = slugify(b.slug || name); if (slug.length < 3) return J({ error: "Choose a longer profile address" }, 400);
     const taken = await one(D, "SELECT uid FROM hosts WHERE slug = ?", slug); if (taken && taken.uid !== u.uid) return J({ error: "That profile address is taken" }, 409);
-    const photo = /^portal\/pub\//.test(String(b.photo_key || "")) ? b.photo_key : (H && H.photo_key) || "";
+    let photo = H?.photo_key || "";
+    if (b.photo_key) {
+      if (!await ownedPublicPhoto(env, b.photo_key, u.uid)) return J({ error: "Photo not found" }, 404);
+      photo = b.photo_key;
+    } else if (b.use_account_photo === true) {
+      const saved = await one(D, "SELECT key FROM account_photos WHERE uid = ?", u.uid);
+      const original = saved && await env.STUDIO_BUCKET.get(saved.key);
+      if (!original) return J({ error: "Add an account photo first" }, 400);
+      photo = "portal/pub/" + u.uid.slice(0, 12) + "/" + rid(16) + "." + saved.key.split(".").pop();
+      await env.STUDIO_BUCKET.put(photo, original.body, { httpMetadata: original.httpMetadata, customMetadata: { by: u.uid, purpose: "pub" } });
+    }
     const so = {}; for (const k of ["instagram", "tiktok", "x", "facebook", "youtube", "website"]) { const v = clean((b.socials || {})[k], 200); if (v && /^https:\/\//.test(v)) so[k] = v }
     if (H) await run(D, "UPDATE hosts SET name = ?, slug = ?, bio = ?, photo_key = ?, location = ?, socials = ?, updated = ? WHERE id = ?", name, slug, clean(b.bio, 3000), photo, clean(b.location, 120), JSON.stringify(so), now(), H.id);
     else await run(D, "INSERT INTO hosts (id, uid, slug, name, bio, photo_key, location, socials, status, created, updated) VALUES (?,?,?,?,?,?,?,?,'active',?,?)", rid(12), u.uid, slug, name, clean(b.bio, 3000), photo, clean(b.location, 120), JSON.stringify(so), now(), now());
@@ -176,6 +198,19 @@ export async function entApi(C) {
   }
   if (!H) return J({ error: "Create your host profile first", code: "nohost" }, 400);
   if (H.status !== "active") return J({ error: "This host account is suspended. Contact Grooveville." }, 403);
+  if (p === "/api/p/host/organizations" && req.method === "POST") {
+    const id = clean(b.id, 40), name = clean(b.name, 80);
+    const org = id ? await one(D, "SELECT * FROM host_organizations WHERE id = ? AND host_id = ?", id, H.id) : null;
+    if (id && !org) return J({ error: "Organization not found" }, 404);
+    const slug = slugify(b.slug || org?.slug || name);
+    if (name.length < 2 || slug.length < 3) return J({ error: "Enter an organization name and an address of at least 3 characters" }, 400);
+    const accent = /^#[0-9a-f]{6}$/i.test(b.accent) ? b.accent : "#f1ae8a";
+    if (b.photo && !await ownedPublicPhoto(env, b.photo, u.uid)) return J({ error: "Photo not found" }, 404);
+    const saved = org ? await run(D, "UPDATE OR IGNORE host_organizations SET slug=?, name=?, bio=?, photo_key=?, accent=?, updated=? WHERE id=? AND host_id=?", slug, name, clean(b.bio, 3000), b.photo || org.photo_key, accent, now(), id, H.id)
+      : await run(D, "INSERT OR IGNORE INTO host_organizations (id, host_id, slug, name, bio, photo_key, accent, created, updated) VALUES (?,?,?,?,?,?,?,?,?)", rid(12), H.id, slug, name, clean(b.bio, 3000), b.photo || "", accent, now(), now());
+    if (!saved.meta.changes) return J({ error: "That organization address is taken" }, 409);
+    return J({ ok: true, slug });
+  }
   if (p === "/api/p/host/verify" && req.method === "POST") {
     if (H.verified) return J({ error: "You're already verified" }, 400); const pend = await one(D, "SELECT id FROM host_verifications WHERE host_id = ? AND status = 'submitted'", H.id); if (pend) return J({ error: "Your request is already being reviewed" }, 409);
     const keys = (b.doc_keys || []).map(String).filter(k => k.startsWith("portal/priv/verification/" + u.uid.slice(0, 12) + "/")).slice(0, 5); if (!keys.length) return J({ error: "Upload a photo ID or business document" }, 400);
@@ -187,6 +222,8 @@ export async function entApi(C) {
   if (p === "/api/p/host/event/save" && req.method === "POST") {
     let e = b.id ? await ownEvent(C, b.id) : null; if (b.id && !e) return J({ error: "Event not found" }, 404);
     if (e && !["draft", "rejected", "submitted", "approved", "published"].includes(e.status)) return J({ error: "This event can't be edited now" }, 409);
+    const orgId = clean(b.organization_id, 40);
+    if (orgId && !await one(D, "SELECT 1 AS owned FROM host_organizations WHERE id = ? AND host_id = ?", orgId, H.id)) return J({ error: "Choose an organization from your host profile" }, 400);
     const ag = e ? await one(D, "SELECT * FROM event_agreements WHERE event_id = ? AND status NOT IN ('void','amended') ORDER BY created DESC LIMIT 1", e.id) : null;
     const f = { title: clean(b.title, 120), description: clean(b.description, 6000), flyer_key: /^portal\/pub\//.test(String(b.flyer_key || "")) ? b.flyer_key : (e ? e.flyer_key : ""), category: clean(b.category, 40), location_id: clean(b.location_id, 20) || null, venue_name: clean(b.venue_name, 120), venue_address: clean(b.venue_address, 200), start: String(b.start || "").slice(0, 16), end: String(b.end || "").slice(0, 16), sales_open: String(b.sales_open || "").slice(0, 16) || null, sales_close: String(b.sales_close || "").slice(0, 16) || null, capacity: Math.max(0, Math.round(Number(b.capacity) || 0)), expected: Math.max(0, Math.round(Number(b.expected) || 0)), age: clean(b.age, 40), refund_policy: clean(b.refund_policy, 1500), visibility: ["public", "unlisted", "private", "password"].includes(b.visibility) ? b.visibility : "public", contact: clean(b.contact, 200), services: JSON.stringify((b.services || []).map(String).slice(0, 20)), setup_hours: Math.max(0, Math.min(24, Math.round(Number(b.setup_hours) || 0))), breakdown_hours: Math.max(0, Math.min(24, Math.round(Number(b.breakdown_hours) || 0))) };
     if (f.title.length < 3) return J({ error: "Add an event title" }, 400); if (!isDT(f.start) || !isDT(f.end) || f.end <= f.start) return J({ error: "Add a start and end time" }, 400);
@@ -207,6 +244,10 @@ export async function entApi(C) {
       else await run(D, "INSERT INTO ticket_types (id, event_id, name, price_cents, qty, max_per_order, sales_start, sales_end, ord) VALUES (?,?,?,?,?,?,?,?,?)", rid(10), e.id, name, price, qty, mpo, String(t.sales_start || "").slice(0, 16) || null, String(t.sales_end || "").slice(0, 16) || null, i) }
     for (const x of old) if (!keep.has(x.id)) { if (x.sold + x.held > 0) await run(D, "UPDATE ticket_types SET status = 'closed' WHERE id = ?", x.id); else await run(D, "DELETE FROM ticket_types WHERE id = ?", x.id) }
     for (const pc of (b.promos || []).slice(0, 20)) { const code = String(pc.code || "").toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 30); if (!code) continue; await run(D, "INSERT INTO promo_codes (id, event_id, code, kind, value, max_uses, expires) VALUES (?,?,?,?,?,?,?) ON CONFLICT(event_id, code) DO UPDATE SET kind = excluded.kind, value = excluded.value, max_uses = excluded.max_uses, expires = excluded.expires", rid(10), e.id, code, pc.kind === "amount" ? "amount" : "pct", Math.max(0, Math.round(Number(pc.value) || 0)), Math.max(0, Math.round(Number(pc.max_uses) || 0)), String(pc.expires || "").slice(0, 16) || null) }
+    if ("organization_id" in b) {
+      if (orgId) await run(D, "INSERT INTO event_organizations (event_id, organization_id) SELECT id, ? FROM events WHERE id = ? AND host_id = ? ON CONFLICT(event_id) DO UPDATE SET organization_id = excluded.organization_id", orgId, e.id, H.id);
+      else await run(D, "DELETE FROM event_organizations WHERE event_id IN (SELECT id FROM events WHERE id = ? AND host_id = ?)", e.id, H.id);
+    }
     return J({ ok: true, id: e.id, slug: e.slug, invite });
   }
   if (p === "/api/p/host/event/quote" && req.method === "POST") {

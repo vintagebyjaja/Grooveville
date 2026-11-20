@@ -53,7 +53,7 @@ PV.loadMe = async force => {
 PV.fullName = p => p ? [p.first, p.middle ? p.middle + "." : "", p.last].filter(Boolean).join(" ") : "";
 PV.initials = p => p && p.first ? (p.first[0] + (p.last || "").slice(0, 1)).toUpperCase() : "G";
 /* ---------- fonts (cursive signatures) ---------- */
-PV.fontsReady = (() => { let p; return () => p || (p = new Promise(res => { if (!document.querySelector('link[data-pvfont]')) { const l = document.createElement("link"); l.rel = "stylesheet"; l.dataset.pvfont = 1; l.href = "https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap"; document.head.appendChild(l) } const t = setTimeout(res, 2500); (document.fonts ? document.fonts.load('44px "Great Vibes"') : Promise.resolve()).then(() => { clearTimeout(t); res() }, () => res()) })) })();
+PV.fontsReady = () => document.fonts ? document.fonts.load('44px "Great Vibes"').catch(() => []) : Promise.resolve([]);
 /* ---------- icons ---------- */
 const IC = { home: "M3 11 12 4l9 7M5 10v10h14V10M10 20v-6h4v6", grid: "M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z", card: "M3 6h18v12H3zM3 10h18M7 15h4", doc: "M6 3h9l4 4v14H6zM14 3v5h5M9 12h7M9 16h5", sign: "M6 3h9l4 4v6M6 3v18h6M14 3v5h5M9 11h6M9 15h3M15 21l5-5-2-2-5 5v2z", folder: "M3 6h6l2 2h10v11H3z", chart: "M5 20V11M10 20V6M15 20v-8M20 20V9", chat: "M4 5h16v11H9l-5 4z", user: "M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM4 21c1.5-4 4.5-6 8-6s6.5 2 8 6", bell: "M6 16v-5a6 6 0 0 1 12 0v5l2 2H4zM10 20a2 2 0 0 0 4 0", cal: "M4 6h16v14H4zM4 10h16M8 3v5M16 3v5", layers: "M12 3 3 8l9 5 9-5zM3 13l9 5 9-5", up: "M12 16V4M7 9l5-5 5 5M4 20h16", down: "M12 4v12M7 11l5 5 5-5M4 20h16", arrow: "M5 12h14M13 6l6 6-6 6", ticket: "M3 7h18v3a2 2 0 0 0 0 4v3H3v-3a2 2 0 0 0 0-4zM15 7v10", scan: "M4 8V4h4M16 4h4v4M20 16v4h-4M8 20H4v-4M4 12h16", pin: "M12 21s-7-6-7-11a7 7 0 0 1 14 0c0 5-7 11-7 11zM12 12.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5z", check: "M5 12l5 5 9-10", shield: "M12 3l8 3v6c0 5-4 8-8 9-4-1-8-4-8-9V6z", cash: "M3 7h18v10H3zM12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z", building: "M4 21V8l8-5 8 5v13M9 21v-6h6v6", speaker: "M7 3h10v18H7zM12 18a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM12 8.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z", gear: "M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM19 12l2-1-1-3-2 .2-1.3-1.3L17 5l-3-1-1 2h-2L10 4 7 5l.3 2L6 8.2 4 8 3 11l2 1v0l-2 1 1 3 2-.2 1.3 1.3L7 19l3 1 1-2h2l1 2 3-1-.3-2 1.3-1.3 2 .2 1-3z", search: "M11 18a7 7 0 1 0 0-14 7 7 0 0 0 0 14zM20 20l-4-4", eye: "M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12zM12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z", star: "M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z", plus: "M12 5v14M5 12h14", music: "M9 18V5l11-2v13M9 18a3 3 0 1 1-6 0 3 3 0 0 1 6 0zM20 16a3 3 0 1 1-6 0 3 3 0 0 1 6 0z", out: "M15 4h4v16h-4M10 8l-4 4 4 4M6 12h11", link: "M10 14a4 4 0 0 0 6 0l3-3a4 4 0 0 0-6-6l-1 1M14 10a4 4 0 0 0-6 0l-3 3a4 4 0 0 0 6 6l1-1", users: "M9 11a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7zM2 20c1-3.5 3.8-5 7-5s6 1.5 7 5M16 4.5a3.5 3.5 0 0 1 0 6.5M18 15c2 .6 3.4 2.2 4 5" };
 PV.ic = (n, cls) => '<svg viewBox="0 0 24 24" aria-hidden="true"' + (cls ? ' class="' + cls + '"' : "") + '><path d="' + (IC[n] || IC.grid) + '"/></svg>';
@@ -95,8 +95,8 @@ PV.sigBlock = (p, opts) => { opts = opts || {}; const name = PV.fullName(p); ret
 PV.loading = t => '<div class="pv' + (window.GV && PV.isLight(GV.S.route) ? ' pvl' : '') + '"><div class="pvbody" style="grid-template-columns:1fr"><main class="pvmain"><p class="muted pvloading" role="status">' + E(t || "Loading…") + '</p></main></div></div>';
 PV.err = (msg, setup) => setup === "d1" ? '<div class="pvbanner">The portal database isn’t connected yet. See PORTALS-SETUP.md (create the D1 database <b>grooveville-portal</b>).</div>' : '<div class="pvbanner bad">' + E(msg) + '</div>';
 /* ---------- routing ---------- */
-const ROUTES = [[/^rentals(\/|$)/, "rentals"], [/^entertainment$/, "ent"], [/^events$/, "events"], [/^invite\//, "invite"], [/^e\//, "event"], [/^h\//, "hostpage"], [/^host(\/|$)/, "host"], [/^account$/, "account"], [/^sign\//, "sign"], [/^order\//, "order"], [/^t\//, "ticket"], [/^checkin(\/|$)/, "checkin"], [/^verify$/, "verify"], [/^team-portals(\/|$)/, "admin"]];
-const previewRoute = /^(?:rentals(?:\/(?:browse|item\/[^/]+))?|events|entertainment|[eh]\/[^/]+)$/;
+const ROUTES = [[/^rentals(\/|$)/, "rentals"], [/^entertainment$/, "ent"], [/^events$/, "events"], [/^invite\//, "invite"], [/^e\//, "event"], [/^[ho]\//, "hostpage"], [/^host(\/|$)/, "host"], [/^account$/, "account"], [/^sign\//, "sign"], [/^order\//, "order"], [/^t\//, "ticket"], [/^checkin(\/|$)/, "checkin"], [/^verify$/, "verify"], [/^team-portals(\/|$)/, "admin"]];
+const previewRoute = /^(?:rentals(?:\/(?:browse|item\/[^/]+))?|events|entertainment|[eho]\/[^/]+)$/;
 const previewBar = () => '<nav class="pv-preview-bar" aria-label="Public preview"><strong>Public preview</strong><a href="#rentals">Rentals</a><a href="#events">Events</a><a class="pvbtn pk sm" href="/#' + E(founderReturn) + '">Back to founder tools</a></nav>';
 PV.previewLink = (area, route) => '/?portal-preview=1&return=' + encodeURIComponent(route.split("?")[0]) + '#' + area;
 window.pvRoute = function (r) {
@@ -107,7 +107,8 @@ window.pvRoute = function (r) {
   if (document.getElementById("pvroot")?.dataset.keep !== key) setTimeout(pvMount, 0);
   const cached = PV.html[r];
   const inner = '<div id="pvroot" data-r="' + E(r) + '" data-keep="' + E(key) + '">' + ((cached?.uid === uid && cached.body) || PV.loading(hit[1] === "admin" ? "Opening founder tools…" : undefined)) + '</div>';
-  return '<div class="' + (hit[1] === "rentals" || hit[1] === "events" ? "pv-destination" : "wrap") + '">' + (publicPreview ? previewBar() : '') + inner + '</div>';
+  const workspace = ["admin", "account", "host"].includes(hit[1]);
+  return '<div class="' + (workspace ? "pv-full-page" : hit[1] === "rentals" || hit[1] === "events" ? "pv-destination" : "wrap") + '">' + (publicPreview ? previewBar() : '') + inner + '</div>';
 };
 PV.isRoute = r => ROUTES.some(([re]) => re.test(String(r || "").split("?")[0]));
 window.pvMount = async function (force) {
@@ -169,6 +170,21 @@ PV.acts["pv-reload-user"] = async () => { const u = fb(); if (u) { await u.reloa
 PV.views.account = async () => {
   const me = PV.me; if (!me.signedIn) return PV.shell({ sec: "ACCOUNT" }, '<div class="pvpanel" style="max-width:560px"><h3>Your Grooveville account</h3><p class="muted" style="margin-bottom:16px">One sign-in for Grooveville Rentals, Entertainment and your agreements.</p><div class="pvrow"><button class="pvbtn pk" data-act="pv-signin">Sign in</button><button class="pvbtn" data-act="pv-signup">Create account</button></div></div>');
   const p = me.profile || {}, docs = (await PV.api("docs/mine").catch(() => ({ docs: [] }))).docs;
+  if (me.hasPhoto) PV.after = async root => {
+    const response = await PV.api("me/photo", undefined, { raw: true });
+    const target = root.querySelector("#pv-account-photo");
+    if (!response.ok || !target) return;
+    const url = URL.createObjectURL(await response.blob());
+    if (!target.isConnected) { URL.revokeObjectURL(url); return; }
+    target.addEventListener("load", () => { target.hidden = false; URL.revokeObjectURL(url); }, { once: true });
+    target.addEventListener("error", () => URL.revokeObjectURL(url), { once: true });
+    target.src = url;
+  };
+  const photoPanel = '<form class="pvpanel pvform pv-account-photo" id="pvphotoform" onsubmit="return false"><h3>Profile photo</h3>' +
+    (me.hasPhoto ? '<img id="pv-account-photo" class="pv-profile-image" alt="Your profile photo" hidden>' : '') +
+    '<label class="pvf"><span>Choose a photo</span><input class="pvin" type="file" name="photo" accept="image/png,image/jpeg,image/webp"></label>' +
+    '<p class="pvnote">Your account photo is private. You can copy it to your public Host profile from Host profile settings.</p><div class="pvrow"><button class="pvbtn pk" data-act="pv-account-photo">Save photo</button>' +
+    (me.hasPhoto ? '<button class="pvbtn" data-act="pv-account-photo-remove">Remove photo</button>' : '') + '</div></form>';
   const links = [["#rentals", "Grooveville Rentals", "home"], ["#entertainment", "Grooveville Entertainment", "music"], me.host ? ["#host", "Host dashboard", "star"] : ["#host", "Become a host", "star"]].concat((me.staffEvents || []).length || me.host ? [["#checkin", "Door check-in", "scan"]] : []).concat(me.admin || me.finance ? [["#team-portals", "Grooveville administration", "gear"]] : []);
   return PV.shell({ sec: "ACCOUNT", nav: [["#account", "Profile & Settings", "user"], ["#rentals", "Rentals", "home"], ["#host", "Host", "star"]], card: ["My Account", me.email || "", "user"], hero: { kick: "Grooveville", title: "Profile &amp; Settings", sub: "Your legal name, signature, verification and documents." } },
     (me.emailVerified ? '' : '<div class="pvbanner">Verify your email (' + E(me.email) + ') before signing documents. <button class="pvbtn sm" data-act="pv-verify-email">Send verification email</button> <button class="pvbtn sm" data-act="pv-reload-user">I verified it</button></div>') +
@@ -176,8 +192,22 @@ PV.views.account = async () => {
     '<div class="pvgrid pvg2"><div class="pvpanel"><h3>Legal name</h3><p class="pvnote" style="margin-bottom:12px">Used for your typed electronic signature. ' + (p.name_verified ? 'Your name has been verified, so changes go to Grooveville for review.' : 'Enter it exactly as on your ID.') + '</p><form class="pvform c3" id="pvname" onsubmit="return false"><label class="pvf"><span>First name</span><input class="pvin" name="first" value="' + E(p.first) + '" autocomplete="given-name"></label><label class="pvf"><span>Middle initial (optional)</span><input class="pvin" name="middle" value="' + E(p.middle) + '" maxlength="1"></label><label class="pvf"><span>Last name</span><input class="pvin" name="last" value="' + E(p.last) + '" autocomplete="family-name"></label><label class="pvf full"><span>Phone</span><input class="pvin" name="phone" value="' + E(p.phone) + '" autocomplete="tel"></label>' + (p.name_verified ? '<label class="pvf full"><span>Reason for the change (e.g. marriage)</span><input class="pvin" name="reason"></label>' : '') + '<div class="full pvrow"><button class="pvbtn pk" data-act="pv-save-name">Save</button></div></form></div>' +
     '<div class="pvpanel"><div class="pvph"><h3>Your signature</h3>' + (p.name_verified || me.emailVerified ? '<span class="pvpill ok">' + PV.ic("check") + (p.name_verified ? "Name verified" : "Email verified") + '</span>' : '<span class="pvpill warn">Not verified</span>') + '</div>' + PV.sigBlock(p) + '<p class="pvnote" style="margin-top:12px">This is how your typed electronic signature appears on agreements. It’s applied only when you press <b>Agree &amp; Sign</b> on a document.</p>' +
     '<p class="pvnote" style="margin-top:10px">Electronic records consent: ' + (p.esign_consent_at ? 'given ' + PV.date(p.esign_consent_at) + ' <button class="pvbtn sm" data-act="pv-esign-withdraw">Withdraw consent</button>' : 'not given yet (you’ll be asked before your first signature)') + '</p></div></div>' +
+    photoPanel +
     '<div class="pvgrid pvg2" style="margin-top:18px"><div class="pvpanel"><h3>Documents</h3>' + (docs.length ? '<div class="pvlist">' + docs.map(d => '<div class="pvli">' + PV.ic("doc") + '<div><b>' + E(d.title) + '</b><small>' + E(d.division) + ' · ' + (d.completed_at ? 'completed ' + PV.date(d.completed_at) : 'sent ' + PV.date(d.sent_at)) + '</small></div><a class="pvbtn sm' + (d.my_status === "pending" && d.status !== "completed" ? " pk" : "") + '" href="#sign/' + E(d.id) + '">' + (d.my_status === "pending" && !["completed", "canceled", "expired", "superseded"].includes(d.status) ? "Review &amp; sign" : "Open") + '</a></div>').join("") + '</div>' : '<p class="muted">No documents yet.</p>') + '</div>' +
     '<div class="pvpanel"><h3>Go to</h3>' + links.map(([h, l, i]) => '<a class="pvq" href="' + h + '">' + PV.ic(i) + '<span><b>' + E(l) + '</b></span><i>›</i></a>').join("") + '<button class="pvq" data-act="pv-signout">' + PV.ic("out") + '<span><b>Sign out</b></span></button><p class="pvnote" style="margin-top:12px">Signed in as ' + E(me.email) + ' · ' + E(me.auth || "") + '</p></div></div>');
+};
+PV.acts["pv-account-photo"] = async () => {
+  const file = new FormData(document.getElementById("pvphotoform")).get("photo");
+  if (!file?.size) throw new Error("Choose a photo first");
+  const { key } = await PV.upload(file, "account");
+  await PV.api("me/photo", { key });
+  PV.toast("Profile photo saved");
+  PV.refresh();
+};
+PV.acts["pv-account-photo-remove"] = async () => {
+  await PV.api("me/photo", {});
+  PV.toast("Profile photo removed");
+  PV.refresh();
 };
 PV.acts["pv-save-name"] = async t => { const F = new FormData(document.getElementById("pvname")); const j = await PV.api("me", Object.fromEntries(F)); PV.toast(j.pending ? "Sent to Grooveville for review" : "Saved"); PV.refresh() };
 PV.acts["pv-esign-withdraw"] = async () => { if (!confirm("Withdraw your consent to sign electronically? You won't be able to sign Grooveville documents online until you consent again. Contact Grooveville for paper copies.")) return; await PV.api("me/esign-withdraw", {}); PV.refresh() };

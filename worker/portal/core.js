@@ -82,15 +82,31 @@ CREATE TABLE IF NOT EXISTS special_invite_upgrades (
 );
 CREATE UNIQUE INDEX IF NOT EXISTS special_invite_upgrade_active ON special_invite_upgrades(event_id)
   WHERE status IN ('pending','paid','revoked');`.split(";").map(sql => sql.trim()).filter(Boolean);
+const PROFILE_SCHEMA = [
+`CREATE TABLE IF NOT EXISTS account_photos (
+  uid TEXT PRIMARY KEY, key TEXT NOT NULL
+)`,
+`CREATE TABLE IF NOT EXISTS host_organizations (
+  id TEXT PRIMARY KEY, host_id TEXT NOT NULL REFERENCES hosts(id), slug TEXT NOT NULL UNIQUE,
+  name TEXT NOT NULL, bio TEXT NOT NULL DEFAULT '', photo_key TEXT NOT NULL DEFAULT '',
+  accent TEXT NOT NULL DEFAULT '#f1ae8a', created TEXT NOT NULL, updated TEXT NOT NULL
+)`,
+`CREATE INDEX IF NOT EXISTS host_organizations_host ON host_organizations(host_id)`,
+`CREATE TABLE IF NOT EXISTS event_organizations (
+  event_id TEXT PRIMARY KEY REFERENCES events(id) ON DELETE CASCADE,
+  organization_id TEXT NOT NULL REFERENCES host_organizations(id)
+)`,
+`CREATE INDEX IF NOT EXISTS event_organizations_org ON event_organizations(organization_id)`
+];
 let READY = null;
 export async function db(env) {
   if (!env.PORTAL_DB) throw Object.assign(new Error("The portal database (D1 binding PORTAL_DB) isn't connected yet."), { status: 503 });
   if (!READY) READY = (async () => {
     const D = env.PORTAL_DB;
     const current = await D.prepare("SELECT MAX(v) AS v FROM schema_version").first().catch(() => null);
-    if (current?.v >= 3) return;
+    if (current?.v >= 4) return;
     const schema = current?.v >= 1 ? [] : SCHEMA;
-    await D.batch([...schema, ...(current?.v >= 2 ? [] : [MANUAL_HOST_PAYMENTS]), ...SPECIAL_INVITES_SCHEMA, "INSERT INTO schema_version (v) SELECT 3 WHERE NOT EXISTS (SELECT 1 FROM schema_version WHERE v >= 3)"].map(sql => D.prepare(sql)));
+    await D.batch([...schema, ...(current?.v >= 2 ? [] : [MANUAL_HOST_PAYMENTS]), ...(current?.v >= 3 ? [] : SPECIAL_INVITES_SCHEMA), ...PROFILE_SCHEMA, "INSERT INTO schema_version (v) SELECT 4 WHERE NOT EXISTS (SELECT 1 FROM schema_version WHERE v >= 4)"].map(sql => D.prepare(sql)));
   })().catch(e => { READY = null; throw e });
   await READY; return env.PORTAL_DB;
 }
