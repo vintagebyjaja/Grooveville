@@ -461,3 +461,11 @@
   border:1px solid #ffd6bc44;
   box-shadow:0 0 0 18px #ed9b720a,0 0 0 38px #ed9b7208;
 }
+
+.pv-preview-bar{
+  display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px;
+  padding:12px 16px;margin:0 0 16px;border:1px solid #edb39555;
+  border-radius:12px;background:#241d1b;color:#fff2e8;
+}
+.pv-preview-bar strong{margin-right:auto}
+.pv-preview-bar>a:not(.pvbtn){color:inherit;text-underline-offset:3px}

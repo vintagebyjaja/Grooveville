@@ -32,7 +32,7 @@ export async function portalApi(req, env, ctx, h) {
     m = /^\/api\/p\/img\/(portal\/pub\/[A-Za-z0-9._\/-]{3,200})$/.exec(p);
     if (m && req.method === "GET") { const o = await env.STUDIO_BUCKET.get(m[1]); if (!o) return new Response("Not found", { status: 404 }); return new Response(o.body, { headers: { "content-type": (o.httpMetadata && o.httpMetadata.contentType) || "image/jpeg", "cache-control": "public, max-age=86400", "x-content-type-options": "nosniff" } }) }
 
-    const S = await settings(D), u = await who(req, env, h, D);
+    const [S, u] = await Promise.all([settings(D), who(req, env, h, D)]);
     let b = {}; const ct = req.headers.get("content-type") || "";
     if (req.method === "POST" && ct.includes("application/json")) { const t = await req.text(); if (t.length > 400000) return J({ error: "Too much data" }, 413); try { b = JSON.parse(t || "{}") } catch (e) { return J({ error: "Bad request" }, 400) } }
     const C = { req, env, ctx, D, S, u, b, url, p, h, ip: ipOf(req), ua: uaOf(req), fetcher: h.fetcher, mode: stripeMode(env) };

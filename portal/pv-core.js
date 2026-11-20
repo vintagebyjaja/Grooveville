@@ -2,7 +2,11 @@
    Every number, permission and status shown here comes from /api/p/* on the server; the browser never decides money. */
 (function () {
 const PV = window.PV = { me: null, meAt: 0, status: null, html: {}, acts: {}, views: {}, busy: false, mountN: 0 };
-const fb = () => window.firebase && firebase.apps && firebase.apps.length ? firebase.auth().currentUser : null;
+const previewParams = new URLSearchParams(location.search);
+const publicPreview = previewParams.get("portal-preview") === "1";
+const previewReturn = previewParams.get("return") || "";
+const founderReturn = /^team-portals(?:\/[a-z]+(?:\/[\w-]+)?)?$/.test(previewReturn) ? previewReturn : "team-portals";
+const fb = () => !publicPreview && window.firebase && firebase.apps && firebase.apps.length ? firebase.auth().currentUser : null;
 const E = s => String(s == null ? "" : s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 PV.e = E;
 PV.$ = c => (c < 0 ? "−" : "") + "$" + (Math.abs(c || 0) / 100).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
@@ -14,15 +18,38 @@ PV.ago = s => { const d = (Date.now() - Date.parse(s)) / 1000; if (!(d >= 0)) re
 PV.toast = m => (window.GV ? GV.toast(m) : alert(m));
 /* ---------- API ---------- */
 PV.api = async function (path, body, opts) {
-  opts = opts || {}; const h = {}; const u = fb(); if (u) h.authorization = "Bearer " + await u.getIdToken();
+  opts = opts || {};
+  const method = opts.method || (body ? "POST" : "GET");
+  if (publicPreview && (method !== "GET" || !/^(status|events|event|hostpage|rentals\/(listings|availability))$/.test(path.split("?")[0]))) {
+    throw new Error("This action is unavailable in public preview.");
+  }
+  const h = {}; const u = fb(); if (u) h.authorization = "Bearer " + await u.getIdToken();
   let b; if (body instanceof Blob || body instanceof ArrayBuffer || body instanceof Uint8Array) { b = body; h["content-type"] = opts.type || (body.type || "application/octet-stream") } else if (body) { b = JSON.stringify(body); h["content-type"] = "application/json" }
-  const r = await fetch("/api/p/" + path, { method: opts.method || (body ? "POST" : "GET"), headers: h, body: b });
+  const r = await fetch("/api/p/" + path, { method, headers: h, body: b, ...(method === "GET" ? { signal: AbortSignal.timeout(12000) } : {}) });
   if (opts.raw) return r; const j = await r.json().catch(() => ({ error: "The server didn't answer (" + r.status + ")" }));
   if (!r.ok) throw Object.assign(new Error(j.error || "Something went wrong"), { status: r.status, j }); return j;
 };
 PV.upload = async (file, purpose) => { const t = file.type || "application/octet-stream"; return PV.api("upload?purpose=" + purpose, file, { method: "PUT", type: t }) };
 PV.sha = async buf => [...new Uint8Array(await crypto.subtle.digest("SHA-256", buf))].map(x => x.toString(16).padStart(2, "0")).join("");
-PV.loadMe = async force => { if (!force && PV.me && Date.now() - PV.meAt < 30000 && PV.me.uid === (fb() && fb().uid)) return PV.me; try { PV.status = await PV.api("status") } catch (e) { PV.status = { error: e.message, setup: e.j && e.j.setup } } if (!fb()) { PV.me = { signedIn: false }; PV.meAt = Date.now(); return PV.me } try { PV.me = await PV.api("me") } catch (e) { PV.me = { signedIn: false, error: e.message } } PV.meAt = Date.now(); return PV.me };
+let identityLoad;
+PV.loadMe = async force => {
+  const uid = fb()?.uid || null;
+  if (!force && PV.me && Date.now() - PV.meAt < 30000 && (PV.me.uid || null) === uid) return PV.me;
+  if (identityLoad?.uid === uid) return identityLoad.promise;
+  const promise = Promise.all([
+    PV.api("status").catch(e => ({ error: e.message, setup: e.j?.setup })),
+    uid ? PV.api("me").catch(e => ({ signedIn: false, error: e.message })) : { signedIn: false },
+  ]).then(([status, me]) => {
+    if ((fb()?.uid || null) === uid) {
+      PV.status = status;
+      PV.me = me;
+      PV.meAt = Date.now();
+    }
+    return me;
+  }).finally(() => { if (identityLoad?.promise === promise) identityLoad = null; });
+  identityLoad = { uid, promise };
+  return promise;
+};
 PV.fullName = p => p ? [p.first, p.middle ? p.middle + "." : "", p.last].filter(Boolean).join(" ") : "";
 PV.initials = p => p && p.first ? (p.first[0] + (p.last || "").slice(0, 1)).toUpperCase() : "G";
 /* ---------- fonts (cursive signatures) ---------- */
@@ -59,7 +86,7 @@ PV.shell = function (o, body) {
   const test = PV.status && PV.status.stripe === "test" ? '<span class="pvmode" title="Stripe test mode: no real charges">TEST MODE</span>' : "";
   return '<div class="pv' + (o.theme ? ' ' + o.theme : '') + (light ? ' pvl' : '') + '">' +
     '<div class="pvtop"><a class="pvbrand" href="#home">' + PV.logo(o.sec) + 'GROOVEVILLE <span>LLC</span></a><span class="pvdiv"></span><span class="pvsec">' + E(o.sec) + '</span>' +
-    '<div class="pvtopr">' + search + test + (me.signedIn ? '<button class="pvicon" data-act="pv-notes" aria-label="Notifications' + (unread ? ", " + unread + " unread" : "") + '">' + PV.ic("bell") + (unread ? '<span class="pvdot">' + unread + '</span>' : '') + '</button><a class="pvav" href="#account" aria-label="Account">' + E(PV.initials(me.profile)) + '</a>' : '<button class="pvbtn sm pk" data-act="pv-signin">Sign in</button>') + '</div></div>' +
+    '<div class="pvtopr">' + search + test + (me.founder && o.sec !== "ADMINISTRATION" ? '<a class="pvicon" href="/founder-portal" aria-label="Founder tools" title="Founder tools">' + PV.ic("shield") + '</a>' : '') + (me.signedIn ? '<button class="pvicon" data-act="pv-notes" aria-label="Notifications' + (unread ? ", " + unread + " unread" : "") + '">' + PV.ic("bell") + (unread ? '<span class="pvdot">' + unread + '</span>' : '') + '</button><a class="pvav" href="#account" aria-label="Account">' + E(PV.initials(me.profile)) + '</a>' : '<button class="pvbtn sm pk" data-act="pv-signin">Sign in</button>') + '</div></div>' +
     (nav ? mobileNav : '') +
     '<div class="pvbody"' + (nav ? '' : ' style="grid-template-columns:1fr"') + '>' + (nav ? '<aside class="pvside"><div class="pvcard0">' + PV.ic(o.card[2] || "home") + '<div><b>' + E(o.card[0]) + '</b><small>' + E(o.card[1]) + '</small></div></div><nav aria-label="' + E(o.sec) + '">' + nav + '</nav>' + (o.art !== false ? '<div class="pvsideart">' + PV.cityArt() + '<b>GROOVEVILLE</b><small>— ' + E(o.sec) + ' —</small></div>' : '') + '</aside>' : '') +
     '<main class="pvmain">' + (o.hero ? '<section class="pvhero"' + (o.hero.bg ? ' style="--hero-bg:' + o.hero.bg + '"' : '') + '>' + (o.hero.art ? '<div class="pvart" aria-hidden="true">' + o.hero.art + '</div>' : '') + '<div class="pvkick">' + E(o.hero.kick) + '</div><h1>' + o.hero.title + '</h1>' + (o.hero.sub ? '<p>' + E(o.hero.sub) + '</p>' : '') + '<div class="pvrule"></div></section>' : '') + body + '</main></div></div>';
@@ -69,25 +96,32 @@ PV.loading = t => '<div class="pv' + (window.GV && PV.isLight(GV.S.route) ? ' pv
 PV.err = (msg, setup) => setup === "d1" ? '<div class="pvbanner">The portal database isn’t connected yet. See PORTALS-SETUP.md (create the D1 database <b>grooveville-portal</b>).</div>' : '<div class="pvbanner bad">' + E(msg) + '</div>';
 /* ---------- routing ---------- */
 const ROUTES = [[/^rentals(\/|$)/, "rentals"], [/^entertainment$/, "ent"], [/^events$/, "events"], [/^invite\//, "invite"], [/^e\//, "event"], [/^h\//, "hostpage"], [/^host(\/|$)/, "host"], [/^account$/, "account"], [/^sign\//, "sign"], [/^order\//, "order"], [/^t\//, "ticket"], [/^checkin(\/|$)/, "checkin"], [/^verify$/, "verify"], [/^team-portals(\/|$)/, "admin"]];
+const previewRoute = /^(?:rentals(?:\/(?:browse|item\/[^/]+))?|events|entertainment|[eh]\/[^/]+)$/;
+const previewBar = () => '<nav class="pv-preview-bar" aria-label="Public preview"><strong>Public preview</strong><a href="#rentals">Rentals</a><a href="#events">Events</a><a class="pvbtn pk sm" href="/#' + E(founderReturn) + '">Back to founder tools</a></nav>';
+PV.previewLink = (area, route) => '/?portal-preview=1&return=' + encodeURIComponent(route.split("?")[0]) + '#' + area;
 window.pvRoute = function (r) {
-  const path = r.split("?")[0], hit = ROUTES.find(([re]) => re.test(path)); if (!hit) return null;
-  if (hit[1] === "admin" && !GV.S.isAdmin && !(PV.me && (PV.me.admin || PV.me.finance))) { setTimeout(pvMount, 0); const inner = '<div id="pvroot" data-r="' + E(r) + '">' + ((PV.html[r]?.uid === (fb()?.uid || null) && PV.html[r]?.body) || PV.loading()) + '</div>'; return '<div class="wrap">' + inner + '</div>' }
-  setTimeout(pvMount, 0); const inner = '<div id="pvroot" data-r="' + E(r) + '">' + ((PV.html[r]?.uid === (fb()?.uid || null) && PV.html[r]?.body) || PV.loading()) + '</div>';
-  if (hit[1] === "admin" && GV.S.isAdmin && window.GV) return GV.teamShell("team-portals", inner);
-  return '<div class="' + (hit[1] === "rentals" || hit[1] === "events" ? "pv-destination" : "wrap") + '">' + inner + '</div>';
+  const path = r.split("?")[0], hit = ROUTES.find(([re]) => re.test(path));
+  if (publicPreview && !previewRoute.test(path)) return '<div class="wrap">' + previewBar() + '<p class="pvempty">Choose Rentals or Events to continue browsing the public preview.</p></div>';
+  if (!hit) return null;
+  const uid = fb()?.uid || null, key = JSON.stringify([r, uid]);
+  if (document.getElementById("pvroot")?.dataset.keep !== key) setTimeout(pvMount, 0);
+  const cached = PV.html[r];
+  const inner = '<div id="pvroot" data-r="' + E(r) + '" data-keep="' + E(key) + '">' + ((cached?.uid === uid && cached.body) || PV.loading(hit[1] === "admin" ? "Opening founder tools…" : undefined)) + '</div>';
+  return '<div class="' + (hit[1] === "rentals" || hit[1] === "events" ? "pv-destination" : "wrap") + '">' + (publicPreview ? previewBar() : '') + inner + '</div>';
 };
 PV.isRoute = r => ROUTES.some(([re]) => re.test(String(r || "").split("?")[0]));
 window.pvMount = async function (force) {
   const root = document.getElementById("pvroot"); if (!root) return; const r = root.dataset.r, n = ++PV.mountN;
   const path = r.split("?")[0], qs = new URLSearchParams(r.split("?")[1] || ""), parts = path.split("/"), hit = ROUTES.find(([re]) => re.test(path));
   const uid = fb()?.uid || null;
-  try { await PV.loadMe(force); const html = await PV.views[hit[1]]({ r, path, parts, qs }); if (uid !== (fb()?.uid || null) || n !== PV.mountN || !document.getElementById("pvroot") || document.getElementById("pvroot").dataset.r !== r) return; PV.html[r] = { uid, body: html }; root.innerHTML = html; if (PV.after) { const a = PV.after; PV.after = null; try { await a(root) } catch (e) { console.warn(e) } } }
-  catch (e) { console.warn(e); if (n === PV.mountN) root.innerHTML = '<div class="pv' + (PV.isLight(r) ? ' pvl' : '') + '"><div class="pvbody" style="grid-template-columns:1fr"><main class="pvmain">' + PV.err(e.message, e.j && e.j.setup) + '</main></div></div>' }
+  try { await PV.loadMe(force); if (uid !== (fb()?.uid || null) || n !== PV.mountN) return; const html = await PV.views[hit[1]]({ r, path, parts, qs }); if (uid !== (fb()?.uid || null) || n !== PV.mountN || !document.getElementById("pvroot") || document.getElementById("pvroot").dataset.r !== r) return; PV.html[r] = { uid, body: html }; root.innerHTML = html; if (PV.after) { const a = PV.after; PV.after = null; try { await a(root) } catch (e) { console.warn(e) } } }
+  catch (e) { console.warn(e); if (n === PV.mountN) root.innerHTML = '<div class="pv' + (PV.isLight(r) ? ' pvl' : '') + '"><div class="pvbody" style="grid-template-columns:1fr"><main class="pvmain">' + PV.err(e.name === "TimeoutError" ? "The portal took too long to respond. Reload to try again." : e.message, e.j && e.j.setup) + '</main></div></div>' }
 };
 PV.refresh = () => { PV.meAt = 0; return pvMount(true) };
 PV.go = h => { if (location.hash === h) PV.refresh(); else location.hash = h };
 /* ---------- auth ---------- */
 PV.signin = function (mode, then) {
+  if (publicPreview) { PV.toast("Return to founder tools to leave public preview."); return; }
   PV.authNext = then;
   if (!(window.firebase && firebase.apps && firebase.apps.length)) { PV.toast("Sign-in works on grooveville.org"); return }
   mode = mode || "in";

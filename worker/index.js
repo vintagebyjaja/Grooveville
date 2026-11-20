@@ -365,7 +365,7 @@ export default {
     if (pm) return portalShare(req, env, pm[1] === "events" ? "e" : "h", pm[2]);
     const inviteRoute = /^\/events\/invite\/([a-f0-9]{48})\/?$/.exec(url.pathname);
     if (inviteRoute) return new Response(null, { status: 302, headers: { Location: url.origin + "/#invite/" + inviteRoute[1], "cache-control": "private, no-store", "referrer-policy": "no-referrer" } });
-    const PR = { "/rentals": "/#rentals", "/events": "/#events", "/entertainment": "/#entertainment", "/account": "/#account", "/admin": "/#team-portals", "/host": "/#host", "/checkin": "/#checkin" };
+    const PR = { "/rentals": "/#rentals", "/events": "/#events", "/entertainment": "/#entertainment", "/account": "/#account", "/admin": "/#team-portals", "/founder-portal": "/#team-portals", "/host": "/#host", "/checkin": "/#checkin" };
     const pretty = url.pathname.replace(/\/$/, "");
     if (Object.hasOwn(PR, pretty)) return Response.redirect(url.origin + PR[pretty] + url.search, 302);
     if (url.pathname.startsWith("/api/p/")) return portalApi(req, env, ctx, { verifyIdToken });

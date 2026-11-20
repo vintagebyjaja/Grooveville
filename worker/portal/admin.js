@@ -8,11 +8,25 @@ export async function adminApi(C) {
   const { D, u, b, p, url, req, env } = C;
   if (!u) return J({ error: "Sign in" }, 401); if (!u.admin && !u.finance) return J({ error: "Grooveville administrators only" }, 403);
   const POST = req.method === "POST"; const founderOnly = () => { if (!u.founder) throw Object.assign(new Error("Only the founder can do this"), { status: 403 }) };
-  if (u.founder) { const S0 = await settings(D); if (S0.founder_uid !== u.uid) await setSetting(D, "founder_uid", u.uid) }
+  if (u.founder && C.S.founder_uid !== u.uid) await setSetting(D, "founder_uid", u.uid);
   if (p === "/api/p/admin/overview") {
-    const c = async sql => (await one(D, sql)).n;
-    return J({ settings: await settings(D), counts: { requests: await c("SELECT COUNT(*) AS n FROM rental_requests WHERE status IN ('submitted')"), docsToFinalize: await c("SELECT COUNT(*) AS n FROM documents WHERE status = 'partially_signed' AND id NOT IN (SELECT doc_id FROM doc_signers WHERE status != 'signed')"), verifications: await c("SELECT COUNT(*) AS n FROM host_verifications WHERE status = 'submitted'"), events: await c("SELECT COUNT(*) AS n FROM events WHERE status = 'submitted'"), nameRequests: await c("SELECT COUNT(*) AS n FROM profiles WHERE name_request IS NOT NULL"), listings: await c("SELECT COUNT(*) AS n FROM listings WHERE status = 'active'"), hosts: await c("SELECT COUNT(*) AS n FROM hosts"), locations: await c("SELECT COUNT(*) AS n FROM locations WHERE status = 'active'") },
-      mode: C.mode, email: !!(env.RESEND_API_KEY && env.MAIL_FROM), webhook: !!(env.STRIPE_PORTAL_WEBHOOK_SECRET || env.STRIPE_WEBHOOK_SECRET), founder: u.founder, roles: await all(D, "SELECT r.uid, r.role, r.scope, p.email, p.first, p.last FROM roles r LEFT JOIN profiles p ON p.uid = r.uid") });
+    const countsSql = {
+      requests: "SELECT COUNT(*) AS n FROM rental_requests WHERE status = 'submitted'",
+      docsToFinalize: "SELECT COUNT(*) AS n FROM documents WHERE status = 'partially_signed' AND id NOT IN (SELECT doc_id FROM doc_signers WHERE status != 'signed')",
+      verifications: "SELECT COUNT(*) AS n FROM host_verifications WHERE status = 'submitted'",
+      events: "SELECT COUNT(*) AS n FROM events WHERE status = 'submitted'",
+      nameRequests: "SELECT COUNT(*) AS n FROM profiles WHERE name_request IS NOT NULL",
+      listings: "SELECT COUNT(*) AS n FROM listings WHERE status = 'active'",
+      hosts: "SELECT COUNT(*) AS n FROM hosts",
+      locations: "SELECT COUNT(*) AS n FROM locations WHERE status = 'active'",
+    };
+    const entries = Object.entries(countsSql);
+    const [results, roles] = await Promise.all([
+      D.batch(entries.map(([, sql]) => D.prepare(sql))),
+      all(D, "SELECT r.uid, r.role, r.scope, p.email, p.first, p.last FROM roles r LEFT JOIN profiles p ON p.uid = r.uid"),
+    ]);
+    const counts = Object.fromEntries(entries.map(([key], index) => [key, results[index].results[0].n]));
+    return J({ settings: C.S, counts, mode: C.mode, email: !!(env.RESEND_API_KEY && env.MAIL_FROM), webhook: !!(env.STRIPE_PORTAL_WEBHOOK_SECRET || env.STRIPE_WEBHOOK_SECRET), founder: u.founder, roles });
   }
   if (p === "/api/p/admin/settings" && POST) {
     founderOnly(); const S = await settings(D), ch = {};

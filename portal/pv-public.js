@@ -6,7 +6,7 @@
     const background = showcase ? '' : '<img class="pv-public-image" src="/media/rentals-architecture.webp" alt="" fetchpriority="high">';
     return '<div class="pv pv-public pv-public-' + kind + '"><section class="pv-public-hero">' +
       background + '<div class="pv-public-copy"><header><div class="pvkick">' + E(section) + '</div><h1>' + E(title) + '</h1></header>' +
-      '<div class="pv-public-intro"><p>' + E(intro) + '</p><div class="pvrow">' + PV.publicJump(browse) + actions + '</div></div></div>' +
+      '<div class="pv-public-intro"><p>' + E(intro) + '</p><div class="pvrow">' + PV.publicJump(browse) + actions + (PV.me?.founder ? '<a class="pvbtn lg" href="#team-portals/' + (kind === "rentals" ? "rentals" : "locations") + '">Founder tools</a>' : '') + '</div></div></div>' +
       (showcase || '') + '</section><div class="pv-public-content">' + content + '</div></div>';
   };
 

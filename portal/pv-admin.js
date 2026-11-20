@@ -9,36 +9,42 @@ const nm = x => [x.first, x.last].filter(Boolean).join(" ") || x.email || "";
 const toC = v => { const n = Number(String(v == null ? "" : v).replace(/[$,\s]/g, "")); return isFinite(n) ? Math.round(n * 100) : 0 };
 const d$ = c => c ? (c / 100).toFixed(2) : "";
 function nav(o) { const c = (o && o.counts) || {}; return [["#team-portals", "Overview", "grid"], ["#team-portals/rentals", "Rentals", "home", c.requests], ["#team-portals/customers", "Customers & billing", "users", c.nameRequests], ["#team-portals/docs", "Agreements", "sign", c.docsToFinalize], ["#team-portals/hosts", "Hosts & verification", "star", c.verifications], ["#team-portals/locations", "Locations & pricing", "building"], ["#team-portals/events", "Event approvals", "cal", c.events], ["#team-portals/finance", "Finance & settlements", "cash"], ["#team-portals/settings", "Settings", "gear"], ...(PV.me.founder ? [["#team-portals/invites", "Special Invites", "link"]] : [])] }
-let OV = null;
-const shell = (body, hero) => PV.shell({ sec: "ADMINISTRATION", theme: "pv-admin", nav: nav(OV), card: ["Grooveville LLC", PV.me.founder ? "Founder" : PV.me.admin ? "Administrator" : "Finance", "shield"], hero, art: false }, body);
-PV.views.admin = async ({ parts, qs }) => {
+const shell = (body, hero, data) => PV.shell({ sec: "ADMINISTRATION", theme: "pv-admin", nav: nav(data), card: ["Grooveville LLC", PV.me.founder ? "Founder" : PV.me.admin ? "Administrator" : "Finance", "shield"], hero, art: false }, body);
+PV.views.admin = async ({ parts, qs, r }) => {
+  if (PV.me.error) throw new Error(PV.me.error);
   if (!PV.me.signedIn) return PV.shell({ sec: "ADMINISTRATION" }, '<div class="pvpanel" style="max-width:520px"><h3>Sign in</h3><p class="muted" style="margin:6px 0 14px">Sign in with your Grooveville administrator account.</p><button class="pvbtn pk" data-act="pv-signin">Sign in</button></div>');
   if (!PV.me.admin && !PV.me.finance) return PV.shell({ sec: "ADMINISTRATION" }, '<div class="pvbanner bad">This area is for Grooveville administrators.</div>');
-  if (PV.me.admin) OV = await PV.api("admin/overview").catch(e => ({ error: e.message }));
   const s = parts[1] || "", id = parts[2];
-  if (s === "rentals") return shell(await rentals());
-  if (s === "listing") return shell(await listingForm(id));
-  if (s === "customers") return shell(await customers());
-  if (s === "docs" && id) return shell('<a class="pvprice" href="#team-portals/docs" style="text-decoration:none">‹ Agreements</a><div style="height:12px"></div>' + await ES.editor(id));
-  if (s === "docs") return shell(await docs(qs));
-  if (s === "hosts") return shell(await hosts());
-  if (s === "locations") return shell(await locations());
-  if (s === "location") return shell(await locationForm(id));
-  if (s === "events") return shell(await events());
-  if (s === "finance" && id) return shell(await settlement(id));
-  if (s === "finance") return shell(await finance(qs));
-  if (s === "invites") return shell(await PV.inviteAdmin());
-  if (s === "settings") return shell(await settingsView());
-  return shell(await overview(), { kick: "Grooveville LLC", title: 'Rentals <span>&amp;</span> Entertainment', sub: "Approvals, agreements, billing, settlements and founder settings.", art: '<img src="/media/admin-venue.webp" alt="" fetchpriority="high">' });
+  const view = (body, hero, data) => shell((PV.me.founder ?
+    '<nav class="pv-preview-bar" aria-label="Preview as a visitor"><strong>Founder tools</strong><a class="pvbtn sm" href="' + E(PV.previewLink("rentals", r)) + '">Preview Rentals</a><a class="pvbtn sm" href="' + E(PV.previewLink("events", r)) + '">Preview Events</a></nav>' : '') + body, hero, data);
+  if (s === "rentals") return view(await rentals());
+  if (s === "listing") return view(await listingForm(id));
+  if (s === "customers") return view(await customers());
+  if (s === "docs" && id) return view('<a class="pvprice" href="#team-portals/docs" style="text-decoration:none">‹ Agreements</a><div style="height:12px"></div>' + await ES.editor(id));
+  if (s === "docs") return view(await docs(qs));
+  if (s === "hosts") return view(await hosts());
+  if (s === "locations") return view(await locations());
+  if (s === "location") return view(await locationForm(id));
+  if (s === "events") return view(await events());
+  if (s === "finance" && id) return view(await settlement(id));
+  if (s === "finance") return view(await finance(qs));
+  if (s === "invites") return view(await PV.inviteAdmin());
+  if (s === "settings") {
+    if (!PV.me.admin) return view('<div class="pvbanner">Administrators only.</div>');
+    const [data, audit] = await Promise.all([PV.api("admin/overview"), PV.api("admin/audit")]);
+    return view(settingsView(data, audit), null, data);
+  }
+  if (!PV.me.admin) return view('<a class="pvbtn" href="#team-portals/finance">Open Finance</a>');
+  const [data, finances] = await Promise.all([PV.api("admin/overview"), PV.api("finance/overview").catch(() => null)]);
+  return view(overview(data, finances), { kick: "Grooveville LLC", title: 'Rentals <span>&amp;</span> Entertainment', sub: "Approvals, agreements, billing, settlements and founder settings.", art: '<img src="/media/admin-venue.webp" alt="" fetchpriority="high">' }, data);
 };
 /* ---------- overview + founder switches ---------- */
 const SW = [["rentals_open", "Rentals portal open to the public", "Customers can browse and request rentals."], ["ent_open", "Entertainment open to the public", "Public event pages and ticket sales (for published events)."], ["payments_live", "Live payments", "Allows real charges when the Stripe key is a live key. Off = live keys are blocked."], ["esign_live", "Production e-signing", "Allows customers to sign with live keys. Testers and admins can always sign."]];
 function overviewHeading(icon, title) {
   return '<h3 class="pv-admin-heading">' + PV.ic(icon) + E(title) + '</h3>';
 }
-async function overview() {
-  if (!OV || OV.error) return '<div class="pvbanner bad">' + E((OV && OV.error) || "Finance access only.") + '</div><a class="pvbtn" href="#team-portals/finance">Finance</a>';
-  const S = OV.settings, c = OV.counts, f = await PV.api("finance/overview").catch(() => null);
+function overview(OV, f) {
+  const S = OV.settings, c = OV.counts;
   const todo = [["requests", "Rental requests to review", "#team-portals/rentals"], ["events", "Events waiting for approval", "#team-portals/events"], ["verifications", "Host verifications", "#team-portals/hosts"], ["docsToFinalize", "Agreements ready to finalize", "#team-portals/docs"], ["nameRequests", "Name change requests", "#team-portals/customers"]].filter(([k]) => c[k]);
   return '<div class="pvgrid pvg2 pv-admin-overview"><div class="pvpanel">' + overviewHeading("check", "To do") + (todo.length ? todo.map(([k, l, h]) => '<a class="pvq" href="' + h + '"><span class="pvn">' + c[k] + '</span><span><b>' + l + '</b></span><i>›</i></a>').join("") : '<p class="muted" style="margin-top:8px">Nothing waiting.</p>') + '</div>' +
     '<div class="pvpanel">' + overviewHeading("link", "Connections") + '<div class="pvlist pv-admin-connections">' + [["Stripe", OV.mode === "off" ? ["Not connected", "bad"] : OV.mode === "test" ? ["Test mode", "warn"] : ["Live key", "ok"]], ["Stripe webhook secret", OV.webhook ? ["Set", "ok"] : ["Missing", "bad"]], ["Email notifications", OV.email ? ["On (Resend)", "ok"] : ["In-app only", ""]]].map(([l, [v, k]]) => '<div class="pvli"><div><b>' + l + '</b></div><span class="pvpill ' + k + '">' + v + '</span></div>').join("") + '</div><p class="pvnote" style="margin-top:10px">Setup steps are in PORTALS-SETUP.md.</p></div></div>' +
@@ -214,7 +220,7 @@ PV.acts["pv-f-record"] = async t => {
 };
 PV.acts["pv-f-adj"] = async t => { const F = Object.fromEntries(new FormData(document.getElementById("pvadj"))); await PV.api("finance/settlement/adjust", { event: t.dataset.id, kind: F.kind, cents: toC(F.amount), label: F.label, reason: F.reason }); PV.refresh() };
 /* ---------- settings ---------- */
-async function settingsView() { if (!OV || OV.error) return '<div class="pvbanner">Administrators only.</div>'; const S = OV.settings, au = await PV.api("admin/audit");
+function settingsView(OV, au) { const S = OV.settings;
   return '<h2>Settings</h2><form class="pvpanel pvform c3" id="pvset" style="margin-top:16px" onsubmit="return false"><h3 class="full">Defaults</h3><label class="pvf"><span>Default ticketing fee (%)</span><input class="pvin" name="fee" value="' + (S.platform_fee_bps / 100) + '"' + (OV.founder ? "" : " disabled") + '></label><label class="pvf"><span>Default per-ticket fee ($)</span><input class="pvin" name="per" value="' + d$(S.platform_fee_cents) + '"' + (OV.founder ? "" : " disabled") + '></label><label class="pvf"><span>Time zone</span><input class="pvin" name="tz" value="' + E(S.tz || "America/New_York") + '"' + (OV.founder ? "" : " disabled") + '></label><label class="pvf"><span>Support email (shown to customers)</span><input class="pvin" name="support_email" value="' + E(S.support_email || "") + '"' + (OV.founder ? "" : " disabled") + '></label><label class="pvf"><span>Default landlord name</span><input class="pvin" name="landlord_name" value="' + E(S.landlord_name || "") + '"' + (OV.founder ? "" : " disabled") + '></label>' + (OV.founder ? '<div class="full"><button class="pvbtn pk" data-act="pv-a-set">Save</button></div>' : '<p class="pvnote full">Only the founder changes these.</p>') + '</form>' +
     '<div class="pvpanel" style="margin-top:16px"><h3>People &amp; roles</h3><p class="pvnote" style="margin:4px 0 10px">Admins manage rentals, hosts and events. Finance can review settlements and issue customer refunds. The founder approves and records host settlements. Testers can preview closed portals and sign test documents. The founder role comes from the Back Office.</p>' + (OV.founder ? '<form class="pvrow" onsubmit="return false"><input class="pvin" id="pvremail" type="email" placeholder="Email (they must sign in once)" style="flex:1"><select class="pvin" id="pvrrole"><option>admin</option><option>finance</option><option>tester</option></select><button class="pvbtn pk" data-act="pv-a-role">Add</button></form>' : '') + '<div class="pvlist" style="margin-top:10px">' + OV.roles.map(r => '<div class="pvli"><div><b>' + E(nm(r)) + '</b><small>' + E(r.email || r.uid) + ' · ' + E(r.role) + '</small></div>' + (OV.founder ? '<button class="pvbtn sm" data-act="pv-a-role" data-rm="' + E(r.email) + '" data-role="' + E(r.role) + '">Remove</button>' : '') + '</div>').join("") + '</div></div>' +
     '<div class="pvpanel" style="margin-top:16px"><div class="pvph"><h3>Audit log</h3><span class="pvpill ' + (au.chain.ok ? "ok" : "bad") + '">' + (au.chain.ok ? "Chain intact · " + au.chain.rows + " entries" : "Chain broken at #" + E(au.chain.at)) + '</span></div><div class="pvtblw" style="max-height:420px;overflow:auto"><table class="pvtbl"><thead><tr><th>When</th><th>Who</th><th>Action</th><th>Item</th></tr></thead><tbody>' + au.rows.map(r => '<tr><td>' + PV.dt(r.at) + '</td><td><small>' + E(String(r.actor).slice(0, 10)) + '</small></td><td>' + E(r.action.replace(/_/g, " ")) + '</td><td><small>' + E(r.entity + " " + (r.entity_id || "")) + '</small></td></tr>').join("") + '</tbody></table></div></div>' }
