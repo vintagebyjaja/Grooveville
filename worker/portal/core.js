@@ -120,15 +120,16 @@ const BUSINESS_FINANCE_SCHEMA = [
 )`,
 `CREATE INDEX IF NOT EXISTS business_finance_business ON business_finance_entries(business_id, entry_date)`
 ];
+const GROOVE_READS_FINANCE = "INSERT OR IGNORE INTO finance_businesses (id,name) VALUES ('reads','Groove Reads')";
 let READY = null;
 export async function db(env) {
   if (!env.PORTAL_DB) throw Object.assign(new Error("The portal database (D1 binding PORTAL_DB) isn't connected yet."), { status: 503 });
   if (!READY) READY = (async () => {
     const D = env.PORTAL_DB;
     const current = await D.prepare("SELECT MAX(v) AS v FROM schema_version").first().catch(() => null);
-    if (current?.v >= 6) return;
+    if (current?.v >= 7) return;
     const schema = current?.v >= 1 ? [] : SCHEMA;
-    await D.batch([...schema, ...(current?.v >= 2 ? [] : [MANUAL_HOST_PAYMENTS]), ...(current?.v >= 3 ? [] : SPECIAL_INVITES_SCHEMA), ...(current?.v >= 4 ? [] : PROFILE_SCHEMA), ...(current?.v >= 5 ? [] : [BUYER_PROCESSING_SCHEMA]), ...BUSINESS_FINANCE_SCHEMA, "INSERT INTO schema_version (v) SELECT 6 WHERE NOT EXISTS (SELECT 1 FROM schema_version WHERE v >= 6)"].map(sql => D.prepare(sql)));
+    await D.batch([...schema, ...(current?.v >= 2 ? [] : [MANUAL_HOST_PAYMENTS]), ...(current?.v >= 3 ? [] : SPECIAL_INVITES_SCHEMA), ...(current?.v >= 4 ? [] : PROFILE_SCHEMA), ...(current?.v >= 5 ? [] : [BUYER_PROCESSING_SCHEMA]), ...(current?.v >= 6 ? [] : BUSINESS_FINANCE_SCHEMA), GROOVE_READS_FINANCE, "INSERT INTO schema_version (v) SELECT 7 WHERE NOT EXISTS (SELECT 1 FROM schema_version WHERE v >= 7)"].map(sql => D.prepare(sql)));
   })().catch(e => { READY = null; throw e });
   await READY; return env.PORTAL_DB;
 }

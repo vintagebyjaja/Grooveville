@@ -75,6 +75,8 @@ export async function businessFinance(C, settlementFor) {
     if (charge.id !== id || charge.currency !== "usd" || !charge.paid || charge.status !== "succeeded" || !charge.captured || charge.livemode !== (C.mode === "live")) return J({ error: "Only captured USD payments from this Stripe environment can be linked" }, 400);
     const intent = charge.payment_intent;
     if (typeof intent !== "object" || !intent?.id || !charge.balance_transaction || typeof charge.balance_transaction !== "object") return J({ error: "Stripe has not provided the payment and fee details yet" }, 409);
+    const reads = charge.metadata?.book || intent.metadata?.book;
+    if (reads && biz.id !== "reads") return J({ error: "Link Groove Reads book payments to the Groove Reads card" }, 409);
     if (charge.metadata?.gvp || intent.metadata?.gvp || await one(D, "SELECT 1 AS native FROM charges WHERE stripe_pi=? UNION ALL SELECT 1 FROM orders WHERE stripe_pi=? UNION ALL SELECT 1 FROM special_invite_upgrades WHERE payment_intent=? LIMIT 1", intent.id, intent.id, intent.id)) return J({ error: "This payment is already managed by Grooveville checkout" }, 409);
     if (charge.disputed) return J({ error: "Reconcile this disputed payment directly in Stripe before linking it" }, 409);
     const amount = charge.amount_captured, refunds = charge.amount_refunded, fees = charge.balance_transaction.fee;
