@@ -4,6 +4,8 @@
   "name": "grooveville",
   "main": "worker/index.js",
   "compatibility_date": "2025-06-01",
+  // Configure isolated bindings and secrets in Cloudflare Previews Base or on the branch preview.
+  "previews": {},
   "assets": {
     "directory": "./",
     "binding": "ASSETS",
