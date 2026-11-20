@@ -3,6 +3,7 @@ import { siteApi } from "./site.js";
 import { guideApi } from "./guide.js";
 import { contentApi, contentCron } from "./content.js";
 import { autopilotQueue } from "./autopilot.js";
+import { portalApi, portalCron, portalShare } from "./portal/api.js";
 import { creativeApi } from "./creative.js";
 import { genApi, genCron } from "./gen.js";
 /* Grooveville Worker
@@ -346,6 +347,11 @@ export default {
     if (am) return artistShare(env, am[1], url);
     const sm = /^\/song\/([A-Za-z0-9_-]{2,64})\/?$/.exec(url.pathname);
     if (sm) return songShare(env, sm[1], url);
+    const pm = /^\/entertainment\/(events|hosts)\/([a-z0-9-]{1,80})\/?$/.exec(url.pathname);
+    if (pm) return portalShare(req, env, pm[1] === "events" ? "e" : "h", pm[2]);
+    const PR = { "/rentals": "/#rentals", "/entertainment": "/#entertainment", "/account": "/#account", "/admin": "/#team-portals", "/host": "/#host", "/checkin": "/#checkin" };
+    const pr = PR[url.pathname.replace(/\/$/, "")]; if (pr) return Response.redirect(url.origin + pr, 302);
+    if (url.pathname.startsWith("/api/p/")) return portalApi(req, env, ctx, { verifyIdToken });
     if (url.pathname.startsWith("/api/")) {
       try { return await api(req, env, ctx) } catch (e) { return json({ error: "Server error" }, 500) }
     }
@@ -356,6 +362,7 @@ export default {
     for (const [s, cfg] of Object.entries(SH)) if (!cfg.disabled) ctx.waitUntil(syncShow(env, s, null, cfg).catch(() => {}));
     ctx.waitUntil(contentCron(env).catch(() => {}));
     ctx.waitUntil(genCron(env).catch(() => {}));
+    if (new Date(event.scheduledTime || Date.now()).getUTCMinutes() % 10 < 2) ctx.waitUntil(portalCron(env).catch(e => console.log("portal cron", e && e.message)));
   },
   /* Content Autopilot background work (Cloudflare Queue "grooveville-autopilot"): one step per message */
   async queue(batch, env, ctx) {

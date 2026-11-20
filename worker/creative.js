@@ -5,6 +5,7 @@
    Paid book pages, audio and files are only sent after the server checks the reader's entitlement; nothing relies on the browser hiding them. */
 import { openaiJSON, budgetOk, charge, IMAGE_MODELS, modelProblem, openaiErr } from "./content.js";
 import { serveR2 } from "./music.js";
+import { portalStripe } from "./portal/api.js";
 
 const J = (o, s, h) => new Response(JSON.stringify(o), { status: s || 200, headers: Object.assign({ "content-type": "application/json; charset=utf-8", "cache-control": "no-store" }, h || {}) });
 const te = new TextEncoder();
@@ -131,6 +132,7 @@ export async function creativeApi(req, env, ctx, h) {
     if (p === "/api/reads/stripe" && req.method === "POST") {                 // Stripe → server only, verified signature
       const raw = await req.text(); if (!(await stripeVerify(env, raw, req.headers.get("stripe-signature")))) return J({ error: "Bad signature" }, 400);
       let ev; try { ev = JSON.parse(raw) } catch (e) { return J({ error: "Bad payload" }, 400) }
+      if (env.PORTAL_DB) { const o0 = (ev.data && ev.data.object) || {}, gvp = o0.metadata && o0.metadata.gvp; if (gvp || /^(charge\.|transfer\.)/.test(ev.type)) { try { const r = await portalStripe(env, ev); if (gvp) return J(r) } catch (e) { return J({ error: "Portal could not process the event; Stripe will retry" }, 500) } } }
       const seenK = "reads/stripe/events/" + String(ev.id || "").replace(/[^A-Za-z0-9_-]/g, "") + ".json"; if (await B.head(seenK)) return J({ ok: true, duplicate: true });
       const o = (ev.data && ev.data.object) || {};
       if (ev.type === "checkout.session.completed" || ev.type === "checkout.session.async_payment_succeeded") {

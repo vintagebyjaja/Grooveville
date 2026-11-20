@@ -2033,7 +2033,7 @@ function viewBrand(id,sub){
     '</div></section>'+
     (b.portal?'<section style="padding-block:6px 0"><div class="wrap">'+portalLink(b,'portalcard','<span class="swirl" aria-hidden="true"><i></i></span><span class="pc-text"><span class="eyebrow" style="color:#d9b3ff">The official Shadow Crown site</span><b>Step through the portal</b><span>Explore the universe, meet the Upendo family, discover Book 1 and enter the Living World.</span></span><span class="pc-go">Enter ✦</span>')+'</div></section>':'')+
     '<section style="padding-top:8px"><div class="wrap bcols"><div style="display:flex;flex-direction:column;gap:20px;min-width:0">'+
-    (b.feature?'<div class="card" style="display:flex;gap:18px;align-items:center;flex-wrap:wrap;border-color:var(--c)"><img src="'+esc(ASSETS["sc-cover"]||"")+'" alt="Shadow Crown Book 1: Zeke\'s Daydream cover" width="96" height="96" style="width:96px;height:96px;border-radius:8px;object-fit:cover;flex:none"><div style="min-width:0;flex:1"><div class="eyebrow">'+esc(b.feature.eyebrow)+'</div><h3 style="font-size:22px;margin-top:4px">'+esc(b.feature.title)+'</h3><p class="muted" style="margin-top:4px">by '+esc(b.feature.by)+' · <span class="mono" style="font-size:13px">'+esc(b.feature.meta)+'</span></p></div><a class="btn peach" href="'+esc(b.feature.url)+'" target="_blank" rel="noopener">'+esc(b.feature.label)+' ↗</a></div>':'')+'<div class="card"><div class="eyebrow">About</div><p style="margin-top:8px;font-size:17px;max-width:62ch">'+esc(b.about)+'</p></div>'+
+    (b.feature?'<div class="card" style="display:flex;gap:18px;align-items:center;flex-wrap:wrap;border-color:var(--c)"><img src="'+esc(ASSETS["sc-cover"]||"")+'" alt="Shadow Crown Book 1: Zeke\'s Daydream cover" width="96" height="96" style="width:96px;height:96px;border-radius:8px;object-fit:cover;flex:none"><div style="min-width:0;flex:1"><div class="eyebrow">'+esc(b.feature.eyebrow)+'</div><h3 style="font-size:22px;margin-top:4px">'+esc(b.feature.title)+'</h3><p class="muted" style="margin-top:4px">by '+esc(b.feature.by)+' · <span class="mono" style="font-size:13px">'+esc(b.feature.meta)+'</span></p></div><a class="btn peach" href="'+esc(b.feature.url)+'" target="_blank" rel="noopener">'+esc(b.feature.label)+' ↗</a></div>':'')+(typeof pvBrandCta==="function"?pvBrandCta(id):"")+'<div class="card"><div class="eyebrow">About</div><p style="margin-top:8px;font-size:17px;max-width:62ch">'+esc(b.about)+'</p></div>'+
     '<div><h3 style="font-size:22px;margin-bottom:12px">'+(id==="hq"?"Everything coming up":"Coming up at "+esc(b.name))+'</h3>'+
     ((id==="hq"?upcomingPublic(null,8):ev).length?'<div class="evlist">'+(id==="hq"?upcomingPublic(null,8):ev).map(e=>evRow(e)).join("")+'</div>':'<div class="empty">Nothing public on the calendar yet.</div>')+'</div></div>'+
     '<aside class="card" style="align-self:start"><div class="eyebrow">'+(id==="hq"?"Growing on the vine":"Part of the Groove Vine")+'</div><div class="links-list" style="margin-top:12px">'+
@@ -2128,7 +2128,7 @@ function collabSubmit(form){
 }
 
 /* ---------- team (back office) ---------- */
-const TEAM_TABS=[["team","Dashboard"],["team-time","Timesheet"],["team-cal","Calendar"],["team-rem","Reminders"],["team-out","Collabs"],["team-people","Teams"],["team-docs","Documents"],["team-conv","Converter"],["team-reports","Reports"],["team-vault","Private notes"],["team-web","Website Studio"],["team-media","Media Library"],["team-content","Content Studio"],["team-creative","Creative Studio"],["team-sound","Grooveville Sound Lab"],["ent","Entertainment"],["studio","Ent. Studio"],["team-site","Site settings"]];
+const TEAM_TABS=[["team","Dashboard"],["team-time","Timesheet"],["team-cal","Calendar"],["team-rem","Reminders"],["team-out","Collabs"],["team-people","Teams"],["team-docs","Documents"],["team-conv","Converter"],["team-reports","Reports"],["team-vault","Private notes"],["team-web","Website Studio"],["team-media","Media Library"],["team-content","Content Studio"],["team-creative","Creative Studio"],["team-sound","Grooveville Sound Lab"],["team-portals","Rentals & Events"],["ent","Entertainment"],["studio","Ent. Studio"],["team-site","Site settings"]];
 function teamGate(){
   if(!S.authChecked)return '<div class="wrap gate"><h1>Checking access…</h1><p class="muted">One moment while we confirm who is signed in.</p></div>';
   return '<div class="wrap gate"><div class="eyebrow">Grooveville team</div><h1>Back office sign in</h1><p class="muted">The timesheet, private calendar, reminders and collab tracker are only for the Grooveville team. Open this page while signed in to Claude with the account Grooveville invited as an Editor.</p><p class="muted" style="font-size:13.5px">If you just got access, reload this page.</p><a class="btn" href="#home">Back to the public site</a></div>';
@@ -8257,6 +8257,7 @@ async function publishSite(btn){
 /* ---------- router & render ---------- */
 let rq=0;
 function scheduleRender(fromData){
+  if(fromData&&window.PV&&PV.isRoute(S.route))return;   // portal pages load their own data from /api/p
   if(fromData&&S.route.includes("content")&&$("#csEd")&&$("#csEd").contains(document.activeElement)&&/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName))return;
   if(fromData&&typeof wsLive==="function"&&wsLive()){wsRefresh();return}
   if(fromData&&S.route==="ent-upload"&&$("#songForm"))return;
@@ -8279,7 +8280,9 @@ function render(){
   document.title="Grooveville LLC";
   navLinks();
   let h;
-  if(r==="calendar")h=viewPublicCalendar();
+  const pvh=typeof pvRoute==="function"?pvRoute(r):null;
+  if(pvh!=null)h=pvh;
+  else if(r==="calendar")h=viewPublicCalendar();
   else if(r.startsWith("collab"))h=viewCollab(r.split("-")[1]);
   else if(r.startsWith("b-")&&BR[r.slice(2).split("/")[0]])h=viewBrand(r.slice(2).split("/")[0],r.slice(2).split("/")[1]||"");
   else if(r==="signin"||r==="groove")h=viewGroove();
@@ -8338,6 +8341,8 @@ function render(){
   $("#footnote").innerHTML=SNAP.publishedAt?' · Updated '+esc(new Date(SNAP.publishedAt).toLocaleDateString("en-US",{month:"short",day:"numeric",year:"numeric"})):'';
 }
 function route(){S.route=(location.hash||"#home").slice(1)||"home"}
+/* bridge for the separately loaded portal scripts (/portal/*.js) */
+window.GV=Object.freeze({get S(){return S},render:()=>render(),teamShell:(t,b)=>teamShell(t,b),openModal:(h,m)=>openModal(h,m),closeModal:()=>closeModal(),toast:m=>toast(m),brandLogo:id=>{try{return (BR[id]&&brandInfo(id).logo)||""}catch(e){return ""}}});
 window.addEventListener("hashchange",()=>{S.navCount++;route();render();window.scrollTo(0,0)});
 
 /* ---------- events ---------- */
@@ -8346,6 +8351,7 @@ document.addEventListener("click",async e=>{
   const t=e.target.closest("[data-act]");if(!t)return;
   const a=t.dataset.act, id=t.dataset.id;
   if(a==="scrim"){if(e.target===t)closeModal();return}
+  if(typeof pvAct==="function"&&pvAct(a,t,e))return;
   if(mobileAct(a,t))return;
   if(wsAct(a,t))return;
   if(typeof genAct2==="function"&&genAct2(a,t))return;
@@ -8524,5 +8530,12 @@ if(introWanted())showIntro();
 })();
 </script>
 
+<link rel="stylesheet" href="/portal/portal.css">
+<script src="/portal/qr.js" defer></script>
+<script src="/portal/pv-core.js" defer></script>
+<script src="/portal/pv-rentals.js" defer></script>
+<script src="/portal/pv-esign.js" defer></script>
+<script src="/portal/pv-ent.js" defer></script>
+<script src="/portal/pv-admin.js" defer></script>
 </body>
 </html>
