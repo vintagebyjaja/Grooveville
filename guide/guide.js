@@ -1136,7 +1136,7 @@ document.addEventListener("click",e=>{
   if(a==="signin")return authModal("in");
   if(a==="g-mode")return authModal(t.dataset.v);
   if(a==="g-google")return googleSignIn();
-  if(a==="signout"){try{firebase.auth().signOut()}catch(x){}closeModal();return}
+  if(a==="signout"){fetch("/api/guide/session",{method:"DELETE",keepalive:true}).catch(()=>{}).finally(()=>firebase.auth().signOut().then(()=>location.assign(CFG.homeUrl)));closeModal();return}
   if(a==="close")return closeModal();
   if(a==="theme"){D.settings.theme=t.dataset.v;save();applyTheme();closeModal();if(G.page==="settings")renderPage();return}
   if(a==="chip"){const k=t.dataset.k;if(k==="fav"||k==="recent")return quickList(k);const s=savedOf(k);if(s){if(G.page!==""&&G.page!=="navigate")go("navigate");return chooseDest(s)}if(G.page!==""&&G.page!=="navigate")go("navigate");return searchFor(k,"Search for your "+k+" address")}

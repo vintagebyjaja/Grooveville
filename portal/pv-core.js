@@ -24,7 +24,7 @@ PV.upload = async (file, purpose) => { const t = file.type || "application/octet
 PV.sha = async buf => [...new Uint8Array(await crypto.subtle.digest("SHA-256", buf))].map(x => x.toString(16).padStart(2, "0")).join("");
 PV.loadMe = async force => { if (!force && PV.me && Date.now() - PV.meAt < 30000 && PV.me.uid === (fb() && fb().uid)) return PV.me; try { PV.status = await PV.api("status") } catch (e) { PV.status = { error: e.message, setup: e.j && e.j.setup } } if (!fb()) { PV.me = { signedIn: false }; PV.meAt = Date.now(); return PV.me } try { PV.me = await PV.api("me") } catch (e) { PV.me = { signedIn: false, error: e.message } } PV.meAt = Date.now(); return PV.me };
 PV.fullName = p => p ? [p.first, p.middle ? p.middle + "." : "", p.last].filter(Boolean).join(" ") : "";
-PV.initials = p => p && p.first ? (p.first[0] + (p.last || "")[0]).toUpperCase() : "G";
+PV.initials = p => p && p.first ? (p.first[0] + (p.last || "").slice(0, 1)).toUpperCase() : "G";
 /* ---------- fonts (cursive signatures) ---------- */
 PV.fontsReady = (() => { let p; return () => p || (p = new Promise(res => { if (!document.querySelector('link[data-pvfont]')) { const l = document.createElement("link"); l.rel = "stylesheet"; l.dataset.pvfont = 1; l.href = "https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap"; document.head.appendChild(l) } const t = setTimeout(res, 2500); (document.fonts ? document.fonts.load('44px "Great Vibes"') : Promise.resolve()).then(() => { clearTimeout(t); res() }, () => res()) })) })();
 /* ---------- icons ---------- */
@@ -39,30 +39,28 @@ PV.houseArt = () => '<svg viewBox="0 0 800 300" preserveAspectRatio="xMidYMid sl
   + '<g stroke="#0f0f10" stroke-width="5"><path d="M345 150v150M425 150v150M505 150v60M268 218h316"/></g><path d="M250 218h360" stroke="#c9b9a7" stroke-width="2" opacity=".5"/>'
   + '<g fill="none" stroke="#0b0b0c" stroke-width="6" stroke-linecap="round"><path d="M735 300c-6-60-2-110 10-150"/><path d="M745 150c-30-12-58-6-80 14M745 150c-14-26-40-40-72-38M745 150c22-22 50-26 76-16M745 150c10-28 34-42 60-42M745 150c-28 4-46 22-58 46"/></g>'
   + '<g fill="none" stroke="#0b0b0c" stroke-width="5" stroke-linecap="round"><path d="M70 300c4-50 0-90-10-120"/><path d="M60 180c-24-6-44 2-58 18M60 180c4-24 22-38 46-40M60 180c20-10 42-6 58 10"/></g></svg>';
-PV.houseArtDay = () => '<svg viewBox="0 0 800 300" preserveAspectRatio="xMidYMid slice"><defs><linearGradient id="pvdsky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f6e7da"/><stop offset=".6" stop-color="#f3d6c0"/><stop offset="1" stop-color="#eac3a6"/></linearGradient><radialGradient id="pvdsun" cx=".78" cy=".22" r=".45"><stop offset="0" stop-color="#fff6e8"/><stop offset="1" stop-color="#fff6e8" stop-opacity="0"/></radialGradient><linearGradient id="pvdwin" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe2b8"/><stop offset=".55" stop-color="#f2b17f"/><stop offset="1" stop-color="#c9805a"/></linearGradient><linearGradient id="pvdwall" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fbf6f0"/><stop offset="1" stop-color="#e4d6c7"/></linearGradient></defs>'
-  + '<rect width="800" height="300" fill="url(#pvdsky)"/><rect width="800" height="300" fill="url(#pvdsun)"/>'
-  + '<path d="M150 300V172l92-38h356l72 30v136z" fill="url(#pvdwall)"/><path d="M118 170l132-58h402l92 44-8 8-88-40H256L128 178z" fill="#2b2622"/>'
-  + '<g fill="url(#pvdwin)"><rect x="270" y="152" width="70" height="58"/><rect x="350" y="152" width="70" height="58"/><rect x="430" y="152" width="70" height="58"/><rect x="510" y="152" width="70" height="58"/><rect x="270" y="226" width="150" height="74"/><rect x="430" y="226" width="150" height="74" opacity=".85"/><rect x="600" y="184" width="50" height="116" opacity=".7"/></g>'
-  + '<g stroke="#2b2622" stroke-width="5"><path d="M345 152v148M425 152v148M505 152v58M268 218h316"/></g><path d="M150 300h500" stroke="#cdb9a6" stroke-width="3"/>'
-  + '<g fill="none" stroke="#4a4a36" stroke-width="6" stroke-linecap="round"><path d="M735 300c-6-60-2-110 10-150"/><path d="M745 150c-30-12-58-6-80 14M745 150c-14-26-40-40-72-38M745 150c22-22 50-26 76-16M745 150c10-28 34-42 60-42M745 150c-28 4-46 22-58 46"/></g>'
-  + '<g fill="none" stroke="#4a4a36" stroke-width="5" stroke-linecap="round"><path d="M70 300c4-50 0-90-10-120"/><path d="M60 180c-24-6-44 2-58 18M60 180c4-24 22-38 46-40M60 180c20-10 42-6 58 10"/></g></svg>';
 PV.cityArt = () => '<svg viewBox="0 0 240 120"><defs><linearGradient id="pvcg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f7c6a8"/><stop offset="1" stop-color="#a8613f"/></linearGradient></defs><g fill="url(#pvcg)" opacity=".9"><rect x="20" y="60" width="22" height="60"/><rect x="46" y="36" width="26" height="84"/><rect x="76" y="18" width="30" height="102"/><rect x="110" y="44" width="22" height="76"/><rect x="136" y="8" width="28" height="112"/><rect x="168" y="50" width="22" height="70"/><rect x="194" y="30" width="26" height="90"/></g><g fill="#0f0f10" opacity=".55"><rect x="82" y="30" width="4" height="80"/><rect x="92" y="30" width="4" height="80"/><rect x="142" y="20" width="4" height="90"/><rect x="152" y="20" width="4" height="90"/></g></svg>';
 /* ---------- shell ---------- */
 /* o: {sec:"RENTALS", key, nav:[[route,label,icon,badge]], card:[title,sub,icon], art:true|false, hero:{kick,title,sub,art}} */
 /* the approved logo published on the website (Website Studio › brand), else the Grooveville LLC logo */
 PV.logo = sec => { const g = window.GV && GV.brandLogo, id = sec === "RENTALS" ? "rentals" : sec === "ENTERTAINMENT" ? "ent" : "hq"; const src = (g && (g(id) || g("hq"))) || "/logo.webp"; return '<img class="pvlogo" src="' + E(src) + '" alt="" width="34" height="34">' };
-const LIGHT = ['RENTALS', 'ACCOUNT', 'AGREEMENTS', 'VERIFY'];
-PV.isLight = r => /^(rentals|account|sign\/|verify)/.test(String(r || ''));
+const LIGHT = ['ACCOUNT', 'AGREEMENTS', 'VERIFY'];
+PV.isLight = r => /^(account|sign\/|verify)/.test(String(r || ''));
 PV.shell = function (o, body) {
+  PV.rentalRecords = o.records || [];
   const light = o.light != null ? o.light : LIGHT.includes(o.sec);
   const me = PV.me || {}, cur = "#" + GV.S.route.split("?")[0], unread = (me.notifications || []).filter(n => !n.seen).length;
   const nav = (o.nav || []).map(([href, label, ic, n]) => '<a class="pvnav' + (cur === href || (href !== o.nav[0][0] && cur.startsWith(href + "/")) ? " on" : "") + '" href="' + href + '">' + PV.ic(ic) + '<span>' + E(label) + '</span>' + (n ? '<span class="pvn">' + n + '</span>' : '') + '</a>').join("");
   const mnav = (o.nav || []).map(([href, label, ic, n]) => '<a class="' + (cur === href || (href !== o.nav[0][0] && cur.startsWith(href + "/")) ? "on" : "") + '" href="' + href + '">' + E(label) + (n ? ' (' + n + ')' : '') + '</a>').join("");
+  const mobileNav = o.theme === "pv-rental"
+    ? '<details class="pv-rental-menu"><summary>Rentals menu</summary><nav aria-label="Rentals sections">' + mnav + '</nav></details>'
+    : '<nav class="pvmnav" aria-label="' + E(o.sec) + ' sections">' + mnav + '</nav>';
+  const search = o.records ? '<button class="pvicon" data-act="pv-rental-search" aria-label="Search your rental records">' + PV.ic("search") + '</button>' : "";
   const test = PV.status && PV.status.stripe === "test" ? '<span class="pvmode" title="Stripe test mode: no real charges">TEST MODE</span>' : "";
-  return '<div class="pv' + (light ? ' pvl' : '') + '">' +
+  return '<div class="pv' + (o.theme ? ' ' + o.theme : '') + (light ? ' pvl' : '') + '">' +
     '<div class="pvtop"><a class="pvbrand" href="#home">' + PV.logo(o.sec) + 'GROOVEVILLE <span>LLC</span></a><span class="pvdiv"></span><span class="pvsec">' + E(o.sec) + '</span>' +
-    '<div class="pvtopr">' + test + (me.signedIn ? '<button class="pvicon" data-act="pv-notes" aria-label="Notifications' + (unread ? ", " + unread + " unread" : "") + '">' + PV.ic("bell") + (unread ? '<span class="pvdot">' + unread + '</span>' : '') + '</button><a class="pvav" href="#account" aria-label="Account">' + E(PV.initials(me.profile)) + '</a>' : '<button class="pvbtn sm pk" data-act="pv-signin">Sign in</button>') + '</div></div>' +
-    (nav ? '<nav class="pvmnav" aria-label="' + E(o.sec) + ' sections">' + mnav + '</nav>' : '') +
+    '<div class="pvtopr">' + search + test + (me.signedIn ? '<button class="pvicon" data-act="pv-notes" aria-label="Notifications' + (unread ? ", " + unread + " unread" : "") + '">' + PV.ic("bell") + (unread ? '<span class="pvdot">' + unread + '</span>' : '') + '</button><a class="pvav" href="#account" aria-label="Account">' + E(PV.initials(me.profile)) + '</a>' : '<button class="pvbtn sm pk" data-act="pv-signin">Sign in</button>') + '</div></div>' +
+    (nav ? mobileNav : '') +
     '<div class="pvbody"' + (nav ? '' : ' style="grid-template-columns:1fr"') + '>' + (nav ? '<aside class="pvside"><div class="pvcard0">' + PV.ic(o.card[2] || "home") + '<div><b>' + E(o.card[0]) + '</b><small>' + E(o.card[1]) + '</small></div></div><nav aria-label="' + E(o.sec) + '">' + nav + '</nav>' + (o.art !== false ? '<div class="pvsideart">' + PV.cityArt() + '<b>GROOVEVILLE</b><small>— ' + E(o.sec) + ' —</small></div>' : '') + '</aside>' : '') +
     '<main class="pvmain">' + (o.hero ? '<section class="pvhero"' + (o.hero.bg ? ' style="--hero-bg:' + o.hero.bg + '"' : '') + '>' + (o.hero.art ? '<div class="pvart" aria-hidden="true">' + o.hero.art + '</div>' : '') + '<div class="pvkick">' + E(o.hero.kick) + '</div><h1>' + o.hero.title + '</h1>' + (o.hero.sub ? '<p>' + E(o.hero.sub) + '</p>' : '') + '<div class="pvrule"></div></section>' : '') + body + '</main></div></div>';
 };
@@ -70,25 +68,27 @@ PV.sigBlock = (p, opts) => { opts = opts || {}; const name = PV.fullName(p); ret
 PV.loading = t => '<div class="pv' + (window.GV && PV.isLight(GV.S.route) ? ' pvl' : '') + '"><div class="pvbody" style="grid-template-columns:1fr"><main class="pvmain"><p class="muted pvloading" role="status">' + E(t || "Loading…") + '</p></main></div></div>';
 PV.err = (msg, setup) => setup === "d1" ? '<div class="pvbanner">The portal database isn’t connected yet. See PORTALS-SETUP.md (create the D1 database <b>grooveville-portal</b>).</div>' : '<div class="pvbanner bad">' + E(msg) + '</div>';
 /* ---------- routing ---------- */
-const ROUTES = [[/^rentals(\/|$)/, "rentals"], [/^entertainment$/, "ent"], [/^e\//, "event"], [/^h\//, "hostpage"], [/^host(\/|$)/, "host"], [/^account$/, "account"], [/^sign\//, "sign"], [/^order\//, "order"], [/^t\//, "ticket"], [/^checkin(\/|$)/, "checkin"], [/^verify$/, "verify"], [/^team-portals(\/|$)/, "admin"]];
+const ROUTES = [[/^rentals(\/|$)/, "rentals"], [/^entertainment$/, "ent"], [/^events$/, "events"], [/^e\//, "event"], [/^h\//, "hostpage"], [/^host(\/|$)/, "host"], [/^account$/, "account"], [/^sign\//, "sign"], [/^order\//, "order"], [/^t\//, "ticket"], [/^checkin(\/|$)/, "checkin"], [/^verify$/, "verify"], [/^team-portals(\/|$)/, "admin"]];
 window.pvRoute = function (r) {
   const path = r.split("?")[0], hit = ROUTES.find(([re]) => re.test(path)); if (!hit) return null;
-  if (hit[1] === "admin" && !GV.S.isAdmin && !(PV.me && (PV.me.admin || PV.me.finance))) { setTimeout(pvMount, 0); const inner = '<div id="pvroot" data-r="' + E(r) + '">' + (PV.html[r] || PV.loading()) + '</div>'; return '<div class="wrap">' + inner + '</div>' }
-  setTimeout(pvMount, 0); const inner = '<div id="pvroot" data-r="' + E(r) + '">' + (PV.html[r] || PV.loading()) + '</div>';
+  if (hit[1] === "admin" && !GV.S.isAdmin && !(PV.me && (PV.me.admin || PV.me.finance))) { setTimeout(pvMount, 0); const inner = '<div id="pvroot" data-r="' + E(r) + '">' + ((PV.html[r]?.uid === (fb()?.uid || null) && PV.html[r]?.body) || PV.loading()) + '</div>'; return '<div class="wrap">' + inner + '</div>' }
+  setTimeout(pvMount, 0); const inner = '<div id="pvroot" data-r="' + E(r) + '">' + ((PV.html[r]?.uid === (fb()?.uid || null) && PV.html[r]?.body) || PV.loading()) + '</div>';
   if (hit[1] === "admin" && GV.S.isAdmin && window.GV) return GV.teamShell("team-portals", inner);
-  return '<div class="wrap">' + inner + '</div>';
+  return '<div class="' + (hit[1] === "rentals" || hit[1] === "events" ? "pv-destination" : "wrap") + '">' + inner + '</div>';
 };
 PV.isRoute = r => ROUTES.some(([re]) => re.test(String(r || "").split("?")[0]));
 window.pvMount = async function (force) {
   const root = document.getElementById("pvroot"); if (!root) return; const r = root.dataset.r, n = ++PV.mountN;
   const path = r.split("?")[0], qs = new URLSearchParams(r.split("?")[1] || ""), parts = path.split("/"), hit = ROUTES.find(([re]) => re.test(path));
-  try { await PV.loadMe(force); const html = await PV.views[hit[1]]({ r, path, parts, qs }); if (n !== PV.mountN || !document.getElementById("pvroot") || document.getElementById("pvroot").dataset.r !== r) return; PV.html[r] = html; root.innerHTML = html; if (PV.after) { const a = PV.after; PV.after = null; try { await a(root) } catch (e) { console.warn(e) } } }
+  const uid = fb()?.uid || null;
+  try { await PV.loadMe(force); const html = await PV.views[hit[1]]({ r, path, parts, qs }); if (uid !== (fb()?.uid || null) || n !== PV.mountN || !document.getElementById("pvroot") || document.getElementById("pvroot").dataset.r !== r) return; PV.html[r] = { uid, body: html }; root.innerHTML = html; if (PV.after) { const a = PV.after; PV.after = null; try { await a(root) } catch (e) { console.warn(e) } } }
   catch (e) { console.warn(e); if (n === PV.mountN) root.innerHTML = '<div class="pv' + (PV.isLight(r) ? ' pvl' : '') + '"><div class="pvbody" style="grid-template-columns:1fr"><main class="pvmain">' + PV.err(e.message, e.j && e.j.setup) + '</main></div></div>' }
 };
 PV.refresh = () => { PV.meAt = 0; return pvMount(true) };
 PV.go = h => { if (location.hash === h) PV.refresh(); else location.hash = h };
 /* ---------- auth ---------- */
 PV.signin = function (mode, then) {
+  PV.authNext = then;
   if (!(window.firebase && firebase.apps && firebase.apps.length)) { PV.toast("Sign-in works on grooveville.org"); return }
   mode = mode || "in";
   GV.openModal('<form id="pvauth" class="pvauth"><h3>' + (mode === "up" ? "Create your Grooveville account" : "Sign in to Grooveville") + '</h3><p class="muted small" style="margin:6px 0 12px">One account for Rentals, Entertainment and your documents. Signing in doesn’t give Back Office access.</p>' +
@@ -97,7 +97,7 @@ PV.signin = function (mode, then) {
     '<div class="row"><button type="button" class="btn ghost" data-act="pv-google">Continue with Google</button><button class="btn olive">' + (mode === "up" ? "Create account" : "Sign in") + '</button></div><p class="small" style="margin-top:10px">' + (mode === "up" ? '<a href="#" data-act="pv-signin">I already have an account</a>' : '<a href="#" data-act="pv-signup">Create an account</a> · <a href="#" data-act="pv-reset">Forgot password?</a>') + '</p></form>',
     el => el.querySelector("#pvauth").addEventListener("submit", async ev => { ev.preventDefault(); const F = new FormData(ev.target), msg = el.querySelector("#pvauthmsg");
       try { if (mode === "up") { const c = await firebase.auth().createUserWithEmailAndPassword(String(F.get("email")).trim(), String(F.get("pass"))); try { await c.user.sendEmailVerification() } catch (e) { } GV.closeModal(); PV.meAt = 0; await PV.loadMe(true); try { await PV.api("me", { first: String(F.get("first")).trim(), last: String(F.get("last")).trim() }) } catch (e) { } PV.toast("Account created. Check your email to verify it.") }
-        else { await firebase.auth().signInWithEmailAndPassword(String(F.get("email")).trim(), String(F.get("pass"))); GV.closeModal() } PV.meAt = 0; setTimeout(() => { if (then) then(); else PV.refresh() }, 400) }
+        else { await firebase.auth().signInWithEmailAndPassword(String(F.get("email")).trim(), String(F.get("pass"))); GV.closeModal() } PV.meAt = 0; setTimeout(() => { PV.authNext = null; if (then) then(); else PV.refresh() }, 400) }
       catch (e) { msg.textContent = ({ "auth/invalid-credential": "Wrong email or password.", "auth/wrong-password": "Wrong email or password.", "auth/user-not-found": "No account with that email.", "auth/email-already-in-use": "That email already has an account. Sign in instead.", "auth/weak-password": "Use at least 6 characters.", "auth/invalid-email": "Check the email address." })[e.code] || e.message } }));
 };
 /* ---------- actions ---------- */
@@ -108,9 +108,26 @@ window.pvAct = function (a, t, ev) {
   return true;
 };
 PV.acts["pv-signin"] = () => PV.signin("in"); PV.acts["pv-signup"] = () => PV.signin("up");
-PV.acts["pv-google"] = async () => { const p = new firebase.auth.GoogleAuthProvider(); await firebase.auth().signInWithPopup(p); GV.closeModal(); PV.meAt = 0; setTimeout(PV.refresh, 400) };
+PV.acts["pv-google"] = async () => { const p = new firebase.auth.GoogleAuthProvider(); await firebase.auth().signInWithPopup(p); GV.closeModal(); PV.meAt = 0; const next = PV.authNext; PV.authNext = null; setTimeout(next || PV.refresh, 400) };
 PV.acts["pv-reset"] = async () => { const em = document.querySelector('#pvauth [name=email]'); if (!em || !em.value) { document.getElementById("pvauthmsg").textContent = "Type your email first."; return } await firebase.auth().sendPasswordResetEmail(em.value.trim()); document.getElementById("pvauthmsg").textContent = "Check your email for a reset link." };
 PV.acts["pv-signout"] = async () => { await firebase.auth().signOut() };
+PV.acts["pv-rental-search"] = () => {
+  const records = PV.rentalRecords;
+  GV.openModal('<h3>Search rental records</h3><label class="f">Search agreements, payments, and requests<input type="search" class="i" id="pv-record-query"></label><div id="pv-record-results" class="pvnotes" aria-live="polite"></div>', el => {
+    const input = el.querySelector("#pv-record-query");
+    const results = el.querySelector("#pv-record-results");
+    const showMatches = () => {
+      const query = input.value.trim().toLowerCase();
+      const matches = records.filter(([label]) => label && label.toLowerCase().includes(query)).slice(0, 12);
+      results.innerHTML = matches.length
+        ? matches.map(([label, href]) => '<a class="pvnote1" data-act="close-modal" href="' + E(href) + '">' + E(label) + '</a>').join("")
+        : '<p class="muted">No matching records.</p>';
+    };
+    input.addEventListener("input", showMatches);
+    showMatches();
+    input.focus();
+  });
+};
 PV.acts["pv-notes"] = async () => { const N = (PV.me && PV.me.notifications) || []; GV.openModal('<h3>Notifications</h3><div class="pvnotes">' + (N.length ? N.map(n => '<a class="pvnote1' + (n.seen ? "" : " new") + '" href="' + E(n.link || "#account") + '" data-act="close-modal"><b>' + E(n.title) + '</b><small>' + E(n.body || "") + ' · ' + PV.ago(n.at) + '</small></a>').join("") : '<p class="muted">Nothing yet.</p>') + '</div><div class="row"><button class="btn ghost" data-act="close-modal">Close</button></div>'); if (N.some(n => !n.seen)) { await PV.api("me/seen", {}); N.forEach(n => n.seen = 1) } };
 PV.acts["pv-verify-email"] = async () => { const u = fb(); if (!u) return; await u.sendEmailVerification(); PV.toast("Verification email sent to " + u.email) };
 PV.acts["pv-reload-user"] = async () => { const u = fb(); if (u) { await u.reload(); await u.getIdToken(true) } PV.refresh() };

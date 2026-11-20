@@ -1,0 +1,26 @@
+/* Shared public landing pages for Rentals and Events. */
+(function () {
+  const E = PV.e;
+
+  PV.publicLanding = ({ kind, section, title, intro, actions, browse, content }) => {
+    const art = kind === "rentals" ? "/media/rentals-architecture.webp" : "/media/gv-ent.webp";
+    return '<div class="pv pv-public pv-public-' + kind + '"><section class="pv-public-hero">' +
+      '<img class="pv-public-image" src="' + art + '" alt="" fetchpriority="high">' +
+      '<div class="pv-public-copy"><div class="pvkick">' + E(section) + '</div><h1>' + E(title) + '</h1><p>' + E(intro) + '</p>' +
+      '<div class="pvrow">' + PV.publicJump(browse) + actions + '</div></div></section>' +
+      '<div class="pv-public-content">' + content + '</div></div>';
+  };
+
+  PV.publicJump = label => '<button class="pvbtn pk lg" data-act="pv-public-browse">' + E(label) + '</button>';
+  PV.acts["pv-public-browse"] = () => {
+    const target = document.getElementById("pv-public-browse");
+    target.focus({ preventScroll: true });
+    target.scrollIntoView();
+  };
+  PV.publicSection = (title, body, browse = false) =>
+    '<section class="pv-public-section"' + (browse ? ' id="pv-public-browse" tabindex="-1"' : '') +
+    '><h2>' + E(title) + '</h2>' + body + '</section>';
+  PV.publicInfo = items => '<div class="pvgrid pvg2">' + items.map(([icon, title, copy]) =>
+    '<div class="pvpanel"><div class="pv-public-icon">' + PV.ic(icon) + '</div><h3>' + E(title) + '</h3><p>' + E(copy) + '</p></div>'
+  ).join("") + '</div>';
+})();

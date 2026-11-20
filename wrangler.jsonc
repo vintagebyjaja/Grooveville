@@ -7,7 +7,7 @@
   "assets": {
     "directory": "./",
     "binding": "ASSETS",
-    "run_worker_first": ["/api/*", "/artist/*", "/song/*", "/entertainment", "/entertainment/*", "/rentals", "/account", "/admin", "/host", "/checkin"]
+    "run_worker_first": true
   },
   // Private storage for Studio recordings, clip exports and the cached YouTube sync.
   // Create this bucket first: R2 › Create bucket › grooveville-studio

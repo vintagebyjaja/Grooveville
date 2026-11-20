@@ -9,3 +9,7 @@ firebase.json
 scripts
 gpu-worker
 migrations
+
+.git
+.wrangler
+14-laws-to-groove

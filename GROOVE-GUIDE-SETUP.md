@@ -35,3 +35,9 @@ A Groove Guide account is a plain public account: it does not create a Groove Te
 - The driving view draws your real route ahead in 3D; it is not a camera feed.
 - Phone browsers can pause GPS when the screen locks; keep Groove Guide open while navigating.
 - Moving to its own domain later: change `base`, `apiBase` and `homeUrl` in `guide-config.js`.
+
+## Private preview and release
+
+While Groove Guide is Ripening, its public listing is under Ecosystem → Vybr8. A signed-in founder or HNIC can open it from **Open founder preview** on that page. The Worker validates the Firebase account and role for Guide pages, assets, and API requests. Reopen the preview from Vybr8 when the session expires.
+
+Public access is closed by default. To release it, the founder sets `GUIDE_PUBLIC=true` in the intended Cloudflare Worker environment. Set `GUIDE_STATUS` to the label to display after release, or leave it unset for **Released**. Removing `GUIDE_PUBLIC` or setting it to `false` closes access and restores **Ripening**.
