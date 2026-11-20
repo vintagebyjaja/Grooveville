@@ -5,7 +5,15 @@
   "main": "worker/index.js",
   "compatibility_date": "2025-06-01",
   // Configure isolated bindings and secrets in Cloudflare Previews Base or on the branch preview.
-  "previews": {},
+  "previews": {
+    "d1_databases": [
+      { "binding": "PORTAL_DB", "database_id": "917f5d2c-6d22-4705-9d41-27b6836664fe" }
+    ],
+    "vars": {
+      "FIREBASE_PROJECT_ID": "groovevillellc",
+      "SITE_HOST": "migration-grooveville.jaja-a20.workers.dev"
+    }
+  },
   "assets": {
     "directory": "./",
     "binding": "ASSETS",
