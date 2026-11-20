@@ -7781,7 +7781,7 @@ function slExportPanel(){const R=SLU.exp,X=SLU.expFile,o=SLU.expOpt||(SLU.expOpt
     (busy?'<p class="small" role="status">'+esc(busy)+'</p>':'<p class="muted small">Renders exactly what the mixer plays (offline, sample-accurate, stereo). MP3s are encoded right here in Sound Lab (MPEG-1 Layer III, constant bitrate) — no converting needed.</p>')+
     (X?'<div class="card slprev"><b>'+esc(X.name)+'</b> <span class="muted small">'+(X.size/1048576).toFixed(1)+' MB</span><audio controls src="'+esc(X.url)+'" preload="metadata"></audio><div class="row l"><button class="btn olive sm" data-act="sl-dlfile">Download</button></div></div>':'')+
     (R?'<div class="sllr"><p>Integrated loudness <b>'+R.lufs.toFixed(1)+' LUFS</b> · sample peak <b>'+R.peak.toFixed(2)+' dBFS</b> · true peak ≈ <b>'+R.truePeak.toFixed(2)+' dBTP</b> · '+Math.floor(R.secs/60)+':'+String(Math.round(R.secs%60)).padStart(2,"0")+(R.encPeak!=null?' · after MP3 encoding peak <b>'+R.encPeak.toFixed(2)+' dBFS</b>':'')+'</p>'+(R.clipped||R.encPeak>0?'<p class="warnt">The '+(R.encPeak>0?"encoded MP3":"master")+' clips. Lower the master gain and render again.</p>':R.truePeak>-1?'<p class="warnt">True peak is above −1 dBTP; lower the master by '+(R.truePeak+1).toFixed(1)+' dB to stay safe on streaming services.</p>':'<p class="okt">No clipping. True peak is under −1 dBTP.</p>')+'<p class="muted small">Loudness uses a simplified ITU-R BS.1770 measurement; treat it as a close estimate.</p></div>':'')+'</div>'+
-  '<div><h4>Import</h4><div class="row l"><button class="btn ghost sm" data-act="sl-imp-audio">Audio file to track</button><button class="btn ghost sm" data-act="sl-imp-midi">MIDI file</button></div><p class="muted small">Imported audio is stored untouched; edits are non-destructive.</p>'+(typeof slSepCard==="function"?slSepCard():"")+'</div></div>'}
+  '<div><h4>Import</h4><div class="row l"><button class="btn ghost sm" data-act="sl-imp-audio">Upload audio from device</button>'+(S.isAdmin?'<button class="btn ghost sm" data-act="sl-library">Choose from Music Library</button>':'')+'<button class="btn ghost sm" data-act="sl-imp-midi">MIDI file</button></div><p class="muted small">Imported audio is stored untouched; edits are non-destructive.</p>'+(typeof slSepCard==="function"?slSepCard():"")+'</div></div>'}
 /* ---------- recording (microphone / interface) ---------- */
 async function slRecord(){const P=SL.proj,t=P.tracks.find(x=>x.arm&&x.type==="audio");if(SL.rec){return slRecStop()}
   if(!t){const d=P.tracks.find(x=>x.arm&&(x.type==="drum"||x.type==="808"||x.type==="synth"));if(d){SL.liveRec={track:d.id,start:SL.play?slBeatNow():SL.pos,notes:[]};if(!SL.play)await slPlay(SL.pos);toast("Recording what you play on "+d.name+". Press R to stop.");SL.rec={live:true};slPaintTransport();return}return toast("Arm a track first (● button)")}
@@ -8002,6 +8002,8 @@ async function slRun(a,t){const v=t.dataset.v,i=Number(t.dataset.i),P=SL.proj,tr
       openModal('<h3>Suggested draft</h3><p class="muted small">Review and edit. Accepting saves your current lyrics as a version first.</p><textarea class="i mono" id="slProp" rows="18">'+esc(txt)+'</textarea><div class="row"><button class="btn ghost" data-act="close-modal">Discard</button><button class="btn olive" data-act="sl-lyr-accept">Use this draft</button></div>')}finally{SLU.lyBusy=null;slPanelPaint()}return}
   case "sl-lyr-accept":{const txt=$("#slProp").value;P.lyrics.versions=(P.lyrics.versions||[]).concat([{name:"Before draft",at:crNow(),by:S.email||"",text:slLyricText(P)}]);const L=slParseLyrics(txt,P),lk=(P.lyrics.lines||[]).filter(l=>l.locked&&!L.some(x=>x.id===l.id));P.lyrics.lines=L.concat(lk);closeModal();slCommit("lyrics",true);if(lk.length)toast(lk.length+" locked line(s) weren’t in the draft and were kept at the end; move them where they belong.");return slPanelPaint()}
   case "sl-lyr-take":{const R=SLU.lprop||[];R.forEach(r=>{const cb=document.querySelector('#modal [data-lp="'+r.id+'"]');if(cb&&cb.checked){const l=P.lyrics.lines.find(x=>x.id===r.id);if(l&&!l.locked)l.text=r.neu}});SLU.lsel={};closeModal();slCommit("lyrics",true);return slPanelPaint()}
+  case "sl-library":return slLibraryPicker(false);
+  case "sl-sep-library":return slLibraryPicker(true);
   case "sl-sep":return slSeparate();
   case "sl-gen-music":{const G=SLU.genOpt;G.caption=($("#gm-cap")||{}).value||"";G.dur=Math.max(10,Math.min(600,Number(($("#gm-dur")||{}).value)||120));G.n=Number(($("#gm-n")||{}).value)||1;G.inst=!!($("#gm-inst")||{}).checked;G.useLyrics=!!($("#gm-lyr")||{}).checked;
     const lyr=G.inst?"[Instrumental]":G.useLyrics?slLyricText(P):"";const st=m=>{SLU.genBusy="Working…";SLU.genJob=m;slPanelPaint()};SLU.genBusy="Sending…";slPanelPaint();
@@ -8113,8 +8115,8 @@ async function slBounce(i,quiet){const P=SL.proj,t=P.tracks[i];if(!t||!(t.clips|
   const nt={id:crId("t"),name:t.name+" (audio)",type:"audio",color:t.color,gain:0,pan:0,fx:{},clips:[{id:crId("c"),kind:"audio",name:t.name+" bounce",src:key,start:0,len:b.duration/slSpb(P)-.05/slSpb(P),offset:0,srcOffset:.05/slSpb(P)}],bouncedFrom:t.id};
   t.mute=true;t.frozen=true;P.tracks.splice(i+1,0,nt);slCommit("edit bounce");if(!quiet)toast("Bounced. The original stays (muted) so you can still edit its notes.")}
 /* ---------- stem separation ---------- */
-function slSepCard(){const busy=SLU.sepBusy,srv=typeof genReady==="function"&&genReady("separate");return '<h4>Separate a song into stems</h4><p class="muted small">Upload a finished mix. The original is kept, and every stem stays in sync with it.</p>'+
-  '<label class="f">Method<select class="i" id="slSepMode"><option value="dsp">Basic, in this browser (no AI model)</option><option value="server"'+(srv?"":" disabled")+'>High quality, Grooveville engine'+(srv?"":" (not connected)")+'</option></select></label><label class="crchk"><input type="checkbox" id="slSepOk"> I own this recording or have permission to edit it</label><button class="btn ghost sm" data-act="sl-sep"'+(busy?" disabled":"")+'>'+esc(busy||"Choose song & separate")+'</button>'+
+function slSepCard(){const busy=SLU.sepBusy,srv=typeof genReady==="function"&&genReady("separate");return '<h4>Separate a song into stems</h4><p class="muted small">Choose a finished mix from your device or Music Library. The original is kept, and every stem stays in sync with it.</p>'+
+  '<label class="f">Method<select class="i" id="slSepMode"><option value="dsp">Basic, in this browser (no AI model)</option><option value="server"'+(srv?"":" disabled")+'>High quality, Grooveville engine'+(srv?"":" (not connected)")+'</option></select></label><label class="crchk"><input type="checkbox" id="slSepOk"> I own this recording or have permission to edit it</label><button class="btn ghost sm" data-act="sl-sep"'+(busy?" disabled":"")+'>'+esc(busy||"Upload song & separate")+'</button>'+(S.isAdmin?' <button class="btn ghost sm" data-act="sl-sep-library"'+(busy?" disabled":"")+'>Choose from Music Library &amp; separate</button>':'')+
   '<p class="muted small">Basic separation splits the sound by timing, pitch steadiness, panning and frequency. Expect bleed between stems (for example, hi-hats in the vocal stem).</p>'}
 function slSepFactory(){
   function fft(re,im,inv){const n=re.length;for(let i=1,j=0;i<n;i++){let b=n>>1;for(;j&b;b>>=1)j^=b;j^=b;if(i<j){let t=re[i];re[i]=re[j];re[j]=t;t=im[i];im[i]=im[j];im[j]=t}}
@@ -8138,7 +8140,63 @@ function slSepFactory(){
 function slSeparateDSP(L,R,sr,onP){if(typeof Worker==="undefined")return Promise.resolve(slSepFactory()(L,R,sr,onP));return new Promise((res,rej)=>{const src="const sep=("+slSepFactory.toString()+")();onmessage=e=>{try{const o=sep(e.data.L,e.data.R,e.data.sr,p=>postMessage({p}));const tr=[];for(const k in o)tr.push(o[k][0].buffer,o[k][1].buffer);postMessage({done:o},tr)}catch(err){postMessage({error:err.message})}}";
   const u=URL.createObjectURL(new Blob([src],{type:"text/javascript"})),w=new Worker(u);URL.revokeObjectURL(u);w.onmessage=e=>{const d=e.data;if(d.p!=null)return onP&&onP(d.p);w.terminate();d.error?rej(new Error(d.error)):res(d.done)};w.onerror=e=>{w.terminate();rej(new Error(e.message||"Separation stopped"))};const l=L.slice(),r=R.slice();w.postMessage({L:l,R:r,sr},[l.buffer,r.buffer])})}
 const slStemBuf=(ch,sr)=>{const b=slCtx().createBuffer(2,ch[0].length,sr);b.copyToChannel(ch[0],0);b.copyToChannel(ch[1],1);return b};
-async function slSeparate(){const P=SL.proj,mode=($("#slSepMode")||{}).value||"dsp";if(!($("#slSepOk")||{}).checked)return toast("Please confirm you can edit this recording");const [f]=await crPick("audio/*");if(!f)return;
+async function slLibraryPicker(separate) {
+  if (!S.isAdmin) return;
+  if (separate && (SLU.sepBusy || !$("#slSepOk")?.checked)) {
+    if (!SLU.sepBusy) toast("Please confirm you can edit this recording");
+    return;
+  }
+  const project = SL.proj, mode = $("#slSepMode")?.value || "dsp";
+  musicSubscribe();
+  const songs = allSongs().filter(song => song.audioKey);
+  if (!songs.length) return toast(MU().loaded ? "No uploaded songs in your Music Library." : "Music Library is loading. Try again in a moment.");
+  const options = songs.map(song => '<option value="' + esc(song.id) + '">' + esc(song.title + " · " + artistName(song)) + '</option>').join("");
+  openModal('<form id="mf"><h3>Choose a Grooveville song</h3><label class="f">Song<select name="song" class="i" required><option value="">Select a song</option>' + options + '</select></label><p class="small" role="status"></p><button class="btn peach">' + (separate ? "Separate into stems" : "Import into project") + '</button></form>', root => {
+    const form = root.querySelector("form");
+    form.onsubmit = async event => {
+      event.preventDefault();
+      const song = MU().songs[new FormData(form).get("song")];
+      if (!song?.audioKey || SL.proj !== project) return;
+      const button = form.querySelector("button"), status = form.querySelector("[role=status]");
+      if (button.disabled) return;
+      button.disabled = true;
+      try {
+        status.textContent = "Loading audio…";
+        const token = await idToken();
+        const audio = await fetch("/api/music/raw?key=" + encodeURIComponent(song.audioKey), { headers: { authorization: "Bearer " + token } });
+        if (!audio.ok) throw new Error("Couldn’t load this song (" + audio.status + ")");
+        const file = new File([await audio.blob()], song.title + ".mp3", { type: "audio/mpeg" });
+        if (SL.proj !== project) return;
+        if (separate) {
+          closeModal();
+          return await slSeparate(file, mode);
+        }
+        const buffer = await slCtx().decodeAudioData(await file.arrayBuffer());
+        const key = "soundlab/" + project.id + "/audio/" + crId("library") + ".mp3";
+        status.textContent = "Adding audio to your project…";
+        await crPut(file, key, file.type);
+        if (SL.proj !== project) return;
+        SL.buf[key] = buffer;
+        const title = song.title || "Grooveville song";
+        project.tracks.push({ id: crId("t"), name: title, type: "audio", color: "#68d4d0", gain: 0, pan: 0, fx: {}, clips: [{ id: crId("c"), kind: "audio", name: title, src: key, start: 0, len: buffer.duration / slSpb(project), offset: 0 }] });
+        project.rights.references = (project.rights.references || []).concat([{ key, name: title, at: crNow(), kind: "Grooveville Music Library" }]);
+        closeModal();
+        slCommit("edit import");
+        toast("Song added as an audio track.");
+      } catch (error) {
+        status.textContent = error.message || "Couldn’t import this song.";
+      } finally {
+        button.disabled = false;
+      }
+    };
+  });
+}
+
+async function slSeparate(file, selectedMode){
+  const P=SL.proj,mode=selectedMode||($("#slSepMode")||{}).value||"dsp";
+  if(SLU.sepBusy)return;
+  if(!file&&!$("#slSepOk")?.checked)return toast("Please confirm you can edit this recording");
+  const f=file||(await crPick("audio/*"))[0];if(!f||SL.proj!==P)return;
   const st=m=>{SLU.sepBusy=m;slPanelPaint()};try{st("Reading the song…");const buf=await slCtx().decodeAudioData(await f.arrayBuffer());if(buf.duration>600)throw new Error("Songs up to 10 minutes can be separated here");
     const L=buf.getChannelData(0),R=buf.numberOfChannels>1?buf.getChannelData(1):buf.getChannelData(0),job=Date.now().toString(36),base="soundlab/"+P.id+"/stems/"+job+"/",origKey=base+"original-"+f.name.replace(/[^\w.\-]/g,"_").slice(-60);
     st("Saving the original…");await crPut(f,origKey,f.type||"audio/mpeg");SL.buf[origKey]=buf;let stems,method;
