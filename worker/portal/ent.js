@@ -3,7 +3,7 @@
    guarded by database CHECK constraints inside one transaction. */
 import { J, one, all, run, now, rid, pj, clean, audit, notify, stripe, sha256, slugify, limited, isDT, mail, signLink } from "./core.js";
 import { activeInvite } from "./invites.js";
-import { quote, normPricing } from "./pricing.js";
+import { quote, normPricing, independentTicketingOffer } from "./pricing.js";
 import { adminUids } from "./rentals.js";
 export function localNow(tz) { const f = new Intl.DateTimeFormat("en-CA", { timeZone: tz || "America/New_York", year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", hourCycle: "h23" }).formatToParts(new Date()), g = t => (f.find(x => x.type === t) || {}).value; return g("year") + "-" + g("month") + "-" + g("day") + "T" + g("hour") + ":" + g("minute") }
 const TZ = S => S.tz || "America/New_York";
@@ -63,13 +63,17 @@ async function canStaff(C, eventId) { const { D, u } = C; if (!u) return false; 
 const MATERIAL = ["location_id", "venue_name", "venue_address", "start", "end", "expected", "services", "setup_hours", "breakdown_hours", "capacity"];
 export async function termsFor(D, S, e, h, offer, loc) {
   const P = loc ? normPricing(pj(loc.pricing, {})) : null;
+  const ticketing = offer.arrangement === "ticketing" ? independentTicketingOffer() : null;
+  const processingBorneBy = ticketing?.processingBorneBy || P?.processingBorneBy || "host";
   return { version: 1, event: { id: e.id, title: e.title, start: e.start, end: e.end, expected: e.expected, capacity: e.capacity, services: pj(e.services, []), setupHours: e.setup_hours, breakdownHours: e.breakdown_hours, refundPolicy: e.refund_policy },
     location: loc ? { id: loc.id, name: loc.name, address: loc.address, category: loc.category, restrictions: loc.restrictions } : { name: e.venue_name, address: e.venue_address, category: "external" },
     host: { id: h.id, name: h.name }, arrangement: offer.arrangement, rentalCents: offer.totalCents || 0, depositCents: offer.depositCents || 0, shareBps: offer.shareBps || 0, minGuaranteeCents: offer.minGuaranteeCents || 0,
-    platformFeeBps: P && (P.platformFeeBps || offer.arrangement !== "share") ? (P.platformFeeBps || S.platform_fee_bps || 0) : (offer.arrangement === "share" ? 0 : (S.platform_fee_bps || 0)), perTicketCents: P ? (P.platformPerTicketCents || 0) : (S.platform_fee_cents || 0),
-    processingBorneBy: P ? P.processingBorneBy : "host", shareBase: P ? P.shareBase : "net_sales", cancelPolicy: (P && P.cancelPolicy) || "", lines: offer.lines || [],
-    refundsAndChargebacks: "Refunds and chargebacks are deducted from ticket sales before any revenue share is calculated. Stripe processing fees are paid by the " + ((P && P.processingBorneBy) === "grooveville" ? "Grooveville" : "host") + ".",
-    offPlatform: "Tickets sold outside Grooveville (cash, other platforms) are not part of this settlement; they must be reported to Grooveville and are reconciled manually.", payout: "Grooveville pays approved host earnings externally after ticket sales close and payments are reconciled." };
+    ...(ticketing ? { independentTicketing: true } : {}),
+    platformFeeBps: ticketing?.platformFee.feeBps ?? (offer.arrangement === "share" ? P?.platformFeeBps || 0 : P?.platformFeeBps || S.platform_fee_bps || 0),
+    perTicketCents: ticketing?.platformFee.perTicketCents ?? (P ? P.platformPerTicketCents || 0 : S.platform_fee_cents || 0),
+    processingBorneBy, shareBase: ticketing ? "net_sales" : P?.shareBase || "net_sales", cancelPolicy: P?.cancelPolicy || "", lines: ticketing?.lines || offer.lines || [],
+    refundsAndChargebacks: ticketing ? "Refunds and chargebacks reduce the revenue used to calculate the ticketing fee. Actual Stripe fees are deducted separately from host proceeds. Free tickets and RSVPs have no platform fee." : "Refunds and chargebacks are deducted from ticket sales before any revenue share is calculated. Stripe processing fees are paid by " + (processingBorneBy === "grooveville" ? "Grooveville" : "the host") + ".",
+    offPlatform: "Tickets sold outside Grooveville (cash, other platforms) are not part of this settlement; they must be reported to Grooveville and are reconciled manually.", payout: ticketing?.payout || "Grooveville pays approved host earnings externally after ticket sales close and payments are reconciled." };
 }
 export async function entApi(C) {
   const { D, S, u, b, p, url, req, env } = C, base = "https://" + url.host;
@@ -253,7 +257,7 @@ export async function entApi(C) {
   if (p === "/api/p/host/event/quote" && req.method === "POST") {
     const e = await ownEvent(C, b.id); if (!e) return J({ error: "Event not found" }, 404);
     if (H.grooveville) return J({ owned: true, offers: [{ arrangement: "owned", label: "Grooveville event", note: "Grooveville's own event: no rental or revenue share." }], errors: [] });
-    if (!e.location_id) return J({ location: null, category: "external", errors: [], offers: [{ arrangement: "ticketing", label: "Ticketing only", platformFee: { feeBps: S.platform_fee_bps || 0, perTicketCents: S.platform_fee_cents || 0 }, lines: [{ label: "Grooveville ticketing fee", value: ((S.platform_fee_bps || 0) / 100) + "% of ticket sales" }], note: "No property rental: Grooveville doesn't own or rent this venue." }] });
+    if (!e.location_id) return J({ location: null, category: "external", errors: [], offers: [independentTicketingOffer()] });
     const loc = await one(D, "SELECT * FROM locations WHERE id = ?", e.location_id); return J(quote(loc, { expected: e.expected, start: e.start, end: e.end, services: pj(e.services, []), setupHours: e.setup_hours, breakdownHours: e.breakdown_hours }));
   }
   if (p === "/api/p/host/event/accept" && req.method === "POST") {
@@ -262,8 +266,10 @@ export async function entApi(C) {
     const ex = await one(D, "SELECT * FROM event_agreements WHERE event_id = ? AND status IN ('sent','signed')", e.id); if (ex) return J({ error: "This event already has a signed agreement. Ask Grooveville for an amendment." }, 409);
     let offer, loc = null;
     if (H.grooveville) offer = { arrangement: "owned" };
-    else if (!e.location_id) offer = { arrangement: "ticketing", lines: [] };
+    else if (!e.location_id && b.arrangement === "ticketing") offer = independentTicketingOffer();
+    else if (!e.location_id) return J({ error: "Choose independent event ticketing for this venue" }, 400);
     else { loc = await one(D, "SELECT * FROM locations WHERE id = ?", e.location_id); const Q = quote(loc, { expected: e.expected, start: e.start, end: e.end, services: pj(e.services, []), setupHours: e.setup_hours, breakdownHours: e.breakdown_hours }); if (Q.errors.length) return J({ error: Q.errors[0] }, 400); offer = Q.offers.find(o => o.arrangement === b.arrangement); if (!offer) return J({ error: "That option isn't available for this event" }, 400) }
+    if (offer.arrangement === "ticketing" && b.ticketingFeeBps !== offer.platformFee.feeBps) return J({ error: "Refresh the event and review the current ticketing fee before accepting." }, 409);
     const terms = await termsFor(D, S, e, H, offer, loc), th = await sha256(JSON.stringify(terms)), id = rid(12);
     await run(D, "UPDATE event_agreements SET status = 'void' WHERE event_id = ? AND status = 'accepted'", e.id);
     await run(D, "INSERT INTO event_agreements (id, event_id, host_id, arrangement, terms, terms_hash, quote, status, accepted_at, created) VALUES (?,?,?,?,?,?,?,?,?,?)", id, e.id, H.id, offer.arrangement, JSON.stringify(terms), th, JSON.stringify(offer), H.grooveville ? "signed" : "accepted", now(), now());

@@ -4,9 +4,13 @@ import { J, one, all, run, now, rid, pj, clean, audit, notify, setSetting, setti
 import { reserve, nextDate } from "./rentals.js";
 import { normPricing, quote } from "./pricing.js";
 const CATS = ["room", "housing", "vehicle", "speakers", "sound", "furniture", "event_equipment", "other"];
+const RENTALS_STAFF_ROUTES = new Set([
+  "GET /api/p/admin/listings", "POST /api/p/admin/listing",
+  "GET /api/p/admin/requests", "POST /api/p/admin/request",
+]);
 export async function adminApi(C) {
   const { D, u, b, p, url, req, env } = C;
-  if (!u) return J({ error: "Sign in" }, 401); if (!u.admin && !u.finance) return J({ error: "Grooveville administrators only" }, 403);
+  if (!u) return J({ error: "Sign in" }, 401); if (!u.admin && !u.finance && !(u.rentalsStaff && RENTALS_STAFF_ROUTES.has(req.method + " " + p))) return J({ error: "You don’t have access to this workspace" }, 403);
   const POST = req.method === "POST"; const founderOnly = () => { if (!u.founder) throw Object.assign(new Error("Only the founder can do this"), { status: 403 }) };
   if (u.founder && C.S.founder_uid !== u.uid) await setSetting(D, "founder_uid", u.uid);
   if (p === "/api/p/admin/overview") {
@@ -36,7 +40,7 @@ export async function adminApi(C) {
     await audit(D, u.uid, "settings_changed", "settings", "", ch); return J({ ok: true, settings: await settings(D) });
   }
   if (p === "/api/p/admin/role" && POST) {
-    founderOnly(); const role = ["admin", "finance", "tester"].includes(b.role) ? b.role : null; if (!role) return J({ error: "Pick a role" }, 400);
+    founderOnly(); const role = ["admin", "finance", "tester", "rentals"].includes(b.role) ? b.role : null; if (!role) return J({ error: "Pick a role" }, 400);
     const pr = await one(D, "SELECT uid, email FROM profiles WHERE lower(email) = lower(?)", clean(b.email, 200)); if (!pr) return J({ error: "That person needs to sign in to Grooveville once first" }, 404);
     if (b.remove) await run(D, "DELETE FROM roles WHERE uid = ? AND role = ?", pr.uid, role); else await run(D, "INSERT OR IGNORE INTO roles (uid, role, scope, added_by, at) VALUES (?,?,'',?,?)", pr.uid, role, u.uid, now());
     await audit(D, u.uid, b.remove ? "role_removed" : "role_added", "profile", pr.uid, { role }); return J({ ok: true });

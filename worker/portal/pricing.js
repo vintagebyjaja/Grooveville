@@ -23,6 +23,18 @@ function withinHours(hours, start, end) {
   if (s < o || e > c) return "The event must fit inside operating hours (" + h[0] + "–" + h[1] + ")"; return null;
 }
 /* ev: { expected, start "YYYY-MM-DDTHH:MM", end, services: [ids], setupHours, breakdownHours, ticketPriceCents? } */
+export function independentTicketingOffer() {
+  const feeBps = 200;
+  return {
+    arrangement: "ticketing",
+    label: "Independent event ticketing",
+    platformFee: { feeBps, perTicketCents: 0 },
+    processingBorneBy: "host",
+    payout: "Grooveville settles with hosts manually, typically within 3–5 business days after ticket sales close and funds are available, subject to reconciliation and dispute review.",
+    lines: [{ label: "Ticketing fee", value: (feeBps / 100).toFixed(2) + "% of collected ticket revenue after refunds and chargebacks" }],
+    note: "The platform fee is deducted from host proceeds. Stripe processing is deducted separately. Free tickets and RSVPs have no platform fee.",
+  };
+}
 export function quote(loc, ev) {
   const P = normPricing(typeof loc.pricing === "string" ? JSON.parse(loc.pricing || "{}") : loc.pricing), errors = [], guests = int(ev.expected);
   const start = String(ev.start || ""), end = String(ev.end || ""); const durMin = Math.round((Date.parse(end + "Z") - Date.parse(start + "Z")) / 60000);
@@ -35,7 +47,10 @@ export function quote(loc, ev) {
   if (!errors.length) { const hErr = withinHours(typeof loc.hours === "string" ? JSON.parse(loc.hours || "{}") : loc.hours, start.slice(0, 16), end.slice(0, 16)); if (hErr) errors.push(hErr) }
   const out = { location: loc.id, category: loc.category, guests, hours: Math.max(0, durMin) / 60, errors, offers: [] };
   const fee = { feeBps: P.platformFeeBps, perTicketCents: P.platformPerTicketCents };
-  if (loc.category === "external") { out.offers.push({ arrangement: "ticketing", label: "Ticketing only", platformFee: fee, lines: [{ label: "Grooveville ticketing fee", value: P.platformFeeBps / 100 + "% of ticket sales" + (P.platformPerTicketCents ? " + " + (P.platformPerTicketCents / 100).toFixed(2) + " per ticket" : "") }], note: "No property rental: Grooveville doesn't own or rent this venue." }); return out }
+  if (loc.category === "external") {
+    if (!errors.length) out.offers.push(independentTicketingOffer());
+    return out;
+  }
   if (errors.length) return out;
   const tier = P.tiers.find(t => guests <= t.maxGuests); if (!tier) { errors.push("No pricing tier covers " + guests + " guests at this location"); return out }
   const sMin = mins(start.slice(11)), band = P.bands.find(b => { let f = mins(b.from), t = mins(b.to); if (t <= f) return sMin >= f || sMin < t; return sMin >= f && sMin < t }) || null;

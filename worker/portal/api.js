@@ -91,7 +91,7 @@ export async function portalApi(req, env, ctx, h) {
       const notes = await all(D, "SELECT id, kind, title, body, link, seen, at FROM notifications WHERE uid = ? ORDER BY at DESC LIMIT 40", u.uid);
       const staff = await all(D, "SELECT e.id, e.slug, e.title, e.start FROM event_staff s JOIN events e ON e.id = s.event_id WHERE s.uid = ? AND e.status IN ('published','sales_closed')", u.uid);
       const photo = await one(D, "SELECT 1 AS present FROM account_photos WHERE uid = ?", u.uid);
-      return J({ hasPhoto: !!photo, signedIn: true, uid: u.uid, email: u.email, emailVerified: !!u.email_verified, auth: u.auth, profile: pr, host, notifications: notes, admin: u.admin, founder: u.founder, finance: u.finance, tester: u.tester, staffEvents: staff });
+      return J({ hasPhoto: !!photo, signedIn: true, uid: u.uid, email: u.email, emailVerified: !!u.email_verified, auth: u.auth, profile: pr, host, notifications: notes, admin: u.admin, founder: u.founder, finance: u.finance, rentalsStaff: u.rentalsStaff, tester: u.tester, staffEvents: staff });
     }
     if (p === "/api/p/me/seen" && req.method === "POST") { if (!u) return J({ error: "Sign in" }, 401); await run(D, "UPDATE notifications SET seen = 1 WHERE uid = ?", u.uid); return J({ ok: true }) }
     if (p === "/api/p/me/esign" && req.method === "POST") {
