@@ -3,7 +3,7 @@
 import re
 
 from docx import Document
-from docx.enum.text import WD_ALIGN_PARAGRAPH
+from docx.enum.text import WD_ALIGN_PARAGRAPH, WD_TAB_ALIGNMENT, WD_TAB_LEADER
 from docx.oxml import OxmlElement
 from docx.oxml.ns import qn
 from docx.shared import Inches, Pt, RGBColor
@@ -13,6 +13,8 @@ from produce import ROOT, TITLES, chapter_paths
 EXPORT = ROOT / "exports/complete-book/The_14_Laws_to_Groove_Illustrated.docx"
 FONT = "DejaVu Serif"
 PURPLE = RGBColor.from_string("592260")
+# Cached page numbers from the current Word layout. The PAGEREF fields can refresh after edits.
+WORD_CHAPTER_STARTS = (9, 18, 27, 36, 45, 54, 62, 74, 83, 92, 101, 110, 119, 128)
 
 
 def element(tag, **attributes):
@@ -37,7 +39,7 @@ def bookmark(paragraph, name, number):
     paragraph._p.append(element("bookmarkEnd", id=number))
 
 
-def contents_link(document, name, label):
+def contents_link(document, name, label, page_number):
     paragraph = document.add_paragraph()
     paragraph.paragraph_format.space_after = Pt(9)
     paragraph.paragraph_format.keep_with_next = False
@@ -48,6 +50,19 @@ def contents_link(document, name, label):
     run.append(text)
     link.append(run)
     paragraph._p.append(link)
+    section = document.sections[0]
+    text_width = section.page_width - section.left_margin - section.right_margin
+    paragraph.paragraph_format.tab_stops.add_tab_stop(
+        text_width, WD_TAB_ALIGNMENT.RIGHT, WD_TAB_LEADER.DOTS,
+    )
+    paragraph.add_run().add_tab()
+    field = element("fldSimple", instr=f"PAGEREF {name}")
+    run = element("r")
+    text = element("t")
+    text.text = str(page_number)
+    run.append(text)
+    field.append(run)
+    paragraph._p.append(field)
 
 
 def image(document, path, width):
@@ -150,10 +165,10 @@ def export():
     source(document, front / "author.md", front=True)
 
     document.add_heading("Contents", 1).paragraph_format.page_break_before = True
-    contents_link(document, "Introduction", "Introduction")
-    for n, title in enumerate(TITLES, 1):
-        contents_link(document, f"Law{n:02}", f"LAW {n:02} — {title}")
-    contents_link(document, "Conclusion", "Conclusion")
+    contents_link(document, "Introduction", "Introduction", 4)
+    for n, (title, start) in enumerate(zip(TITLES, WORD_CHAPTER_STARTS, strict=True), 1):
+        contents_link(document, f"Law{n:02}", f"LAW {n:02} — {title}", start)
+    contents_link(document, "Conclusion", "Conclusion", 137)
     source(document, front / "introduction.md", target=("Introduction", 0))
 
     for n in range(1, 15):
