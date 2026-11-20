@@ -9,8 +9,8 @@ import { financeApi, stripeEvent } from "./finance.js";
 import { adminApi } from "./admin.js";
 import { inviteApi } from "./invites.js";
 
-const MAX_UP = { pub: 12e6, verification: 15e6, doc: 25e6, final: 30e6, license: 15e6 };
-const TYPES = { pub: /^image\/(png|jpeg|webp)$/, verification: /^(image\/(png|jpeg|webp)|application\/pdf)$/, license: /^(image\/(png|jpeg|webp)|application\/pdf)$/, doc: /^application\/pdf$/, final: /^application\/pdf$/ };
+const MAX_UP = { pub: 12e6, account: 5e6, verification: 15e6, doc: 25e6, final: 30e6, license: 15e6 };
+const TYPES = { account: /^image\/(png|jpeg|webp)$/, pub: /^image\/(png|jpeg|webp)$/, verification: /^(image\/(png|jpeg|webp)|application\/pdf)$/, license: /^(image\/(png|jpeg|webp)|application\/pdf)$/, doc: /^application\/pdf$/, final: /^application\/pdf$/ };
 
 export async function portalApi(req, env, ctx, h) {
   const url = new URL(req.url), p = url.pathname; let D;
@@ -32,7 +32,7 @@ export async function portalApi(req, env, ctx, h) {
     m = /^\/api\/p\/img\/(portal\/pub\/[A-Za-z0-9._\/-]{3,200})$/.exec(p);
     if (m && req.method === "GET") { const o = await env.STUDIO_BUCKET.get(m[1]); if (!o) return new Response("Not found", { status: 404 }); return new Response(o.body, { headers: { "content-type": (o.httpMetadata && o.httpMetadata.contentType) || "image/jpeg", "cache-control": "public, max-age=86400", "x-content-type-options": "nosniff" } }) }
 
-    const S = await settings(D), u = await who(req, env, h, D);
+    const [S, u] = await Promise.all([settings(D), who(req, env, h, D)]);
     let b = {}; const ct = req.headers.get("content-type") || "";
     if (req.method === "POST" && ct.includes("application/json")) { const t = await req.text(); if (t.length > 400000) return J({ error: "Too much data" }, 413); try { b = JSON.parse(t || "{}") } catch (e) { return J({ error: "Bad request" }, 400) } }
     const C = { req, env, ctx, D, S, u, b, url, p, h, ip: ipOf(req), ua: uaOf(req), fetcher: h.fetcher, mode: stripeMode(env) };
@@ -49,12 +49,33 @@ export async function portalApi(req, env, ctx, h) {
       if (type === "application/pdf" && !(buf[0] === 0x25 && buf[1] === 0x50 && buf[2] === 0x44 && buf[3] === 0x46)) return J({ error: "That isn't a valid PDF" }, 415);
       if (/^image\/png/.test(type) && !(buf[0] === 0x89 && buf[1] === 0x50)) return J({ error: "That isn't a valid PNG" }, 415);
       if (/^image\/jpeg/.test(type) && !(buf[0] === 0xff && buf[1] === 0xd8)) return J({ error: "That isn't a valid JPG" }, 415);
+      if (type === "image/webp" && (String.fromCharCode(...buf.subarray(0, 4)) !== "RIFF" || String.fromCharCode(...buf.subarray(8, 12)) !== "WEBP")) return J({ error: "That isn't a valid WebP image" }, 415);
       const ext = { "image/png": "png", "image/jpeg": "jpg", "image/webp": "webp", "application/pdf": "pdf" }[type];
       const key = "portal/" + (purpose === "pub" ? "pub/" + u.uid.slice(0, 12) : "priv/" + purpose + "/" + u.uid.slice(0, 12)) + "/" + Date.now().toString(36) + "-" + rid(8) + "." + ext;
       const hash = await sha256(buf); await env.STUDIO_BUCKET.put(key, buf, { httpMetadata: { contentType: type }, customMetadata: { by: u.uid, sha256: hash, purpose } });
       return J({ ok: true, key, sha256: hash, size: buf.length });
     }
     /* account */
+    if (p === "/api/p/me/photo") {
+      if (!u) return J({ error: "Sign in first" }, 401);
+      if (req.method === "POST") {
+        const key = String(b.key || "");
+        if (key) {
+          if (!key.startsWith("portal/priv/account/") || !FILE_RE.test(key)) return J({ error: "Choose an account photo" }, 400);
+          const photo = await env.STUDIO_BUCKET.head(key);
+          if (photo?.customMetadata?.by !== u.uid) return J({ error: "Photo not found" }, 404);
+          await run(D, "INSERT INTO account_photos (uid, key) VALUES (?, ?) ON CONFLICT(uid) DO UPDATE SET key = excluded.key", u.uid, key);
+        } else await run(D, "DELETE FROM account_photos WHERE uid = ?", u.uid);
+        return J({ ok: true });
+      }
+      if (req.method === "GET") {
+        const saved = await one(D, "SELECT key FROM account_photos WHERE uid = ?", u.uid);
+        const photo = saved && await env.STUDIO_BUCKET.get(saved.key);
+        if (!photo) return J({ error: "Photo not found" }, 404);
+        return new Response(photo.body, { headers: { "content-type": photo.httpMetadata.contentType, "cache-control": "private, no-store", "x-content-type-options": "nosniff" } });
+      }
+      return J({ error: "Method not allowed" }, 405);
+    }
     if (p === "/api/p/me") {
       if (!u) return J({ signedIn: false }); let pr = await one(D, "SELECT * FROM profiles WHERE uid = ?", u.uid);
       if (!pr) { await run(D, "INSERT INTO profiles (uid, email, created, updated) VALUES (?,?,?,?)", u.uid, u.email || "", now(), now()); pr = await one(D, "SELECT * FROM profiles WHERE uid = ?", u.uid) }
@@ -69,7 +90,8 @@ export async function portalApi(req, env, ctx, h) {
       const host = await one(D, "SELECT id, slug, name, verified, official, status, grooveville FROM hosts WHERE uid = ?", u.uid);
       const notes = await all(D, "SELECT id, kind, title, body, link, seen, at FROM notifications WHERE uid = ? ORDER BY at DESC LIMIT 40", u.uid);
       const staff = await all(D, "SELECT e.id, e.slug, e.title, e.start FROM event_staff s JOIN events e ON e.id = s.event_id WHERE s.uid = ? AND e.status IN ('published','sales_closed')", u.uid);
-      return J({ signedIn: true, uid: u.uid, email: u.email, emailVerified: !!u.email_verified, auth: u.auth, profile: pr, host, notifications: notes, admin: u.admin, founder: u.founder, finance: u.finance, tester: u.tester, staffEvents: staff });
+      const photo = await one(D, "SELECT 1 AS present FROM account_photos WHERE uid = ?", u.uid);
+      return J({ hasPhoto: !!photo, signedIn: true, uid: u.uid, email: u.email, emailVerified: !!u.email_verified, auth: u.auth, profile: pr, host, notifications: notes, admin: u.admin, founder: u.founder, finance: u.finance, tester: u.tester, staffEvents: staff });
     }
     if (p === "/api/p/me/seen" && req.method === "POST") { if (!u) return J({ error: "Sign in" }, 401); await run(D, "UPDATE notifications SET seen = 1 WHERE uid = ?", u.uid); return J({ ok: true }) }
     if (p === "/api/p/me/esign" && req.method === "POST") {

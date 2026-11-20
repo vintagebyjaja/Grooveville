@@ -8532,17 +8532,19 @@ if(introWanted())showIntro();
     if(!(window.firebase&&cfg&&cfg.apiKey&&!/YOUR_/.test(cfg.apiKey))){S.authChecked=true;render();return}
     try{firebase.initializeApp(cfg);S.db=firebase.firestore();S.fbReady=true}catch(e){S.authChecked=true;render();return}
     subscribePublic();subscribeMedia();subscribeShows();musicSubscribe();
+    if(new URLSearchParams(location.search).get("portal-preview")==="1"){S.authChecked=true;render();return}
     let started=false;
     firebase.auth().onAuthStateChanged(async u=>{
       if(started&&!u){await fetch("/api/guide/session",{method:"DELETE",keepalive:true}).catch(()=>{});location.hash="#home";location.reload();return}
       if(!u){S.authChecked=true;render();return}
       started=true;S.signedIn=true;S.uid=u.uid;S.email=u.email||"";
+      if(window.PV?.isRoute(S.route))render();
       setTimeout(studioCheck,0);setTimeout(csCheck,0);
       try{const back=localStorage.getItem("gvReturn");if(back&&/^\/(shadowcrown|guide)\//.test(back)){localStorage.removeItem("gvReturn");location.href=back;return}}catch(e){}
       let first=true;
       S.db.doc("access/"+u.uid).onSnapshot(d=>{
         const f=d.exists&&["founder","hnic"].includes(String(d.data().role||"").toLowerCase().replace(/["'\s]/g,""));
-        if(f&&!S.isAdmin){S.isAdmin=true;subscribeFounder();musicSubscribe();if(!first||S.route==="signin"||S.route.startsWith("portal")||S.route==="join")location.hash="#team";if(!PREVIEW.on)toast("Founder access on")}
+        if(f&&!S.isAdmin){S.isAdmin=true;subscribeFounder();musicSubscribe();if(!window.PV?.isRoute(S.route)&&(!first||S.route==="signin"||S.route.startsWith("portal")||S.route==="join"))location.hash="#team";if(!PREVIEW.on)toast("Founder access on")}
         if(first){first=false;S.authChecked=true;if(!S.isAdmin){subscribeMember();if(S.route==="signin"||S.route==="groove")location.hash="#portal"}}
         render();
       },()=>{if(first){first=false;S.authChecked=true;subscribeMember();if(S.route==="signin"||S.route==="groove")location.hash="#portal";render()}});
