@@ -6,6 +6,7 @@
 import { openaiJSON, budgetOk, charge, IMAGE_MODELS, modelProblem, openaiErr } from "./content.js";
 import { serveR2 } from "./music.js";
 import { portalStripe } from "./portal/api.js";
+import { stripe } from "./portal/core.js";
 
 const J = (o, s, h) => new Response(JSON.stringify(o), { status: s || 200, headers: Object.assign({ "content-type": "application/json; charset=utf-8", "cache-control": "no-store" }, h || {}) });
 const te = new TextEncoder();
@@ -111,17 +112,6 @@ async function stripeVerify(env, payload, header) {
   const want = await hmacHex(env.STRIPE_WEBHOOK_SECRET, parts.t + "." + payload);
   return sigs.some(s => safeEq(s, want));
 }
-async function stripe(env, path, form, fetcher) {
-  const body = new URLSearchParams(); const add = (k, v) => { if (v === undefined || v === null) return; if (typeof v === "object") { for (const [kk, vv] of Object.entries(v)) add(k + "[" + kk + "]", vv) } else body.append(k, String(v)) };
-  for (const [k, v] of Object.entries(form)) add(k, v);
-  const r = await (fetcher || fetch)("https://api.stripe.com/v1/" + path, { method: "POST", headers: { authorization: "Bearer " + env.STRIPE_SECRET_KEY, "content-type": "application/x-www-form-urlencoded" }, body });
-  const j = await r.json().catch(() => ({}));
-  if (!r.ok) throw Object.assign(new Error("Stripe checkout request failed"), {
-    status: r.status, code: j.error?.code, type: j.error?.type, param: j.error?.param,
-    requestId: r.headers.get("request-id"),
-  });
-  return j;
-}
 async function grant(env, uid, bookId, product, formats, ref) {
   const e = await rj(env, entKey(uid), { books: {} }); e.books = e.books || {}; const b = e.books[bookId] = e.books[bookId] || { grants: [] };
   if (b.grants.some(g => g.ref === ref)) return false;                       // idempotent: same Stripe session never grants twice
@@ -217,20 +207,20 @@ export async function creativeApi(req, env, ctx, h) {
       const origin = url.origin, route = "/#reads/" + ed.id;
       const errorId = crypto.randomUUID().slice(0, 8);
       try {
-        const session = await stripe(env, "checkout/sessions", {
+        const session = await stripe(env, "POST", "checkout/sessions", {
           mode: "payment", success_url: origin + "/?paid={CHECKOUT_SESSION_ID}#reads/" + ed.id, cancel_url: origin + route,
           client_reference_id: user.uid, customer_email: user.email || undefined,
           "line_items[0][quantity]": 1, "line_items[0][price_data][currency]": (pr.currency || "usd").toLowerCase(),
           "line_items[0][price_data][unit_amount]": Math.round(pr.price * 100),
           "line_items[0][price_data][product_data][name]": ed.title + ({ digital: " (Digital book)", audio: " (Audiobook)", bundle: " (Book + audiobook)" }[prod] || ""),
           metadata: { uid: user.uid, book: ed.id, product: prod }, payment_intent_data: { metadata: { uid: user.uid, book: ed.id, product: prod } },
-        }, fetcher);
+        }, { fetcher });
         const checkout = new URL(session.url);
         if (checkout.protocol !== "https:" || checkout.hostname !== "checkout.stripe.com") throw new Error("Missing Stripe Checkout URL");
         return J({ url: checkout.href });
       } catch (e) {
         const safe = v => typeof v === "string" ? v.replace(/[^\w[\].-]/g, "").slice(0, 120) : undefined;
-        console.error("groove_reads_checkout_failed", { errorId, book: ed.id, product: prod, stripeStatus: e.status, stripeCode: safe(e.code), stripeType: safe(e.type), stripeParam: safe(e.param), stripeRequest: safe(e.requestId) });
+        console.error("groove_reads_checkout_failed", { errorId, book: ed.id, product: prod, stripeStatus: e.stripeStatus, stripeCode: safe(e.stripe?.code), stripeType: safe(e.stripe?.type), stripeParam: safe(e.stripe?.param), stripeRequest: safe(e.requestId) });
         return J({ error: "Stripe checkout could not open. Please try again. Reference " + errorId + ".", reference: errorId }, 502);
       }
     }
