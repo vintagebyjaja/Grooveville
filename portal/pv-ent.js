@@ -14,6 +14,15 @@ const pubShell = (hero, body) => PV.shell({ sec: "ENTERTAINMENT", hero }, body);
 const when = s => PV.dt(s);
 /* ---------- public listing ---------- */
 const eventCard = e => '<a class="pvcardx" href="#e/' + E(e.slug) + '"><div class="pvcimg">' + img(e.flyer, e.title) + '</div><div class="pvcb"><small class="pvlbl">' + E(when(e.start)) + '</small><b>' + E(e.title) + '</b><small>' + E(e.venue || "") + '</small><small>' + E(e.host.name) + ' ' + PV.badge(e.host) + '</small><span class="pvprice">' + (e.status === "sales_closed" ? "Sales closed" : e.from == null ? "" : e.from === 0 ? "Free" : "From " + $m(e.from)) + '</span></div></a>';
+function eventShowcase(events) {
+  const flyers = events.filter(event => event.flyer).slice(0, 8);
+  if (!flyers.length) {
+    return '<img class="pv-event-art" src="/media/events-poster-art.webp" alt="" width="1920" height="640" fetchpriority="high">';
+  }
+  return '<ul class="pv-event-flyers" aria-label="Upcoming event flyers">' + flyers.map(event =>
+    '<li><a href="#e/' + E(event.slug) + '">' + img(event.flyer, "") + '<span>' + E(event.title) + '</span></a></li>'
+  ).join("") + '</ul>';
+}
 PV.views.events = async () => {
   const result = await PV.api("events").catch(() => null);
   const events = result?.events || [];
@@ -33,6 +42,7 @@ PV.views.events = async () => {
     title: "The experience starts here.",
     intro: "Discover events, find verified hosts, and get tickets. Bring your own event to life with Grooveville Entertainment.",
     browse: "Explore events",
+    showcase: eventShowcase(events),
     actions: hosting,
     content: PV.publicSection("Upcoming events", eventsBody, true) +
       PV.publicSection("Featured hosts", hostBody) +
