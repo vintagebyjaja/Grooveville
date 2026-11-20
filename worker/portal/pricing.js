@@ -23,16 +23,19 @@ function withinHours(hours, start, end) {
   if (s < o || e > c) return "The event must fit inside operating hours (" + h[0] + "–" + h[1] + ")"; return null;
 }
 /* ev: { expected, start "YYYY-MM-DDTHH:MM", end, services: [ids], setupHours, breakdownHours, ticketPriceCents? } */
-export function independentTicketingOffer() {
+export const BUYER_PROCESSING_BPS = 350;
+
+export function independentTicketingOffer(buyerProcessing = false) {
   const feeBps = 200;
   return {
     arrangement: "ticketing",
     label: "Independent event ticketing",
     platformFee: { feeBps, perTicketCents: 0 },
-    processingBorneBy: "host",
+    processingBorneBy: buyerProcessing ? "grooveville" : "host",
+    buyerProcessingBps: buyerProcessing ? BUYER_PROCESSING_BPS : 0,
     payout: "Grooveville settles with hosts manually, typically within 3–5 business days after ticket sales close and funds are available, subject to reconciliation and dispute review.",
     lines: [{ label: "Ticketing fee", value: (feeBps / 100).toFixed(2) + "% of collected ticket revenue after refunds and chargebacks" }],
-    note: "The platform fee is deducted from host proceeds. Stripe processing is deducted separately. Free tickets and RSVPs have no platform fee.",
+    note: buyerProcessing ? "The platform fee comes from host proceeds. Buyers pay 3.5% for processing as part of the displayed total. Free tickets and RSVPs have no fee." : "The platform fee is deducted from host proceeds. Stripe processing is deducted separately. Free tickets and RSVPs have no platform fee.",
   };
 }
 export function quote(loc, ev) {
