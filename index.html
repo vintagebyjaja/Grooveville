@@ -757,6 +757,8 @@ body.mp-on .toast{bottom:92px}
 .hh2 .hhin{display:flex;flex-direction:column;gap:28px;min-height:calc(100svh - 62px);padding-block:clamp(36px,7vh,80px) 34px}
 .hh2 .hhtx{flex:1;display:flex;flex-direction:column;justify-content:center}
 .hh2 h1{max-width:none;font-size:clamp(44px,min(6.4vw,9.4vh),100px)}
+/* The intro moves screen-reader focus to this non-interactive heading. */
+.hh2 h1[tabindex="-1"]:focus{outline:none}
 .hh2 .caps{font:600 12px/1.7 var(--f-body);letter-spacing:.32em;text-transform:uppercase;color:#f3eee6;margin-top:22px}
 @media (max-width:1500px){.nav .soundbtn .lbl{display:none}}
 .hh2 p{margin-top:16px}
