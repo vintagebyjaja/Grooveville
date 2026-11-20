@@ -1,11 +1,21 @@
 /* Grooveville Entertainment: hosts, peach verification, events, ticket types, guest checkout,
    QR tickets and door check-in. Overselling is impossible by construction: ticket holds and sales are
    guarded by database CHECK constraints inside one transaction. */
-import { J, one, all, run, now, rid, pj, clean, audit, notify, stripe, sha256, slugify, limited, isDT, mail, signLink } from "./core.js";
+import { J, one, all, run, now, rid, pj, clean, audit, notify, stripe, sha256, slugify, limited, isDT, mail, signLink, bpsOf } from "./core.js";
 import { activeInvite } from "./invites.js";
-import { quote, normPricing, independentTicketingOffer } from "./pricing.js";
+import { quote, normPricing, independentTicketingOffer, BUYER_PROCESSING_BPS } from "./pricing.js";
 import { adminUids } from "./rentals.js";
 export function localNow(tz) { const f = new Intl.DateTimeFormat("en-CA", { timeZone: tz || "America/New_York", year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", hourCycle: "h23" }).formatToParts(new Date()), g = t => (f.find(x => x.type === t) || {}).value; return g("year") + "-" + g("month") + "-" + g("day") + "T" + g("hour") + ":" + g("minute") }
+const buyerProcessingAvailable = C => C.mode !== "live" || C.env.INDEPENDENT_BUYER_PROCESSING_LIVE === "true";
+const buyerProcessingRate = terms => {
+  const t = pj(terms, {});
+  return t.independentTicketing && t.buyerProcessingBps === BUYER_PROCESSING_BPS ? BUYER_PROCESSING_BPS : 0;
+};
+const agreedBuyerProcessing = async (D, e) => {
+  if (!e.agreement_id) return 0;
+  const a = await one(D, "SELECT terms FROM event_agreements WHERE id = ? AND event_id = ? AND status = 'signed'", e.agreement_id, e.id);
+  return buyerProcessingRate(a?.terms);
+};
 const TZ = S => S.tz || "America/New_York";
 const fmtWhen = s => { try { const d = new Date(s.slice(0, 16) + ":00Z"); return d.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric", timeZone: "UTC" }) + " · " + d.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", timeZone: "UTC" }) } catch (e) { return s } };
 const hostCard = h => h && { id: h.id, slug: h.slug, name: h.name, photo: h.photo_key || "", verified: !!h.verified, official: !!h.official, location: h.location };
@@ -63,24 +73,26 @@ async function canStaff(C, eventId) { const { D, u } = C; if (!u) return false; 
 const MATERIAL = ["location_id", "venue_name", "venue_address", "start", "end", "expected", "services", "setup_hours", "breakdown_hours", "capacity"];
 export async function termsFor(D, S, e, h, offer, loc) {
   const P = loc ? normPricing(pj(loc.pricing, {})) : null;
-  const ticketing = offer.arrangement === "ticketing" ? independentTicketingOffer() : null;
+  const ticketing = offer.arrangement === "ticketing" ? independentTicketingOffer(offer.buyerProcessingBps === BUYER_PROCESSING_BPS) : null;
   const processingBorneBy = ticketing?.processingBorneBy || P?.processingBorneBy || "host";
   return { version: 1, event: { id: e.id, title: e.title, start: e.start, end: e.end, expected: e.expected, capacity: e.capacity, services: pj(e.services, []), setupHours: e.setup_hours, breakdownHours: e.breakdown_hours, refundPolicy: e.refund_policy },
     location: loc ? { id: loc.id, name: loc.name, address: loc.address, category: loc.category, restrictions: loc.restrictions } : { name: e.venue_name, address: e.venue_address, category: "external" },
     host: { id: h.id, name: h.name }, arrangement: offer.arrangement, rentalCents: offer.totalCents || 0, depositCents: offer.depositCents || 0, shareBps: offer.shareBps || 0, minGuaranteeCents: offer.minGuaranteeCents || 0,
-    ...(ticketing ? { independentTicketing: true } : {}),
+    ...(ticketing ? { independentTicketing: true, buyerProcessingBps: ticketing.buyerProcessingBps } : {}),
     platformFeeBps: ticketing?.platformFee.feeBps ?? (offer.arrangement === "share" ? P?.platformFeeBps || 0 : P?.platformFeeBps || S.platform_fee_bps || 0),
     perTicketCents: ticketing?.platformFee.perTicketCents ?? (P ? P.platformPerTicketCents || 0 : S.platform_fee_cents || 0),
     processingBorneBy, shareBase: ticketing ? "net_sales" : P?.shareBase || "net_sales", cancelPolicy: P?.cancelPolicy || "", lines: ticketing?.lines || offer.lines || [],
-    refundsAndChargebacks: ticketing ? "Refunds and chargebacks reduce the revenue used to calculate the ticketing fee. Actual Stripe fees are deducted separately from host proceeds. Free tickets and RSVPs have no platform fee." : "Refunds and chargebacks are deducted from ticket sales before any revenue share is calculated. Stripe processing fees are paid by " + (processingBorneBy === "grooveville" ? "Grooveville" : "the host") + ".",
+    refundsAndChargebacks: ticketing?.buyerProcessingBps ? "Refunds and chargebacks reduce ticket revenue. Buyers pay a 3.5% processing fee and Grooveville covers actual Stripe fees. Free tickets and RSVPs have no fee." : ticketing ? "Refunds and chargebacks reduce the revenue used to calculate the ticketing fee. Actual Stripe fees are deducted separately from host proceeds. Free tickets and RSVPs have no platform fee." : "Refunds and chargebacks are deducted from ticket sales before any revenue share is calculated. Stripe processing fees are paid by " + (processingBorneBy === "grooveville" ? "Grooveville" : "the host") + ".",
     offPlatform: "Tickets sold outside Grooveville (cash, other platforms) are not part of this settlement; they must be reported to Grooveville and are reconciled manually.", payout: ticketing?.payout || "Grooveville pays approved host earnings externally after ticket sales close and payments are reconciled." };
 }
 export async function entApi(C) {
   const { D, S, u, b, p, url, req, env } = C, base = "https://" + url.host;
   const pubOpen = S.ent_open || (u && u.tester);
   /* ---------------- public ---------------- */
-  if (p === "/api/p/events") { if (!pubOpen) return J({ closed: true, events: [] }); const ln = localNow(TZ(S)); const E = await all(D, "SELECT e.*, l.name AS lname, l.address AS laddr, h.name AS hname, h.slug AS hslug, h.verified AS hver, h.official AS hoff, o.name AS oname, o.slug AS oslug FROM events e LEFT JOIN event_organizations eo ON eo.event_id = e.id LEFT JOIN host_organizations o ON o.id = eo.organization_id AND o.host_id = e.host_id LEFT JOIN locations l ON l.id = e.location_id JOIN hosts h ON h.id = e.host_id WHERE e.status IN ('published','sales_closed') AND e.visibility = 'public' AND e.end > ? ORDER BY e.start LIMIT 100", ln);
-    const mins = await all(D, "SELECT event_id, MIN(price_cents) AS m FROM ticket_types WHERE status = 'active' GROUP BY event_id"); return J({ events: E.map(e => ({ slug: e.slug, title: e.title, start: e.start, flyer: e.flyer_key, venue: e.lname || e.venue_name, host: { name: e.hname, slug: e.hslug, verified: !!e.hver, official: !!e.hoff }, organization: e.oslug ? { name: e.oname, slug: e.oslug } : null, from: (mins.find(m => m.event_id === e.id) || {}).m, status: e.status, category: e.category })) }) }
+  if (p === "/api/p/events") { if (!pubOpen) return J({ closed: true, events: [] }); const ln = localNow(TZ(S)); const E = await all(D, "SELECT e.*, l.name AS lname, l.address AS laddr, h.name AS hname, h.slug AS hslug, h.verified AS hver, h.official AS hoff, o.name AS oname, o.slug AS oslug, a.terms AS ticketing_terms FROM events e LEFT JOIN event_agreements a ON a.id = e.agreement_id AND a.event_id = e.id AND a.status = 'signed' LEFT JOIN event_organizations eo ON eo.event_id = e.id LEFT JOIN host_organizations o ON o.id = eo.organization_id AND o.host_id = e.host_id LEFT JOIN locations l ON l.id = e.location_id JOIN hosts h ON h.id = e.host_id WHERE e.status IN ('published','sales_closed') AND e.visibility = 'public' AND e.end > ? ORDER BY e.start LIMIT 100", ln);
+    const mins = new Map((await all(D, "SELECT event_id, MIN(price_cents) AS m FROM ticket_types WHERE status = 'active' GROUP BY event_id")).map(m => [m.event_id, m.m]));
+    return J({ events: E.map(e => ({
+ slug: e.slug, title: e.title, start: e.start, flyer: e.flyer_key, venue: e.lname || e.venue_name, host: { name: e.hname, slug: e.hslug, verified: !!e.hver, official: !!e.hoff }, organization: e.oslug ? { name: e.oname, slug: e.oslug } : null, from: mins.has(e.id) ? mins.get(e.id) + bpsOf(mins.get(e.id), buyerProcessingRate(e.ticketing_terms)) : undefined, status: e.status, category: e.category })) }) }
   if (p === "/api/p/event") {
     const e = await one(D, "SELECT * FROM events WHERE slug = ?", url.searchParams.get("slug") || ""); if (!e) return J({ error: "Event not found" }, 404);
     const token = url.searchParams.get("invite");
@@ -89,7 +101,7 @@ export async function entApi(C) {
     const v = invite ? { ok: true } : await canSeeEvent(C, e, url.searchParams.get("k") || "", url.searchParams.get("pw") || ""); if (!v.ok) return J(v.password ? { locked: "password", title: e.title } : v.private ? { locked: "private" } : { error: v.closed ? "Grooveville Entertainment opens soon." : "Event not found" }, v.password || v.private ? 200 : 404);
     const h = await one(D, "SELECT * FROM hosts WHERE id = ?", e.host_id), loc = e.location_id ? await one(D, "SELECT * FROM locations WHERE id = ?", e.location_id) : null, T = await all(D, "SELECT * FROM ticket_types WHERE event_id = ? ORDER BY ord, price_cents", e.id);
     const org = await one(D, "SELECT o.* FROM event_organizations eo JOIN host_organizations o ON o.id = eo.organization_id WHERE eo.event_id = ? AND o.host_id = ?", e.id, e.host_id);
-    return J({ event: { ...eventPublic(e, h, loc, invite?.destination === "rsvp" ? T.filter(t => !t.price_cents) : T, S), organization: orgCard(org) }, preview: !!v.owner && e.status !== "published", stripe: C.mode, live: C.mode === "live" && !!S.payments_live });
+    return J({ event: { ...eventPublic(e, h, loc, invite?.destination === "rsvp" ? T.filter(t => !t.price_cents) : T, S), organization: orgCard(org), buyerProcessingBps: invite?.destination === "rsvp" ? 0 : await agreedBuyerProcessing(D, e) }, preview: !!v.owner && e.status !== "published", stripe: C.mode, live: C.mode === "live" && !!S.payments_live });
   }
   if (p === "/api/p/hostpage") {
     const orgSlug = url.searchParams.get("org");
@@ -118,7 +130,10 @@ export async function entApi(C) {
     if (invite?.destination === "rsvp" && sub > 0) return J({ error: "This invite is for free RSVPs." }, 400);
     if (!qty) return J({ error: "Choose at least one ticket" }, 400); if (qty > 20) return J({ error: "Up to 20 tickets per order" }, 400);
     let disc = 0, promo = ""; if (b.promo) { promo = String(b.promo).toUpperCase().trim().slice(0, 30); const pc = await one(D, "SELECT * FROM promo_codes WHERE event_id = ? AND code = ?", e.id, promo); if (!pc || (pc.expires && pc.expires < ln)) return J({ error: "That promo code isn't valid" }, 400); disc = pc.kind === "pct" ? Math.min(sub, Math.floor(sub * Math.min(10000, pc.value) / 10000)) : Math.min(sub, pc.value) }
-    const total = sub - disc, free = total === 0;
+    const ticketTotal = sub - disc, rate = await agreedBuyerProcessing(D, e);
+    const processing = bpsOf(ticketTotal, rate), total = ticketTotal + processing, free = total === 0;
+    if (!free && rate && !buyerProcessingAvailable(C)) return J({ error: "Ticket sales open soon." }, 403);
+    if (!free && rate && (b.buyerProcessingBps !== rate || b.expectedTotal !== total)) return J({ error: "The ticket total changed. Refresh and review the price before continuing." }, 409);
     if (!free && (C.mode === "off")) return J({ error: "Payments aren't connected yet" }, 503);
     if (!free && C.mode === "live" && !S.payments_live) return J({ error: "Ticket sales open soon." }, 403);
     const id = rid(12), tok = rid(24), att = (Array.isArray(b.attendees) ? b.attendees : []).slice(0, qty).map(x => clean(x, 80));
@@ -126,6 +141,7 @@ export async function entApi(C) {
     stmts.push(D.prepare("UPDATE events SET reserved = reserved + ? WHERE id = ?").bind(qty, e.id));
     if (promo) stmts.push(D.prepare("UPDATE promo_codes SET used = used + 1 WHERE event_id = ? AND code = ?").bind(e.id, promo));
     stmts.push(D.prepare("INSERT INTO orders (id, event_id, email, name, uid, qty, subtotal_cents, discount_cents, total_cents, status, promo, hold_expires, attendees, view_token, created, paid_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)").bind(id, e.id, email, name, u ? u.uid : null, qty, sub, disc, total, free ? "paid" : "pending", promo, Date.now() + 31 * 60000, JSON.stringify(att), tok, now(), free ? now() : null));
+    if (processing) stmts.push(D.prepare("INSERT INTO order_processing_fees (order_id, cents) VALUES (?,?)").bind(id, processing));
     if (invite) stmts.push(D.prepare("INSERT INTO special_invite_orders (order_id,token) VALUES (?,?)").bind(id, invite.token));
     for (const { t, q } of items) stmts.push(D.prepare("INSERT INTO order_items (order_id, ticket_type_id, qty, unit_cents) VALUES (?,?,?,?)").bind(id, t.id, q, t.price_cents));
     await D.batch(stmts); /* throws (CHECK constraint) if any ticket type, the event or the promo code would go over its limit */
@@ -133,8 +149,10 @@ export async function entApi(C) {
     if (free) { await issueTickets(env, D, o, base); await audit(D, u ? u.uid : "guest", "order_free", "order", id, { qty }); return J({ ok: true, free: true, order: id, token: tok }) }
     const host = await one(D, "SELECT * FROM hosts WHERE id = ?", e.host_id);
     try {
+      const lineItems = disc ? [{ quantity: 1, price_data: { currency: "usd", unit_amount: ticketTotal, product_data: { name: e.title + " · " + qty + " ticket" + (qty > 1 ? "s" : "") + " (code " + promo + ")" } } }] : items.map(({ t, q }) => ({ quantity: q, price_data: { currency: "usd", unit_amount: t.price_cents, product_data: { name: e.title + " · " + t.name } } }));
+      if (processing) lineItems.push({ quantity: 1, price_data: { currency: "usd", unit_amount: processing, product_data: { name: "Ticket processing fee" } } });
       const sess = await stripe(env, "POST", "checkout/sessions", { mode: "payment", customer_email: email, client_reference_id: id, expires_at: Math.floor(Date.now() / 1000) + 30 * 60 + 15,
-        line_items: disc ? [{ quantity: 1, price_data: { currency: "usd", unit_amount: total, product_data: { name: e.title + " · " + qty + " ticket" + (qty > 1 ? "s" : "") + " (code " + promo + ")" } } }] : items.map(({ t, q }) => ({ quantity: q, price_data: { currency: "usd", unit_amount: t.price_cents, product_data: { name: e.title + " · " + t.name } } })),
+        line_items: lineItems,
         metadata: { gvp: "order", order: id, event: e.id }, payment_intent_data: { metadata: { gvp: "order", order: id, event: e.id }, description: "Tickets: " + e.title + (host && !host.grooveville ? " (hosted by " + host.name + ")" : "") },
         success_url: base + "/#order/" + id + "." + tok + "?paid=1", cancel_url: base + "/#e/" + e.slug + "?cancel=" + id + "." + tok + (invite ? "&invite=" + invite.token : "") }, { idem: "order-" + id, fetcher: C.fetcher });
       await run(D, "UPDATE orders SET stripe_session = ? WHERE id = ?", sess.id, id); await audit(D, u ? u.uid : "guest", "order_started", "order", id, { total, qty, session: sess.id });
@@ -144,7 +162,8 @@ export async function entApi(C) {
   if (p === "/api/p/order") {
     const [id, t] = String(url.searchParams.get("o") || "").split("."); const o = await one(D, "SELECT * FROM orders WHERE id = ?", id || ""); if (!o || !t || o.view_token !== t) return J({ error: "Order not found" }, 404);
     const e = await one(D, "SELECT e.*, l.name AS lname, l.address AS laddr FROM events e LEFT JOIN locations l ON l.id = e.location_id WHERE e.id = ?", o.event_id), T = await all(D, "SELECT t.token, t.code, t.attendee, t.status, t.checked_in_at, y.name AS type FROM tickets t LEFT JOIN ticket_types y ON y.id = t.ticket_type_id WHERE t.order_id = ?", o.id);
-    return J({ order: { id: o.id, status: o.status, qty: o.qty, total_cents: o.total_cents, discount_cents: o.discount_cents, refunded_cents: o.refunded_cents, name: o.name, email: o.email, paid_at: o.paid_at, created: o.created }, event: { title: e.title, slug: e.slug, start: e.start, end: e.end, venue: e.lname || e.venue_name, address: e.laddr || e.venue_address, flyer: e.flyer_key, age: e.age }, tickets: T });
+    const processing = await one(D, "SELECT cents FROM order_processing_fees WHERE order_id = ?", o.id);
+    return J({ order: { processing_cents: processing?.cents || 0, id: o.id, status: o.status, qty: o.qty, total_cents: o.total_cents, discount_cents: o.discount_cents, refunded_cents: o.refunded_cents, name: o.name, email: o.email, paid_at: o.paid_at, created: o.created }, event: { title: e.title, slug: e.slug, start: e.start, end: e.end, venue: e.lname || e.venue_name, address: e.laddr || e.venue_address, flyer: e.flyer_key, age: e.age }, tickets: T });
   }
   if (p === "/api/p/order/cancel" && req.method === "POST") {
     const [id, t] = String(b.o || "").split("."); const o = await one(D, "SELECT * FROM orders WHERE id = ?", id || ""); if (!o || o.view_token !== t) return J({ error: "Not found" }, 404); if (o.status !== "pending") return J({ ok: true, status: o.status });
@@ -257,8 +276,11 @@ export async function entApi(C) {
   if (p === "/api/p/host/event/quote" && req.method === "POST") {
     const e = await ownEvent(C, b.id); if (!e) return J({ error: "Event not found" }, 404);
     if (H.grooveville) return J({ owned: true, offers: [{ arrangement: "owned", label: "Grooveville event", note: "Grooveville's own event: no rental or revenue share." }], errors: [] });
-    if (!e.location_id) return J({ location: null, category: "external", errors: [], offers: [independentTicketingOffer()] });
-    const loc = await one(D, "SELECT * FROM locations WHERE id = ?", e.location_id); return J(quote(loc, { expected: e.expected, start: e.start, end: e.end, services: pj(e.services, []), setupHours: e.setup_hours, breakdownHours: e.breakdown_hours }));
+    if (!e.location_id) return J({ location: null, category: "external", errors: [], offers: [independentTicketingOffer(buyerProcessingAvailable(C))] });
+    const loc = await one(D, "SELECT * FROM locations WHERE id = ?", e.location_id);
+    const q = quote(loc, { expected: e.expected, start: e.start, end: e.end, services: pj(e.services, []), setupHours: e.setup_hours, breakdownHours: e.breakdown_hours });
+    if (q.category === "external" && q.offers.length) q.offers = [independentTicketingOffer(buyerProcessingAvailable(C))];
+    return J(q);
   }
   if (p === "/api/p/host/event/accept" && req.method === "POST") {
     const e = await ownEvent(C, b.id); if (!e) return J({ error: "Event not found" }, 404); if (!["draft", "rejected"].includes(e.status)) return J({ error: "Terms can only be chosen before the event is submitted" }, 409);
@@ -266,10 +288,11 @@ export async function entApi(C) {
     const ex = await one(D, "SELECT * FROM event_agreements WHERE event_id = ? AND status IN ('sent','signed')", e.id); if (ex) return J({ error: "This event already has a signed agreement. Ask Grooveville for an amendment." }, 409);
     let offer, loc = null;
     if (H.grooveville) offer = { arrangement: "owned" };
-    else if (!e.location_id && b.arrangement === "ticketing") offer = independentTicketingOffer();
+    else if (!e.location_id && b.arrangement === "ticketing") offer = independentTicketingOffer(buyerProcessingAvailable(C));
     else if (!e.location_id) return J({ error: "Choose independent event ticketing for this venue" }, 400);
     else { loc = await one(D, "SELECT * FROM locations WHERE id = ?", e.location_id); const Q = quote(loc, { expected: e.expected, start: e.start, end: e.end, services: pj(e.services, []), setupHours: e.setup_hours, breakdownHours: e.breakdown_hours }); if (Q.errors.length) return J({ error: Q.errors[0] }, 400); offer = Q.offers.find(o => o.arrangement === b.arrangement); if (!offer) return J({ error: "That option isn't available for this event" }, 400) }
-    if (offer.arrangement === "ticketing" && b.ticketingFeeBps !== offer.platformFee.feeBps) return J({ error: "Refresh the event and review the current ticketing fee before accepting." }, 409);
+    if (offer.arrangement === "ticketing") offer = independentTicketingOffer(buyerProcessingAvailable(C));
+    if (offer.arrangement === "ticketing" && (b.ticketingFeeBps !== offer.platformFee.feeBps || (b.buyerProcessingBps || 0) !== offer.buyerProcessingBps)) return J({ error: "Refresh the event and review the current ticketing fee before accepting." }, 409);
     const terms = await termsFor(D, S, e, H, offer, loc), th = await sha256(JSON.stringify(terms)), id = rid(12);
     await run(D, "UPDATE event_agreements SET status = 'void' WHERE event_id = ? AND status = 'accepted'", e.id);
     await run(D, "INSERT INTO event_agreements (id, event_id, host_id, arrangement, terms, terms_hash, quote, status, accepted_at, created) VALUES (?,?,?,?,?,?,?,?,?,?)", id, e.id, H.id, offer.arrangement, JSON.stringify(terms), th, JSON.stringify(offer), H.grooveville ? "signed" : "accepted", now(), now());

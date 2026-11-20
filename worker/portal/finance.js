@@ -50,7 +50,7 @@ export async function stripeEvent(env, D, ev, fetcher) {
 export async function settlementFor(D, eventId) {
   const e = await one(D, "SELECT * FROM events WHERE id = ?", eventId); if (!e) return null;
   const ag = e.agreement_id ? await one(D, "SELECT * FROM event_agreements WHERE id = ?", e.agreement_id) : null, terms = ag ? pj(ag.terms, {}) : { arrangement: "ticketing" };
-  const orders = await all(D, "SELECT * FROM orders WHERE event_id = ?", eventId); let rec = await one(D, "SELECT * FROM settlements WHERE event_id = ?", eventId);
+  const orders = await all(D, "SELECT o.*, f.cents AS processing_cents FROM orders o LEFT JOIN order_processing_fees f ON f.order_id = o.id WHERE o.event_id = ?", eventId); let rec = await one(D, "SELECT * FROM settlements WHERE event_id = ?", eventId);
   const payouts = rec ? await all(D, "SELECT p.*, m.paid_on, m.method, m.reference FROM payouts p LEFT JOIN manual_host_payments m ON m.payout_id = p.id WHERE p.settlement_id = ? ORDER BY COALESCE(m.paid_on, p.at), p.id", rec.id) : [];
   const calc = settle(terms, orders, rec ? pj(rec.adjustments, []) : [], payouts); const h = await one(D, "SELECT id, name, uid, grooveville FROM hosts WHERE id = ?", e.host_id);
   let state = rec && rec.state === "host_disputed" ? "disputed" : settlementState(e, calc, rec);
@@ -85,7 +85,7 @@ export async function financeApi(C) {
       calc: {
         terms: { arrangement: calc.terms.arrangement, shareBps: calc.terms.shareBps },
         gross: calc.gross, tickets: calc.tickets, activeTickets: calc.activeTickets, refunds: calc.refunds,
-        chargebacks: calc.chargebacks, fees: calc.fees, netSales: calc.netSales,
+        chargebacks: calc.chargebacks, fees: calc.fees, buyerProcessing: calc.buyerProcessing, hostFees: calc.hostFees, netSales: calc.netSales,
         grooveLabel: calc.grooveLabel, grooveShare: calc.grooveShare,
         adjustments: calc.adjustments.map(({ kind, cents, label }) => ({ kind, cents, label })),
         hostShare: calc.hostShare, paidOut: calc.paidOut, outstanding: calc.outstanding, openDisputes: calc.openDisputes,

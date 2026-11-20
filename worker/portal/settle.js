@@ -10,7 +10,14 @@ export function settle(terms, orders, adjustments, payouts, today) {
   const refunds = P.reduce((a, o) => a + (o.refunded_cents | 0), 0), chargebacks = P.reduce((a, o) => a + (o.dispute_cents | 0), 0);
   const fees = P.reduce((a, o) => a + (o.fee_cents | 0) + (o.dispute_fee_cents | 0), 0);
   const fullyRefundedTickets = P.filter(o => o.status === "refunded").reduce((a, o) => a + (o.qty | 0), 0), activeTickets = tickets - fullyRefundedTickets;
-  const netSales = gross - refunds - chargebacks, base = Math.max(0, T.shareBase === "gross_less_refunds" ? gross - refunds : netSales);
+  const retainedFee = (o, includeDisputes) => {
+    const fee = o.processing_cents || 0;
+    const remaining = Math.max(0, o.total_cents - (o.refunded_cents || 0) - (includeDisputes ? o.dispute_cents || 0 : 0));
+    return fee && o.total_cents > 0 ? Math.round(fee * remaining / o.total_cents) : 0;
+  };
+  const buyerProcessing = P.reduce((a, o) => a + retainedFee(o, true), 0);
+  const netSales = gross - refunds - chargebacks - buyerProcessing;
+  const base = Math.max(0, T.shareBase === "gross_less_refunds" ? gross - refunds - P.reduce((a, o) => a + retainedFee(o, false), 0) : netSales);
   let groove = 0, grooveLabel = "";
   if (T.arrangement === "owned") { groove = base; grooveLabel = "Grooveville event: all eligible revenue" }
   else if (T.arrangement === "share") { const pct = bpsOf(base, T.shareBps); groove = Math.max(pct, T.minGuaranteeCents); grooveLabel = (T.shareBps / 100) + "% of " + (T.shareBase === "gross_less_refunds" ? "sales after refunds" : "net sales") + (groove > pct ? " (minimum guarantee applied)" : "") }
@@ -21,7 +28,7 @@ export function settle(terms, orders, adjustments, payouts, today) {
   const paidDone = (payouts || []).filter(p => p.status === "paid").reduce((s, p) => s + (p.amount_cents | 0), 0);
   const t = today || new Date().toISOString().slice(0, 10), pendingFunds = P.filter(o => !o.available_on || o.available_on > t).reduce((a, o) => a + (o.total_cents | 0) - (o.refunded_cents | 0), 0);
   const openDisputes = P.filter(o => o.status === "disputed").length;
-  return { terms: T, gross, tickets, activeTickets, refunds, chargebacks, fees, taxes: 0, netSales, base, grooveShare: groove, grooveLabel, grooveNet: groove + charges - credits - (T.processingBorneBy === "grooveville" || T.arrangement === "owned" ? fees : 0),
+  return { terms: T, gross, tickets, activeTickets, refunds, chargebacks, fees, buyerProcessing, hostFees, taxes: 0, netSales, base, grooveShare: groove, grooveLabel, grooveNet: groove + buyerProcessing + charges - credits - (T.processingBorneBy === "grooveville" || T.arrangement === "owned" ? fees : 0),
     charges, credits, adjustments: adj, hostShare: host, previousPayouts: paidDone, paidOut: paidDone, outstanding: host - paidDone, pendingFunds, openDisputes, orders: P.length };
 }
 /* state machine for a settlement record */

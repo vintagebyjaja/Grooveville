@@ -98,15 +98,19 @@ const PROFILE_SCHEMA = [
 )`,
 `CREATE INDEX IF NOT EXISTS event_organizations_org ON event_organizations(organization_id)`
 ];
+const BUYER_PROCESSING_SCHEMA = `CREATE TABLE IF NOT EXISTS order_processing_fees (
+  order_id TEXT PRIMARY KEY REFERENCES orders(id) ON DELETE CASCADE,
+  cents INTEGER NOT NULL CHECK(cents > 0)
+)`;
 let READY = null;
 export async function db(env) {
   if (!env.PORTAL_DB) throw Object.assign(new Error("The portal database (D1 binding PORTAL_DB) isn't connected yet."), { status: 503 });
   if (!READY) READY = (async () => {
     const D = env.PORTAL_DB;
     const current = await D.prepare("SELECT MAX(v) AS v FROM schema_version").first().catch(() => null);
-    if (current?.v >= 4) return;
+    if (current?.v >= 5) return;
     const schema = current?.v >= 1 ? [] : SCHEMA;
-    await D.batch([...schema, ...(current?.v >= 2 ? [] : [MANUAL_HOST_PAYMENTS]), ...(current?.v >= 3 ? [] : SPECIAL_INVITES_SCHEMA), ...PROFILE_SCHEMA, "INSERT INTO schema_version (v) SELECT 4 WHERE NOT EXISTS (SELECT 1 FROM schema_version WHERE v >= 4)"].map(sql => D.prepare(sql)));
+    await D.batch([...schema, ...(current?.v >= 2 ? [] : [MANUAL_HOST_PAYMENTS]), ...(current?.v >= 3 ? [] : SPECIAL_INVITES_SCHEMA), ...(current?.v >= 4 ? [] : PROFILE_SCHEMA), BUYER_PROCESSING_SCHEMA, "INSERT INTO schema_version (v) SELECT 5 WHERE NOT EXISTS (SELECT 1 FROM schema_version WHERE v >= 5)"].map(sql => D.prepare(sql)));
   })().catch(e => { READY = null; throw e });
   await READY; return env.PORTAL_DB;
 }
