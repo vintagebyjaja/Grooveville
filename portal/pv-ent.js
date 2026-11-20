@@ -9,7 +9,9 @@ const VIS = { public: "Public", unlisted: "Unlisted (link only)", private: "Priv
 const ARR = { flat: "Option A · Flat rental", share: "Option B · Revenue share", ticketing: "Ticketing only", owned: "Grooveville event" };
 const SET = { sales_active: ["Sales active", ""], disputed: ["Under review", "bad"], pending_reconciliation: ["Reconciling payments", "warn"], awaiting_approval: ["Awaiting Grooveville approval", "warn"], approved: ["Approved", "tl"], partially_paid: ["Partially paid", "tl"], paid: ["Paid", "ok"], adjusted: ["Adjusted", "tl"] };
 PV.ent = { ESTAT, SET, ARR, VIS };
-const entHero = (title, sub) => ({ kick: "Grooveville Entertainment", title, sub, art: '<img src="/media/gv-ent.webp" alt="">' });
+const entHero = (title, sub, kick = "Grooveville Entertainment") => ({
+  kick, title, sub, art: '<div class="pv-ent-art"></div>'
+});
 const pubShell = (hero, body) => PV.shell({ sec: "ENTERTAINMENT", hero }, body);
 const when = s => PV.dt(s);
 /* ---------- public listing ---------- */
@@ -163,7 +165,7 @@ PV.views.host = async ({ parts, qs }) => {
   if (sub === "event" && parts[2]) { const e = d.events.find(x => x.id === parts[2]); if (!e) return hshell(d, null, '<div class="pvempty">Event not found.</div>'); if (parts[3] === "guests") return hshell(d, null, await guests(d, e)); if (parts[3] === "settlement") return hshell(d, null, await settlement(e)); return hshell(d, null, await editor(d, e)) }
   if (sub === "events") return hshell(d, null, eventsList(d, d.events));
   const up = d.events.filter(e => !["completed", "canceled"].includes(e.status)), gross = d.events.reduce((a, e) => a + (e.sales ? e.sales.gross - e.sales.refunds : 0), 0), tix = d.events.reduce((a, e) => a + (e.sales ? e.sales.tickets : 0), 0);
-  return hshell(d, { kick: "Host dashboard", title: "Welcome, " + E(d.host.name) + ".", sub: "Your events, tickets and settlements.", art: '<img src="/media/gv-ent.webp" alt="">' },
+  return hshell(d, entHero("Welcome, " + E(d.host.name) + ".", "Your events, tickets and settlements.", "Host dashboard"),
     (!d.host.verified ? '<div class="pvbanner tl">Get the Grooveville Peach Verified badge on your profile and events. <a href="#host/verify">Request verification</a></div>' : '') +
     '<div class="pvstats">' + [["cal", up.length, "Active events"], ["ticket", tix, "Tickets sold"], ["cash", $m(gross), "Ticket sales (net of refunds)"], ["star", d.host.verified ? "Verified" : "Not yet", "Peach Verified"]].map(([i, v, l]) => '<div class="pvstat">' + PV.ic(i) + '<div><b>' + v + '</b><small>' + l + '</small></div></div>').join("") + '</div>' +
     '<div class="pvgrid pvg2" style="margin-top:18px"><div class="pvpanel"><div class="pvph"><h3>Your events</h3><a class="pvbtn sm pk" href="#host/new">' + PV.ic("plus") + 'Create event</a></div>' + eventsList(d, up.slice(0, 6), true) + '</div>' +
